@@ -1,6 +1,6 @@
 using SS.Backend.SharedNamespace;
 
-namespace SS.Backend.Services.AccountCreation
+namespace SS.Backend.Services.AccountCreationService
 {
     public class AccountCreation : IAccountCreation
     {
@@ -18,11 +18,11 @@ namespace SS.Backend.Services.AccountCreation
                 allValid ++;
             }
             else {errorMsg += "Invalid email address."; }
-            if (userInfo.dob != null)
-            {
-                allValid ++;
-            }
-            else {errorMsg += "Invalid date of birth."; }
+            // if (userInfo.dob != null)
+            // {
+            //     allValid ++;
+            // }
+            // else {errorMsg += "Invalid date of birth."; }
             if (userInfo.firstname != "" && CheckNullWhiteSpace(userInfo.firstname) == true && userInfo.firstname != "NULL" && userInfo.firstname != "null")
             {
                 allValid ++;
@@ -33,7 +33,7 @@ namespace SS.Backend.Services.AccountCreation
                 allValid ++;
             }
             else {errorMsg += "Invalid last name."; }
-
+        
             if (allValid == 4)
             {
                 errorMsg = "Pass";
@@ -42,6 +42,21 @@ namespace SS.Backend.Services.AccountCreation
         }
 
         //generate pepper and add it?? 
+        //pepper 
+        public Response CreateUserAccount(UserInfo userInfo)
+        {
+            Response result = new Response();
 
+            if (CheckUserInfoValidity(userInfo) == "Pass")
+            {
+                result.HasError = false;
+            }
+            else
+            {
+                result.HasError = true;
+                result.ErrorMessage = "Invalid log entry: " + CheckUserInfoValidity(userInfo);
+            }
+            return result;
+        }
     }
 }

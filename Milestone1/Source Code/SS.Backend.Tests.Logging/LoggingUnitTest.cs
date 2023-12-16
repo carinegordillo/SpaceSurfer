@@ -713,7 +713,7 @@ namespace SS.Backend.Tests.Logging
                 description = "Testing File Logger"
             };
             Stopwatch timer = new Stopwatch();
-            var textLogTarget = new TextFileLogTarget("C:/Users/epik1/Desktop/File_Log_Test.txt");
+            var textLogTarget = new TextFileLogTarget("C:/Users/kayka/Downloads/File_Log_Test.txt");
             Logger logger = new Logger(textLogTarget);
 
             // Act
