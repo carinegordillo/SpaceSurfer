@@ -27,30 +27,34 @@ internal class Program
         if (result.HasError == false)
         {
             Console.WriteLine($"You have received your OTP for {user}: {sentOTP}");
+            Console.WriteLine("Enter password: ");
+            string password = Console.ReadLine();
+            request.UserIdentity = user;
+            request.Proof = password;
+
+            (principal, result) = await authn.Authenticate(request).ConfigureAwait(false);
+
+            if (result.HasError == false && principal != null)
+            {
+                Console.WriteLine($"Successful authentication!\nRoles for {principal.UserIdentity}:");
+
+                foreach (var claim in principal.Claims)
+                {
+                    Console.WriteLine($"{claim.Key}: {claim.Value}");
+                }
+            }
+            else if (result.HasError == true)
+            {
+                Console.WriteLine($"Failure in Authenticate\nError message: {result.ErrorMessage}");
+            }
+            else
+            {
+                Console.WriteLine("Authentication failed. Principal is null.");
+            }
         }
         else if (result.HasError == true)
         {
             Console.WriteLine($"Failure in SendOTP_and_SaveToDB\nError message: {result.ErrorMessage}");
-        }
-
-        Console.WriteLine("Enter password: ");
-        string password = Console.ReadLine();
-        request.UserIdentity = user;
-        request.Proof = password;
-
-        (principal, result) = await authn.Authenticate(request).ConfigureAwait(false);
-
-        if (result.HasError == false && principal != null)
-        {
-            Console.WriteLine($"Successful authentication!\nRole for {principal.UserIdentity}: {principal.Role}");
-        }
-        else if (result.HasError == true)
-        {
-            Console.WriteLine($"Failure in Authenticate\nError message: {result.ErrorMessage}");
-        }
-        else
-        {
-            Console.WriteLine("Authentication failed. Principal is null.");
         }
 
     }
