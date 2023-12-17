@@ -47,7 +47,7 @@ if(auth.Authenticate(“”, “”))
 public class AppAuthService : IAuthenticator, IAuthorizer
 {
 	// authenticate method from lecture
-	public SSPrincipal? Authenticate(AuthenticationRequest authRequest)
+	public ClaimsPrincipal? Authenticate(AuthenticationRequest authRequest)
 	{
 		// validate arguments “Early Exit” (less cpu, ram = faster system)
 		// parameter vs argument (parameter = method signature, argument = actual value)
@@ -68,7 +68,7 @@ public class AppAuthService : IAuthenticator, IAuthorizer
 		}
 		#endregion
 
-		SSPrincipal appPrincipal = null;
+		ClaimsPrincipal appPrincipal = null;
 
 		try
 		{
@@ -77,7 +77,7 @@ public class AppAuthService : IAuthenticator, IAuthorizer
 			
 			var claims = new Dictionary<string, string>();
 				
-			appPrincipal = new SSPrincipal()
+			appPrincipal = new ClaimsPrincipal()
 			{
 				UserIdentity = authRequest.UserIdentity,
 				Claims = claims
@@ -94,7 +94,7 @@ public class AppAuthService : IAuthenticator, IAuthorizer
 		return appPrincipal;
 	}
 
-	public bool IsAuthorize(SSPrincipal currentPrincipal, IDictionary<string, string> predicateClaims)
+	public bool IsAuthorize(ClaimsPrincipal currentPrincipal, IDictionary<string, string> predicateClaims)
 	{
 		
 		//Dictionary<string, string>() {new (“RoleName”, “Admin”)}

@@ -3,7 +3,7 @@ namespace SS.SecurityLibrary;
 // example code from lecture for UploadService
 public class RoleAuthService : IAuthenticator, IAuthorizer
 {
-    public bool IsAuthorize(SSPrincipal currentPrincipal, IDictionary<string, string> claims)
+    public bool IsAuthorize(ClaimsPrincipal currentPrincipal, IDictionary<string, string> claims)
     {
         if(currentPrincipal.Claims == "Admin")
     }
@@ -12,18 +12,23 @@ public class RoleAuthService : IAuthenticator, IAuthorizer
 
 // roleAuthService.IsAuthorize(currPrincipal, requiredRole)
 
-public class UploadService
+private readonly SSAuthService _SSAuthService;
+private readonly AuthenticationRequest authRequest;
+
+public UploadService()
 {
-    public void Upload()
+   _SSAuthService = SSAuthService.Authenticate(authRequest);
+    
+}
+public void Upload(ClaimsPrincipal currentPrincipal, IDictionary<string, string> requiredClaims)
+{
+    if(SSAuthService.IsAuthorize(currentPrincipal, requiredClaims))
     {
-        var SSAuthService = new SSAuthService();
-
-        var authRequest = new AuthenticationRequest();
-        var SSPrincipal = SSAuthService.Authenticate(authRequest);
-
-        if(SSAuthService.IsAuthorize(SSPrincipal))
-        {
-            // do something
-        }
+        UploadFile();
     }
+}
+
+private void UploadFile()
+{
+    throw new NotImplementedException();
 }
