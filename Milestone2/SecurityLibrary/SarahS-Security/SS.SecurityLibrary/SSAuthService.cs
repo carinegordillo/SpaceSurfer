@@ -4,7 +4,7 @@ using Microsoft.VisualBasic;
 
 using System.Security.Principal;
 
-namespace Company.Security;
+namespace SS.SecurityLibrary;
 
 /*
 public class RandomValue

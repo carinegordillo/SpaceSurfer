@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using System.Security.Principal;
 
-namespace Company.Security;
+namespace SS.SecurityLibrary;
 
 public class ClaimsPrincipal 
 {
@@ -28,7 +28,6 @@ public class ClaimsPrincipal
 
         return claim != null && claim.Value == claimValue;
     }
-    }
+}
 
 	//AuthZ: who is the user u need to evaluate (against)
-}

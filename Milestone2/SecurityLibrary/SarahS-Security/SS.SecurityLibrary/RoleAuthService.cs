@@ -1,4 +1,4 @@
-namespace Company.Security;
+namespace SS.SecurityLibrary;
 
 // example code from lecture for UploadService
 public class RoleAuthService : IAuthenticator, IAuthorizer
