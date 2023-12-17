@@ -3,9 +3,9 @@ using SS.Backend.SharedNamespace;
 using System.Data.SqlClient;
 
 
-namespace SS.Backend.Services.UpdatingService
+namespace SS.Backend.Services.ModificationService
 {
-    public class Updater : IUpdater
+    public class AccountModifier : IAccountModifier
     {
         Credential removeMeLater = Credential.CreateSAUser();
 
@@ -19,10 +19,15 @@ namespace SS.Backend.Services.UpdatingService
             { "Email", newEmail },
             { "Age", newAge }};
 
+            var whereValues = new Dictionary<string, object>{
+            { "@Username", newEmail }};
+
+
+
             var updateCommand = commandBuilder.BeginUpdate("Users")
                                             .Set(columnValues)
-                                            .Where("Username = @Username")
                                             .AddParameters(columnValues)
+                                            .Where("Username = @Username")
                                             .Build();
 
 

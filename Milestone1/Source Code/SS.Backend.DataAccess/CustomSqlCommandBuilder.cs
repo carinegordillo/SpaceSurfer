@@ -41,6 +41,25 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
+    public ICustomSqlCommandBuilder BeginSelect()
+    {
+        _commandText.Clear();
+        _commandText.Append("SELECT ");
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder SelectColumns(params string[] columns)
+    {
+        _commandText.Append(string.Join(", ", columns));
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder From(string tableName)
+    {
+        _commandText.Append($" FROM {tableName}");
+        return this;
+    }
+
     public ICustomSqlCommandBuilder Set(Dictionary<string, object> columnValues)
     {
         var setClauses = columnValues.Select(kv => $"{kv.Key} = @{kv.Key}");
@@ -51,6 +70,12 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
     public ICustomSqlCommandBuilder Where(string whereClause)
     {
         _commandText.Append($"WHERE {whereClause}");
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder Join(string joinTable, string fromColumn, string toColumn)
+    {
+        _commandText.Append($" JOIN {joinTable} ON {fromColumn} = {toColumn}");
         return this;
     }
 

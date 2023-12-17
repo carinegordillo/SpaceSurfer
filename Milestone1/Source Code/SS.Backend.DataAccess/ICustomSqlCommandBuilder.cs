@@ -10,7 +10,11 @@ namespace SS.Backend.DataAccess
         ICustomSqlCommandBuilder BeginUpdate(string tableName);
         ICustomSqlCommandBuilder Set(Dictionary<string, object> columnValues);
         ICustomSqlCommandBuilder Where(string whereClause);
+        ICustomSqlCommandBuilder BeginSelect();
+        ICustomSqlCommandBuilder SelectColumns(params string[] columns);
+        ICustomSqlCommandBuilder From(string tableName);
         ICustomSqlCommandBuilder BeginDelete(string tableName);
+        ICustomSqlCommandBuilder Join(string joinTable, string fromColumn, string toColumn);
         ICustomSqlCommandBuilder AddParameters(Dictionary<string, object> parameters);
 
         SqlCommand Build();
