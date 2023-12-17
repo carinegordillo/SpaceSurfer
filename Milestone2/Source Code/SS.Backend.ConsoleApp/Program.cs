@@ -19,7 +19,7 @@ internal class Program
             description = "Testing File Logger"
         };
         Stopwatch timer = new Stopwatch();
-        var textLogTarget = new TextFileLogTarget("\"C:\\Users\\epik1\\source\\repos\\SS.Logging\\File_Logger_Test.txt\"");
+        var textLogTarget = new TextFileLogTarget("\"C:\\Users\\brand\\Documents\\Examples\\SS.Logging,DataAccess\\File_Logger_Test.txt\"");
         Logger logger = new Logger(textLogTarget);
 
         Console.WriteLine("Finished.");
