@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SS.Backend.Security.AuthN
+﻿namespace SS.Backend.Security.AuthN
 {
-    internal class SSPrincipal
+    public class SSPrincipal
     {
+        public string UserIdentity { get; set; } = string.Empty;
+        //public IDictionary<string, string> Claims { get; set; }
+
+        public string Role { get; set; } = string.Empty;
     }
 }
