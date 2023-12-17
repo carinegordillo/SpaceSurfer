@@ -1,13 +1,12 @@
 using SS.Backend.DataAccess;
-using SS.Backend.SharedNamespace;
 using System.Data.SqlClient;
-using System.Runtime.InteropServices;
 
 namespace SS.Backend.Tests.DataAccess
 {
     [TestClass]
     public class CustomSqlCommandBuilderUnitTest
     {
+
         [TestMethod]
         public void CustomSqlCommandBuilder_Correct_InsertCommand_Pass()
         {
@@ -35,14 +34,20 @@ namespace SS.Backend.Tests.DataAccess
         [TestMethod]
         public void CustomSqlCommandBuilder_Correct_DeleteCommand_Pass()
         {
+            var parameters = new Dictionary<string, object>
+            {
+                { "@Username", "john_doe" },
+            };
+
             var builder = new CustomSqlCommandBuilder();
             var command = builder.BeginDelete("Users")
                                 .Where("Username = @Username")
+                                .AddParameters(parameters)
                                 .Build();
 
             Console.WriteLine(command.CommandText);
-            
-            Assert.AreEqual("DELETE FROM Users WHERE Username = @Username", command.CommandText);
+
+            Assert.AreEqual("DELETE FROM Users WHERE Username = john_doe", command.CommandText);
         }
 
         [TestMethod]
@@ -94,8 +99,6 @@ namespace SS.Backend.Tests.DataAccess
             Assert.AreNotEqual(insertCommand.CommandText, updateCommand.CommandText);
         }
 
-
-
     }
-    
+
 }
