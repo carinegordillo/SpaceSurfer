@@ -20,6 +20,7 @@ namespace SS.Backend.Security.AuthN
         }
         public async Task<(string username, string otp, Response res)> SendOTP_and_SaveToDB(AuthenticationRequest authRequest)
         {
+            var builder = new CustomSqlCommandBuilder();
             Response result = new Response();
             string user = authRequest.UserIdentity;
 
@@ -48,17 +49,42 @@ namespace SS.Backend.Security.AuthN
                 if (result.ValuesRead == null || result.ValuesRead.Count == 0)
                 {
                     // create and execute the sql command to insert the username, otp, salt, and timestamp to the DB
-                    SqlCommand insertCmd = gensql.GenerateInsertQuery(user, hashedOTP, salt);
-                    result = await sqldao.SqlRowsAffected(insertCmd).ConfigureAwait(false);
+                    var parameters = new Dictionary<string, object>
+                    {
+                        { "OTP", hashedOTP },
+                        { "Salt", salt },
+                        { "Timestamp", DateTime.UtcNow },
+                        { "Username", user }
+                    };
+                    var insertCommand = builder
+                        .BeginInsert("OTP")
+                        .Columns(parameters.Keys)
+                        .Values(parameters.Keys)
+                        .AddParameters(parameters)
+                        .Build();
+                    result = await sqldao.SqlRowsAffected(insertCommand).ConfigureAwait(false);
 
                     // user and otp is returned so it can be used by the manager to send the otp to the user
                     return (user, otp, result);
                 }
                 else
                 {
+                    var parameters = new Dictionary<string, object>
+                    {
+                        { "OTP", hashedOTP },
+                        { "Salt", salt },
+                        { "Timestamp", DateTime.UtcNow },
+                        { "Username", user }
+                    };
+                    var updateCommand = builder
+                        .BeginUpdate("OTP")
+                        .Set(parameters)
+                        .Where("Username = @username")
+                        .AddParameters(parameters)
+                        .Build();
+
                     //update the otp and salt in table for that user
-                    SqlCommand updateCmd = gensql.GenerateUpdateQuery(user, hashedOTP, salt);
-                    result = await sqldao.SqlRowsAffected(updateCmd).ConfigureAwait(false);
+                    result = await sqldao.SqlRowsAffected(updateCommand).ConfigureAwait(false);
 
                     // user and otp is returned so it can be used by the manager to send the otp to the user
                     return (user, otp, result);
@@ -142,6 +168,7 @@ namespace SS.Backend.Security.AuthN
                             return (null, result);
                         }
                     }
+
                 }
                 else
                 {
