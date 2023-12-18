@@ -10,7 +10,7 @@ namespace SS.Backend.DataAccess
 
         public SqlDAO(Credential user)
         {
-            this.connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", user.user, user.pass);
+            this.connectionString = string.Format(@"Data localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", user.user, user.pass);
         }
 
         public async Task<Response> SqlRowsAffected(SqlCommand sql)
