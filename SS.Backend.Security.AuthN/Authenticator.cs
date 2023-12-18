@@ -148,14 +148,12 @@ namespace SS.Backend.Security.AuthN
                         result = await sqldao.ReadSqlResult(readRolesQuery).ConfigureAwait(false);
                         if (result.ValuesRead.Count > 0)
                         {
-                            // Assuming Roles is a varchar(100), modify accordingly if needed
                             string roles = (string)result.ValuesRead[0][0];
 
                             // populate the principal
                             SSPrincipal principal = new SSPrincipal();
                             principal.UserIdentity = username;
                             principal.Claims.Add("Roles", roles);
-                            //principal.Role = roles; // ------------------- THIS IS TEMPORARY, i couldn't figure out the dictionary stuff, so right now i have it as role based and not claims
 
                             result.HasError = false;
 
