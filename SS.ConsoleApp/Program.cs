@@ -9,10 +9,9 @@ internal class Program
         Response result = new Response();
         Credential cred = new Credential("sa", "r@ysbb@ll2013");
         GenOTP genotp = new GenOTP();
-        GenSql gensql = new GenSql();
         Hashing hasher = new Hashing();
         SqlDAO sqldao = new SqlDAO(cred);
-        Authenticator authn = new Authenticator(genotp, hasher, gensql, sqldao);
+        Authenticator authn = new Authenticator(genotp, hasher, sqldao);
 
         Console.WriteLine("Enter username: ");
         string username = Console.ReadLine();
@@ -22,14 +21,13 @@ internal class Program
         request.UserIdentity = username;
         request.Proof = null;
 
-        (string? user, string? sentOTP, result) = await authn.SendOTP_and_SaveToDB(request).ConfigureAwait(false);
+        (string? sentOTP, result) = await authn.SendOTP_and_SaveToDB(request).ConfigureAwait(false);
 
         if (result.HasError == false)
         {
-            Console.WriteLine($"You have received your OTP for {user}: {sentOTP}");
+            Console.WriteLine($"You have received your OTP: {sentOTP}");
             Console.WriteLine("Enter password: ");
             string password = Console.ReadLine();
-            request.UserIdentity = user;
             request.Proof = password;
 
             (principal, result) = await authn.Authenticate(request).ConfigureAwait(false);
