@@ -18,10 +18,11 @@ namespace SS.Backend.Tests.Security.Authorization
             // Arrange
             Response result = new Response();
             var builder = new CustomSqlCommandBuilder();
-            Credential cred = new Credential("sa", "r@ysbb@ll2013");
+            string configFilePath = Path.Combine(AppContext.BaseDirectory, "config.local.txt");
+            ConfigService configService = new ConfigService(configFilePath);
             GenOTP genotp = new GenOTP();
             Hashing hasher = new Hashing();
-            SqlDAO dao = new SqlDAO(cred);
+            SqlDAO dao = new SqlDAO(configService);
             SqlLogTarget target = new SqlLogTarget(dao);
             Logger log = new Logger(target);
             SSAuthService auth = new SSAuthService(genotp, hasher, dao, log);
@@ -59,10 +60,11 @@ namespace SS.Backend.Tests.Security.Authorization
             // Arrange
             Response result = new Response();
             var builder = new CustomSqlCommandBuilder();
-            Credential cred = new Credential("sa", "r@ysbb@ll2013");
+            string configFilePath = Path.Combine(AppContext.BaseDirectory, "config.local.txt");
+            ConfigService configService = new ConfigService(configFilePath);
             GenOTP genotp = new GenOTP();
             Hashing hasher = new Hashing();
-            SqlDAO dao = new SqlDAO(cred);
+            SqlDAO dao = new SqlDAO(configService);
             SqlLogTarget target = new SqlLogTarget(dao);
             Logger log = new Logger(target);
             SSAuthService auth = new SSAuthService(genotp, hasher, dao, log);
@@ -101,10 +103,11 @@ namespace SS.Backend.Tests.Security.Authorization
             // Arrange
             Response result = new Response();
             var builder = new CustomSqlCommandBuilder();
-            Credential cred = new Credential("sa", "r@ysbb@ll2013");
+            string configFilePath = Path.Combine(AppContext.BaseDirectory, "config.local.txt");
+            ConfigService configService = new ConfigService(configFilePath);
             GenOTP genotp = new GenOTP();
             Hashing hasher = new Hashing();
-            SqlDAO dao = new SqlDAO(cred);
+            SqlDAO dao = new SqlDAO(configService);
             SqlLogTarget target = new SqlLogTarget(dao);
             Logger log = new Logger(target);
             SSAuthService auth = new SSAuthService(genotp, hasher, dao, log);
