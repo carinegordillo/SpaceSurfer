@@ -31,6 +31,8 @@ namespace SS.Backend.Services.AccountCreationService
             int totalStringFields = 0; 
             foreach (PropertyInfo prop in userInfo.GetType().GetProperties())
             {
+
+                //so if property is nullable its fine it doesnt pass thru this
                 if (prop.PropertyType == typeof(string))
                 {
                     totalStringFields++; // Count string fields

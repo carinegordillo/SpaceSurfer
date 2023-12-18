@@ -35,6 +35,17 @@ namespace SS.Backend.Tests.AccountCreationTest
         }
 
         [TestMethod]
+        public async Task ReadPepperFileContents_Success()
+        {
+            string filePath = "C:/Users/kayka/Downloads/pepper.txt";
+            SealedPepperDAO pepperDao = new SealedPepperDAO(filePath);
+            string pepper = await pepperDao.ReadPepperAsync();
+            Console.WriteLine($"Pepper content: {pepper}");
+            Assert.IsFalse(string.IsNullOrEmpty(pepper), "The pepper file should not be empty.");
+        }
+        
+
+        [TestMethod]
         public async Task CreateUserAccount_Success()
         {
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
@@ -48,9 +59,12 @@ namespace SS.Backend.Tests.AccountCreationTest
             SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
             var builder = new CustomSqlCommandBuilder();
 
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
             //username must be unique in database
             var validUserInfo = new UserInfo{
-                username = "imbeggingvTIREDeryuniquew@example.com",
+                username = "thidkanymoreG@example.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "Jane",
                 lastname = "Doe", 
@@ -59,7 +73,7 @@ namespace SS.Backend.Tests.AccountCreationTest
                 backupEmail = "test@backup.com"
             };
 
-            string pepper = "X3R5";
+      
             var validPepper = new UserPepper{
                 hashedUsername = hashing.HashData(validUserInfo.username, pepper)
             };
@@ -85,23 +99,6 @@ namespace SS.Backend.Tests.AccountCreationTest
                 {"isActive", validUserInfo.status} 
             };
 
-            ///trying to retrieve userID from userAccount//////////////////////////////////////
-            // SqlCommand selectCommand = builder.BeginSelect()
-            //     .SelectColumns("user_id") // Assuming 'user_id' is the column you want to select
-            //     .From("userAccount")      // Assuming 'userAccount' is the table name
-            //     .Where("username = @username") // The WHERE clause
-            //     .AddParameters(new Dictionary<string, object> { { "username", validUserInfo.username} })
-            //     .Build();
-            // int userID = -1; 
-            // using (SqlDataReader reader = selectCommand.ExecuteReader())
-            // {
-            //     if (reader.Read()) // Assuming there is only one unique user with this username
-            //     {
-            //         userID = (int)reader["user_id"];
-            //     }
-            // }
-            //////////////////////////////////////////////////////////////////////////////
-
             var hashedAccount_success_parameters = new Dictionary<string, object>
                 {
                     {"hashedUsername", validPepper.hashedUsername},
@@ -115,7 +112,6 @@ namespace SS.Backend.Tests.AccountCreationTest
                 { "activeAccount", activeAccount_success_parameters}, 
                 {"userHash", hashedAccount_success_parameters}
             };
-
 
             timer.Start();
             var response = await accountcreation.CreateUserAccount(validPepper, validUserInfo, tableData);
@@ -153,7 +149,10 @@ namespace SS.Backend.Tests.AccountCreationTest
                 backupEmail = "test@backup.com"
             };
 
-            string pepper = "X3R5";
+    
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
             var validPepper = new UserPepper{
                 hashedUsername = hashing.HashData(validUserInfo.username, pepper)
             };
@@ -229,7 +228,9 @@ namespace SS.Backend.Tests.AccountCreationTest
                 backupEmail = "test@backup.com"
             };
 
-            string pepper = "X3R5";
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
             var validPepper = new UserPepper{
                 hashedUsername = hashing.HashData(validUserInfo.username, pepper)
             };
@@ -306,7 +307,9 @@ namespace SS.Backend.Tests.AccountCreationTest
                 backupEmail = "test@backup.com"
             };
 
-            string pepper = "X3R5";
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
             var validPepper = new UserPepper{
                 hashedUsername = hashing.HashData(validUserInfo.username, pepper)
             };
@@ -383,7 +386,10 @@ namespace SS.Backend.Tests.AccountCreationTest
                 backupEmail = "test@backup.com"
             };
 
-            string pepper = "X3R5";
+            
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
             var validPepper = new UserPepper{
                 hashedUsername = hashing.HashData(validUserInfo.username, pepper)
             };
@@ -449,18 +455,21 @@ namespace SS.Backend.Tests.AccountCreationTest
             SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
             var builder = new CustomSqlCommandBuilder();
 
-            //role is invalid so will throw an error 
+        
             var validUserInfo = new UserInfo{
                 username = "idontkaddnonewtest@example.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "Jane",
                 lastname = "Doe", 
-                role = 56,
+                role = 2,
                 status = "", 
                 backupEmail = "test@backup.com"
             };
 
-            string pepper = "X3R5";
+           
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
             var validPepper = new UserPepper{
                 hashedUsername = hashing.HashData(validUserInfo.username, pepper)
             };
@@ -524,18 +533,21 @@ namespace SS.Backend.Tests.AccountCreationTest
             SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
             var builder = new CustomSqlCommandBuilder();
 
-            //role is invalid so will throw an error 
+  
             var validUserInfo = new UserInfo{
                 username = "idontkaddnonewtest@example.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "Jane",
                 lastname = "Doe", 
-                role = 56,
+                role = 3,
                 status = "yes", 
                 backupEmail = ""
             };
 
-            string pepper = "X3R5";
+          
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
             var validPepper = new UserPepper{
                 hashedUsername = hashing.HashData(validUserInfo.username, pepper)
             };
@@ -599,18 +611,21 @@ namespace SS.Backend.Tests.AccountCreationTest
             SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
             var builder = new CustomSqlCommandBuilder();
 
-            //role is invalid so will throw an error 
+        
             var validUserInfo = new UserInfo{
                 username = "idontkaddnonewtest@example.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "Jane",
                 lastname = "Doe", 
-                role = 56,
+                role = 1,
                 status = "yes", 
                 backupEmail = "test@backup.com"
             };
 
-            string pepper = "X3R5";
+          
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
             var validPepper = new UserPepper{
                 hashedUsername = hashing.HashData(validUserInfo.username, pepper)
             };
@@ -671,18 +686,21 @@ namespace SS.Backend.Tests.AccountCreationTest
             SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
             var builder = new CustomSqlCommandBuilder();
 
-            //role is invalid so will throw an error 
+     
             var validUserInfo = new UserInfo{
                 username = "unique233@example.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "Jane",
                 lastname = "Doe", 
-                role = 56,
+                role = 5,
                 status = "yes", 
                 backupEmail = "test@backup.com"
             };
 
-            string pepper = "X3R5";
+          
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
             var validPepper = new UserPepper{
                 hashedUsername = hashing.HashData(validUserInfo.username, pepper)
             };
@@ -726,7 +744,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             var response = await accountcreation.CreateUserAccount(validPepper, validUserInfo, tableData);
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
-            Assert.IsFalse(timer.ElapsedMilliseconds <= 1);
+            Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
             await CleanupTestData().ConfigureAwait(false);
         }
 
@@ -744,18 +762,21 @@ namespace SS.Backend.Tests.AccountCreationTest
             SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
             var builder = new CustomSqlCommandBuilder();
 
-            //role is invalid so will throw an error 
+          
             var validUserInfo = new UserInfo{
                 username = "NOWWWPLEASWORKtabledoesnotexits@example.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "Jane",
                 lastname = "Doe", 
-                role = 56,
+                role = 4,
                 status = "yes", 
                 backupEmail = "test@backup.com"
             };
 
-            string pepper = "X3R5";
+        
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
             var validPepper = new UserPepper{
                 hashedUsername = hashing.HashData(validUserInfo.username, pepper)
             };
@@ -799,7 +820,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             var response = await accountcreation.CreateUserAccount(validPepper, validUserInfo, tableData);
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
-            Assert.IsFalse(timer.ElapsedMilliseconds <= 1);
+            Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
             await CleanupTestData().ConfigureAwait(false);
         }
 
