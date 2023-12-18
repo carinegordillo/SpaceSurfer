@@ -4,6 +4,11 @@
     {
 
         private static readonly Random random = new Random();
+
+        /// <summary>
+        /// This method generates a random OTP made up of alphanumerical characters
+        /// </summary>
+        /// <returns>Returns an OTP that is 8 characters long</returns>
         public string generateOTP()
         {
             const string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";

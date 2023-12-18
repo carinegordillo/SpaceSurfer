@@ -18,6 +18,12 @@ namespace SS.Backend.Security
             this.sqldao = sqldao;
             this.log = log;
         }
+
+        /// <summary>
+        /// This method sends the OTP back in the system to whereever it was called and also saves the hashed OTP to the data store
+        /// </summary>
+        /// <param name="authRequest">Request to authenticate, holds UserIdentity and Proof</param>
+        /// <returns>OTP in plaintext and the Response object</returns>
         public async Task<(string otp, Response res)> SendOTP_and_SaveToDB(AuthenticationRequest authRequest)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -135,6 +141,12 @@ namespace SS.Backend.Security
                 return (null, result);
             }
         }
+
+        /// <summary>
+        /// This method authenticates a user by validating their OTP. If valid, it populates the claims sent in the SSPrincipal object
+        /// </summary>
+        /// <param name="authRequest">Request to authenticate, holds UserIdentity and Proof</param>
+        /// <returns>SSPrincipal object which contains UserIdentity and Claims as well as the Response object</returns>
         public async Task<(SSPrincipal principal, Response res)> Authenticate(AuthenticationRequest authRequest)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -279,6 +291,13 @@ namespace SS.Backend.Security
             }
 
         }
+
+        /// <summary>
+        /// This method authorizes a user by checking if their claims are contained in the required claims
+        /// </summary>
+        /// <param name="currentPrincipal">The current principal of the user</param>
+        /// <param name="requiredClaims">The required claims to check that the user has</param>
+        /// <returns>A boolean denoting if the user is authorized</returns>
         public async Task<bool> IsAuthorize(SSPrincipal currentPrincipal, IDictionary<string, string> requiredClaims)
         {
             if (currentPrincipal?.Claims == null)
