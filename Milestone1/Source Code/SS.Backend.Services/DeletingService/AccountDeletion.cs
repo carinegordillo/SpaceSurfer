@@ -4,12 +4,20 @@ using SS.Backend.SharedNamespace;
 
 namespace SS.Backend.Services.DeletingService
 {
+    /// <summary>
+    ///     AccountDeletion class responsible for deleting user records from the database
+    /// </summary>
+    ///
     public class AccountDeletion : IAccountDeletion
     {
         // Temporary User Variable
         Credential temp = Credential.CreateSAUser();
 
-
+        /// <summary>
+        ///     DeleteAccount deletes the account by username
+        /// </summary>
+        ///
+        /// <param username > String value representing a username.</param>
         public async Task<Response> DeleteAccount(string username)
         {
             // initializes a new instance of the Response
@@ -87,7 +95,7 @@ namespace SS.Backend.Services.DeletingService
             else
             {
                 //Unsuccessful Deletion
-                LogEntry entry = new()
+                LogEntry errorEntry = new LogEntry()
                 {
                     timestamp = DateTime.UtcNow,
                     level = "Error",
@@ -96,7 +104,7 @@ namespace SS.Backend.Services.DeletingService
                     description = "Unsuccessful Deletion"
                 };
 
-                await logger.SaveData(entry);
+                await logger.SaveData(errorEntry);
             }
 
             return overallResponse;

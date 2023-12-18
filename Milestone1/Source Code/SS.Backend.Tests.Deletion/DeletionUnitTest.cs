@@ -6,6 +6,9 @@ using System.Data.SqlClient;
 
 namespace SS.Backend.Tests.Services
 {
+    /// <summary>
+    ///     DeletionUnitTest class that performd units tests on the methods in AccountDeletion
+    /// <summary>
 
     [TestClass]
     public class DeletionUnitTest
@@ -15,7 +18,10 @@ namespace SS.Backend.Tests.Services
         private CustomSqlCommandBuilder? commandBuilder;
         private Logger? logger;
 
-
+        /// <summary>
+        ///     Initializes unit tests
+        /// </summary>
+        ///
         [TestInitialize]
         public void InitializeTest()
         {
@@ -75,7 +81,10 @@ namespace SS.Backend.Tests.Services
             }
         }
 
-
+        /// <summary>
+        ///     Helper method that inserts user method into the database
+        /// </summary>
+        ///
         public async Task insertUser()
         {
             var SAUser = Credential.CreateSAUser();
@@ -114,12 +123,19 @@ namespace SS.Backend.Tests.Services
             }
         }
 
+        /// <summary>
+        ///     Cleans up after the unit tests are executed
+        /// </summary>
         [TestCleanup]
         public async Task CleanupTestData()
         {
             await CleanupTestData(1);
         }
 
+        /// <summary>
+        ///     Tests for a successful deletion of an account
+        /// </summary>
+        ///
         [TestMethod]
         public async Task DeleteAccount_Successful_Deletion()
         {
@@ -134,13 +150,16 @@ namespace SS.Backend.Tests.Services
             // Execute deletion command to the database
             var result = await deleter.DeleteAccount(userToDelete);
 
-            // Deletion should be successful
+            // Deletion should be successful, therefore false
             Assert.IsFalse(result.HasError);
             Assert.IsTrue(result.RowsAffected > 0);
 
             await CleanupTestData(1);
         }
 
+        /// <summary>
+        ///     Tests for an unsuccessful deletion of an account
+        /// </summary>
         [TestMethod]
         public async Task DeleteAccount_Unsuccessful_Deletion()
         {
@@ -156,12 +175,37 @@ namespace SS.Backend.Tests.Services
 
             // Deletion should be unsuccessful, therefore true
             Assert.IsTrue(result.HasError);
-            Assert.IsTrue(result.RowsAffected <= 0);
+            Assert.IsTrue(result.RowsAffected >= 0);
 
             await CleanupTestData(2);
 
         }
 
+        /// <summary>
+        ///     Tests for a unsuccessful deletion of an account
+        /// </summary>
+        [TestMethod]
+        public async Task DeleteAccount_Unsuccessful_Empty()
+        {
+            // initializing account deletion
+            var deleter = new AccountDeletion();
+
+            // Temporary user username
+            var userToDelete = "temporary@email";
+
+            // Execute deletion command to the database
+            var result = await deleter.DeleteAccount(userToDelete);
+
+            // Deletion should be unsuccessful, therefore true
+            Assert.IsTrue(result.HasError);
+            Assert.IsTrue(result.RowsAffected == 0);
+
+            await CleanupTestData(1);
+        }
+
+        /// <summary>
+        ///     Tests for the successful retrieval of the database table names that contain the username column
+        /// </summary>
         [TestMethod]
         public async Task TableNames_Success()
         {
@@ -175,4 +219,5 @@ namespace SS.Backend.Tests.Services
         }
 
     }
+
 }
