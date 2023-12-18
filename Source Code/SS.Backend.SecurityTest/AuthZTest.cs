@@ -72,7 +72,7 @@ public class AuthZTest
 
         var currentPrincipal = new SSPrincipal
         {
-            UserIdentity = "Bob",
+            UserIdentity = "Jimmy",
             Claims = null
         };
 
