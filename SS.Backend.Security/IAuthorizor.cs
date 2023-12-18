@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SS.Backend.Security
+﻿namespace SS.Backend.Security
 {
-    internal class IAuthorizor
+    public interface IAuthorizer
     {
+        bool IsAuthorize(SSPrincipal currentPrincipal, IDictionary<string, string> claims);
     }
 }

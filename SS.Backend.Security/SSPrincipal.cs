@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SS.Backend.Security
+﻿namespace SS.Backend.Security
 {
-    internal class SSPrincipal
+    public class SSPrincipal
     {
+        public string UserIdentity { get; set; } = string.Empty;
+        public Dictionary<string, string> Claims { get; set; } = new Dictionary<string, string>();
     }
 }
