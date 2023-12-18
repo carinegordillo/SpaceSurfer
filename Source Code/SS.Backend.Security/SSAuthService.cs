@@ -5,7 +5,7 @@ namespace SS.Backend.Security
 {
     public class SSAuthService : IAuthenticator, IAuthorizer
     {
-        /*
+        
         private readonly GenOTP genotp;
         private readonly Hashing hasher;
         private readonly SqlDAO sqldao;
@@ -16,6 +16,7 @@ namespace SS.Backend.Security
             this.hasher = hasher;
             this.sqldao = sqldao;
         }
+        /*
         public async Task<(string otp, Response res)> SendOTP_and_SaveToDB(AuthenticationRequest authRequest)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -104,6 +105,7 @@ namespace SS.Backend.Security
             }
         }
         */
+        
         public async Task<(SSPrincipal principal, Response res)> Authenticate(AuthenticationRequest authRequest)
         {
             var builder = new CustomSqlCommandBuilder();
