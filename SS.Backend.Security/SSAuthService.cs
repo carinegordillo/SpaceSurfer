@@ -162,12 +162,12 @@ namespace SS.Backend.Security
                         result = await sqldao.ReadSqlResult(readRoles).ConfigureAwait(false);
                         if (result.ValuesRead.Count > 0)
                         {
-                            string roles = (string)result.ValuesRead[0][1];
+                            string role = (string)result.ValuesRead[0][1];
 
                             // populate the principal
                             SSPrincipal principal = new SSPrincipal();
                             principal.UserIdentity = hashedUsername;
-                            principal.Claims.Add("Roles", roles);
+                            principal.Claims.Add("Role", role);
 
                             result.HasError = false;
 
@@ -196,7 +196,7 @@ namespace SS.Backend.Security
             }
 
         }
-        public bool IsAuthorize(SSPrincipal currentPrincipal, IDictionary<string, string> requiredClaims)
+        public async Task<bool> IsAuthorize(SSPrincipal currentPrincipal, IDictionary<string, string> requiredClaims)
         {
             foreach (var claim in requiredClaims)
             {
