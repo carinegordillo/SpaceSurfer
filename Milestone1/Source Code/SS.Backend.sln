@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.Logging", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.ConsoleApp", "SS.Backend.ConsoleApp\SS.Backend.ConsoleApp.csproj", "{6035FCC0-2071-4DE7-A6D1-740A422DA888}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.Services", "SS.Backend.Tests.Deletion\SS.Backend.Tests.Services.csproj", "{D0871303-1A98-4A19-B68A-DEF78438301B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.Services", "SS.Backend.Tests.Deletion\SS.Backend.Tests.Services.csproj", "{D0871303-1A98-4A19-B68A-DEF78438301B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

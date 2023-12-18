@@ -41,6 +41,25 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
+    public ICustomSqlCommandBuilder SelectOne(string column)
+    {
+        _commandText.Append(column);
+        return this;
+    }
+
+
+    public ICustomSqlCommandBuilder BeginSelect()
+    {
+        _commandText.Clear();
+        _commandText.Append("SELECT ");
+        return this;
+    }
+    public ICustomSqlCommandBuilder From(string tableName)
+    {
+        _commandText.Append($" FROM {tableName}");
+        return this;
+    }
+
     public ICustomSqlCommandBuilder Set(Dictionary<string, object> columnValues)
     {
         var setClauses = columnValues.Select(kv => $"{kv.Key} = @{kv.Key}");
