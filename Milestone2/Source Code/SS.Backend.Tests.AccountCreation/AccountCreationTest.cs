@@ -10,7 +10,6 @@ namespace SS.Backend.Tests.AccountCreationTest
     [TestClass]
     public class AccountCreationTests
     {
-
         private async Task CleanupTestData()
         {
             var SAUser = Credential.CreateSAUser();
@@ -51,7 +50,7 @@ namespace SS.Backend.Tests.AccountCreationTest
 
             //username must be unique in database
             var validUserInfo = new UserInfo{
-                username = "oleaatsgoiww@example.com",
+                username = "imbeggingvTIREDeryuniquew@example.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "Jane",
                 lastname = "Doe", 
@@ -221,7 +220,7 @@ namespace SS.Backend.Tests.AccountCreationTest
 
             //first name is null so will throw an error 
             var validUserInfo = new UserInfo{
-                username = "newtest@example.com",
+                username = "now2323trythis@example.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "",
                 lastname = "Doe", 
@@ -298,7 +297,7 @@ namespace SS.Backend.Tests.AccountCreationTest
 
             //last name is null so will throw an error 
             var validUserInfo = new UserInfo{
-                username = "newtest@example.com",
+                username = "neDWdwtest@example.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "Jane",
                 lastname = "", 
@@ -375,7 +374,7 @@ namespace SS.Backend.Tests.AccountCreationTest
 
             //role is invalid so will throw an error 
             var validUserInfo = new UserInfo{
-                username = "idontknonewtest@example.com",
+                username = "idontkaddnonewtest@example.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "Jane",
                 lastname = "Doe", 
@@ -433,5 +432,377 @@ namespace SS.Backend.Tests.AccountCreationTest
             await CleanupTestData().ConfigureAwait(false);
           
         }
+
+
+
+        [TestMethod]
+        public async Task CreateUserAccount_InvaliStatus()
+        {
+            // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
+            UserInfo userInfo = new UserInfo();
+            UserPepper userPepper = new UserPepper();
+            AccountCreation accountcreation = new AccountCreation(userInfo);
+            Hashing hashing = new Hashing();
+            Stopwatch timer = new Stopwatch();
+
+            Credential removeMeLater = Credential.CreateSAUser();
+            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            var builder = new CustomSqlCommandBuilder();
+
+            //role is invalid so will throw an error 
+            var validUserInfo = new UserInfo{
+                username = "idontkaddnonewtest@example.com",
+                dob = new DateTime(1990, 1, 1),
+                firstname = "Jane",
+                lastname = "Doe", 
+                role = 56,
+                status = "", 
+                backupEmail = "test@backup.com"
+            };
+
+            string pepper = "X3R5";
+            var validPepper = new UserPepper{
+                hashedUsername = hashing.HashData(validUserInfo.username, pepper)
+            };
+    
+            var userAccount_success_parameters = new Dictionary<string, object>
+            {
+                { "username", validUserInfo.username},
+                {"birthDate", validUserInfo.dob}   
+            };
+
+            var userProfile_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                { "FirstName", validUserInfo.firstname},
+                { "LastName", validUserInfo.lastname}, 
+                {"backupEmail", validUserInfo.backupEmail},
+                {"appRole", validUserInfo.role}, 
+            };
+            
+            var activeAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"isActive", validUserInfo.status} 
+            };
+
+            var hashedAccount_success_parameters = new Dictionary<string, object>
+                {
+                    {"hashedUsername", validPepper.hashedUsername},
+                    {"username", validUserInfo.username},
+                };
+
+            var tableData = new Dictionary<string, Dictionary<string, object>>
+            {
+                { "userAccount", userAccount_success_parameters },
+                { "userProfile", userProfile_success_parameters },
+                { "activeAccount", activeAccount_success_parameters}, 
+                {"userHash", hashedAccount_success_parameters}
+            };
+
+
+            timer.Start();
+            var response = await accountcreation.CreateUserAccount(validPepper, validUserInfo, tableData);
+            timer.Stop();
+            Assert.IsTrue(response.HasError, response.ErrorMessage);
+            Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
+            await CleanupTestData().ConfigureAwait(false);
+          
+        }
+
+        [TestMethod]
+        public async Task CreateUserAccount_InvalidBackupEmail()
+        {
+            // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
+            UserInfo userInfo = new UserInfo();
+            UserPepper userPepper = new UserPepper();
+            AccountCreation accountcreation = new AccountCreation(userInfo);
+            Hashing hashing = new Hashing();
+            Stopwatch timer = new Stopwatch();
+
+            Credential removeMeLater = Credential.CreateSAUser();
+            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            var builder = new CustomSqlCommandBuilder();
+
+            //role is invalid so will throw an error 
+            var validUserInfo = new UserInfo{
+                username = "idontkaddnonewtest@example.com",
+                dob = new DateTime(1990, 1, 1),
+                firstname = "Jane",
+                lastname = "Doe", 
+                role = 56,
+                status = "yes", 
+                backupEmail = ""
+            };
+
+            string pepper = "X3R5";
+            var validPepper = new UserPepper{
+                hashedUsername = hashing.HashData(validUserInfo.username, pepper)
+            };
+    
+            var userAccount_success_parameters = new Dictionary<string, object>
+            {
+                { "username", validUserInfo.username},
+                {"birthDate", validUserInfo.dob}   
+            };
+
+            var userProfile_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                { "FirstName", validUserInfo.firstname},
+                { "LastName", validUserInfo.lastname}, 
+                {"backupEmail", validUserInfo.backupEmail},
+                {"appRole", validUserInfo.role}, 
+            };
+            
+            var activeAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"isActive", validUserInfo.status} 
+            };
+
+            var hashedAccount_success_parameters = new Dictionary<string, object>
+                {
+                    {"hashedUsername", validPepper.hashedUsername},
+                    {"username", validUserInfo.username},
+                };
+
+            var tableData = new Dictionary<string, Dictionary<string, object>>
+            {
+                { "userAccount", userAccount_success_parameters },
+                { "userProfile", userProfile_success_parameters },
+                { "activeAccount", activeAccount_success_parameters}, 
+                {"userHash", hashedAccount_success_parameters}
+            };
+
+
+            timer.Start();
+            var response = await accountcreation.CreateUserAccount(validPepper, validUserInfo, tableData);
+            timer.Stop();
+            Assert.IsTrue(response.HasError, response.ErrorMessage);
+            Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
+            await CleanupTestData().ConfigureAwait(false);
+        }
+
+
+        [TestMethod]
+        public async Task CreateUserAccount_Timeout()
+        {
+            // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
+            UserInfo userInfo = new UserInfo();
+            UserPepper userPepper = new UserPepper();
+            AccountCreation accountcreation = new AccountCreation(userInfo);
+            Hashing hashing = new Hashing();
+            Stopwatch timer = new Stopwatch();
+
+            Credential removeMeLater = Credential.CreateSAUser();
+            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            var builder = new CustomSqlCommandBuilder();
+
+            //role is invalid so will throw an error 
+            var validUserInfo = new UserInfo{
+                username = "idontkaddnonewtest@example.com",
+                dob = new DateTime(1990, 1, 1),
+                firstname = "Jane",
+                lastname = "Doe", 
+                role = 56,
+                status = "yes", 
+                backupEmail = "test@backup.com"
+            };
+
+            string pepper = "X3R5";
+            var validPepper = new UserPepper{
+                hashedUsername = hashing.HashData(validUserInfo.username, pepper)
+            };
+    
+            var userAccount_success_parameters = new Dictionary<string, object>
+            {
+                { "username", validUserInfo.username},
+                {"birthDate", validUserInfo.dob}   
+            };
+
+            var userProfile_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                { "FirstName", validUserInfo.firstname},
+                { "LastName", validUserInfo.lastname}, 
+                {"backupEmail", validUserInfo.backupEmail},
+                {"appRole", validUserInfo.role}, 
+            };
+            
+            var activeAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"isActive", validUserInfo.status} 
+            };
+
+            var hashedAccount_success_parameters = new Dictionary<string, object>
+                {
+                    {"hashedUsername", validPepper.hashedUsername},
+                    {"username", validUserInfo.username},
+                };
+
+            var tableData = new Dictionary<string, Dictionary<string, object>>
+            {
+                { "userAccount", userAccount_success_parameters },
+                { "userProfile", userProfile_success_parameters },
+                { "activeAccount", activeAccount_success_parameters}, 
+                {"userHash", hashedAccount_success_parameters}
+            };
+
+            timer.Start();
+            var response = await accountcreation.CreateUserAccount(validPepper, validUserInfo, tableData);
+            timer.Stop();
+            Assert.IsTrue(response.HasError, response.ErrorMessage);
+            Assert.IsFalse(timer.ElapsedMilliseconds <= 1);
+            await CleanupTestData().ConfigureAwait(false);
+        }
+        [TestMethod]
+        public async Task CreateUserAccount_InvalidTableData()
+        {
+            // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
+            UserInfo userInfo = new UserInfo();
+            UserPepper userPepper = new UserPepper();
+            AccountCreation accountcreation = new AccountCreation(userInfo);
+            Hashing hashing = new Hashing();
+            Stopwatch timer = new Stopwatch();
+
+            Credential removeMeLater = Credential.CreateSAUser();
+            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            var builder = new CustomSqlCommandBuilder();
+
+            //role is invalid so will throw an error 
+            var validUserInfo = new UserInfo{
+                username = "unique233@example.com",
+                dob = new DateTime(1990, 1, 1),
+                firstname = "Jane",
+                lastname = "Doe", 
+                role = 56,
+                status = "yes", 
+                backupEmail = "test@backup.com"
+            };
+
+            string pepper = "X3R5";
+            var validPepper = new UserPepper{
+                hashedUsername = hashing.HashData(validUserInfo.username, pepper)
+            };
+    
+            var userAccount_success_parameters = new Dictionary<string, object>
+            {
+                { "THISISNOTACOLUMN", validUserInfo.username},
+                {"birthDate", validUserInfo.dob}   
+            };
+
+            var userProfile_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                { "FirstName", validUserInfo.firstname},
+                { "LastName", validUserInfo.lastname}, 
+                {"backupEmail", validUserInfo.backupEmail},
+                {"appRole", validUserInfo.role}, 
+            };
+            
+            var activeAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"isActive", validUserInfo.status} 
+            };
+
+            var hashedAccount_success_parameters = new Dictionary<string, object>
+                {
+                    {"hashedUsername", validPepper.hashedUsername},
+                    {"username", validUserInfo.username},
+                };
+
+            var tableData = new Dictionary<string, Dictionary<string, object>>
+            {
+                { "userAccount", userAccount_success_parameters },
+                { "userProfile", userProfile_success_parameters },
+                { "activeAccount", activeAccount_success_parameters}, 
+                {"userHash", hashedAccount_success_parameters}
+            };
+
+            timer.Start();
+            var response = await accountcreation.CreateUserAccount(validPepper, validUserInfo, tableData);
+            timer.Stop();
+            Assert.IsTrue(response.HasError, response.ErrorMessage);
+            Assert.IsFalse(timer.ElapsedMilliseconds <= 1);
+            await CleanupTestData().ConfigureAwait(false);
+        }
+
+        [TestMethod]
+        public async Task CreateUserAccount_InvalidTable()
+        {
+            // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
+            UserInfo userInfo = new UserInfo();
+            UserPepper userPepper = new UserPepper();
+            AccountCreation accountcreation = new AccountCreation(userInfo);
+            Hashing hashing = new Hashing();
+            Stopwatch timer = new Stopwatch();
+
+            Credential removeMeLater = Credential.CreateSAUser();
+            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            var builder = new CustomSqlCommandBuilder();
+
+            //role is invalid so will throw an error 
+            var validUserInfo = new UserInfo{
+                username = "NOWWWPLEASWORKtabledoesnotexits@example.com",
+                dob = new DateTime(1990, 1, 1),
+                firstname = "Jane",
+                lastname = "Doe", 
+                role = 56,
+                status = "yes", 
+                backupEmail = "test@backup.com"
+            };
+
+            string pepper = "X3R5";
+            var validPepper = new UserPepper{
+                hashedUsername = hashing.HashData(validUserInfo.username, pepper)
+            };
+    
+            var userAccount_success_parameters = new Dictionary<string, object>
+            {
+                { "username", validUserInfo.username},
+                {"birthDate", validUserInfo.dob}   
+            };
+
+            var userProfile_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                { "FirstName", validUserInfo.firstname},
+                { "LastName", validUserInfo.lastname}, 
+                {"backupEmail", validUserInfo.backupEmail},
+                {"appRole", validUserInfo.role}, 
+            };
+            
+            var activeAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"isActive", validUserInfo.status} 
+            };
+
+            var hashedAccount_success_parameters = new Dictionary<string, object>
+                {
+                    {"hashedUsername", validPepper.hashedUsername},
+                    {"username", validUserInfo.username},
+                };
+
+            var tableData = new Dictionary<string, Dictionary<string, object>>
+            {
+                { "THISISNOTATABLEWEHAVE", userAccount_success_parameters },
+                { "userProfile", userProfile_success_parameters },
+                { "activeAccount", activeAccount_success_parameters}, 
+                {"userHash", hashedAccount_success_parameters}
+            };
+
+            timer.Start();
+            var response = await accountcreation.CreateUserAccount(validPepper, validUserInfo, tableData);
+            timer.Stop();
+            Assert.IsTrue(response.HasError, response.ErrorMessage);
+            Assert.IsFalse(timer.ElapsedMilliseconds <= 1);
+            await CleanupTestData().ConfigureAwait(false);
+        }
+
+
     }
 }

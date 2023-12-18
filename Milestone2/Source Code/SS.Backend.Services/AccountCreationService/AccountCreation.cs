@@ -2,20 +2,18 @@ using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Reflection;
+using SS.Backend.Services.LoggingService;
+
 
 namespace SS.Backend.Services.AccountCreationService
 {
     public class AccountCreation : IAccountCreation
     {
-        Credential removeMeLater = Credential.CreateSAUser();
+        Credential temp = Credential.CreateSAUser();
         private readonly UserInfo _userInfo;
         private readonly ICustomSqlCommandBuilder _commandBuilder;
 
-        // public AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder)
-        // {
-        //     _sqlDao = sqlDao;
-        //     _commandBuilder = commandBuilder;
-        // }
         public AccountCreation(UserInfo userInfo)
         {
             _userInfo = userInfo;
@@ -30,28 +28,29 @@ namespace SS.Backend.Services.AccountCreationService
         {
             string errorMsg = "";
             int allValid = 0;
+            int totalStringFields = 0; 
+            foreach (PropertyInfo prop in userInfo.GetType().GetProperties())
+            {
+                if (prop.PropertyType == typeof(string))
+                {
+                    totalStringFields++; // Count string fields
+                    string value = prop.GetValue(userInfo) as string;
 
-            //change so its not explicitly checking each field by name user variable and do loop 
-            if (userInfo.username != "" && CheckNullWhiteSpace(userInfo.username) == true && userInfo.username != "NULL" && userInfo.username != "null")
-            {
-                allValid ++;
+                    if (!string.IsNullOrEmpty(value) && CheckNullWhiteSpace(value) && !value.Equals("NULL", StringComparison.OrdinalIgnoreCase))
+                    {
+                        allValid++;
+                    }
+                    else
+                    {
+                        errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                    }
+                }
             }
-            else {errorMsg += "Invalid email address."; }
- 
-            if (userInfo.firstname != "" && CheckNullWhiteSpace(userInfo.firstname) == true && userInfo.firstname != "NULL" && userInfo.firstname != "null")
-            {
-                allValid ++;
-            }
-            else {errorMsg += "Invalid first name";}
-            if (userInfo.lastname != "" && CheckNullWhiteSpace(userInfo.lastname) == true && userInfo.lastname != "NULL" && userInfo.lastname != "null")
-            {
-                allValid ++;
-            }
-            else {errorMsg += "Invalid last name."; }
-        
-            if (allValid == 3)
+            if (allValid == totalStringFields)
             {
                 errorMsg = "Pass";
+            }else{
+                errorMsg = "fail";
             }
             return errorMsg;
         }
@@ -59,30 +58,21 @@ namespace SS.Backend.Services.AccountCreationService
         //pepper 
         //  UserInfo hashedUsername = new UserInfo(hashedUser) 
 
-         
-
-
+        
         //this method takes builds a dictionary with several sql commands to insert all at once 
         public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
         {
             
-            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
             var builder = new CustomSqlCommandBuilder();
             Response tablesresponse = new Response();
             // Response transactionResponse = await SQLDao.BeginTransactionAsync();
             // await SQLDao.BeginTransactionAsync();
 
-            // Check if the transaction started successfully
-            // if (transactionResponse.HasError)
-            // {
-            //     return transactionResponse;
-            // }
-
             foreach (var tableEntry in tableData)
             {
                 string tableName = tableEntry.Key;
                 Dictionary<string, object> parameters = tableEntry.Value;
-
                 var insertCommand =  builder.BeginInsert(tableName)
                     .Columns(parameters.Keys)
                     .Values(parameters.Keys)
@@ -105,19 +95,45 @@ namespace SS.Backend.Services.AccountCreationService
         public async Task<Response> CreateUserAccount(UserPepper userPepper, UserInfo userInfo, Dictionary<string, Dictionary<string, object>> tableData)
         {
             Response response = new Response();
+
+            SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(temp)));
+
+
             string validationMessage = CheckUserInfoValidity(userInfo);
             if (validationMessage != "Pass")
             {
                 response.HasError = true;
                 response.ErrorMessage = "Invalid User Info entry: " + validationMessage;
             }
+       
             //if all methods retyrn success
             response  = await InsertIntoMultipleTables(tableData);
-            // if (response.HasError == false)
-            // {
-            //     response = await InsertIntoMultipleTables(ProfiletableData);
-    
-            // }
+            if (response.HasError == false)
+            {
+                LogEntry entry = new LogEntry()
+
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Info",
+                    username = userInfo.username,
+                    category = "Data Store",
+                    description = "Successful account creation"
+                };
+                await logger.SaveData(entry);
+            }
+            else{
+                LogEntry entry = new LogEntry()
+
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = userInfo.username,
+                    category = "Data Store",
+                    description = "Error inserting user in data store."
+                };
+                await logger.SaveData(entry);
+            }
             return response;            
          
         }
