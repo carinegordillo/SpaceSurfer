@@ -12,21 +12,25 @@ namespace SS.Backend.Services.DeletingService
 
         public async Task<Response> DeleteAccount(string username)
         {
-            // Creates a new instance of SqlDAO
-            SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
-
-            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(temp)));
-
-            // Creates a new instance of the Response
+            // initializes a new instance of the Response
             Response overallResponse = new Response();
 
+            // initializes a new instance of SqlDAO
+            SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
+
+            // initializes a new instance of the logger
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(temp)));
+
+            // initializes a new instance of the Custom Command Builder
+            CustomSqlCommandBuilder commandBuilder = new CustomSqlCommandBuilder();
+
+            // initializes a new instance of Database Helper
+            DatabaseHelper dbHelper = new DatabaseHelper();
+
+            // Sets the response error to false
             overallResponse.HasError = false;
 
-            // Creates a new instance of the Custom Command Builder
-            var commandBuilder = new CustomSqlCommandBuilder();
-
-            var dbHelper = new DatabaseHelper();
-
+            // Sets the tables names from the Database Helper Response
             var tables = dbHelper.RetrieveTableNames();
 
             // Sets the value to the username
@@ -46,7 +50,7 @@ namespace SS.Backend.Services.DeletingService
                     // Delete Query Command built [DELETE FROM "Users" WHERE Username = @username]
                     var deleteCommand = commandBuilder.BeginDelete("dbo." + table).Where("Username = @Username").AddParameters(value).Build();
 
-                    // 
+                    // Sets the reponse from the executed command
                     var response = await SQLDao.SqlRowsAffected(deleteCommand);
 
                     // Appends the responses into one response
