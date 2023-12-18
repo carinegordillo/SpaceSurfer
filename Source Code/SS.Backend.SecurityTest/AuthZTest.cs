@@ -1,4 +1,4 @@
-using SS.Security;
+using SS.Backend.Security;
 
 namespace SS.Backend.SecurityTest;
 
