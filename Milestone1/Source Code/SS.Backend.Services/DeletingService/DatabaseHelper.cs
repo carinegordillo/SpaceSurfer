@@ -3,6 +3,10 @@ using SS.Backend.SharedNamespace;
 
 namespace SS.Backend.Services.DeletingService
 {
+    /// <summary>
+    ///     DatabaseHelper class is responsible of retreiving table names from a database
+    /// </summary>
+    ///
     public class DatabaseHelper : IDatabaseHelper
     {
         // Initializing temp credential
