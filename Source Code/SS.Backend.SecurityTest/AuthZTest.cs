@@ -6,7 +6,7 @@ namespace SS.Backend.SecurityTest;
 public class AuthZTest
 {
     [TestMethod]
-    // isAuthorize - Success (true)
+    //IsAuthorize - Success (true)
     public void IsAuthorize_Pass()
     {
         // Arrange
@@ -36,7 +36,7 @@ public class AuthZTest
     }
 
     [TestMethod]
-    //isAuthorize - Fail (false)
+    //IsAuthorize - Failed Required Claims(false)
     public void IsAuthorize_FailedRequiredClaims()
     {
         // Arrange
@@ -47,16 +47,13 @@ public class AuthZTest
             UserIdentity = "Jane",
             Claims = new Dictionary<string, string>
             {
-                {"Role", "User"},
-                {"Department", "HR"}
-            },
-            SecurityContext = "custom"
+                {"Role", "GenUser"}
+            }
         };
 
         var requiredClaims = new Dictionary<string, string>
         {
-            {"Role", "Admin"},
-            {"Department", "IT"}
+            {"Role", "Admin"}
         };
 
         // Act
@@ -66,30 +63,28 @@ public class AuthZTest
         Assert.IsFalse(result, "The user is missing a required claim, so IsAuthorize should return false.");
     }
 
-/*
     [TestMethod]
-    //HasClaim - Success (true)
-    public void HasClaim_Pass()
+    //IsAuthorize - Failed Null Claims (false)
+    public void IsAuthorize_FailedNullClaims()
     {
-        // arrange
-        var valid_user = new SSPrincipal
+    // Arrange
+        var authService = new SSAuthService();
+
+        var currentPrincipal = new SSPrincipal
         {
-            UserIdentity = "John",
-            Claims = new Dictionary<string, string>
-            {
-                {"Role", "Admin"},
-                {"Department", "IT"},
-            },
-            SecurityContext = "custom",
+            UserIdentity = "Bob",
+            Claims = null
         };
 
-        // act
-        bool result = valid_user.HasClaim("Role", "Admin");
+        var requiredClaims = new Dictionary<string, string>
+        {
+            {"Role", "Admin"}
+        };
 
-        //assert
-        Assert.IsTrue(result, $"Expected user '{valid_user.UserIdentity}' to have the 'Role' claim with value 'Admin'.");
-    }
+        // Act
+        bool result = authService.IsAuthorize(currentPrincipal, requiredClaims);
+
+        // Assert
+        Assert.IsFalse(result, "The user claims are null, so IsAuthorize should return false.");
     
-    //HasClaim - Fail (false)
-    */
 }
