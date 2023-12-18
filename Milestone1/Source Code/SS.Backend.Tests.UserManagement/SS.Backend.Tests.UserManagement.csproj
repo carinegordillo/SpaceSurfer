@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SS.Backend.Services\SS.Backend.Services.csproj" />
+    <ProjectReference Include="..\SS.Backend.UserManagement\SS.Backend.UserManagement.csproj" />
     <ProjectReference Include="..\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,8 @@
+using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
+using System.Data.SqlClient;
 
-namespace SS.Backend.Services.ModificationService
+namespace SS.Backend.UserManagement
 {
     public interface IProfileModifier
     {
