@@ -16,24 +16,25 @@ public class AuthZTest
             UserIdentity = "John",
             Claims = new Dictionary<string, string>
             {
-                {"Role", "Admin"},
-                {"Department", "IT"}
-            },
-            SecurityContext = "custom"
+                {"Role", "Admin"}
+            }
         };
 
         var requiredClaims = new Dictionary<string, string>
         {
-            {"Role", "Admin"},
-            {"Department", "IT"}
+            {"Role", "Admin"}
         };
+        Stopwatch timer = new Stopwatch();
 
         // Act
+        timer.Start();
         bool await result = authService.IsAuthorize(currentPrincipal, requiredClaims);
+        timer.Stop();
 
         // Assert
         Assert.IsTrue(result, "The user has all the required claims, so IsAuthorize should return true.");
-    }
+        Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
+    }   
 
     [TestMethod]
     //IsAuthorize - Failed Required Claims(false)
@@ -55,19 +56,23 @@ public class AuthZTest
         {
             {"Role", "Admin"}
         };
+        Stopwatch timer = new Stopwatch();
 
         // Act
+        timer.Start();
         bool result = authService.IsAuthorize(currentPrincipal, requiredClaims);
+        timer.Stop();
 
         // Assert
         Assert.IsFalse(result, "The user is missing a required claim, so IsAuthorize should return false.");
+        Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
     }
 
     [TestMethod]
     //IsAuthorize - Failed Null Claims (false)
     public void IsAuthorize_FailedNullClaims()
     {
-    // Arrange
+        // Arrange
         var authService = new SSAuthService();
 
         var currentPrincipal = new SSPrincipal
@@ -80,11 +85,16 @@ public class AuthZTest
         {
             {"Role", "Admin"}
         };
+        Stopwatch timer = new Stopwatch();
 
         // Act
+        timer.Start();
         bool result = authService.IsAuthorize(currentPrincipal, requiredClaims);
+        timer.Stop();
 
         // Assert
         Assert.IsFalse(result, "The user claims are null, so IsAuthorize should return false.");
+        Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
+    }
     
 }
