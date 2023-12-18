@@ -47,7 +47,6 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
-
     public ICustomSqlCommandBuilder BeginSelect()
     {
         _commandText.Clear();
@@ -99,5 +98,10 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
     {
         _command.CommandText = _commandText.ToString();
         return _command;
+    }
+
+    public ICustomSqlCommandBuilder Select()
+    {
+        throw new NotImplementedException();
     }
 }

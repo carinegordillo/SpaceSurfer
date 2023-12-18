@@ -5,6 +5,7 @@ using SS.Backend.SharedNamespace;
 
 namespace SS.Backend.Tests.Services
 {
+
     [TestClass]
     public class DeletionUnitTest
     {
@@ -23,6 +24,15 @@ namespace SS.Backend.Tests.Services
             logger = new Logger(new SqlLogTarget(dao));
         }
 
+        public async Task insertUser()
+        {
+            var SAUser = Credential.CreateSAUser();
+            SealedSqlDAO SQLDao = new SealedSqlDAO(SAUser);
+            Response response = new Response();
+
+        }
+
+
         [TestMethod]
         public async Task DeleteAccount_Successful_Deletion()
         {
@@ -30,13 +40,13 @@ namespace SS.Backend.Tests.Services
             var deleter = new Deleter();
 
             // Temporary user username
-            var userToDelete = "temporaryname";
+            var userToDelete = "temporary";
 
             // Execute deletion command to the database
             var result = await deleter.DeleteAccount(userToDelete);
 
-            // Deletion should be successful, therefore false
-            Assert.IsFalse(result.HasError, "Deletion was successful.");
+            // Deletion should be successful
+            Assert.IsFalse(result.HasError);
             Assert.IsTrue(result.RowsAffected > 0);
 
         }
@@ -54,18 +64,22 @@ namespace SS.Backend.Tests.Services
             var result = await deleter.DeleteAccount(userToDelete);
 
             // Deletion should be unsuccessful, therefore true
-            Assert.IsTrue(result.HasError, "Deletion was unsuccessful.");
+            Assert.IsTrue(result.HasError);
             Assert.IsTrue(result.RowsAffected <= 0);
 
         }
 
-        public async Task TableNames()
+        [TestMethod]
+        public async Task TableNames_Success()
         {
             // initializing account deletion
-            var test = new TableNames();
+            var test = new DatabaseHelper();
+            var result = await test.RetrieveTableNames();
 
-            Console.WriteLine(test);
+
+            Assert.IsTrue(result.ValuesRead.Count >= 1);
 
 
         }
     }
+}
