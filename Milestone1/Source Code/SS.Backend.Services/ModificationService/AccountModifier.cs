@@ -16,7 +16,7 @@ namespace SS.Backend.Services.ModificationService
             var commandBuilder = new CustomSqlCommandBuilder();
             
             var columnValues = new Dictionary<string, object>{
-            { "Email", newEmail },
+            { "firstName", newEmail },
             { "Age", newAge }};
 
             var whereValues = new Dictionary<string, object>{
@@ -24,7 +24,7 @@ namespace SS.Backend.Services.ModificationService
 
 
 
-            var updateCommand = commandBuilder.BeginUpdate("Users")
+            var updateCommand = commandBuilder.BeginUpdate("TABLENAME")
                                             .Set(columnValues)
                                             .AddParameters(columnValues)
                                             .Where("Username = @Username")
@@ -34,4 +34,5 @@ namespace SS.Backend.Services.ModificationService
             return await SQLDao.SqlRowsAffected(updateCommand);
         }
     }
+
 }
