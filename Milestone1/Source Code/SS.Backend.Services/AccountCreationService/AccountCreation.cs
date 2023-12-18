@@ -102,7 +102,7 @@ namespace SS.Backend.Services.AccountCreationService
         }
 
 
-        public async Task<Response> CreateUserAccount(UserInfo userInfo, Dictionary<string, Dictionary<string, object>> tableData)
+        public async Task<Response> CreateUserAccount(UserPepper userPepper, UserInfo userInfo, Dictionary<string, Dictionary<string, object>> tableData)
         {
             Response response = new Response();
             string validationMessage = CheckUserInfoValidity(userInfo);
