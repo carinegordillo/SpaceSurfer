@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SS.Backend.Security
 {
-    internal class IAuthenticator
+    public interface IAuthenticator
     {
         Task<(SSPrincipal principal, Response res)> Authenticate(AuthenticationRequest authRequest);
     }
