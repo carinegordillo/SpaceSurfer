@@ -4,27 +4,36 @@ using System.Threading.Tasks;
 using SS.Backend.SharedNamespace;
 
 
-namespace SS.Backend.UserManagement;
-public class AccountStatusModifier
+namespace SS.Backend.UserManagement
 {
+    public class AccountStatusModifier : IAccountStatusModifier
+    {
 
-    public async Task<Response> EnableAccount(string userhash){
+        public async Task<Response> EnableAccount(string userhash){
 
-        ProfileModifier profileModifier = new ProfileModifier(); 
+            ProfileModifier profileModifier = new ProfileModifier(); 
 
-        Response result = await profileModifier.GenProfileModifier("hashedUsername", userhash, "IsActive", "yes", "dbo.activeAccount");
+            Response result = await profileModifier.GenProfileModifier("hashedUsername", userhash, "IsActive", "yes", "dbo.activeAccount");
 
-        return result;
+            return result;
 
-    }
+        }
 
-    public async Task<Response> DisableAccount(string userhash){
+        public async Task<Response> DisableAccount(string userhash){
 
-        ProfileModifier profileModifier = new ProfileModifier(); 
+            ProfileModifier profileModifier = new ProfileModifier(); 
 
-        Response result = await profileModifier.GenProfileModifier("hashedUsername", userhash, "IsActive", "no", "dbo.activeAccount");
-        return result;
+            Response result = await profileModifier.GenProfileModifier("hashedUsername", userhash, "IsActive", "no", "dbo.activeAccount");
+            return result;
+        }
 
+        public async Task<Response> PendingRequest(string userhash){
+
+            ProfileModifier profileModifier = new ProfileModifier(); 
+
+            Response result = await profileModifier.GenProfileModifier("hashedUsername", userhash, "IsActive", "pending", "dbo.activeAccount");
+            return result;
+        }
 
     }
 }
