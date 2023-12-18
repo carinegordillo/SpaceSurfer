@@ -18,6 +18,10 @@ namespace SS.Backend.DataAccess
             }
         }
 
+        /// <summary>
+        /// This method gets the connection string
+        /// </summary>
+        /// <returns>The connection string</returns>
         public string GetConnectionString()
         {
             Console.WriteLine("Loaded Configuration Values:");
@@ -34,6 +38,11 @@ namespace SS.Backend.DataAccess
             throw new InvalidOperationException("ConnectionString not found in the configuration file.");
         }
 
+        /// <summary>
+        /// This method loads in the config file and reads it.
+        /// </summary>
+        /// <param name="filePath">The path of where the config file is on your system</param>
+        /// <returns>Each line read in</returns>
         private Dictionary<string, string> LoadConfig(string filePath)
         {
             var config = new Dictionary<string, string>();
