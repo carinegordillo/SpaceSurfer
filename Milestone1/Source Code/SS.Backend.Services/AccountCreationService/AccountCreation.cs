@@ -1,9 +1,26 @@
+using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SS.Backend.Services.AccountCreationService
 {
     public class AccountCreation : IAccountCreation
     {
+        Credential removeMeLater = Credential.CreateSAUser();
+        private readonly UserInfo _userInfo;
+        private readonly ICustomSqlCommandBuilder _commandBuilder;
+
+        // public AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder)
+        // {
+        //     _sqlDao = sqlDao;
+        //     _commandBuilder = commandBuilder;
+        // }
+        public AccountCreation(UserInfo userInfo)
+        {
+            _userInfo = userInfo;
+        }
+
         public bool CheckNullWhiteSpace(string str)
         {
             return !string.IsNullOrWhiteSpace(str);
@@ -13,16 +30,14 @@ namespace SS.Backend.Services.AccountCreationService
         {
             string errorMsg = "";
             int allValid = 0;
-            if (userInfo.email != "" && CheckNullWhiteSpace(userInfo.email) == true && userInfo.email != "NULL" && userInfo.email != "null")
+
+            //change so its not explicitly checking each field by name user variable and do loop 
+            if (userInfo.username != "" && CheckNullWhiteSpace(userInfo.username) == true && userInfo.username != "NULL" && userInfo.username != "null")
             {
                 allValid ++;
             }
             else {errorMsg += "Invalid email address."; }
-            // if (userInfo.dob != null)
-            // {
-            //     allValid ++;
-            // }
-            // else {errorMsg += "Invalid date of birth."; }
+ 
             if (userInfo.firstname != "" && CheckNullWhiteSpace(userInfo.firstname) == true && userInfo.firstname != "NULL" && userInfo.firstname != "null")
             {
                 allValid ++;
@@ -34,29 +49,84 @@ namespace SS.Backend.Services.AccountCreationService
             }
             else {errorMsg += "Invalid last name."; }
         
-            if (allValid == 4)
+            if (allValid == 3)
             {
                 errorMsg = "Pass";
             }
             return errorMsg;
         }
 
-        //generate pepper and add it?? 
         //pepper 
-        public Response CreateUserAccount(UserInfo userInfo)
+        //  UserInfo hashedUsername = new UserInfo(hashedUser) 
+        
+        public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
         {
-            Response result = new Response();
+            
+            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            var builder = new CustomSqlCommandBuilder();
+            Response testresponse = new Response();
+            // string errorMsg = "";
+           
+            foreach (var tableEntry in tableData)
+            {
+                string tableName = tableEntry.Key;
+                Dictionary<string, object> parameters = tableEntry.Value;
 
-            if (CheckUserInfoValidity(userInfo) == "Pass")
-            {
-                result.HasError = false;
+                var insertCommand =  builder.BeginInsert(tableName)
+                    .Columns(parameters.Keys)
+                    .Values(parameters.Keys)
+                    .AddParameters(parameters)
+                    .Build();
+
+                testresponse= await SQLDao.SqlRowsAffected(insertCommand);
+                if (testresponse.HasError)
+                {
+                    testresponse.ErrorMessage += $"{tableName}: error inserting data; ";
+                    return testresponse;
+                }
             }
-            else
-            {
-                result.HasError = true;
-                result.ErrorMessage = "Invalid log entry: " + CheckUserInfoValidity(userInfo);
-            }
-            return result;
+
+            // return new Response { HasError = false };
+            
+                // Log?
+                // return new Response { HasError = true, ErrorMessage = errorMsg };
+           
+
+            return testresponse;
+
+
         }
+
+
+        public async Task<Response> CreateUserAccount(UserInfo userInfo, Dictionary<string, Dictionary<string, object>> tableData)
+        {
+            Response response = new Response();
+            string validationMessage = CheckUserInfoValidity(userInfo);
+            if (validationMessage != "Pass")
+            {
+                response.HasError = true;
+                response.ErrorMessage = "Invalid User Info entry: " + validationMessage;
+                // return new Response
+                // {
+                //     HasError = true,
+                //     ErrorMessage = "Invalid User Info entry: " + validationMessage
+                // };
+            }
+
+            //if all methods retyrn success
+             
+            // return await InsertIntoMultipleTables(tableData);
+            response  = await InsertIntoMultipleTables(tableData);
+            // if (response.HasError == false)
+            // {
+            //     response = await InsertIntoMultipleTables(ProfiletableData);
+    
+            // }
+
+            return response;            
+
+         
+        }
+        
     }
 }

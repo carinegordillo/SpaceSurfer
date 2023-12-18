@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.Logging", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.ConsoleApp", "SS.Backend.ConsoleApp\SS.Backend.ConsoleApp.csproj", "{6035FCC0-2071-4DE7-A6D1-740A422DA888}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.AccountCreation", "SS.Backend.Tests.AccountCreation\SS.Backend.Tests.AccountCreation.csproj", "{15BF497F-DD35-4D95-9AD4-2A752F273379}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{6035FCC0-2071-4DE7-A6D1-740A422DA888}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6035FCC0-2071-4DE7-A6D1-740A422DA888}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6035FCC0-2071-4DE7-A6D1-740A422DA888}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15BF497F-DD35-4D95-9AD4-2A752F273379}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15BF497F-DD35-4D95-9AD4-2A752F273379}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15BF497F-DD35-4D95-9AD4-2A752F273379}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15BF497F-DD35-4D95-9AD4-2A752F273379}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

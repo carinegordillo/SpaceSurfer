@@ -4,6 +4,6 @@ namespace SS.Backend.Services.AccountCreationService
 {
     public interface IAccountCreation
     {
-        public Response CreateUserAccount(UserInfo userInfo);
+        public Task<Response> CreateUserAccount(UserInfo userInfo, Dictionary<string, Dictionary<string, object>> tableData);
     }
 }
