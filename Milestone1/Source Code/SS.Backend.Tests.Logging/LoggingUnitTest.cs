@@ -21,7 +21,7 @@ namespace SS.Backend.Tests.Logging
         private async Task CleanupTestData()
         {
             var SAUser = Credential.CreateSAUser();
-            var connectionString = string.Format(@"Data localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+            var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
