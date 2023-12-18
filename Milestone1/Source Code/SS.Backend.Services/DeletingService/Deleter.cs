@@ -19,6 +19,9 @@ namespace SS.Backend.Services.DeletingService
             // Creates a new instance of the Custom Command Builder
             var commandBuilder = new CustomSqlCommandBuilder();
 
+            var TableName = new TableNames();
+
+            Console.WriteLine(TableName);
 
             // Sets the value to the username
             var value = new Dictionary<string, object>

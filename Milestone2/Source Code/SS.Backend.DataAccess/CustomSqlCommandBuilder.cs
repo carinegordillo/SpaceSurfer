@@ -41,6 +41,13 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
+    public ICustomSqlCommandBuilder SelectOne(string column)
+    {
+        _commandText.Append(column);
+        return this;
+    }
+
+
     public ICustomSqlCommandBuilder BeginSelect()
     {
         _commandText.Clear();

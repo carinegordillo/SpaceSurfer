@@ -59,5 +59,13 @@ namespace SS.Backend.Tests.Services
 
         }
 
+        public async Task TableNames()
+        {
+            // initializing account deletion
+            var test = new TableNames();
+
+            Console.WriteLine(test);
+
+
+        }
     }
-}
