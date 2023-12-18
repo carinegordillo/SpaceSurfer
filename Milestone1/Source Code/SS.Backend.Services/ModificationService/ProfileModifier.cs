@@ -47,14 +47,6 @@ namespace SS.Backend.Services.ModificationService
                                             .AddParameters(columnValues)
                                             .Build();
 
-            
-
-            Console.WriteLine(updateCommand.CommandText ,"updatecommand finish");
-
-            foreach (SqlParameter param in updateCommand.Parameters)
-            {
-                Console.WriteLine($"{param.ParameterName} = {param.Value}");
-            }
 
             return await SQLDao.SqlRowsAffected(updateCommand);
         }
