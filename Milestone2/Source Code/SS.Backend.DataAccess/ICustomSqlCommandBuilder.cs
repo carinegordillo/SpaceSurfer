@@ -9,6 +9,7 @@ namespace SS.Backend.DataAccess
         ICustomSqlCommandBuilder Values(IEnumerable<string> columns);
         ICustomSqlCommandBuilder BeginUpdate(string tableName);
         ICustomSqlCommandBuilder Select();
+        ICustomSqlCommandBuilder BeginSelect();
         ICustomSqlCommandBuilder From(string tableName);
         ICustomSqlCommandBuilder SelectOne(string column);
         ICustomSqlCommandBuilder Set(Dictionary<string, object> columnValues);

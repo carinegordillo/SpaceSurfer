@@ -2,7 +2,7 @@
 
 namespace SS.Backend.Services.DeletingService
 {
-    public interface ITableNames
+    public interface IDatabaseHelper
     {
         public Task<Response> RetrieveTableNames();
 
