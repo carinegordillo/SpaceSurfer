@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.Logging", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.ConsoleApp", "SS.Backend.ConsoleApp\SS.Backend.ConsoleApp.csproj", "{6035FCC0-2071-4DE7-A6D1-740A422DA888}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Security", "SS.Backend.Security\SS.Backend.Security.csproj", "{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.SecurityTest", "SS.Backend.SecurityTest\SS.Backend.SecurityTest.csproj", "{CDC580DB-5FDC-4515-AAB8-63181EA726CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{6035FCC0-2071-4DE7-A6D1-740A422DA888}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6035FCC0-2071-4DE7-A6D1-740A422DA888}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6035FCC0-2071-4DE7-A6D1-740A422DA888}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDC580DB-5FDC-4515-AAB8-63181EA726CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDC580DB-5FDC-4515-AAB8-63181EA726CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDC580DB-5FDC-4515-AAB8-63181EA726CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDC580DB-5FDC-4515-AAB8-63181EA726CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
