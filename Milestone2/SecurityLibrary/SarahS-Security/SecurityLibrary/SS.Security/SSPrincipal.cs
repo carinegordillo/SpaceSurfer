@@ -10,15 +10,12 @@ namespace SS.Security
         IDictionary<string, string>? Claims { get; }
         string? SecurityContext { get; }
     }
-
     public class SSPrincipal : ClaimsPrincipal, IClaimsPrincipal
     {
         public string UserIdentity { get; set; }
-        public IDictionary<string, string>? Claims { get; set; }
+        public new IDictionary<string, string>? Claims { get; set; }
         public string? SecurityContext { get; set; }
     }
-
-
     public static class ClaimsExtensions
     {
         public static bool HasClaim(this IClaimsPrincipal user, string claimType, string claimValue)
