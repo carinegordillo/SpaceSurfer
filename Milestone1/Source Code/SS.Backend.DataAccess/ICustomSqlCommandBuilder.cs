@@ -8,6 +8,10 @@ namespace SS.Backend.DataAccess
         ICustomSqlCommandBuilder Columns(IEnumerable<string> columns);
         ICustomSqlCommandBuilder Values(IEnumerable<string> columns);
         ICustomSqlCommandBuilder BeginUpdate(string tableName);
+        ICustomSqlCommandBuilder Select();
+        ICustomSqlCommandBuilder BeginSelect();
+        ICustomSqlCommandBuilder From(string tableName);
+        ICustomSqlCommandBuilder SelectOne(string column);
         ICustomSqlCommandBuilder Set(Dictionary<string, object> columnValues);
         ICustomSqlCommandBuilder Where(string whereClause);
         ICustomSqlCommandBuilder BeginSelect();

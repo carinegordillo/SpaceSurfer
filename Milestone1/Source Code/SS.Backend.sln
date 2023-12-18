@@ -3,17 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.SharedNamespace", "SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj", "{AE4EC0B6-813A-46D2-9EB6-2153FE03E6D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.SharedNamespace", "SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj", "{AE4EC0B6-813A-46D2-9EB6-2153FE03E6D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.DataAccess", "SS.Backend.DataAccess\SS.Backend.DataAccess.csproj", "{13331E6E-A835-41E9-831F-4ADA5BB5CE0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.DataAccess", "SS.Backend.DataAccess\SS.Backend.DataAccess.csproj", "{13331E6E-A835-41E9-831F-4ADA5BB5CE0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Services", "SS.Backend.Services\SS.Backend.Services.csproj", "{A22E5CBB-793E-4D6C-B442-A87565282464}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Services", "SS.Backend.Services\SS.Backend.Services.csproj", "{A22E5CBB-793E-4D6C-B442-A87565282464}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.DataAccess", "SS.Backend.Tests.DataAccess\SS.Backend.Tests.DataAccess.csproj", "{8484A174-D9E4-4F9B-B27F-3CF292EAB5F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.DataAccess", "SS.Backend.Tests.DataAccess\SS.Backend.Tests.DataAccess.csproj", "{8484A174-D9E4-4F9B-B27F-3CF292EAB5F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.Logging", "SS.Backend.Tests.Logging\SS.Backend.Tests.Logging.csproj", "{C9364A4E-A22A-46CD-AA2B-2FB26BED0BE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.Logging", "SS.Backend.Tests.Logging\SS.Backend.Tests.Logging.csproj", "{C9364A4E-A22A-46CD-AA2B-2FB26BED0BE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.ConsoleApp", "SS.Backend.ConsoleApp\SS.Backend.ConsoleApp.csproj", "{6035FCC0-2071-4DE7-A6D1-740A422DA888}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.ConsoleApp", "SS.Backend.ConsoleApp\SS.Backend.ConsoleApp.csproj", "{6035FCC0-2071-4DE7-A6D1-740A422DA888}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.Services", "SS.Backend.Tests.Deletion\SS.Backend.Tests.Services.csproj", "{D0871303-1A98-4A19-B68A-DEF78438301B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.AccountCreation", "SS.Backend.Tests.AccountCreation\SS.Backend.Tests.AccountCreation.csproj", "{15BF497F-DD35-4D95-9AD4-2A752F273379}"
 EndProject
