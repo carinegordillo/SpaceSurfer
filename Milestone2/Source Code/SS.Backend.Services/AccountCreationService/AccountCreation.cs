@@ -35,7 +35,7 @@ namespace SS.Backend.Services.AccountCreationService
                 //so if property is nullable its fine it doesnt pass thru this
                 if (prop.PropertyType == typeof(string))
                 {
-                    totalStringFields++; // Count string fields
+                    totalStringFields++; 
                     string value = prop.GetValue(userInfo) as string;
 
                     if (!string.IsNullOrEmpty(value) && CheckNullWhiteSpace(value) && !value.Equals("NULL", StringComparison.OrdinalIgnoreCase))
@@ -57,10 +57,6 @@ namespace SS.Backend.Services.AccountCreationService
             return errorMsg;
         }
 
-        //pepper 
-        //  UserInfo hashedUsername = new UserInfo(hashedUser) 
-
-        
         //this method takes builds a dictionary with several sql commands to insert all at once 
         public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
         {
@@ -68,9 +64,8 @@ namespace SS.Backend.Services.AccountCreationService
             SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
             var builder = new CustomSqlCommandBuilder();
             Response tablesresponse = new Response();
-            // Response transactionResponse = await SQLDao.BeginTransactionAsync();
-            // await SQLDao.BeginTransactionAsync();
 
+            //for each table 
             foreach (var tableEntry in tableData)
             {
                 string tableName = tableEntry.Key;
@@ -85,11 +80,9 @@ namespace SS.Backend.Services.AccountCreationService
                 if (tablesresponse.HasError)
                 {
                     tablesresponse.ErrorMessage += $"{tableName}: error inserting data; ";
-                    // SQLDao.RollbackTransaction();
                     return tablesresponse;
                 }
             }
-            // SQLDao.CommitTransaction();
             return tablesresponse;
         }
 
@@ -109,7 +102,7 @@ namespace SS.Backend.Services.AccountCreationService
                 response.ErrorMessage = "Invalid User Info entry: " + validationMessage;
             }
        
-            //if all methods retyrn success
+            //generating sql command 
             response  = await InsertIntoMultipleTables(tableData);
             if (response.HasError == false)
             {

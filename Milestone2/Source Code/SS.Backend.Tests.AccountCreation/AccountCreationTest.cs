@@ -64,11 +64,11 @@ namespace SS.Backend.Tests.AccountCreationTest
 
             //username must be unique in database
             var validUserInfo = new UserInfo{
-                username = "thidkanymoreG@example.com",
+                username = "idksucesssss@@example.com",
                 dob = new DateTime(1990, 1, 1),
-                firstname = "Jane",
+                firstname = "SUCCESS",
                 lastname = "Doe", 
-                role = 5,
+                role = 1,
                 status = "yes", 
                 backupEmail = "test@backup.com"
             };

@@ -8,6 +8,8 @@ namespace SS.Backend.DataAccess
     {
         private readonly string connectionString;
 
+        private SqlTransaction transaction;
+
         public SealedSqlDAO(Credential user)
         {
             this.connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", user.user, user.pass);
@@ -103,6 +105,55 @@ namespace SS.Backend.DataAccess
 
             return result;
         }
+            public async Task<Response> ExecuteSqlAsync(string sql, Dictionary<string, object> parameters)
+            {
+                Response response = new Response();
+                SqlConnection connection = new SqlConnection(connectionString);
+                try
+                {
+                    
+                    await connection.OpenAsync();
+                    transaction = connection.BeginTransaction();
+
+                    using (var command = new SqlCommand(sql, connection, transaction))
+                    {
+                        // Add parameters to the command
+                        foreach (var param in parameters)
+                        {
+                            command.Parameters.AddWithValue(param.Key, param.Value);
+                        }
+
+                        var rowsAffected = await command.ExecuteNonQueryAsync();
+                        response.RowsAffected = rowsAffected;
+
+                        if (rowsAffected > 0)
+                        {
+                            response.HasError = false;
+                            // Handle the LastInsertedId if needed
+                        }
+                        else
+                        {
+                            response.HasError = true;
+                            response.ErrorMessage = "No rows affected.";
+                        }
+                        
+                        transaction.Commit();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction?.Rollback();
+                    response.HasError = true;
+                    response.ErrorMessage = ex.Message;
+                    // Log the error
+                }
+                finally
+                {
+                    connection?.Close();
+                }
+
+                return response;
+            }
 
     }
 }
