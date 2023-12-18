@@ -4,7 +4,7 @@ using SS.Backend.SharedNamespace;
 
 namespace SS.Backend.Services.DeletingService
 {
-    public class Deleter : IDeleter
+    public class AccountDeletion : IAccountDeletion
     {
         // Temporary User Variable
         Credential temp = Credential.CreateSAUser();
@@ -37,16 +37,19 @@ namespace SS.Backend.Services.DeletingService
 
             try
             {
-
+                // Iterates through every table that deals with the value being deleted
                 for (int i = tables.Result.ValuesRead.Count - 1; i >= 0; i--)
                 {
+                    // Initializing Table Name 
                     var table = tables.Result.ValuesRead[i][2];
 
                     // Delete Query Command built [DELETE FROM "Users" WHERE Username = @username]
                     var deleteCommand = commandBuilder.BeginDelete("dbo." + table).Where("Username = @Username").AddParameters(value).Build();
 
+                    // 
                     var response = await SQLDao.SqlRowsAffected(deleteCommand);
 
+                    // Appends the responses into one response
                     overallResponse.RowsAffected += response.RowsAffected;
                     overallResponse.HasError |= response.HasError;
 
@@ -55,12 +58,16 @@ namespace SS.Backend.Services.DeletingService
             }
             catch (Exception ex)
             {
+                // If an error occurs error
                 overallResponse.HasError = true;
                 overallResponse.ErrorMessage = ex.Message;
             }
 
+            // Logs entry based on the overallResponse error
             if (overallResponse.HasError == false)
             {
+
+                // Successful Deletion
                 LogEntry entry = new LogEntry()
 
                 {
@@ -75,6 +82,7 @@ namespace SS.Backend.Services.DeletingService
             }
             else
             {
+                //Unsuccessful Deletion
                 LogEntry entry = new()
                 {
                     timestamp = DateTime.UtcNow,

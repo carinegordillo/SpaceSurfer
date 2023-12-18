@@ -2,7 +2,7 @@
 
 namespace SS.Backend.Services.DeletingService
 {
-    public interface IDeleter
+    public interface IAccountDeletion
     {
         public Task<Response> DeleteAccount(string username);
 

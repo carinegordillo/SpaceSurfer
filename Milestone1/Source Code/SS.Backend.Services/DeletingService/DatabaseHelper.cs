@@ -16,7 +16,7 @@ namespace SS.Backend.Services.DeletingService
             //initialzing Sql Command builder
             var commandBuild = new CustomSqlCommandBuilder();
 
-            // SQL Query
+            // SQL Query to get the Table Names in the database
             var tableNames = commandBuild.BeginSelect().SelectOne("*").From("INFORMATION_SCHEMA.COLUMNS ").Where("COLUMN_NAME = 'username' AND TABLE_NAME<>'Logs';").Build();
 
             return await sealedSqlDAO.ReadSqlResult(tableNames);

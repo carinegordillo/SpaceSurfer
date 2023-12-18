@@ -2,6 +2,7 @@ using SS.Backend.DataAccess;
 using SS.Backend.Services.DeletingService;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
+using System.Data.SqlClient;
 
 namespace SS.Backend.Tests.Services
 {
@@ -27,20 +28,51 @@ namespace SS.Backend.Tests.Services
         public async Task insertUser()
         {
             var SAUser = Credential.CreateSAUser();
-            SealedSqlDAO SQLDao = new SealedSqlDAO(SAUser);
-            Response response = new Response();
 
+            var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync().ConfigureAwait(false);
+
+
+                    // Enters values to dbo.userAccount
+                    string sql1 = $"SET IDENTITY_INSERT dbo.userAccount ON;" +
+                                    $"\r\nINSERT INTO dbo.userAccount(user_id, username,birthDate) VALUES (1, 'temporary@email','2002-12-21');" +
+                                    $"\r\nSET IDENTITY_INSERT dbo.userAccount OFF;";
+                    // Enters values to dbo.userHash
+                    string sql2 = $"INSERT INTO dbo.userHash(hashedUsername, username, user_id) VALUES ('gdulfzfh2duzkp', 'temporary@email', 1)";
+
+                    // Executes sql commands
+                    using (SqlCommand command = new SqlCommand(sql1, connection))
+                    {
+                        await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                    }
+                    using (SqlCommand command = new SqlCommand(sql2, connection))
+                    {
+                        await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                    }
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during test cleanup: {ex}");
+            }
         }
-
 
         [TestMethod]
         public async Task DeleteAccount_Successful_Deletion()
         {
+            // await insertUser();
+
             // initializing account deletion
-            var deleter = new Deleter();
+            var deleter = new AccountDeletion();
 
             // Temporary user username
-            var userToDelete = "temporary";
+            var userToDelete = "temporary@email";
 
             // Execute deletion command to the database
             var result = await deleter.DeleteAccount(userToDelete);
@@ -54,11 +86,12 @@ namespace SS.Backend.Tests.Services
         [TestMethod]
         public async Task DeleteAccount_Unsuccessful_Deletion()
         {
+            //await insertUser();
             // initializing account deletion
-            var deleter = new Deleter();
+            var deleter = new AccountDeletion();
 
             // Temporary user username
-            var userToDelete = "ouser";
+            var userToDelete = "temporaru@mail";
 
             // Execute deletion command to the database
             var result = await deleter.DeleteAccount(userToDelete);
@@ -79,7 +112,46 @@ namespace SS.Backend.Tests.Services
 
             Assert.IsTrue(result.ValuesRead.Count >= 1);
 
-
         }
+        /*
+        [TestCleanup]
+        private async Task CleanupTest()
+        {
+            var SAUser = Credential.CreateSAUser();
+            var connectionString = string.Format(@"Data localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync().ConfigureAwait(false);
+
+                    string sql1 = $"DELETE FROM dbo.Logs WHERE [Username] = 'test@email'";
+                    string sql2 = $"DELETE FROM dbo.Logs WHERE [Username] = 'temporary@email'";
+                    string sql3 = $"DELETE FROM dbo.userAccount WHERE [Username] = 'temporary@email'";
+                    string sql4 = $"DELETE FROM dbo.userHash WHERE [Username] = 'temporary@email'";
+
+                    using (SqlCommand command = new SqlCommand(sql1, connection))
+                    {
+                        await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                    }
+                    using (SqlCommand command = new SqlCommand(sql2, connection))
+                    {
+                        await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                    }
+                    using (SqlCommand command = new SqlCommand(sql3, connection))
+                    {
+                        await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                    }
+                    using (SqlCommand command = new SqlCommand(sql4, connection))
+                    {
+                        await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during test cleanup: {ex}");
+            }
+        }*/
     }
 }
