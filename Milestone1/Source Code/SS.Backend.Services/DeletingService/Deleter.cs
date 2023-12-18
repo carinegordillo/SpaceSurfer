@@ -19,14 +19,15 @@ namespace SS.Backend.Services.DeletingService
             // Creates a new instance of the Custom Command Builder
             var commandBuilder = new CustomSqlCommandBuilder();
 
-            // Creates a new instance of the Custom Command Builder
+
+            // Sets the value to the username
             var value = new Dictionary<string, object>
             {
                 { "Username", username}
             };
 
             // Delete Query Command built [DELETE FROM "Users" WHERE Username = @username]
-            var deleteCommand = commandBuilder.BeginDelete("Users").Where("Username = @Username").AddParameters(value).Build();
+            var deleteCommand = commandBuilder.BeginDelete("dbo." + TableName).Where("Username = @Username").AddParameters(value).Build();
 
             return await SQLDao.SqlRowsAffected(deleteCommand);
         }
