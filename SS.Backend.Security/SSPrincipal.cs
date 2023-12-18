@@ -9,7 +9,7 @@
             Claims = new Dictionary<string, string>();
         }
 
-        public string UserIdentity { get; set; } = string.Empty;
-        public IDictionary<string, string> Claims { get; set; }
+        public string? UserIdentity { get; set; } = string.Empty;
+        public IDictionary<string, string>? Claims { get; set; }
     }
 }

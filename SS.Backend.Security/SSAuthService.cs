@@ -1,4 +1,5 @@
 ﻿using SS.Backend.DataAccess;
+using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
 
 namespace SS.Backend.Security
@@ -8,12 +9,14 @@ namespace SS.Backend.Security
         private readonly GenOTP genotp;
         private readonly Hashing hasher;
         private readonly SqlDAO sqldao;
+        private readonly Logger log;
 
-        public SSAuthService(GenOTP genotp, Hashing hasher, SqlDAO sqldao)
+        public SSAuthService(GenOTP genotp, Hashing hasher, SqlDAO sqldao, Logger log)
         {
             this.genotp = genotp;
             this.hasher = hasher;
             this.sqldao = sqldao;
+            this.log = log;
         }
         public async Task<(string otp, Response res)> SendOTP_and_SaveToDB(AuthenticationRequest authRequest)
         {
@@ -26,14 +29,24 @@ namespace SS.Backend.Security
                 // check if user is registered, ie if user has a role
                 var selectCommand = builder
                     .BeginSelectAll()
-                    .From("UserRoles")
-                    .Where($"Username = '{user}'")
+                    .From("userProfile")
+                    .Where($"hashedUsername = '{user}'")
                     .Build();
                 result = await sqldao.ReadSqlResult(selectCommand).ConfigureAwait(false);
                 if (result.ValuesRead == null || result.ValuesRead.Count == 0)
                 {
                     result.HasError = true;
                     result.ErrorMessage = "User does not exist.";
+                    LogEntry entry = new()
+                    {
+                        timestamp = DateTime.UtcNow,
+                        level = "Error",
+                        username = user,
+                        category = "Data Store",
+                        description = "Unregistered user tried to authenticate."
+                    };
+                    await log.SaveData(entry);
+
                     return (null, result);
                 }
 
@@ -70,6 +83,16 @@ namespace SS.Backend.Security
                     result = await sqldao.SqlRowsAffected(insertCommand).ConfigureAwait(false);
 
                     // user and otp is returned so it can be used by the manager to send the otp to the user
+                    LogEntry entry = new()
+                    {
+                        timestamp = DateTime.UtcNow,
+                        level = "Info",
+                        username = user,
+                        category = "Data Store",
+                        description = "Successfully sent OTP to manager."
+                    };
+                    await log.SaveData(entry);
+
                     return (otp, result);
                 }
                 else
@@ -92,6 +115,16 @@ namespace SS.Backend.Security
                     result = await sqldao.SqlRowsAffected(updateCommand).ConfigureAwait(false);
 
                     // user and otp is returned so it can be used by the manager to send the otp to the user
+                    LogEntry entry = new()
+                    {
+                        timestamp = DateTime.UtcNow,
+                        level = "Info",
+                        username = user,
+                        category = "Data Store",
+                        description = "Successfully sent OTP to manager."
+                    };
+                    await log.SaveData(entry);
+
                     return (otp, result);
                 }
             }
@@ -149,6 +182,16 @@ namespace SS.Backend.Security
                     {
                         result.HasError = true;
                         result.ErrorMessage = "OTP has expired.";
+                        LogEntry entry = new()
+                        {
+                            timestamp = DateTime.UtcNow,
+                            level = "Error",
+                            username = hashedUsername,
+                            category = "Data Store",
+                            description = "User tried to authenticate with an expired OTP."
+                        };
+                        await log.SaveData(entry);
+
                         return (null, result);
                     }
                     else
@@ -156,13 +199,13 @@ namespace SS.Backend.Security
                         // they match and not expired, so get the roles from the DB for that user
                         var readRoles = builder
                             .BeginSelectAll()
-                            .From("UserRoles")
-                            .Where($"Username = '{hashedUsername}'")
+                            .From("userProfile")
+                            .Where($"hashedUsername = '{hashedUsername}'")
                             .Build();
                         result = await sqldao.ReadSqlResult(readRoles).ConfigureAwait(false);
                         if (result.ValuesRead.Count > 0)
                         {
-                            string role = (string)result.ValuesRead[0][1];
+                            string role = (string)result.ValuesRead[0][4];
 
                             // populate the principal
                             SSPrincipal principal = new SSPrincipal();
@@ -171,12 +214,32 @@ namespace SS.Backend.Security
 
                             result.HasError = false;
 
+                            LogEntry entry = new()
+                            {
+                                timestamp = DateTime.UtcNow,
+                                level = "Info",
+                                username = hashedUsername,
+                                category = "Data Store",
+                                description = "Successful authentication."
+                            };
+                            await log.SaveData(entry);
+
                             return (principal, result);
                         }
                         else
                         {
                             result.HasError = true;
                             result.ErrorMessage = "No roles found for the user.";
+                            LogEntry entry = new()
+                            {
+                                timestamp = DateTime.UtcNow,
+                                level = "Error",
+                                username = hashedUsername,
+                                category = "Data Store",
+                                description = "Failure to authenticate."
+                            };
+                            await log.SaveData(entry);
+
                             return (null, result);
                         }
                     }
@@ -186,18 +249,44 @@ namespace SS.Backend.Security
                 {
                     result.HasError = true;
                     result.ErrorMessage = "Failed to authenticate.";
+                    LogEntry entry = new()
+                    {
+                        timestamp = DateTime.UtcNow,
+                        level = "Error",
+                        username = hashedUsername,
+                        category = "Data Store",
+                        description = "Failure to authenticate."
+                    };
+                    await log.SaveData(entry);
+
                     return (null, result);
                 }
             }
             catch (Exception ex)
             {
                 result.ErrorMessage = ex.Message;
+                LogEntry entry = new()
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = hashedUsername,
+                    category = "Data Store",
+                    description = "Failure to authenticate."
+                };
+                await log.SaveData(entry);
+
                 return (null, result);
             }
 
         }
         public async Task<bool> IsAuthorize(SSPrincipal currentPrincipal, IDictionary<string, string> requiredClaims)
         {
+            if (currentPrincipal?.Claims == null)
+            {
+                // If user claims are null, authorization fails
+                return false;
+            }
+
             foreach (var claim in requiredClaims)
             {
                 if (!currentPrincipal.Claims.Contains(claim))
