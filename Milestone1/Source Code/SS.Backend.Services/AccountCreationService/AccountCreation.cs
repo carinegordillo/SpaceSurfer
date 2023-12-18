@@ -21,11 +21,11 @@ namespace SS.Backend.Services.AccountCreationService
             _userInfo = userInfo;
         }
 
+        //checking for null and white space 
         public bool CheckNullWhiteSpace(string str)
         {
             return !string.IsNullOrWhiteSpace(str);
         }
-
         public string CheckUserInfoValidity(UserInfo userInfo)
         {
             string errorMsg = "";
@@ -58,15 +58,26 @@ namespace SS.Backend.Services.AccountCreationService
 
         //pepper 
         //  UserInfo hashedUsername = new UserInfo(hashedUser) 
-        
+
+         
+
+
+        //this method takes builds a dictionary with several sql commands to insert all at once 
         public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
         {
             
             SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
             var builder = new CustomSqlCommandBuilder();
-            Response testresponse = new Response();
-            // string errorMsg = "";
-           
+            Response tablesresponse = new Response();
+            // Response transactionResponse = await SQLDao.BeginTransactionAsync();
+            // await SQLDao.BeginTransactionAsync();
+
+            // Check if the transaction started successfully
+            // if (transactionResponse.HasError)
+            // {
+            //     return transactionResponse;
+            // }
+
             foreach (var tableEntry in tableData)
             {
                 string tableName = tableEntry.Key;
@@ -78,23 +89,16 @@ namespace SS.Backend.Services.AccountCreationService
                     .AddParameters(parameters)
                     .Build();
 
-                testresponse= await SQLDao.SqlRowsAffected(insertCommand);
-                if (testresponse.HasError)
+                tablesresponse = await SQLDao.SqlRowsAffected(insertCommand);
+                if (tablesresponse.HasError)
                 {
-                    testresponse.ErrorMessage += $"{tableName}: error inserting data; ";
-                    return testresponse;
+                    tablesresponse.ErrorMessage += $"{tableName}: error inserting data; ";
+                    // SQLDao.RollbackTransaction();
+                    return tablesresponse;
                 }
             }
-
-            // return new Response { HasError = false };
-            
-                // Log?
-                // return new Response { HasError = true, ErrorMessage = errorMsg };
-           
-
-            return testresponse;
-
-
+            // SQLDao.CommitTransaction();
+            return tablesresponse;
         }
 
 
@@ -106,25 +110,15 @@ namespace SS.Backend.Services.AccountCreationService
             {
                 response.HasError = true;
                 response.ErrorMessage = "Invalid User Info entry: " + validationMessage;
-                // return new Response
-                // {
-                //     HasError = true,
-                //     ErrorMessage = "Invalid User Info entry: " + validationMessage
-                // };
             }
-
             //if all methods retyrn success
-             
-            // return await InsertIntoMultipleTables(tableData);
             response  = await InsertIntoMultipleTables(tableData);
             // if (response.HasError == false)
             // {
             //     response = await InsertIntoMultipleTables(ProfiletableData);
     
             // }
-
             return response;            
-
          
         }
         

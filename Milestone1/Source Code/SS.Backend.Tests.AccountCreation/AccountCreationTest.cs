@@ -18,39 +18,46 @@ namespace SS.Backend.Tests.AccountCreationTest
             AccountCreation accountcreation = new AccountCreation(userInfo);
             
             var validUserInfo = new UserInfo{
-                username = "test@example.com",
+                username = "mshowing@example.com",
                 dob = new DateTime(1990, 1, 1),
-                firstname = "John",
-                lastname = "Doe"
+                firstname = "Jane",
+                lastname = "Doe", 
+                role = 5,
+                status = "yes", 
+                backupEmail = "test@backup.com"
             };
     
             var userAccount_success_parameters = new Dictionary<string, object>
             {
                 { "username", validUserInfo.username},
-                {"birthDate", validUserInfo.dob}
-               
+                {"birthDate", validUserInfo.dob}   
             };
 
             var userProfile_success_parameters = new Dictionary<string, object>
             {
-                {"hashedUsername", "sda7863286"},
+                {"hashedUsername", "newnew"},
                 { "FirstName", validUserInfo.firstname},
-                { "LastName", validUserInfo.lastname}
+                { "LastName", validUserInfo.lastname}, 
+                {"backupEmail", validUserInfo.backupEmail},
+                {"appRole", validUserInfo.role}, 
+            };
+            
+            var activeAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", "newnew"},
+                {"isActive", validUserInfo.status} 
             };
 
             var tableData = new Dictionary<string, Dictionary<string, object>>
             {
                 { "userAccount", userAccount_success_parameters },
-                { "userProfile", userProfile_success_parameters }
+                { "userProfile", userProfile_success_parameters },
+                { "activeAccount", activeAccount_success_parameters}
             };
 
-
-           var response = await accountcreation.CreateUserAccount(validUserInfo, tableData);
-           Assert.IsFalse(response.HasError, response.ErrorMessage);
-
-            // var response = await _accountCreation.CreateUserAccount(validUserInfo, userAccount_success_parameters);
-            // Assert.IsFalse(response.HasError);
-        
+            var response = await accountcreation.CreateUserAccount(validUserInfo, tableData);
+        //    Assert.IsFalse(response.HasError, response.ErrorMessage);
+            Assert.IsFalse(response.HasError, response.ErrorMessage);
         }
     }
 }

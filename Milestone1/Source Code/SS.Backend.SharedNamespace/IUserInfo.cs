@@ -6,8 +6,11 @@ namespace SS.Backend.SharedNamespace
         public DateTime dob { get; set; }
         public string firstname { get; set; }
         public string lastname { get; set; }
-        // public string hashedUser {get; set;}
+        public int role { get; set; }
+        public string status { get; set; }
 
+        public string backupEmail { get; set; }
+        // public string hashedUser {get; set;}
     }
 }
 
