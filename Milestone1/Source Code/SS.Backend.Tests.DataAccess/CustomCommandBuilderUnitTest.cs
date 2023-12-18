@@ -41,7 +41,7 @@ namespace SS.Backend.Tests.DataAccess
                                 .Where("Username = @Username")
                                 .Build();
 
-            Console.WriteLine(command.CommandText);
+
             
             Assert.AreEqual("DELETE FROM Users WHERE Username = @Username", command.CommandText);
         }
@@ -56,14 +56,12 @@ namespace SS.Backend.Tests.DataAccess
                                     .Values(new[] { "Username", "Email" })
                                     .Build();
 
-            Console.WriteLine(insertCommand.CommandText);
+
 
             var updateCommand = builder.BeginUpdate("Users")
                                     .Set(new Dictionary<string, object> { { "Email", "new@example.com" } })
                                     .Where("Username = @Username")
                                     .Build();
-            Console.WriteLine(updateCommand.CommandText);
-            Console.WriteLine(insertCommand.CommandText);
 
             Assert.AreNotEqual(insertCommand.CommandText, updateCommand.CommandText);
         }
@@ -87,11 +85,6 @@ namespace SS.Backend.Tests.DataAccess
                                 .Build();
 
 
-            Console.WriteLine(command.CommandText);
-            foreach (SqlParameter param in command.Parameters)
-            {
-                Console.WriteLine($"{param.ParameterName} = {param.Value}");
-            }
 
             Assert.AreEqual("john_doe", command.Parameters["@Username"].Value);
 
@@ -117,13 +110,6 @@ namespace SS.Backend.Tests.DataAccess
                                 
 
 
-            Console.WriteLine(command.CommandText);
-            foreach (SqlParameter param in command.Parameters)
-            {
-                Console.WriteLine($"{param.ParameterName} = {param.Value}");
-
-            }
-
             Assert.AreEqual("john_doe", command.Parameters["@Username"].Value);
 
             Assert.AreEqual("jd@gmail.com", command.Parameters["@Email"].Value);
@@ -144,13 +130,6 @@ namespace SS.Backend.Tests.DataAccess
                                 .Where("Username = @Username AND Age > @Age")
                                 .AddParameters(parameters)
                                 .Build();
-
-
-            Console.WriteLine(command.CommandText);
-            foreach (SqlParameter param in command.Parameters)
-            {
-                Console.WriteLine($"{param.ParameterName} = {param.Value}");
-            }
 
             Assert.AreEqual("john_doe", command.Parameters["@Username"].Value);
 
