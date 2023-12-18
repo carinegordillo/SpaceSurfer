@@ -41,18 +41,26 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
-    public ICustomSqlCommandBuilder SelectOne(string column)
-    {
-        _commandText.Append(column);
-        return this;
-    }
-
     public ICustomSqlCommandBuilder BeginSelect()
     {
         _commandText.Clear();
         _commandText.Append("SELECT ");
         return this;
     }
+
+    public ICustomSqlCommandBuilder BeginSelectAll()
+    {
+        _commandText.Clear();
+        _commandText.Append("SELECT *");
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder SelectColumns(params string[] columns)
+    {
+        _commandText.Append(string.Join(", ", columns));
+        return this;
+    }
+
     public ICustomSqlCommandBuilder From(string tableName)
     {
         _commandText.Append($" FROM {tableName}");
@@ -68,7 +76,7 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
 
     public ICustomSqlCommandBuilder Where(string whereClause)
     {
-        _commandText.Append($"WHERE {whereClause}");
+        _commandText.Append($" WHERE {whereClause}");
         return this;
     }
 
@@ -104,10 +112,5 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
     {
         _command.CommandText = _commandText.ToString();
         return _command;
-    }
-
-    public ICustomSqlCommandBuilder Select()
-    {
-        throw new NotImplementedException();
     }
 }
