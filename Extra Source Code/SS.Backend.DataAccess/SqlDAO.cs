@@ -4,13 +4,13 @@ using System.Data.SqlClient;
 
 namespace SS.Backend.DataAccess
 {
-    public class SqlDAO : ISqlDAO
+    public sealed class SqlDAO : ISqlDAO
     {
         private readonly string connectionString;
 
-        public SqlDAO(Credential user)
+        public SqlDAO(ConfigService configService)
         {
-            this.connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", user.user, user.pass);
+            this.connectionString = configService.GetConnectionString();
         }
 
         public async Task<Response> SqlRowsAffected(SqlCommand sql)

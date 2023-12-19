@@ -1,6 +1,6 @@
-﻿
-using System.Data.SqlClient;
+
 using System.Text;
+using System.Data.SqlClient;
 
 namespace SS.Backend.DataAccess;
 public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
@@ -48,13 +48,6 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
-    public ICustomSqlCommandBuilder BeginSelectAll()
-    {
-        _commandText.Clear();
-        _commandText.Append("SELECT *");
-        return this;
-    }
-
     public ICustomSqlCommandBuilder SelectColumns(params string[] columns)
     {
         _commandText.Append(string.Join(", ", columns));
@@ -70,13 +63,13 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
     public ICustomSqlCommandBuilder Set(Dictionary<string, object> columnValues)
     {
         var setClauses = columnValues.Select(kv => $"{kv.Key} = @{kv.Key}");
-        _commandText.Append(string.Join(", ", setClauses) + " ");
+        _commandText.Append(string.Join(", ", setClauses)+" ");
         return this;
     }
 
     public ICustomSqlCommandBuilder Where(string whereClause)
     {
-        _commandText.Append($" WHERE {whereClause}");
+        _commandText.Append($"WHERE {whereClause}");
         return this;
     }
 

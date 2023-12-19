@@ -11,7 +11,7 @@ public class ProfileModification
 {
 
     [TestMethod]
-    public async Task ProfileModification_ModifyFirstName()
+    public async Task ProfileModification_ModifyFirstName_Pass()
     {
         Response response = new Response();
         ProfileModifier accountModifier = new ProfileModifier();
@@ -23,7 +23,7 @@ public class ProfileModification
     }
 
     [TestMethod]
-    public async Task ProfileModification_ModifyLastName()
+    public async Task ProfileModification_ModifyLastName_Pass()
     {
         Response response = new Response();
         ProfileModifier accountModifier = new ProfileModifier();
@@ -35,7 +35,7 @@ public class ProfileModification
     }
 
     [TestMethod]
-    public async Task ProfileModification_ModifyBackupEmail()
+    public async Task ProfileModification_ModifyBackupEmail_Pass()
     {
         Response response = new Response();
         ProfileModifier accountModifier = new ProfileModifier();
@@ -61,7 +61,7 @@ public class ProfileModification
     }
     
     [TestMethod]
-    public async Task ModifyFirstName_NullOrEmptyName_ShouldFail()//needds to fail 
+    public async Task ModifyFirstName_NullOrEmptyName_ShouldFail()
     {
         // Arrange
         ProfileModifier accountModifier = new ProfileModifier();
@@ -79,7 +79,7 @@ public class ProfileModification
     }
 
     [TestMethod]
-    public async Task ModifyProfile_ConcurrentModifications_ShouldHandleGracefully()
+    public async Task ModifyProfile_ConcurrentModifications_ShouldPass()
     {
         // Arrange
         ProfileModifier accountModifier = new ProfileModifier();
@@ -105,7 +105,7 @@ public class ProfileModification
         {
             // Arrange
             ProfileModifier accountModifier = new ProfileModifier();
-            var newValue = "NewValue"; // Replace with an appropriate new value
+            var newValue = "NewValue"; 
 
             // Test with null
             var responseNull = await accountModifier.ModifyFirstName(null, newValue);
