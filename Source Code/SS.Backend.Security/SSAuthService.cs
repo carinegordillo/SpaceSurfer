@@ -22,7 +22,6 @@ namespace SS.Backend.Security
         /// </summary>
         /// <param name="authRequest">Request to authenticate, holds UserIdentity and Proof</param>
         /// <returns>OTP in plaintext and the Response object</returns>
-        /*
         public async Task<(string otp, Response res)> SendOTP_and_SaveToDB(AuthenticationRequest authRequest)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -116,8 +115,6 @@ namespace SS.Backend.Security
         /// </summary>
         /// <param name="authRequest">Request to authenticate, holds UserIdentity and Proof</param>
         /// <returns>SSPrincipal object which contains UserIdentity and Claims as well as the Response object</returns>
-        */
-        
         public async Task<(SSPrincipal principal, Response res)> Authenticate(AuthenticationRequest authRequest)
         {
             var builder = new CustomSqlCommandBuilder();
