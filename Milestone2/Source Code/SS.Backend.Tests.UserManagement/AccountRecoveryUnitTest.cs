@@ -12,14 +12,12 @@ public class AccountRecoveryTests
     [TestInitialize]
     public void Setup()
     {
-        // Initialize AccountRecovery with real dependencies
-        // This assumes that you can construct AccountStatusModifier without mocks
         AccountStatusModifier accountStatusModifier = new AccountStatusModifier();
         _accountRecovery = new AccountRecovery(accountStatusModifier);
     }
 
     [TestMethod]
-    public async Task SendRecoveryRequest_ShouldReturnExpectedResult()
+    public async Task SendInitialRecoveryRequest_Pass()
     {
         // Arrange
         var userHash = "testUsername";
@@ -28,19 +26,17 @@ public class AccountRecoveryTests
         var response = await _accountRecovery.sendRecoveryRequest(userHash);
 
         // Assert
-        // Your assertions here will depend on the actual implementation and side effects of SendRecoveryRequest
-        // For example:
+
         Assert.IsFalse(response.HasError);
-        // Assert.IsTrue(response.Success); // Uncomment if applicable
-        // Assert.AreEqual("Expected Message", response.Message); // Uncomment and modify as needed
+
     }
 
     [TestMethod]
-    public async Task RecoverAccount_ShouldReturnExpectedResult()
+    public async Task RecoverAccount_AdminDecision_True_ShouldPass()
     {
         // Arrange
         var userHash = "testUsername";
-        bool adminDecision = true; // or false, depending on the test case
+        bool adminDecision = true; 
 
         // Act
         var response = await _accountRecovery.RecoverAccount(userHash, adminDecision);
@@ -64,7 +60,7 @@ public class AccountRecoveryTests
     }
 
     [TestMethod]
-    public async Task SendRecoveryRequest_AlreadyActiveAccount_ShouldIndicateUnnecessaryAction()
+    public async Task SendRecoveryRequest_AlreadyActiveAccount_ShouldPass()
     {
         // Arrange
 
@@ -85,7 +81,7 @@ public class AccountRecoveryTests
     {
         // Arrange
         var userHash = "nonExistentUserHash";
-        bool adminDecision = true; // Admin decision doesn't matter in this case
+        bool adminDecision = true; 
 
         // Act
         var response = await _accountRecovery.RecoverAccount(userHash, adminDecision);
@@ -100,7 +96,7 @@ public class AccountRecoveryTests
     {
         // Arrange
         var userHash = "someUserHash";
-        bool adminDecision = false; // Admin decision is negative
+        bool adminDecision = false; 
 
         // Act
         var response = await _accountRecovery.RecoverAccount(userHash, adminDecision);
@@ -111,26 +107,25 @@ public class AccountRecoveryTests
     }
 
     [TestMethod]
-    public async Task RecoverAccount_WithPendingRecoveryRequest_ShouldHandleGracefully()
+    public async Task RecoverAccount_WithPendingRecoveryRequest_ShouldPass()
     {
         // Arrange
-        var userHash = "userWithPendingRequest"; // Use a userHash that has a pending recovery request
-        bool adminDecision = true; // Assuming admin approval is required
+        var userHash = "userWithPendingRequest"; 
+        bool adminDecision = true; 
 
-        // Send an initial recovery request (assuming this sets the recovery request as pending)
         await _accountRecovery.sendRecoveryRequest(userHash);
 
         // Act
-        // Now attempt to recover the account again
+
         var response = await _accountRecovery.RecoverAccount(userHash, adminDecision);
 
         // Assert
-        // The exact assertion will depend on how your system is expected to behave in this scenario
+  
         Assert.IsFalse(response.HasError);
     }
 
     [TestMethod]
-    public async Task SendRecoveryRequest_MultipleConcurrentRequests_ShouldHandleConcurrently()
+    public async Task SendRecoveryRequest_MultipleConcurrentRequests_ShouldPass()
     {
         // Arrange
         var userHash = "userForConcurrentTesting";
@@ -144,7 +139,7 @@ public class AccountRecoveryTests
         var responses = await Task.WhenAll(task1, task2, task3);
 
         // Assert
-        // The assertions depend on how your system handles concurrent requests
+        
         foreach (var response in responses)
         {
             Assert.IsFalse(response.HasError);
