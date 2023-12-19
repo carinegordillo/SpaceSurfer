@@ -20,6 +20,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.UserManagement", "SS.Backend.Tests.UserManagement\SS.Backend.Tests.UserManagement.csproj", "{ABD6D6CB-8786-4F24-8569-5B620A5C31B3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.AccountCreation", "SS.Backend.Tests.AccountCreation\SS.Backend.Tests.AccountCreation.csproj", "{15BF497F-DD35-4D95-9AD4-2A752F273379}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Security", "SS.Backend.Security\SS.Backend.Security.csproj", "{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.SecurityTest", "SS.Backend.SecurityTest\SS.Backend.SecurityTest.csproj", "{CDC580DB-5FDC-4515-AAB8-63181EA726CB}"
