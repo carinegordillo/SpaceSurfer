@@ -1,44 +1,52 @@
-public class AcountRecovery
+using SS.Backend.SharedNamespace;
+
+
+namespace SS.Backend.UserManagement
 {
-    private AccountStatusModifier _accountStatusModifier;
-
-    public AcountRecovery(AccountStatusModifier accountStatusModifier)
+    public class AccountRecovery : IAccountRecovery
     {
-        _accountStatusModifier = accountStatusModifier;
-    }
+        private AccountStatusModifier _accountStatusModifier;
 
-
-    public async Task<Response> createRecoveryRequest(string userHash)
-    {
-        // Logic to initiate the recovery process.
-        // This might involve setting a flag in the user's profile indicating a pending recovery.
-        bool requestInitiated = _dataAccess.InitiateRecoveryRequest(userHash);
-
-        if (requestInitiated)
+        public AccountRecovery(AccountStatusModifier accountStatusModifier)
         {
-            return new Response { Success = true, Message = "Recovery request initiated." };
+            _accountStatusModifier = accountStatusModifier;
         }
-        else
-        {
-            return new Response { Success = false, Message = "Failed to initiate recovery request." };
-        }
-    }
 
-    public async Task<Response> RecoverAccount(string userHash)
-    {
-        // Logic to check if the recovery request has been accepted
-        // This might involve checking a flag in the database or some other condition
-        bool isRecoveryAccepted = CheckRecoveryRequest(userHash);
 
-        if (isRecoveryAccepted)
+        public async Task<Response> sendRecoveryRequest(string userHash)
         {
-            // If the recovery request is accepted, enable the account
-            return await _accountStatusModifier.EnableAccount(userHash);
+            
+            Response response = new Response();
+            response = await _accountStatusModifier.PendingRequest(userHash);
+
+            if (response.HasError == false)
+            {
+                response.ErrorMessage = "Recovery request initiated.";
+            }
+            else
+            {
+                response.ErrorMessage = "Failed to initiate recovery request.";
+            }
+
+            return response;
         }
-        else
+
+        public async Task<Response> RecoverAccount(string userHash, bool adminDecision)
         {
-            // If the recovery request is not accepted, return an appropriate response
-            return new Response { Success = false, Message = "Recovery request not accepted." };
+            Response response = new Response();
+
+            if (adminDecision)
+            {
+                
+                response = await _accountStatusModifier.EnableAccount(userHash);
+            }
+            else
+            {
+                response = new Response { HasError = true, ErrorMessage = "Recovery request denied by admin." };
+            }
+            return response;
+            
         }
+
     }
 }

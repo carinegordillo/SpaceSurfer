@@ -15,6 +15,7 @@ namespace SS.Backend.DataAccess
         ICustomSqlCommandBuilder Set(Dictionary<string, object> columnValues);
         ICustomSqlCommandBuilder Where(string whereClause);
         ICustomSqlCommandBuilder BeginSelect();
+        ICustomSqlCommandBuilder BeginSelectAll();
         ICustomSqlCommandBuilder SelectColumns(params string[] columns);
         ICustomSqlCommandBuilder From(string tableName);
         ICustomSqlCommandBuilder BeginDelete(string tableName);

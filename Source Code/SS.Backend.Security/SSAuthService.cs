@@ -16,7 +16,7 @@ namespace SS.Backend.Security
             this.hasher = hasher;
             this.sqldao = sqldao;
         }
-        /*
+        
         public async Task<(string otp, Response res)> SendOTP_and_SaveToDB(AuthenticationRequest authRequest)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -104,7 +104,6 @@ namespace SS.Backend.Security
                 return (null, result);
             }
         }
-        */
         
         public async Task<(SSPrincipal principal, Response res)> Authenticate(AuthenticationRequest authRequest)
         {

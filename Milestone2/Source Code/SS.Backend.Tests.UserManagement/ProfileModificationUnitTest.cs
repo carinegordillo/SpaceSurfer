@@ -46,7 +46,84 @@ public class ProfileModification
 
     }
 
+    [TestMethod]
+    public async Task ModifyFirstName_InvalidUserHash_ShouldFail()
+    {
+        // Arrange
+        ProfileModifier accountModifier = new ProfileModifier();
+        var invalidUserHash = "invalidUserHash";
+
+        // Act
+        var response = await accountModifier.ModifyFirstName(invalidUserHash, "NewFirstName");
+
+        // Assert
+        Assert.IsTrue(response.HasError);
+    }
     
+    [TestMethod]
+    public async Task ModifyFirstName_NullOrEmptyName_ShouldFail()//needds to fail 
+    {
+        // Arrange
+        ProfileModifier accountModifier = new ProfileModifier();
+        var userHash = "validUserHash"; 
+
+        // Test with null
+        var responseNull = await accountModifier.ModifyFirstName(userHash, null);
+
+        // Test with empty string
+        var responseEmpty = await accountModifier.ModifyFirstName(userHash, string.Empty);
+
+        // Assert
+        Assert.IsTrue(responseNull.HasError);
+        Assert.IsTrue(responseEmpty.HasError);
+    }
+
+    [TestMethod]
+    public async Task ModifyProfile_ConcurrentModifications_ShouldHandleGracefully()
+    {
+        // Arrange
+        ProfileModifier accountModifier = new ProfileModifier();
+        var userHash = "hashedUser4"; // Replace with a valid user hash
+
+        // Act
+        var task1 = accountModifier.ModifyFirstName(userHash, "NewFirstName");
+        var task2 = accountModifier.ModifyLastName(userHash, "NewLastName");
+        var task3 = accountModifier.ModifyBackupEmail(userHash, "newemail@example.com");
+
+        // Await all tasks to complete
+        var responses = await Task.WhenAll(task1, task2, task3);
+
+        // Assert
+        foreach (var response in responses)
+        {
+            Assert.IsFalse(response.HasError);
+        }
+    }
+    
+        [TestMethod]
+        public async Task ModifyField_NullOrEmptyUserHash_ShouldFail()
+        {
+            // Arrange
+            ProfileModifier accountModifier = new ProfileModifier();
+            var newValue = "NewValue"; // Replace with an appropriate new value
+
+            // Test with null
+            var responseNull = await accountModifier.ModifyFirstName(null, newValue);
+
+            // Test with empty string
+            var responseEmpty = await accountModifier.ModifyFirstName(string.Empty, newValue);
+
+            // Assert
+            Assert.IsTrue(responseNull.HasError);
+            Assert.IsTrue(responseEmpty.HasError);
+        }
+
+        //create an email formatter for valid emails 
+
+
+
+
 
     
+
 }
