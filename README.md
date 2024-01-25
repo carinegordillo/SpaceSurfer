@@ -1,2 +1,9 @@
-# CECS491
-code, documents and notes related to our 491 class
+# SpaceSurfer 
+### CECS 491 - Vatanak Vong 
+## Team: 
+### Kay Kayale 
+### Carine Gordillo 
+### Sarah Santos 
+### Brandon Galich 
+### Sarah Phan 
+
