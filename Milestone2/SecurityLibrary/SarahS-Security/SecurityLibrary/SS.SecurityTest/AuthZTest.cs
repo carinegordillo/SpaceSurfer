@@ -29,7 +29,7 @@ public class AuthZTest
         };
 
         // Act
-        bool result = authService.IsAuthorize(currentPrincipal, requiredClaims);
+        bool await result = authService.IsAuthorize(currentPrincipal, requiredClaims);
 
         // Assert
         Assert.IsTrue(result, "The user has all the required claims, so IsAuthorize should return true.");
