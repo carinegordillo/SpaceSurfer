@@ -210,6 +210,13 @@ PublishScripts/
 csx/
 *.build.csdef
 
+
+#appName-config.*.txt
+config.*.json
+config.*.xml
+config.*.txt
+
+
 # Microsoft Azure Emulator
 ecf/
 rcf/
@@ -396,4 +403,3 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-.DS_Store
