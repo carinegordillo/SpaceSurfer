@@ -48,5 +48,5 @@ namespace SS.Backend.UserManagement
             
         }
 
-    }
+}
 }

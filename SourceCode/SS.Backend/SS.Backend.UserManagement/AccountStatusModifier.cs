@@ -35,5 +35,12 @@ namespace SS.Backend.UserManagement
             return result;
         }
 
+        public async Task<Response> ReadRecoveryRequests(){
+            ProfileModifier profileModifier = new ProfileModifier();
+            Response result = await profileModifier.ReadRequests("dbo.activeAccount");
+            return result;
+
+        }
+
     }
 }

@@ -31,6 +31,24 @@ namespace SS.Backend.UserManagement
 
         }
 
+        public async Task<Response> ReadRequests(string tableName){
+
+            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+            
+            
+            //var columnValues = new Dictionary<string, object>{{whereClause, requestType}};
+
+            SqlCommand selectRequestsCommand = commandBuilder.BeginSelectAll()
+                                            .From($"{tableName}")
+                                            .Build();
+
+            return await SQLDao.SqlRowsAffected(selectRequestsCommand);
+
+
+        }
+
         public async Task<Response> GenProfileModifier(string whereClause, object whereClauseval, string fieldName, object newValue, string profileTableName)
         {
             SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
