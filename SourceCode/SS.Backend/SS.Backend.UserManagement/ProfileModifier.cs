@@ -44,7 +44,7 @@ namespace SS.Backend.UserManagement
                                             .From($"{tableName}")
                                             .Build();
 
-            return await SQLDao.SqlRowsAffected(selectRequestsCommand);
+            return await SQLDao.ReadSqlResult(selectRequestsCommand);
 
 
         }

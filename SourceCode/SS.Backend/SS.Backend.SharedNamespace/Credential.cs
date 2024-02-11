@@ -13,11 +13,11 @@
 
         public static Credential CreateSAUser()
         {
-            return new Credential("sa", "kalynn");
+            return new Credential("sa", "Mamba562");
         }
         public static Credential CreateGenUser()
         {
-            return new Credential("SS.GenUser", "kalynn");
+            return new Credential("sa", "Mamba562");
         }
 
     }
