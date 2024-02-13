@@ -41,13 +41,13 @@ namespace SS.Backend.DataAccess
                     {
                         result.HasError = true;
                         result.RowsAffected = 0;
-                        result.ErrorMessage += " Error in SqlRowsEffected";
+                        result.ErrorMessage += " - Error in SqlRowsEffected -";
                     }
                 }
                 catch (Exception ex)
                 {
                     result.HasError = true;
-                    result.ErrorMessage += " Error in SqlRowsEffected"+ex.Message;
+                    result.ErrorMessage += " - Error in SqlRowsEffected - "+ ex.Message;
                 }
             }
 

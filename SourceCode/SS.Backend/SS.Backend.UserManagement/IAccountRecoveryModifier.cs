@@ -5,7 +5,7 @@ using SS.Backend.SharedNamespace;
 
 namespace SS.Backend.UserManagement
 {
-    public interface IAccountStatusModifier
+    public interface IAccountRecoveryModifier
     {
 
         public Task<Response> EnableAccount(string userhash);
@@ -14,7 +14,6 @@ namespace SS.Backend.UserManagement
 
         public Task<Response> PendingRequest(string userhash);
 
-        public  Task<Response> ReadRecoveryRequests();
 
     }
 }

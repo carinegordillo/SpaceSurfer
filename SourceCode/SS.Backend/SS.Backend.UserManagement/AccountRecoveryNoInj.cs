@@ -3,17 +3,13 @@ using SS.Backend.SharedNamespace;
 
 namespace SS.Backend.UserManagement
 {
-    public class AccountRecovery : IAccountRecovery
+    public class AccountRecoveryNoInj : IAccountRecovery
     {
-        private AccountRecoveryModifier _accountRecoveryModifier;
 
-        public AccountRecovery(AccountRecoveryModifier accountRecoveryModifier)
-        {
-            _accountRecoveryModifier = accountRecoveryModifier;
-        }
 
         public async Task<Response> createRecoveryRequest(string userHash, string additionalInfo = "")
         {
+            IAccountRecoveryModifier accountRecoveryModifier = new AccountRecoveryModifier();
     
             var userRequest = new UserRequestModel
             {
@@ -46,9 +42,10 @@ namespace SS.Backend.UserManagement
 
         public async Task<Response> sendRecoveryRequest(string userHash)
         {
-            
+            IAccountRecoveryModifier accountRecoveryModifier = new AccountRecoveryModifier();
+
             Response response = new Response();
-            response = await _accountRecoveryModifier.PendingRequest(userHash);
+            response = await accountRecoveryModifier.PendingRequest(userHash);
 
             if (response.HasError == false)
             {
@@ -65,11 +62,12 @@ namespace SS.Backend.UserManagement
         public async Task<Response> RecoverAccount(string userHash, bool adminDecision)
         {
             Response response = new Response();
+            IAccountRecoveryModifier accountRecoveryModifier = new AccountRecoveryModifier();
 
             if (adminDecision)
             {
                 
-                response = await _accountRecoveryModifier.EnableAccount(userHash);
+                response = await accountRecoveryModifier.EnableAccount(userHash);
             }
             else
             {
@@ -82,6 +80,7 @@ namespace SS.Backend.UserManagement
         public async Task<Response> ReadUserRequests(){
 
             IUserManagementRepository userManagementRepository = new UserManagementRepository();
+            
             Response response = new Response();
             
             response = await userManagementRepository.ReadUserTable("dbo.userRequests");

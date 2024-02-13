@@ -1,4 +1,4 @@
-namespace AccountManagement.Models
+namespace SS.Backend.UserManagement
 {
     //DTO
     public class RequestsModel
