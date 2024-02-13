@@ -27,12 +27,12 @@ public class RecoverRequestController : ControllerBase
         var requests = response.ValuesRead.Select(row => new UserRequestModel
         {
             RequestId = (int)row[0],
-    UserHash = (string)row[1],
-    RequestDate = (DateTime)row[2],
-    Status = (string)row[3],
-    RequestType = (string)row[4],
-    ResolveDate = row[5] != DBNull.Value ? DateTime.Parse((string)row[5]) : (DateTime?)null,
-    AdditionalInformation = row[6] != DBNull.Value ? (string)row[6] : null
+            UserHash = (string)row[1],
+            RequestDate = (DateTime)row[2],
+            Status = (string)row[3],
+            RequestType = (string)row[4],
+            ResolveDate = row[5] != DBNull.Value ? DateTime.Parse((string)row[5]) : (DateTime?)null,
+            AdditionalInformation = row[6] != DBNull.Value ? (string)row[6] : null
         }).ToList();
 
         return Ok(requests);
