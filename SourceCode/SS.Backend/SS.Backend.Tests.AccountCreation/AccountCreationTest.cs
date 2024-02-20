@@ -43,7 +43,49 @@ namespace SS.Backend.Tests.AccountCreationTest
             Console.WriteLine($"Pepper content: {pepper}");
             Assert.IsFalse(string.IsNullOrEmpty(pepper), "The pepper file should not be empty.");
         }
-        
+
+
+        [TestMethod]
+        public async Task isTHISVALID()
+        {
+            // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
+            UserInfo userInfo = new UserInfo();
+            UserPepper userPepper = new UserPepper();
+            AccountCreation accountcreation = new AccountCreation(userInfo);
+            Hashing hashing = new Hashing();
+            Stopwatch timer = new Stopwatch();
+
+            Credential removeMeLater = Credential.CreateSAUser();
+            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            var builder = new CustomSqlCommandBuilder();
+
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
+            //username must be unique in database
+            var validUserInfo = new UserInfo
+            {
+                username = "memem@hotmail.com",
+                dob = new DateTime(1990, 1, 1),
+                firstname = "vgggggggggggggggggggggggggggggkjkjjjjhjjjjjjjjjjjjhjfffgf",
+                lastname = "k", 
+                role = 1,
+                status = "yes", 
+                backupEmail = "test@backup.com"
+            };
+
+
+            timer.Start();
+            string didPASS = accountcreation.CheckUserInfoValidity(validUserInfo);
+            timer.Stop();
+
+            // Assert.IsFalse(response.HasError, response.ErrorMessage);
+            // Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
+            await CleanupTestData().ConfigureAwait(false);
+          
+        }
+
+
 
         [TestMethod]
         public async Task CreateUserAccount_Success()
@@ -63,18 +105,20 @@ namespace SS.Backend.Tests.AccountCreationTest
             string pepper = await pepperDao.ReadPepperAsync();
 
             //username must be unique in database
-            var validUserInfo = new UserInfo{
-                username = "idksucesssss@@example.com",
+            var validUserInfo = new UserInfo
+            {
+                username = "THISISUNIQUEmemem@hotmail.com",
                 dob = new DateTime(1990, 1, 1),
-                firstname = "SUCCESS",
-                lastname = "Doe", 
+                firstname = "VERYUNIWU",
+                lastname = "sovalid", 
                 role = 1,
                 status = "yes", 
                 backupEmail = "test@backup.com"
             };
 
       
-            var validPepper = new UserPepper{
+            var validPepper = new UserPepper
+            {
                 hashedUsername = hashing.HashData(validUserInfo.username, pepper)
             };
     
@@ -100,10 +144,10 @@ namespace SS.Backend.Tests.AccountCreationTest
             };
 
             var hashedAccount_success_parameters = new Dictionary<string, object>
-                {
-                    {"hashedUsername", validPepper.hashedUsername},
-                    {"username", validUserInfo.username},
-                };
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"username", validUserInfo.username},
+            };
 
             var tableData = new Dictionary<string, Dictionary<string, object>>
             {
@@ -111,6 +155,104 @@ namespace SS.Backend.Tests.AccountCreationTest
                 { "userProfile", userProfile_success_parameters },
                 { "activeAccount", activeAccount_success_parameters}, 
                 {"userHash", hashedAccount_success_parameters}
+            };
+
+            timer.Start();
+            var response = await accountcreation.CreateUserAccount(validPepper, validUserInfo, tableData);
+            timer.Stop();
+
+            Assert.IsFalse(response.HasError, response.ErrorMessage);
+            Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
+            await CleanupTestData().ConfigureAwait(false);
+          
+        }
+
+
+        [TestMethod]
+        public async Task CreateManagerAccount_Success()
+        {
+            // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
+            UserInfo userInfo = new UserInfo();
+            UserPepper userPepper = new UserPepper();
+            AccountCreation accountcreation = new AccountCreation(userInfo);
+            Hashing hashing = new Hashing();
+            Stopwatch timer = new Stopwatch();
+
+            Credential removeMeLater = Credential.CreateSAUser();
+            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            var builder = new CustomSqlCommandBuilder();
+
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
+            //username must be unique in database
+            var validUserInfo = new UserInfo
+            {
+                username = "WORKSUCCESScompanyManager@hotmail.com",
+                dob = new DateTime(1990, 1, 1),
+                firstname = "COMPANY",
+                lastname = "MANAGER", 
+                role = 2,
+                status = "yes", 
+                backupEmail = "test@backup.com", 
+                companyName = "Kay's Billion Dollar Company", 
+                address = "Irvine", 
+                openingHours = "2:00:00",
+                closingHours = "2:00:00" ,
+                daysOpen = "Monday,Tuesday"
+            };
+
+            
+      
+            var validPepper = new UserPepper
+            {
+                hashedUsername = hashing.HashData(validUserInfo.username, pepper)
+            };
+    
+            var userAccount_success_parameters = new Dictionary<string, object>
+            {
+                { "username", validUserInfo.username},
+                {"birthDate", validUserInfo.dob}   
+            };
+
+            var userProfile_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                { "FirstName", validUserInfo.firstname},
+                { "LastName", validUserInfo.lastname}, 
+                {"backupEmail", validUserInfo.backupEmail},
+                {"appRole", validUserInfo.role}, 
+            };
+            
+            var activeAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"isActive", validUserInfo.status} 
+            };
+
+            var hashedAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"username", validUserInfo.username},
+            };
+
+            var companyInfo_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"companyName", validUserInfo.companyName}, 
+                {"address", validUserInfo.address}, 
+                {"openingHours", validUserInfo.openingHours}, 
+                {"closingHours", validUserInfo.closingHours}, 
+                {"daysOpen", validUserInfo.daysOpen}
+            };
+
+            var tableData = new Dictionary<string, Dictionary<string, object>>
+            {
+                { "userAccount", userAccount_success_parameters },
+                { "userProfile", userProfile_success_parameters },
+                { "activeAccount", activeAccount_success_parameters}, 
+                {"userHash", hashedAccount_success_parameters}, 
+                {"companyProfile", companyInfo_success_parameters}
             };
 
             timer.Start();
@@ -461,7 +603,7 @@ namespace SS.Backend.Tests.AccountCreationTest
                 dob = new DateTime(1990, 1, 1),
                 firstname = "Jane",
                 lastname = "Doe", 
-                role = 2,
+                role = 1,
                 status = "", 
                 backupEmail = "test@backup.com"
             };
@@ -539,7 +681,7 @@ namespace SS.Backend.Tests.AccountCreationTest
                 dob = new DateTime(1990, 1, 1),
                 firstname = "Jane",
                 lastname = "Doe", 
-                role = 3,
+                role = 4,
                 status = "yes", 
                 backupEmail = ""
             };
