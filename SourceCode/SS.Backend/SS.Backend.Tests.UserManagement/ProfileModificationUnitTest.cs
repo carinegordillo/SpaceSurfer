@@ -57,6 +57,7 @@ public class ProfileModification
         var response = await accountModifier.ModifyFirstName(invalidUserHash, "NewFirstName");
 
         // Assert
+        Console.Write(response.ErrorMessage);
         Assert.IsTrue(response.HasError);
     }
     
@@ -114,6 +115,8 @@ public class ProfileModification
             var responseEmpty = await accountModifier.ModifyFirstName(string.Empty, newValue);
 
             // Assert
+            Console.Write(responseEmpty.ErrorMessage);
+            Console.Write(responseNull.ErrorMessage);
             Assert.IsTrue(responseNull.HasError);
             Assert.IsTrue(responseEmpty.HasError);
         }
