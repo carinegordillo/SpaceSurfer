@@ -8,12 +8,14 @@ namespace SS.Backend.Tests.UserManagement;
 public class AccountRecoveryTests
 {
     private AccountRecovery _accountRecovery;
+    private AccountDisabler _accountDisabler;
 
     [TestInitialize]
     public void Setup()
     {
         AccountRecoveryModifier accountRecoveryModifier = new AccountRecoveryModifier();
         _accountRecovery = new AccountRecovery(accountRecoveryModifier);
+        _accountDisabler = new AccountDisabler();
     }
 
     [TestMethod]

@@ -10,8 +10,6 @@ namespace SS.Backend.UserManagement
 
         public Task<Response> EnableAccount(string userhash);
 
-        public Task<Response> DisableAccount(string userhash);
-
         public Task<Response> PendingRequest(string userhash);
 
 
