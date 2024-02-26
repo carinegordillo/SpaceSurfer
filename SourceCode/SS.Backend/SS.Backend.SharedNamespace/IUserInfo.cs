@@ -1,3 +1,5 @@
+using System.Net.Sockets;
+
 namespace SS.Backend.SharedNamespace
 {
     public interface IUserInfo
@@ -8,8 +10,13 @@ namespace SS.Backend.SharedNamespace
         public string lastname { get; set; }
         public int role { get; set; }
         public string status { get; set; }
-
         public string backupEmail { get; set; }
-        // public string hashedUser {get; set;}
+
+        // Only for company/facility managers: 
+        public string companyName {get; set;}
+        public string address {get;set;}
+        public string openingHours {get;set;}
+        public string closingHours {get;set;}
+        public string daysOpen{get;set;}
     }
 }

@@ -57,7 +57,7 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
     public ICustomSqlCommandBuilder BeginSelectAll()
     {
         _commandText.Clear();
-        _commandText.Append("SELECT *");
+        _commandText.Append("SELECT * ");
         return this;
     }
 
@@ -82,7 +82,7 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
 
     public ICustomSqlCommandBuilder Where(string whereClause)
     {
-        _commandText.Append($" WHERE {whereClause}");
+        _commandText.Append($"WHERE {whereClause}");
         return this;
     }
 

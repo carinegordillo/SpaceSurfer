@@ -55,7 +55,7 @@ namespace SS.Backend.Services.LoggingService
             else
             {
                 result.HasError = true;
-                result.ErrorMessage = "Invalid log entry: " + CheckLogValidity(log);
+                result.ErrorMessage += "Invalid log entry: " + CheckLogValidity(log);
             }
             return result;
         }
