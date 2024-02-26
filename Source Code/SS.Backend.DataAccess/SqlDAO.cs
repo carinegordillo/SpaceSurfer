@@ -1,4 +1,4 @@
-﻿using SS.Backend.SharedNamespace;
+using SS.Backend.SharedNamespace;
 using System.Data;
 using System.Data.SqlClient;
 

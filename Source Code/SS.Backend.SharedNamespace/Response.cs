@@ -1,4 +1,4 @@
-﻿namespace SS.Backend.SharedNamespace
+namespace SS.Backend.SharedNamespace
 {
     public class Response
     {

@@ -1,4 +1,4 @@
-﻿namespace SS.Backend.Security
+namespace SS.Backend.Security
 {
     public class GenOTP
     {
