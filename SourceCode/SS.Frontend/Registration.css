@@ -1,13 +1,15 @@
 body {
-    min-height: 100vh; /*  Ensure body stretches to full viewport height */
-    font-family: 'Verdana', sans-serif;
-    background-image: linear-gradient(to bottom, rgba(12, 39, 138, 0.754), rgba(39, 20, 58, 0.404));
+    min-height: 100vh; /* Ensure body stretches to full viewport height */
+    font-family: 'Arial', sans-serif;
+    /* background-image: linear-gradient(to bottom, rgba(12, 39, 138, 0.754), rgba(39, 20, 58, 0.404)); */
+    background-image: url(AIfire_transparent.png);
+    background-size: cover; /* Scale the background image as large as possible */
+    background-repeat: no-repeat; /* Prevent the background image from repeating */
     padding: 0;
     margin: 0;
     display: flex; /* Make the body a flex container */
     flex-direction: column; /* Stack children vertically */
-    justify-content: space-between; /* Push content to the top and bottom*/
-    
+    justify-content: space-between; /* Push content to the top and bottom */
 }
 
 .background-image {
@@ -26,6 +28,7 @@ body {
     right: 0;
     bottom: 0;
     /* background-image: url('skystar.jpg'); */
+    
     background-size: cover;
     background-position: center;
     opacity: 0.5; /* Adjust the opacity as needed */
@@ -33,33 +36,15 @@ body {
   }
 
 header, footer {
-    background-color: #053c4a;
+    background-color: #0d092cb5;
     color: white;
     text-align: center;
-    padding: 10px 0;
-}
-
-.form-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* height: 100vh; */
-    flex-grow: 1;
-    padding: 90px; 
-}
-
-#registrationForm {
-    width: 100%; 
-    max-width: 500px; 
-    background: #fff;
-    padding: 30px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 45px;
-    text-align: center; 
+    padding: 5px 0;
 }
 
 nav {
     /* background-color: #5e08ff; */
+    background-color: #0d092c44;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -98,6 +83,26 @@ nav a:hover {
     color: #ddd;
 }
 
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: 100vh; */
+    flex-grow: 1;
+    padding: 50px; 
+}
+
+#registrationForm {
+    width: 100%; 
+    max-width: 500px; 
+    background: rgb(205, 216, 247);
+    padding: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 45px;
+    text-align: center; 
+}
+
 .container {
     width: 80%;
     margin: 20px auto;
@@ -126,12 +131,12 @@ nav a:hover {
 .form-row input[type="email"],
 .form-row input[type="date"],
 .form-row input[type="time"] {
-    flex-grow: 1; /* Input field takes up remaining space */
+    flex-grow: 1; /*Input field takes up remaining space*/
 }
 
 label {
     display: flex;
-    margin-bottom: 5px;
+    margin-bottom: 0px;
 }
 
 input[type="text"],
@@ -163,7 +168,7 @@ input[type="submit"]:hover {
 }
 
 input[type="checkbox"] {
-    margin-right: 10px;
+    margin-right: 7px;
 }
 
 #additionalFields {
