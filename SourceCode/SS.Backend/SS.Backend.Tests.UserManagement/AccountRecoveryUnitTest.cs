@@ -8,12 +8,14 @@ namespace SS.Backend.Tests.UserManagement;
 public class AccountRecoveryTests
 {
     private AccountRecovery _accountRecovery;
+    private AccountDisabler _accountDisabler;
 
     [TestInitialize]
     public void Setup()
     {
-        AccountStatusModifier accountStatusModifier = new AccountStatusModifier();
-        _accountRecovery = new AccountRecovery(accountStatusModifier);
+        AccountRecoveryModifier accountRecoveryModifier = new AccountRecoveryModifier();
+        _accountRecovery = new AccountRecovery(accountRecoveryModifier);
+        _accountDisabler = new AccountDisabler();
     }
 
     [TestMethod]
@@ -55,6 +57,7 @@ public class AccountRecoveryTests
         var response = await _accountRecovery.sendRecoveryRequest(userHash);
 
         // Assert
+        Console.Write(response.ErrorMessage);
         Assert.IsTrue(response.HasError);
      
     }
@@ -87,6 +90,7 @@ public class AccountRecoveryTests
         var response = await _accountRecovery.RecoverAccount(userHash, adminDecision);
 
         // Assert
+        Console.Write(response.ErrorMessage);
         Assert.IsTrue(response.HasError);
         
     }
@@ -145,6 +149,21 @@ public class AccountRecoveryTests
             Assert.IsFalse(response.HasError);
             
         }
+    }
+
+    [TestMethod]
+    public async Task CreateRecoveryRequest_ValidUserHash_ShouldSucceed()
+    {
+        // Arrange
+        var userHash = "userHash1";
+        string additionalInfo = "Need to recover account due to forgotten password.";
+
+        // Actx
+        var response = await _accountRecovery.createRecoveryRequest(userHash, additionalInfo);
+
+        // Assert
+        Console.Write(response.ErrorMessage);
+        Assert.IsFalse(response.HasError);
     }
 
 

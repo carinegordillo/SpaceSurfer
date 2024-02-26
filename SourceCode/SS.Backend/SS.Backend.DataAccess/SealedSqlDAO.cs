@@ -12,7 +12,7 @@ namespace SS.Backend.DataAccess
 
         public SealedSqlDAO(Credential user)
         {
-            this.connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", user.user, user.pass);
+            this.connectionString = string.Format(@"Data Source=localhost;Initial Catalog=SS_Server;User Id={0};Password={1};", user.user, user.pass);
         }
 
         public async Task<Response> SqlRowsAffected(SqlCommand sql)
@@ -41,12 +41,13 @@ namespace SS.Backend.DataAccess
                     {
                         result.HasError = true;
                         result.RowsAffected = 0;
+                        result.ErrorMessage += " - Error in SqlRowsEffected -";
                     }
                 }
                 catch (Exception ex)
                 {
                     result.HasError = true;
-                    result.ErrorMessage = ex.Message;
+                    result.ErrorMessage += " - Error in SqlRowsEffected - "+ ex.Message;
                 }
             }
 
@@ -92,14 +93,14 @@ namespace SS.Backend.DataAccess
                         else
                         {
                             result.HasError = true;
-                            result.ErrorMessage = "No rows found.";
+                            result.ErrorMessage += "No rows found.";
                         }
                     }
                 }
                 catch (Exception ex)
                 {
                     result.HasError = true;
-                    result.ErrorMessage = ex.Message;
+                    result.ErrorMessage += "Error in Read Sql Results" +ex.Message;
                 }
             }
 
@@ -134,7 +135,7 @@ namespace SS.Backend.DataAccess
                         else
                         {
                             response.HasError = true;
-                            response.ErrorMessage = "No rows affected.";
+                            response.ErrorMessage += "No rows affected.";
                         }
                         
                         transaction.Commit();
@@ -144,7 +145,7 @@ namespace SS.Backend.DataAccess
                 {
                     transaction?.Rollback();
                     response.HasError = true;
-                    response.ErrorMessage = ex.Message;
+                    response.ErrorMessage += " could not connect to DB: "+ ex.Message;
                     // Log the error
                 }
                 finally
