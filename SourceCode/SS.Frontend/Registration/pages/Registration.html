@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register!</title>
+    <script src="registration.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="Registration.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico?version=3">
+</head>
+<body class="background-image">
+    <nav>
+        <div class="logo-container">
+            <img src="astroSurf.png" alt="Company Logo" width="160" height="150" style="padding-left: 5px;">
+            <img src="ssName.png" alt="Company Name" width="440" height="80" style="padding: 25px 15px 0px 0px;">
+        </div>
+        <div class="nav-items">
+            <div class="nav-item" id="navAbout" onclick="showView('about')">About</div>
+            <div class="nav-item" id="navRegister" onclick="showView('register')">Register</div>
+            <div class="nav-item" id="navLogin" onclick="showView('login')">Login</div>
+        </div>
+    </nav>
+
+<!-- <div id="aboutView" class="view">About content...</div>
+<div id="loginView" class="view" style="display: none;">Login content...</div> -->
+<!-- <div id = "registerView" class = "form-container" style="display: none;"> -->
+<div id = "registerView" class = "form-container" >
+
+    <form id="registrationForm">
+        <h2>Register to SpaceSurfer🤙</h2>
+
+        <div class="form-row">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" required><br><br>
+        </div>
+
+        <div class="form-row">
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" required><br>
+        </div>
+
+        <div class="form-row">
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required><br>
+        </div>
+
+        <div class="form-row">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
+        </div>
+        
+        <h3>Are You A Company/Facility?</h3>
+        <div class="form-row" style="display: flex; justify-content: center;">
+        <input type="checkbox" id="isCompany" name="isCompany" onchange="handleCheckboxChange()" >
+        <label for="isCompany">Company</label>
+
+        <input type="checkbox" id="isFacility" name="isFacility" onchange="handleCheckboxChange()" >
+        <label for="isFacility">Facility</label>
+        </div>
+        
+        <div id="additionalFields" style="display: none;">
+            <label for="name">Company/Facility Name:</label>
+            <input type="text" id="name" name="name"><br>
+
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location"><br>
+
+            <label for="openingHours">Opening Hours:</label>
+            <input type="time" id="openingHours" name="openingHours"<br>
+
+            <label for="closingHours">Closing Hours:</label>
+            <input type="time" id="closingHours" name="closingHours"><br>
+
+            <fieldset>
+                <legend>Days Open:</legend>
+                <label><input type="checkbox" name="daysOpen" value="Monday"> Monday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Tuesday"> Tuesday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Wednesday"> Wednesday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Thursday"> Thursday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Friday"> Friday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Saturday"> Saturday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Sunday"> Sunday</label><br>
+            </fieldset>
+        
+        </div>
+        <input type="submit" value="Register">
+    </form>
+</div>
+<div>
+<footer>
+    Designed and Developed by the PixelPals Team
+</footer>
+</div>
+
+</body>
+</html>
+<script>
+    function createUserAccount(){
+        //all teh differetnt things 
+        // var firstName = document.getElementById("firstName").value;
+
+        // create object 
+        //userProfile 
+
+        const userInfo = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            dob: document.getElementById('dob').value,
+            username: document.getElementById('username').value,
+            role: Math.floor(Math.random() * 10), // Random role number between 0 and 9
+            status: ["Active", "Inactive", "Pending"][Math.floor(Math.random() * 3)], // Randomly selects a status
+            backupEmail: `user@example.com`,
+        };
+
+        $.ajax({
+            url: '/api/registration/createAccount',
+            type: 'POST',
+            contentType: 'application/json',
+            // data: JSON.stringify({ userInfo: userInfo }),
+            data: JSON.stringify({userInfo }),
+            success: function (response) {
+              
+                var otpWindow = window.open('', '_blank', 'width=400,height=200');
+                otpWindow.document.write('<h2>Your OTP:</h2>');
+
+            },
+            error: function (xhr, status, error) {
+                alert('Error sending verification code.');
+            }
+        });
+    }
+
+</script>
