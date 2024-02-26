@@ -6,9 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // Add services to the container.
+//builder.Services.AddTransient<ISqlDAO, SealedSqlDAO>();
 builder.Services.AddTransient<IAccountRecovery, AccountRecoveryNoInj>();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Learn more about configuring Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
