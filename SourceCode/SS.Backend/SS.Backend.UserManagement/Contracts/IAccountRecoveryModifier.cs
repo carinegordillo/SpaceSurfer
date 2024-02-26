@@ -5,14 +5,13 @@ using SS.Backend.SharedNamespace;
 
 namespace SS.Backend.UserManagement
 {
-    public interface IAccountStatusModifier
+    public interface IAccountRecoveryModifier
     {
 
         public Task<Response> EnableAccount(string userhash);
 
-        public Task<Response> DisableAccount(string userhash);
-
         public Task<Response> PendingRequest(string userhash);
+
 
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Reflection;
 using SS.Backend.Services.LoggingService;
+using System.Text.RegularExpressions;
 
 
 namespace SS.Backend.Services.AccountCreationService
@@ -19,7 +20,6 @@ namespace SS.Backend.Services.AccountCreationService
             _userInfo = userInfo;
         }
 
-        //checking for null and white space 
         public bool CheckNullWhiteSpace(string str)
         {
             return !string.IsNullOrWhiteSpace(str);
@@ -27,34 +27,101 @@ namespace SS.Backend.Services.AccountCreationService
         public string CheckUserInfoValidity(UserInfo userInfo)
         {
             string errorMsg = "";
-            int allValid = 0;
-            int totalStringFields = 0; 
             foreach (PropertyInfo prop in userInfo.GetType().GetProperties())
             {
-
-                //so if property is nullable its fine it doesnt pass thru this
-                if (prop.PropertyType == typeof(string))
+                var value = prop.GetValue(userInfo);
+                switch (prop.Name)
                 {
-                    totalStringFields++; 
-                    string value = prop.GetValue(userInfo) as string;
-
-                    if (!string.IsNullOrEmpty(value) && CheckNullWhiteSpace(value) && !value.Equals("NULL", StringComparison.OrdinalIgnoreCase))
-                    {
-                        allValid++;
-                    }
-                    else
-                    {
-                        errorMsg += $"Invalid {prop.Name.ToLower()}; ";
-                    }
+                    case "firstname":
+                    case "lastname":
+                        if (!IsValidName(value as string))
+                        {
+                            errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                        }
+                        break;
+                    case "username":
+                        if (!IsValidEmail(value as string))
+                        {
+                            string testing = "random gibbering";
+                            errorMsg += "Invalid email";
+                        }
+                        break;
+                    case "dob":
+                        if (!IsValidDateOfBirth(value as DateTime?))
+                        {
+                            errorMsg += "Invalid date of birth; ";
+                        }
+                        break;
+                    case "companyName":
+                        if (userInfo.role == 2 || userInfo.role == 3){
+                                if(!IsValidCompanyName(value as string))
+                            {
+                                errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                            }
+                            break;
+                        }
+                        break;
+                        
+                    case "address":
+                        if (userInfo.role == 2 || userInfo.role == 3){
+                            if(!IsValidAddress(value as string))
+                            {
+                                errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                            }
+                            break;
+                        }
+                        break;
+                    // case "openingHours":
+                    // case "closingHours":
+                    // case "daysOpen": //check if these need their own function
+                    //     if (CheckNullWhiteSpace(value as string))
+                    //     {
+                    //         errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                    //     }
+                    //     break;
                 }
             }
-            if (allValid == totalStringFields)
+            return string.IsNullOrEmpty(errorMsg) ? "Pass" : errorMsg;
+        }
+
+        private bool IsValidName(string name)
+        {
+            return !string.IsNullOrWhiteSpace(name) &&
+                name.Length >= 1 &&
+                name.Length <= 50 &&
+                Regex.IsMatch(name, @"^[a-zA-Z]+$");
+        }
+        private bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email) || email.Length < 3)
             {
-                errorMsg = "Pass";
-            }else{
-                errorMsg = "fail";
+                return false;
             }
-            return errorMsg;
+
+            string pattern = @"^[a-zA-Z0-9\.-]+@[a-zA-Z0-9\.-]+$";
+            return Regex.IsMatch(email, pattern);
+        }
+        private bool IsValidDateOfBirth(DateTime? dateOfBirth)
+        {
+            if (!dateOfBirth.HasValue)
+            {
+                return false;
+            }
+
+            var validStartDate = new DateTime(1970, 1, 1);
+            var validEndDate = DateTime.Now;
+            return dateOfBirth >= validStartDate && dateOfBirth <= validEndDate;
+        }
+        private bool IsValidCompanyName(string name)
+        {
+            return 
+                name.Length >= 1 &&
+                name.Length <= 60;
+        }
+        private bool IsValidAddress(string name)
+        {
+            //implement Geolocation API
+            return name == "Irvine";
         }
 
         //this method takes builds a dictionary with several sql commands to insert all at once 
@@ -100,6 +167,7 @@ namespace SS.Backend.Services.AccountCreationService
             {
                 response.HasError = true;
                 response.ErrorMessage = "Invalid User Info entry: " + validationMessage;
+                return response;
             }
        
             //generating sql command 
@@ -132,6 +200,5 @@ namespace SS.Backend.Services.AccountCreationService
             return response;            
          
         }
-        
     }
 }
