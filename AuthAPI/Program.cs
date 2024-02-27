@@ -49,8 +49,8 @@ builder.Services.AddTransient<SSAuthService>(provider =>
         provider.GetRequiredService<GenOTP>(),
         provider.GetRequiredService<Hashing>(),
         provider.GetRequiredService<SqlDAO>(),
-        provider.GetRequiredService<Logger>(),
-        "g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn"
+        provider.GetRequiredService<Logger>()//,
+        //"g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn"
     )
 );
 
