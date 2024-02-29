@@ -5,13 +5,15 @@ using SS.Backend.Security;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 /*
 builder.Services.AddTransient<SqlDAO>();
@@ -25,6 +27,14 @@ builder.Services.AddTransient<SSAuthService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
+
+/*
+builder.Services.AddSwaggerGen(options =>
+{
+    options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+});
+*/
 
 builder.Services.AddAuthentication(options =>
 {
@@ -46,9 +56,9 @@ builder.Services.AddAuthentication(options =>
 
 //builder.Services.AddAuthorization();
 
-builder.Services.AddTransient<Credential>();
-//builder.Services.AddTransient<ConfigService>(provider =>
-    //new ConfigService(Path.Combine(AppContext.BaseDirectory, "config.local.txt")));
+//builder.Services.AddTransient<Credential>();
+builder.Services.AddTransient<ConfigService>(provider =>
+    new ConfigService(Path.Combine(AppContext.BaseDirectory, "config.local.txt")));
 builder.Services.AddTransient<SqlDAO>();
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
@@ -69,16 +79,15 @@ builder.Services.AddTransient<SSAuthService>(provider =>
 );
 
 var app = builder.Build();
+app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 
 //app.UseHttpsRedirection();
-
 //app.UseAuthorization();
 
 app.MapControllers();

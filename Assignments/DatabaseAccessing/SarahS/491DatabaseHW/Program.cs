@@ -1,4 +1,5 @@
 ﻿using SS.Logging;
+//using SS.DataAccess;
 class Program
 {
         static void Main(string[] args)
