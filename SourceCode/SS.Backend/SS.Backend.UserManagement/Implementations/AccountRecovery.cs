@@ -98,6 +98,39 @@ namespace SS.Backend.UserManagement
             return response;
         }
 
+        public async Task<Response> ReadDummyTable(){
+
+            IUserManagementRepository userManagementRepository = new UserManagementRepository();
+            Response response = new Response();
+            
+            response = await userManagementRepository.ReadUserTable("dbo.EmployeesDummyTable");
+
+            if (response.HasError == false)
+            {
+                response.ErrorMessage = "- ReadDummyTable successful. -";
+            }
+            else
+            {
+                response.ErrorMessage = "- ReadDummyTable Failed - ";
+            }
+
+            return response;
+        }
+
+         public async Task<Response> sendDummyRequest(string name, string position)
+        {
+
+            IUserManagementRepository userManagementRepository = new UserManagementRepository();
+
+            Response response = new Response();
+            response = await userManagementRepository.sendRequest(name, position);
+
+            return response;
+
+        }
+
+
+
         
 
     }

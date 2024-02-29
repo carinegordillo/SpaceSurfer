@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJAX Demo</title>
+
+</head>
+<body>
+    <div class="menu">
+        <ul>
+            <li id="get">Get Data</li>
+
+
+            <form id="dummyRequestForm">
+                <h3>post data</h3>
+                <input type="text" id="name" placeholder="Name">
+                <input type="text" id="position" placeholder="Position">
+                <button type="submit">Submit</button>
+            </form>
+
+        </ul>
+    </div>
+
+    <!-- Content will be injected in this placeholder -->
+    <div class="dynamic-content">
+        
+    </div>
+
+        <!-- Third Party Dependencies -->
+        <script src="node_modules/axios/dist/axios.js"></script>
+
+        <!-- MyApp Dependencies -->
+    
+        <!-- Page Specific -->
+    
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+
+    <script>
+       document.getElementById('get').addEventListener('click', function() {
+        fetch('http://localhost:5137/api/employees/getAllDummyRequests')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("in here")
+            console.log(data)
+            
+            const container = document.querySelector('.dynamic-content');
+            container.innerHTML = ''; // Clear previous content
+            let content = '<ul>';
+            data.forEach(employee => {
+                console.log(data)
+                console.log(employee)
+                content += `<li>Name: ${employee.name}, Position: ${employee.position}</li>`;
+            });
+            content += '</ul>';
+            container.innerHTML = content;
+        })
+        .catch(error => console.error('Fetch error:', error));
+       });
+
+
+       document.getElementById('dummyRequestForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent default form submission
+
+        const name = document.getElementById('name').value;
+        const position = document.getElementById('position').value;
+
+        fetch('http://localhost:5137/api/employees/postDummyRequest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                name: name,
+                position: position // Adjust according to what your backend expects
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Process the response data
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+
+    </script>
+
+    
+</body>
+</html>
+
+
+
+<!-- MyApp Dependencies -->
+
+<!-- Page Specific -->

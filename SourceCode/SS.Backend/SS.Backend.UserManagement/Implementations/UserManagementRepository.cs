@@ -99,5 +99,40 @@ namespace SS.Backend.UserManagement
             return response;
         }
 
+
+
+        public async Task<Response> sendRequest(string name, string position)
+        {
+            
+
+            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+
+            var parameters = new Dictionary<string, object>
+                        {
+                            { "Name", name },
+                            { "Position", position}
+                        };
+
+            SqlCommand InsertRequestsCommand = commandBuilder.BeginInsert("dbo.EmployeesDummyTable")
+                                                            .Columns(parameters.Keys)
+                                                            .Values(parameters.Keys)
+                                                            .AddParameters(parameters)
+                                                            .Build();
+
+            response = await SQLDao.SqlRowsAffected(InsertRequestsCommand);
+
+            if (response.HasError == false){
+                response.ErrorMessage += "- createAccountRecoveryRequest - command successful - ";
+            }
+            else{
+                 response.ErrorMessage += $"- createAccountRecoveryRequest - command : {InsertRequestsCommand} not successful - ";
+
+            }
+            return response;
+        }
+
+
     }
 }
