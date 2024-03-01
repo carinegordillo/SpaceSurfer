@@ -1,6 +1,6 @@
 using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace SS.Backend.UserManagement
 {
@@ -13,7 +13,12 @@ namespace SS.Backend.UserManagement
 
         public async Task<Response> GeneralModifier(string whereClause, object whereClauseval, string fieldName, object newValue, string tableName)
         {
-            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            string configFilePath = "/Users/carinegordillo/config.txt";
+            ConfigService configService = new ConfigService(configFilePath);
+            testSealedSqlDAO SQLDao = new testSealedSqlDAO(configService);
+
+
+
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();
             
@@ -42,7 +47,10 @@ namespace SS.Backend.UserManagement
         public async Task<Response> ReadUserTable(string tableName)
         {
 
-            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            string configFilePath = "/Users/carinegordillo/config.txt";
+            ConfigService configService = new ConfigService(configFilePath);
+            testSealedSqlDAO SQLDao = new testSealedSqlDAO(configService);
+
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();
             
@@ -68,8 +76,12 @@ namespace SS.Backend.UserManagement
 
         public async Task<Response> createAccountRecoveryRequest(UserRequestModel userRequest, string tableName)
         {
-            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+
+            string configFilePath = "/Users/carinegordillo/config.txt";
+            ConfigService configService = new ConfigService(configFilePath);
+            testSealedSqlDAO SQLDao = new testSealedSqlDAO(configService);
             Response response = new Response();
+
             var commandBuilder = new CustomSqlCommandBuilder();
 
             var parameters = new Dictionary<string, object>
@@ -105,7 +117,9 @@ namespace SS.Backend.UserManagement
         {
             
 
-            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            string configFilePath = "/Users/carinegordillo/config.txt";
+            ConfigService configService = new ConfigService(configFilePath);
+            testSealedSqlDAO SQLDao = new testSealedSqlDAO(configService);
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();
 
