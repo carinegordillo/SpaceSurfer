@@ -1,13 +1,13 @@
-namespace AccountDeletion
+// AccountDeletionRequest
+namespace AccountDeletionAPI
 {
     public class DeletionRequest
     {
-        public DateTime Date { get; set; }
 
-        public string Username { get; set; }
+        public required string username { get; set; }
 
 
-        // Need to see if OTP is already implemented
+        // Need to see how to get OTP
 
         // public string? OTP { get; set; }
     }

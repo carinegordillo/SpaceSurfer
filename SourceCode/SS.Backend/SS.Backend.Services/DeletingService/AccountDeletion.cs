@@ -49,24 +49,33 @@ namespace SS.Backend.Services.DeletingService
 
             try
             {
-                // Iterates through every table that deals with the value being deleted
-                for (int i = tables.Result.ValuesRead.Count - 1; i >= 0; i--)
+                await tables;
+                // Check if the task completed successfully and its result is not null
+                if (tables != null && tables.Result != null && tables.Result.ValuesRead != null)
                 {
-                    // Initializing Table Name 
-                    var table = tables.Result.ValuesRead[i][2];
+                    // Iterates through every table that deals with the value being deleted
+                    for (int i = tables.Result.ValuesRead.Count - 1; i >= 0; i--)
+                    {
+                        // Initializing Table Name 
+                        var table = tables.Result.ValuesRead[i][2];
 
-                    // Delete Query Command built [DELETE FROM "Users" WHERE Username = @username]
-                    var deleteCommand = commandBuilder.BeginDelete("dbo." + table).Where("Username = @Username").AddParameters(value).Build();
+                        // Delete Query Command built [DELETE FROM "Users" WHERE Username = @username]
+                        var deleteCommand = commandBuilder.BeginDelete("dbo." + table).Where("Username = @Username").AddParameters(value).Build();
 
-                    // Sets the reponse from the executed command
-                    var response = await SQLDao.SqlRowsAffected(deleteCommand);
+                        // Sets the reponse from the executed command
+                        var response = await SQLDao.SqlRowsAffected(deleteCommand);
 
-                    // Appends the responses into one response
-                    overallResponse.RowsAffected += response.RowsAffected;
-                    overallResponse.HasError |= response.HasError;
+                        // Appends the responses into one response
+                        overallResponse.RowsAffected += response.RowsAffected;
+                        overallResponse.HasError |= response.HasError;
 
+                    }
                 }
-
+                else
+                {
+                    // Handle the case where tables.Task is not completed or its result is null
+                    throw new InvalidOperationException("Failed to retrieve table names.");
+                }
             }
             catch (Exception ex)
             {

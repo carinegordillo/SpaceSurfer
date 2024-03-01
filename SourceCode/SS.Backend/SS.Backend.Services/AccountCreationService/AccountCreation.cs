@@ -1,9 +1,7 @@
 using SS.Backend.DataAccess;
-using SS.Backend.SharedNamespace;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Reflection;
 using SS.Backend.Services.LoggingService;
+using SS.Backend.SharedNamespace;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 
@@ -53,32 +51,34 @@ namespace SS.Backend.Services.AccountCreationService
                         }
                         break;
                     case "companyName":
-                        if (userInfo.role == 2 || userInfo.role == 3){
-                                if(!IsValidCompanyName(value as string))
+                        if (userInfo.role == 2 || userInfo.role == 3)
+                        {
+                            if (!IsValidCompanyName(value as string))
                             {
                                 errorMsg += $"Invalid {prop.Name.ToLower()}; ";
                             }
                             break;
                         }
                         break;
-                        
+
                     case "address":
-                        if (userInfo.role == 2 || userInfo.role == 3){
-                            if(!IsValidAddress(value as string))
+                        if (userInfo.role == 2 || userInfo.role == 3)
+                        {
+                            if (!IsValidAddress(value as string))
                             {
                                 errorMsg += $"Invalid {prop.Name.ToLower()}; ";
                             }
                             break;
                         }
                         break;
-                    // case "openingHours":
-                    // case "closingHours":
-                    // case "daysOpen": //check if these need their own function
-                    //     if (CheckNullWhiteSpace(value as string))
-                    //     {
-                    //         errorMsg += $"Invalid {prop.Name.ToLower()}; ";
-                    //     }
-                    //     break;
+                        // case "openingHours":
+                        // case "closingHours":
+                        // case "daysOpen": //check if these need their own function
+                        //     if (CheckNullWhiteSpace(value as string))
+                        //     {
+                        //         errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                        //     }
+                        //     break;
                 }
             }
             return string.IsNullOrEmpty(errorMsg) ? "Pass" : errorMsg;
@@ -114,7 +114,7 @@ namespace SS.Backend.Services.AccountCreationService
         }
         private bool IsValidCompanyName(string name)
         {
-            return 
+            return
                 name.Length >= 1 &&
                 name.Length <= 60;
         }
@@ -127,7 +127,7 @@ namespace SS.Backend.Services.AccountCreationService
         //this method takes builds a dictionary with several sql commands to insert all at once 
         public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
         {
-            
+
             SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
             var builder = new CustomSqlCommandBuilder();
             Response tablesresponse = new Response();
@@ -137,7 +137,7 @@ namespace SS.Backend.Services.AccountCreationService
             {
                 string tableName = tableEntry.Key;
                 Dictionary<string, object> parameters = tableEntry.Value;
-                var insertCommand =  builder.BeginInsert(tableName)
+                var insertCommand = builder.BeginInsert(tableName)
                     .Columns(parameters.Keys)
                     .Values(parameters.Keys)
                     .AddParameters(parameters)
@@ -169,9 +169,9 @@ namespace SS.Backend.Services.AccountCreationService
                 response.ErrorMessage = "Invalid User Info entry: " + validationMessage;
                 return response;
             }
-       
+
             //generating sql command 
-            response  = await InsertIntoMultipleTables(tableData);
+            response = await InsertIntoMultipleTables(tableData);
             if (response.HasError == false)
             {
                 LogEntry entry = new LogEntry()
@@ -185,7 +185,8 @@ namespace SS.Backend.Services.AccountCreationService
                 };
                 await logger.SaveData(entry);
             }
-            else{
+            else
+            {
                 LogEntry entry = new LogEntry()
 
                 {
@@ -197,8 +198,8 @@ namespace SS.Backend.Services.AccountCreationService
                 };
                 await logger.SaveData(entry);
             }
-            return response;            
-         
+            return response;
+
         }
     }
 }
