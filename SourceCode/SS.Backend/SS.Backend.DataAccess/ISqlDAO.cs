@@ -1,5 +1,5 @@
 ﻿using SS.Backend.SharedNamespace;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace SS.Backend.DataAccess
 {

@@ -1,16 +1,16 @@
 ﻿using SS.Backend.SharedNamespace;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace SS.Backend.DataAccess
 {
-    public class SqlDAO : ISqlDAO
+    public sealed class SqlDAO : ISqlDAO
     {
         private readonly string connectionString;
 
-        public SqlDAO(Credential user)
+        public SqlDAO(ConfigService configService)
         {
-            this.connectionString = string.Format(@"Data Source=localhost;Initial Catalog=SS_Server;User Id={0};Password={1};", user.user, user.pass);
+            this.connectionString = configService.GetConnectionString();
         }
 
         public async Task<Response> SqlRowsAffected(SqlCommand sql)
@@ -66,26 +66,15 @@ namespace SS.Backend.DataAccess
 
                     sql.Connection = connection;
 
-                    using (SqlDataReader reader = await sql.ExecuteReaderAsync().ConfigureAwait(false))
+                    using (SqlDataReader reader = await sql.ExecuteReaderAsync())
                     {
-                        List<List<object>> allValuesRead = new List<List<object>>();
+                        DataTable dataTable = new DataTable();
+                        dataTable.Load(reader);
 
-                        while (reader.Read())
-                        {
-                            List<object> valuesRead = new List<object>();
-
-                            for (int i = 0; i < reader.FieldCount; i++)
-                            {
-                                valuesRead.Add(reader[i]);
-                            }
-
-                            allValuesRead.Add(valuesRead);
-                        }
-
-                        if (allValuesRead.Count > 0)
+                        if (dataTable.Rows.Count > 0)
                         {
                             result.HasError = false;
-                            result.ValuesRead = allValuesRead;
+                            result.ValuesRead = dataTable;
                         }
                         else
                         {
@@ -103,6 +92,7 @@ namespace SS.Backend.DataAccess
 
             return result;
         }
+
 
     }
 }

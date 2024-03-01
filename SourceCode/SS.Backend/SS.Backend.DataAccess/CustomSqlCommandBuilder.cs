@@ -1,5 +1,5 @@
 
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Text;
 
 namespace SS.Backend.DataAccess;
