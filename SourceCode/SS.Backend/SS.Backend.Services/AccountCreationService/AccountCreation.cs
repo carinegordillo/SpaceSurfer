@@ -7,11 +7,14 @@ using SS.Backend.Services.LoggingService;
 using System.Text.RegularExpressions;
 
 
+
 namespace SS.Backend.Services.AccountCreationService
 {
     public class AccountCreation : IAccountCreation
     {
-        Credential temp = Credential.CreateSAUser();
+        // Credential temp = Credential.CreateSAUser();
+        string configFilePath = "C:/Users/kayka/Downloads/config.local.txt";
+        ConfigService configService = new ConfigService("C:/Users/kayka/Downloads/config.local.txt");
         private readonly UserInfo _userInfo;
         private readonly ICustomSqlCommandBuilder _commandBuilder;
 
@@ -128,7 +131,8 @@ namespace SS.Backend.Services.AccountCreationService
         public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
         {
             
-            SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
+            // SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
+            SqlDAO SQLDao = new SqlDAO(configService);
             var builder = new CustomSqlCommandBuilder();
             Response tablesresponse = new Response();
 
@@ -154,12 +158,12 @@ namespace SS.Backend.Services.AccountCreationService
         }
 
 
-        public async Task<Response> CreateUserAccount(UserPepper userPepper, UserInfo userInfo, Dictionary<string, Dictionary<string, object>> tableData)
+        public async Task<Response> CreateUserAccount(UserInfo userInfo)
         {
             Response response = new Response();
 
-            SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
-            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(temp)));
+            SqlDAO SQLDao = new SqlDAO(configService);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
 
 
             string validationMessage = CheckUserInfoValidity(userInfo);
@@ -171,6 +175,57 @@ namespace SS.Backend.Services.AccountCreationService
             }
        
             //generating sql command 
+            UserPepper userPepper = new UserPepper();
+            AccountCreation accountcreation = new AccountCreation(userInfo);
+            Hashing hashing = new Hashing();
+
+            
+            var builder = new CustomSqlCommandBuilder();
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
+          
+            var validPepper = new UserPepper
+            {
+                hashedUsername = hashing.HashData(userInfo.username, pepper)
+            };
+    
+            var userAccount_success_parameters = new Dictionary<string, object>
+            {
+                { "username", userInfo.username},
+                {"birthDate", userInfo.dob}   
+            };
+
+            var userProfile_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                { "FirstName", userInfo.firstname},
+                { "LastName", userInfo.lastname}, 
+                {"backupEmail", userInfo.backupEmail},
+                {"appRole", userInfo.role}, 
+            };
+            
+            var activeAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"isActive", userInfo.status} 
+            };
+
+            var hashedAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"username", userInfo.username},
+            };
+
+            var tableData = new Dictionary<string, Dictionary<string, object>>
+            {
+                { "userAccount", userAccount_success_parameters },
+                { "userProfile", userProfile_success_parameters },
+                { "activeAccount", activeAccount_success_parameters}, 
+                {"userHash", hashedAccount_success_parameters}
+            };
+
+
             response  = await InsertIntoMultipleTables(tableData);
             if (response.HasError == false)
             {
@@ -199,6 +254,30 @@ namespace SS.Backend.Services.AccountCreationService
             }
             return response;            
          
+        }
+
+        public async Task<Response> ReadUserTable(string tableName)
+        {
+
+            SqlDAO SQLDao = new SqlDAO(configService);
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+            
+            var insertCommand =  commandBuilder.BeginSelectAll()
+                                            .From($"dbo.userPofile")
+                                            .Build();
+
+            response = await SQLDao.SqlRowsAffected(insertCommand);
+            if (response.HasError)
+            {
+                response.ErrorMessage += $"{tableName}: error inserting data; ";
+                return response;
+            }else{
+                response.ErrorMessage += "- ReadUserTable- command successful -";
+            }
+          
+            return response;
+
         }
     }
 }
