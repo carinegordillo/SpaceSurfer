@@ -2,20 +2,18 @@ using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
 using Microsoft.Data.SqlClient;
 
+
 namespace SS.Backend.UserManagement
 {
 
     public class UserManagementRepository : IUserManagementRepository
     {
 
-        Credential removeMeLater = Credential.CreateSAUser();
-
-
         public async Task<Response> GeneralModifier(string whereClause, object whereClauseval, string fieldName, object newValue, string tableName)
         {
             string configFilePath = "/Users/carinegordillo/config.txt";
             ConfigService configService = new ConfigService(configFilePath);
-            testSealedSqlDAO SQLDao = new testSealedSqlDAO(configService);
+            SqlDAO sqldao = new SqlDAO(configService);
 
 
 
@@ -26,13 +24,13 @@ namespace SS.Backend.UserManagement
             var columnValues = new Dictionary<string, object>{
                 { fieldName, newValue },{whereClause,whereClauseval}};
 
-            SqlCommand updateCommand = commandBuilder.BeginUpdate(tableName)
+            var updateCommand = commandBuilder.BeginUpdate(tableName)
                                             .Set(columnValues)
                                             .Where($"{whereClause} = @{whereClause}")
                                             .AddParameters(columnValues)
                                             .Build();
 
-            response = await SQLDao.SqlRowsAffected(updateCommand);
+            response = await sqldao.SqlRowsAffected(updateCommand);
 
             if (response.HasError == false){
                 response.ErrorMessage += "- General Modifier - command successful -";
@@ -49,18 +47,18 @@ namespace SS.Backend.UserManagement
 
             string configFilePath = "/Users/carinegordillo/config.txt";
             ConfigService configService = new ConfigService(configFilePath);
-            testSealedSqlDAO SQLDao = new testSealedSqlDAO(configService);
+            SqlDAO sqldao = new SqlDAO(configService);
 
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();
             
 
 
-            SqlCommand selectRequestsCommand = commandBuilder.BeginSelectAll()
+            var selectRequestsCommand = commandBuilder.BeginSelectAll()
                                             .From($"{tableName}")
                                             .Build();
 
-            response = await SQLDao.ReadSqlResult(selectRequestsCommand);
+            response = await sqldao.ReadSqlResult(selectRequestsCommand);
 
             if (response.HasError == false){
                 response.ErrorMessage += "- ReadUserTable- command successful -";
@@ -79,7 +77,7 @@ namespace SS.Backend.UserManagement
 
             string configFilePath = "/Users/carinegordillo/config.txt";
             ConfigService configService = new ConfigService(configFilePath);
-            testSealedSqlDAO SQLDao = new testSealedSqlDAO(configService);
+            SqlDAO sqldao = new SqlDAO(configService);
             Response response = new Response();
 
             var commandBuilder = new CustomSqlCommandBuilder();
@@ -93,13 +91,13 @@ namespace SS.Backend.UserManagement
                             { "additionalInformation", userRequest.AdditionalInformation }
                         };
 
-            SqlCommand InsertRequestsCommand = commandBuilder.BeginInsert(tableName)
+            var InsertRequestsCommand = commandBuilder.BeginInsert(tableName)
                                                             .Columns(parameters.Keys)
                                                             .Values(parameters.Keys)
                                                             .AddParameters(parameters)
                                                             .Build();
 
-            response = await SQLDao.SqlRowsAffected(InsertRequestsCommand);
+            response = await sqldao.SqlRowsAffected(InsertRequestsCommand);
 
             if (response.HasError == false){
                 response.ErrorMessage += "- createAccountRecoveryRequest - command successful - ";
@@ -113,35 +111,35 @@ namespace SS.Backend.UserManagement
 
 
 
-        public async Task<Response> sendRequest(string name, string position)
+        public async Task<Response> sendRequest(string employeeName, string position)
         {
             
 
             string configFilePath = "/Users/carinegordillo/config.txt";
             ConfigService configService = new ConfigService(configFilePath);
-            testSealedSqlDAO SQLDao = new testSealedSqlDAO(configService);
+            SqlDAO sqldao = new SqlDAO(configService);
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();
 
             var parameters = new Dictionary<string, object>
                         {
-                            { "Name", name },
+                            { "Name", employeeName },
                             { "Position", position}
                         };
 
-            SqlCommand InsertRequestsCommand = commandBuilder.BeginInsert("dbo.EmployeesDummyTable")
+            var InsertRequestsCommand = commandBuilder.BeginInsert("dbo.EmployeesDummyTable")
                                                             .Columns(parameters.Keys)
                                                             .Values(parameters.Keys)
                                                             .AddParameters(parameters)
                                                             .Build();
 
-            response = await SQLDao.SqlRowsAffected(InsertRequestsCommand);
+            response = await sqldao.SqlRowsAffected(InsertRequestsCommand);
 
             if (response.HasError == false){
-                response.ErrorMessage += "- createAccountRecoveryRequest - command successful - ";
+                response.ErrorMessage += "- sendRequest - command successful - ";
             }
             else{
-                 response.ErrorMessage += $"- createAccountRecoveryRequest - command : {InsertRequestsCommand} not successful - ";
+                 response.ErrorMessage += $"- sendRequest - command : {InsertRequestsCommand} not successful - ";
 
             }
             return response;

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using SS.Backend.UserManagement;
 
 namespace demoAPI.Controllers;
@@ -18,31 +19,48 @@ public class DemoController : ControllerBase
     public async Task<ActionResult<List<Employee>>> GetAllRequests(){
 
         var response = await _accountRecovery.ReadDummyTable();
+        List<Employee> employeeList = new List<Employee>();
 
-        if (response.HasError)
+        try{
+
+            if (response.HasError)
+            {
+                Console.WriteLine(response.ErrorMessage);
+                return StatusCode(500, response.ErrorMessage);
+            }
+
+            
+                if (response.ValuesRead != null)
+                {
+                    foreach (DataRow row in response.ValuesRead.Rows)
+                    {
+                        employeeList.Add(new Employee
+                        {
+                            Name = row["Name"].ToString(),
+                            Position = row["Position"].ToString(),
+                        });
+                    }
+                }
+
+                return Ok(employeeList);
+
+            foreach (var employee in employeeList){
+                Console.WriteLine($"Name: {employee.Name}, Position: {employee.Position}");
+            }
+        }
+        catch (Exception ex)
         {
-            Console.WriteLine(response.ErrorMessage);
-            return StatusCode(500, response.ErrorMessage);
+            return StatusCode(500, $"An error occurred: {ex.Message}");
         }
 
-        var requests = response.ValuesRead.Select(row => new Employee
-        {
-            Name = row[0].ToString(), 
-            Position = row[1].ToString()
-        }).ToList();
-
-        foreach (var employee in requests){
-            Console.WriteLine($"Name: {employee.Name}, Position: {employee.Position}");
-        }
-
-        return Ok(requests);
+        return Ok(employeeList);
     }
 
 
     [HttpPost]
     [Route("postDummyRequest")]
-    public async Task<ActionResult<List<Employee>>> PostDummyRequest([FromForm] string name, [FromForm] string position){
-        var response = await _accountRecovery.sendDummyRequest(name, position);
+    public async Task<ActionResult<List<Employee>>> PostDummyRequest([FromForm] string employeeName, [FromForm] string position){
+        var response = await _accountRecovery.sendDummyRequest(employeeName, position);
         return Ok(response);
     }
    

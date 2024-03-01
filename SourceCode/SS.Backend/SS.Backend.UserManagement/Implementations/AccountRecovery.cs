@@ -107,11 +107,11 @@ namespace SS.Backend.UserManagement
 
             if (response.HasError == false)
             {
-                response.ErrorMessage = "- ReadDummyTable successful. -";
+                response.ErrorMessage += "- ReadDummyTable successful. -";
             }
             else
             {
-                response.ErrorMessage = "- ReadDummyTable Failed - ";
+                response.ErrorMessage += "- ReadDummyTable Failed - ";
             }
 
             return response;
