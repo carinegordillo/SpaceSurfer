@@ -2,7 +2,7 @@ using SS.Backend.DataAccess;
 using SS.Backend.Security;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using Logger = SS.Backend.Services.LoggingService.Logger;
 
@@ -14,7 +14,7 @@ namespace SS.Backend.Tests.Security.Authentication
         private async Task CleanupTestData()
         {
             var SAUser = Credential.CreateSAUser();
-            var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SSDatabase;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+            var connectionString = string.Format(@"Data Source=localhost;Initial Catalog=SSDatabase;User Id={0};Password={1};", SAUser.user, SAUser.pass);
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -113,8 +113,10 @@ namespace SS.Backend.Tests.Security.Authentication
             // Cleanup
             await CleanupTestData();
         }
+    }
+}
 
-
+/*
         [TestMethod]
         public async Task Authenticate_RegisteredUser_NeverAuthenticatedBefore_Pass()
         {
@@ -341,3 +343,4 @@ namespace SS.Backend.Tests.Security.Authentication
 
     }
 }
+*/

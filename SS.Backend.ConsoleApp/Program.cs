@@ -13,6 +13,7 @@ internal class Program
         ConfigService configService = new ConfigService(configFilePath);
         SqlDAO dao = new SqlDAO(configService);
 
+        
         var parameters = new Dictionary<string, object>
         {
             { "hashedUsername", "test@email" },

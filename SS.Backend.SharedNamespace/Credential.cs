@@ -13,11 +13,11 @@
 
         public static Credential CreateSAUser()
         {
-            return new Credential("sa", "D0ck3rHaras");
+            return new Credential("sa", "strongDockerPwd123");
         }
         public static Credential CreateGenUser()
         {
-            return new Credential("sa", "D0ck3rHaras");
+            return new Credential("sa", "strongDockerPwd123");
         }
 
     }

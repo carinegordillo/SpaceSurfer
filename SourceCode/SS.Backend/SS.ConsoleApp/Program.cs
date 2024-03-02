@@ -18,7 +18,8 @@ internal class Program
                     .From("userProfile")
                     .Where($"hashedUsername = 'helloworld'")
                     .Build();
-        result = await dao.ReadSqlResult(selectCommand);
+        result = await dao.ReadSqlResult(selectCommand).ConfigureAwait(false);
+        //await sqldao.SqlRowsAffected(insertCommand).ConfigureAwait(false)
 
         result.PrintDataTable();
     }

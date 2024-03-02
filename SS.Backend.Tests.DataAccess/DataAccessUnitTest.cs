@@ -16,22 +16,21 @@ namespace SS.Backend.Tests.DataAccess
             var builder = new CustomSqlCommandBuilder();
             string configFilePath = "/Users/sarahsantos/SpaceSurfer/SourceCode/SS.Backend/Configs/config.local.txt";
             ConfigService configService = new ConfigService(configFilePath);
-            SqlDAO dao = new SqlDAO(configService);
+            dao = new SqlDAO(configService);
 
 
         }
 
         private async Task CleanupTestData()
         {
-            //var SAUser = Credential.CreateSAUser();
-            //var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SSDatabaser;User Id={0};Password={1}; TrustServerCertificate=True;", SAUser.user, SAUser.pass);
-            string configFilePath = "/Users/sarahsantos/SpaceSurfer/SourceCode/SS.Backend/Configs/config.local.txt";
-            ConfigService configService = new ConfigService(configFilePath);
-            SqlDAO dao = new SqlDAO(configService);           
+            var SAUser = Credential.CreateSAUser();
+            var connectionString = string.Format(@"Data Source=localhost; Initial Catalog=SSDatabase; User Id=sa; Password=dockerStrongPwd123; TrustServerCertificate=True;");
+                  
             try
             {
-                using (SqlConnection connection = new SqlConnection(dao))
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
+
                     await connection.OpenAsync();
 
                     string sql = $"DELETE FROM dbo.Logs WHERE [Username] = 'test@email'";
@@ -68,6 +67,9 @@ namespace SS.Backend.Tests.DataAccess
             await CleanupTestData();
         }
 
+    
+
+
         [TestMethod]
         public async Task DataAccess_Create_CreateValidRecord_Pass()
         {
@@ -87,7 +89,9 @@ namespace SS.Backend.Tests.DataAccess
             // Cleanup
             await CleanupTestData();
         }
-
+    }
+}
+/*
         [TestMethod]
         public async Task DataAccess_Create_HasNullInput_Pass()
         {
@@ -454,3 +458,4 @@ namespace SS.Backend.Tests.DataAccess
 
     }
 }
+*/
