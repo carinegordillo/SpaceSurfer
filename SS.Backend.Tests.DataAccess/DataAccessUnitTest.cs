@@ -12,18 +12,25 @@ namespace SS.Backend.Tests.DataAccess
         [TestInitialize]
         public void TestInitialize()
         {
-            var SAUser = Credential.CreateSAUser();
-            //dao = new SqlDAO(SAUser);
+            Response result = new Response();
+            var builder = new CustomSqlCommandBuilder();
+            string configFilePath = "/Users/sarahsantos/SpaceSurfer/SourceCode/SS.Backend/Configs/config.local.txt";
+            ConfigService configService = new ConfigService(configFilePath);
+            SqlDAO dao = new SqlDAO(configService);
+
 
         }
 
         private async Task CleanupTestData()
         {
-            var SAUser = Credential.CreateSAUser();
-            var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+            //var SAUser = Credential.CreateSAUser();
+            //var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SSDatabaser;User Id={0};Password={1}; TrustServerCertificate=True;", SAUser.user, SAUser.pass);
+            string configFilePath = "/Users/sarahsantos/SpaceSurfer/SourceCode/SS.Backend/Configs/config.local.txt";
+            ConfigService configService = new ConfigService(configFilePath);
+            SqlDAO dao = new SqlDAO(configService);           
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(dao))
                 {
                     await connection.OpenAsync();
 

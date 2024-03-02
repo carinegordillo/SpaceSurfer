@@ -14,7 +14,7 @@ namespace SS.Backend.Tests.Security.Authentication
         private async Task CleanupTestData()
         {
             var SAUser = Credential.CreateSAUser();
-            var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+            var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SSDatabase;User Id={0};Password={1};", SAUser.user, SAUser.pass);
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -51,7 +51,7 @@ namespace SS.Backend.Tests.Security.Authentication
             // Arrange
             Response result = new Response();
             var builder = new CustomSqlCommandBuilder();
-            string configFilePath = Path.Combine(AppContext.BaseDirectory, "config.local.txt");
+            string configFilePath =  "/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt";
             ConfigService configService = new ConfigService(configFilePath);
             GenOTP genotp = new GenOTP();
             Hashing hasher = new Hashing();
@@ -121,7 +121,7 @@ namespace SS.Backend.Tests.Security.Authentication
             // Arrange
             Response result = new Response();
             var builder = new CustomSqlCommandBuilder();
-            string configFilePath = Path.Combine(AppContext.BaseDirectory, "config.local.txt");
+            string configFilePath =  "/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt";
             ConfigService configService = new ConfigService(configFilePath);
             GenOTP genotp = new GenOTP();
             Hashing hasher = new Hashing();
@@ -175,7 +175,7 @@ namespace SS.Backend.Tests.Security.Authentication
             // Arrange
             Response result = new Response();
             var builder = new CustomSqlCommandBuilder();
-            string configFilePath = Path.Combine(AppContext.BaseDirectory, "config.local.txt");
+            string configFilePath =  "/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt";
             ConfigService configService = new ConfigService(configFilePath);
             GenOTP genotp = new GenOTP();
             Hashing hasher = new Hashing();
@@ -209,7 +209,7 @@ namespace SS.Backend.Tests.Security.Authentication
             // Arrange
             Response result = new Response();
             var builder = new CustomSqlCommandBuilder();
-            string configFilePath = Path.Combine(AppContext.BaseDirectory, "config.local.txt");
+            string configFilePath =  "/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt";
             ConfigService configService = new ConfigService(configFilePath);
             GenOTP genotp = new GenOTP();
             Hashing hasher = new Hashing();
@@ -278,7 +278,7 @@ namespace SS.Backend.Tests.Security.Authentication
             // Arrange
             Response result = new Response();
             var builder = new CustomSqlCommandBuilder();
-            string configFilePath = Path.Combine(AppContext.BaseDirectory, "config.local.txt");
+            string configFilePath =  "/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt";
             ConfigService configService = new ConfigService(configFilePath);
             GenOTP genotp = new GenOTP();
             Hashing hasher = new Hashing();

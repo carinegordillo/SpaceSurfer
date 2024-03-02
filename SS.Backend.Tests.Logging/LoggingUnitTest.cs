@@ -16,6 +16,8 @@ namespace SS.Backend.Tests.Logging
         {
             var SAUser = Credential.CreateSAUser();
             //dao = new SqlDAO(SAUser);
+            string configFilePath =  "/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt";
+            ConfigService configService = new ConfigService(configFilePath);
         }
 
         private async Task CleanupTestData()
