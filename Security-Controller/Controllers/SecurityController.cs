@@ -102,10 +102,20 @@ namespace AuthAPI.Controllers
 
         [HttpGet(Name = "getAuthZ")]
         [Route("/authZ")]
-        public async Task<IActionResult> AuthZ([FromRouteAttribute] SSPrincipal currentPrincipal, IDictionary<string, string> requiredClaims)
+        public async Task<IActionResult> AuthZ()
         {
+            var currentPrincipal = HttpContext.User;
+            IDictionary<string, string> requiredClaims = new Dictionary<string, string>
+            {
+                {"Role", "Admin"}
+            }
             var verify = await _authService.IsAuthorize(currentPrincipal, requiredClaims);
 
+             if (!verify)
+            {
+                // If not authorized, return 401 Unauthorized
+                return Unauthorized();
+            }
             return Ok(new { verify} );
         }
     }
