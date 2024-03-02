@@ -103,7 +103,7 @@ namespace SS.Backend.UserManagement
                 response.ErrorMessage += "- createAccountRecoveryRequest - command successful - ";
             }
             else{
-                 response.ErrorMessage += $"- createAccountRecoveryRequest - command : {InsertRequestsCommand} not successful - ";
+                 response.ErrorMessage += $"- createAccountRecoveryRequest - command : {InsertRequestsCommand.CommandText} not successful - ";
 
             }
             return response;
@@ -139,11 +139,44 @@ namespace SS.Backend.UserManagement
                 response.ErrorMessage += "- sendRequest - command successful - ";
             }
             else{
-                 response.ErrorMessage += $"- sendRequest - command : {InsertRequestsCommand} not successful - ";
+                 response.ErrorMessage += $"- sendRequest - command : {InsertRequestsCommand.CommandText} not successful - ";
 
             }
             return response;
         }
+
+        public async Task<Response> readTableWhere(string whereClause, object whereClauseval, string tableName)
+        {
+            string configFilePath = "/Users/carinegordillo/config.txt";
+            ConfigService configService = new ConfigService(configFilePath);
+            SqlDAO sqldao = new SqlDAO(configService);
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+
+            var parameters = new Dictionary<string, object>
+            {{ whereClause, whereClauseval }};
+
+            var command = commandBuilder.BeginSelectAll()
+                        .From(tableName)
+                        .Where($"{whereClause} = @{whereClause}")
+                        .AddParameters(parameters)
+                        .Build();
+            
+            response = await sqldao.ReadSqlResult(command);
+
+            if (response.HasError == false){
+                response.ErrorMessage += "- readTableWhere- command successful -";
+            }
+            else{
+                 response.ErrorMessage += $"- readTableWhere- {command.CommandText} -  command not successful -";
+
+            }
+            return response;
+
+
+
+        }
+
 
 
     }

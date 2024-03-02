@@ -1,0 +1,6 @@
+{
+    "server": {
+      "baseDir": "./webpages",
+      "index": "recoveryRequests.html"
+    }
+  }

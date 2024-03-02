@@ -5,7 +5,7 @@
   "main": "main.js",
   "dependencies": {
     "ajax": "^0.0.4",
-    "axios": "^0.26.0",
+    "axios": "^0.26.1",
     "typescript": "^4.6.2"
   },
   "scripts": {

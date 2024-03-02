@@ -1,0 +1,76 @@
+.requests-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.request-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #f9f9f9;
+}
+
+.request-card:not(:last-child) {
+    margin-bottom: 15px;
+}
+
+.request-card h4 {
+    margin: 0;
+    color: #333;
+}
+
+.request-detail {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Style the checkbox */
+.request-card input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+/* Style the submit button */
+#approvalForm button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#approvalForm button:hover {
+    background-color: #45a049;
+}
+
+.requests-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.request-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+}
+
+.request-card h4, .request-card p {
+    margin: 5px 0;
+}
+
+#approvalForm button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#approvalForm button:hover {
+    background-color: #45a049;
+}

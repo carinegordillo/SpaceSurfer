@@ -10,6 +10,7 @@ namespace SS.Backend.UserManagement
         public Task<Response> ReadUserTable(string tableName);
         public Task<Response> createAccountRecoveryRequest(UserRequestModel userRequest, string tableName);
         public  Task<Response> sendRequest(string name, string position);
+        public  Task<Response> readTableWhere(string whereClause, object whereClauseval, string tableName);
         
 
     }

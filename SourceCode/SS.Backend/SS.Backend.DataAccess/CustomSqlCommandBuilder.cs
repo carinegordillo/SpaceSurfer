@@ -82,7 +82,7 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
 
     public ICustomSqlCommandBuilder Where(string whereClause)
     {
-        _commandText.Append($"WHERE {whereClause}");
+        _commandText.Append($" WHERE {whereClause}");
         return this;
     }
 
