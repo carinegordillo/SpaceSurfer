@@ -54,11 +54,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-//builder.Services.AddAuthorization();
+builder.Services.AddAuthorization();
 
 //builder.Services.AddTransient<Credential>();
-//builder.Services.AddTransient<ConfigService>(provider =>
-  //  new ConfigService(Path.Combine(AppContext.BaseDirectory, "config.local.txt")));
+builder.Services.AddTransient<ConfigService>(provider =>
+    new ConfigService(Path.Combine("/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt")));
 builder.Services.AddTransient<SqlDAO>();
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
