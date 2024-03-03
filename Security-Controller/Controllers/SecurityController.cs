@@ -60,11 +60,13 @@ public class SecurityController : Controller
 
 using Microsoft.AspNetCore.Mvc;
 using SS.Backend.Security;
+using System.Data;
 
 namespace Security_Controller.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[ApiExplorerSettings(IgnoreApi=true)]
 public class SecurityController : Controller
 {
     private readonly SSAuthService _authService;
@@ -72,7 +74,7 @@ public class SecurityController : Controller
     {
         _authService = authService;
     }
-
+    /*
     [HttpPost("sendOTP")]
     public async Task<IActionResult> SendOTP([FromBody] AuthenticationRequest request)
     {
@@ -86,6 +88,20 @@ public class SecurityController : Controller
         return Ok(new { otp });
     }
 
+    [Route("/authZ")]
+    [HttpPost("postAuthZ")]
+    public async Task<IActionResult> AuthZ([FromForm] SSPrincipal currentPrincipal, [FromForm] IDictionary<string, string> requiredClaims)
+    {
+        bool verify = await _authService.IsAuthorize(currentPrincipal, requiredClaims);
+
+        if (!verify)
+        {
+            // If not authorized, return 401 Unauthorized
+            return Unauthorized();
+        }
+        return Ok(new { verify });
+    }
+    */
     [HttpPost("authenticate")]
     public async Task<IActionResult> Authenticate([FromBody] AuthenticationRequest request)
     {
@@ -98,20 +114,11 @@ public class SecurityController : Controller
 
         return Ok(new { principal });
     }
-
-    [HttpPost(Name = "postAuthZ")]
-    [Route("/authZ")]
-    public async Task<IActionResult> AuthZ([FromQueryAttribute] SSPrincipal currentPrincipal, IDictionary<string, string> requiredClaims)
-    {
-        bool verify = await _authService.IsAuthorize(currentPrincipal, requiredClaims);
-
-        if (!verify)
-        {
-            // If not authorized, return 401 Unauthorized
-            return Unauthorized();
-        }
-        return Ok(new { verify} );
-    }
+    
+    
+    
 }
+
+
 
 
