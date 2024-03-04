@@ -30,6 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SS.FrontEnd", "SS.FrontEnd"
 		..\SS.Frontend\AccountDeletionView.html = ..\SS.Frontend\AccountDeletionView.html
 		..\SS.Frontend\AIfire_transparent.png = ..\SS.Frontend\AIfire_transparent.png
 		..\SS.Frontend\astroSurf.png = ..\SS.Frontend\astroSurf.png
+		..\SS.Frontend\bs-config.json = ..\SS.Frontend\bs-config.json
 		..\SS.Frontend\favicon.ico = ..\SS.Frontend\favicon.ico
 		..\SS.Frontend\index.html = ..\SS.Frontend\index.html
 		..\SS.Frontend\package-lock.json = ..\SS.Frontend\package-lock.json
@@ -43,14 +44,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SS.FrontEnd", "SS.FrontEnd"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SS.Backend", "SS.Backend", "{4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}"
 	ProjectSection(SolutionItems) = preProject
+		bs-config.json = bs-config.json
 		package-lock.json = package-lock.json
 		package.json = package.json
 		server.js = server.js
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B01F06E3-7BFC-4E7C-BD5B-33065115F025}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthAPI", "..\..\AuthAPI\AuthAPI.csproj", "{5269C8DF-2EA9-454C-9192-310EEA34BD8F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountDeletionAPI", "..\SS.Frontend\SS.Frontend.Services\DeletingService\AccountDeletion\AccountDeletionAPI.csproj", "{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B}"
 EndProject
@@ -102,10 +102,6 @@ Global
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5269C8DF-2EA9-454C-9192-310EEA34BD8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5269C8DF-2EA9-454C-9192-310EEA34BD8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5269C8DF-2EA9-454C-9192-310EEA34BD8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5269C8DF-2EA9-454C-9192-310EEA34BD8F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B}.Release|Any CPU.ActiveCfg = Release|Any CPU

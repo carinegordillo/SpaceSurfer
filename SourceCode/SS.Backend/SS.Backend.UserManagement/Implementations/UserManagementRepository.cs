@@ -1,103 +1,103 @@
-using SS.Backend.DataAccess;
-using SS.Backend.SharedNamespace;
-using System.Data.SqlClient;
+//using SS.Backend.DataAccess;
+//using SS.Backend.SharedNamespace;
+//using System.Data.SqlClient;
 
-namespace SS.Backend.UserManagement
-{
+//namespace SS.Backend.UserManagement
+//{
 
-    public class UserManagementRepository : IUserManagementRepository
-    {
+//    public class UserManagementRepository : IUserManagementRepository
+//    {
 
-        Credential removeMeLater = Credential.CreateSAUser();
-
-
-        public async Task<Response> GeneralModifier(string whereClause, object whereClauseval, string fieldName, object newValue, string tableName)
-        {
-            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
-            Response response = new Response();
-            var commandBuilder = new CustomSqlCommandBuilder();
-            
-            
-            var columnValues = new Dictionary<string, object>{
-                { fieldName, newValue },{whereClause,whereClauseval}};
-
-            SqlCommand updateCommand = commandBuilder.BeginUpdate(tableName)
-                                            .Set(columnValues)
-                                            .Where($"{whereClause} = @{whereClause}")
-                                            .AddParameters(columnValues)
-                                            .Build();
-
-            response = await SQLDao.SqlRowsAffected(updateCommand);
-
-            if (response.HasError == false){
-                response.ErrorMessage += "- General Modifier - command successful -";
-            }
-            else{
-                 response.ErrorMessage += $"- General Modifier - command : {updateCommand.CommandText} not successful -";
-
-            }
-            return response;
-        }
-
-        public async Task<Response> ReadUserTable(string tableName)
-        {
-
-            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
-            Response response = new Response();
-            var commandBuilder = new CustomSqlCommandBuilder();
-            
+//        Credential removeMeLater = Credential.CreateSAUser();
 
 
-            SqlCommand selectRequestsCommand = commandBuilder.BeginSelectAll()
-                                            .From($"{tableName}")
-                                            .Build();
+//        public async Task<Response> GeneralModifier(string whereClause, object whereClauseval, string fieldName, object newValue, string tableName)
+//        {
+//            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+//            Response response = new Response();
+//            var commandBuilder = new CustomSqlCommandBuilder();
 
-            response = await SQLDao.ReadSqlResult(selectRequestsCommand);
 
-            if (response.HasError == false){
-                response.ErrorMessage += "- ReadUserTable- command successful -";
-            }
-            else{
-                 response.ErrorMessage += "- ReadUserTable - command not successful -";
+//            var columnValues = new Dictionary<string, object>{
+//                { fieldName, newValue },{whereClause,whereClauseval}};
 
-            }
-            return response;
-        }
+//            SqlCommand updateCommand = commandBuilder.BeginUpdate(tableName)
+//                                            .Set(columnValues)
+//                                            .Where($"{whereClause} = @{whereClause}")
+//                                            .AddParameters(columnValues)
+//                                            .Build();
+
+//            response = await SQLDao.SqlRowsAffected(updateCommand);
+
+//            if (response.HasError == false){
+//                response.ErrorMessage += "- General Modifier - command successful -";
+//            }
+//            else{
+//                 response.ErrorMessage += $"- General Modifier - command : {updateCommand.CommandText} not successful -";
+
+//            }
+//            return response;
+//        }
+
+//        public async Task<Response> ReadUserTable(string tableName)
+//        {
+
+//            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+//            Response response = new Response();
+//            var commandBuilder = new CustomSqlCommandBuilder();
 
 
 
-        public async Task<Response> createAccountRecoveryRequest(UserRequestModel userRequest, string tableName)
-        {
-            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
-            Response response = new Response();
-            var commandBuilder = new CustomSqlCommandBuilder();
+//            SqlCommand selectRequestsCommand = commandBuilder.BeginSelectAll()
+//                                            .From($"{tableName}")
+//                                            .Build();
 
-            var parameters = new Dictionary<string, object>
-                        {
-                            { "userHash", userRequest.UserHash },
-                            { "requestDate", userRequest.RequestDate},
-                            { "status", userRequest.Status },
-                            { "requestType", userRequest.RequestType},
-                            { "additionalInformation", userRequest.AdditionalInformation }
-                        };
+//            response = await SQLDao.ReadSqlResult(selectRequestsCommand);
 
-            SqlCommand InsertRequestsCommand = commandBuilder.BeginInsert(tableName)
-                                                            .Columns(parameters.Keys)
-                                                            .Values(parameters.Keys)
-                                                            .AddParameters(parameters)
-                                                            .Build();
+//            if (response.HasError == false){
+//                response.ErrorMessage += "- ReadUserTable- command successful -";
+//            }
+//            else{
+//                 response.ErrorMessage += "- ReadUserTable - command not successful -";
 
-            response = await SQLDao.SqlRowsAffected(InsertRequestsCommand);
+//            }
+//            return response;
+//        }
 
-            if (response.HasError == false){
-                response.ErrorMessage += "- createAccountRecoveryRequest - command successful - ";
-            }
-            else{
-                 response.ErrorMessage += $"- createAccountRecoveryRequest - command : {InsertRequestsCommand} not successful - ";
 
-            }
-            return response;
-        }
 
-    }
-}
+//        public async Task<Response> createAccountRecoveryRequest(UserRequestModel userRequest, string tableName)
+//        {
+//            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+//            Response response = new Response();
+//            var commandBuilder = new CustomSqlCommandBuilder();
+
+//            var parameters = new Dictionary<string, object>
+//                        {
+//                            { "userHash", userRequest.UserHash },
+//                            { "requestDate", userRequest.RequestDate},
+//                            { "status", userRequest.Status },
+//                            { "requestType", userRequest.RequestType},
+//                            { "additionalInformation", userRequest.AdditionalInformation }
+//                        };
+
+//            SqlCommand InsertRequestsCommand = commandBuilder.BeginInsert(tableName)
+//                                                            .Columns(parameters.Keys)
+//                                                            .Values(parameters.Keys)
+//                                                            .AddParameters(parameters)
+//                                                            .Build();
+
+//            response = await SQLDao.SqlRowsAffected(InsertRequestsCommand);
+
+//            if (response.HasError == false){
+//                response.ErrorMessage += "- createAccountRecoveryRequest - command successful - ";
+//            }
+//            else{
+//                 response.ErrorMessage += $"- createAccountRecoveryRequest - command : {InsertRequestsCommand} not successful - ";
+
+//            }
+//            return response;
+//        }
+
+//    }
+//}

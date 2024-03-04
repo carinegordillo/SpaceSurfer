@@ -50,35 +50,6 @@
 
     </div>
 
-    <script>
-
-    function deleteAccount(email) {
-
-            $.ajax({
-
-                // Our sample url to make request
-                url:'http://localhost:8080/api/AccountDeletion/Delete',
-                // Type of Request
-                type: "POST",
-                mode: 'cors',
-                cache: 'default',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify({ username: email }),
-
-                // Function to call when to
-                // request is ok
-                success: function (data) {
-                    changeView('AccountDeleteView')
-                    console.log(data);
-                }
-            });
-        }
-
-    </script>
-
 </body>
 
 </html>

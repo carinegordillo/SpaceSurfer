@@ -1,9 +1,8 @@
-// Program.cs
 using Microsoft.Net.Http.Headers;
 using SS.Backend.DataAccess;
 using SS.Backend.Services.DeletingService;
-using SS.Backend.SharedNamespace;
 
+// Creates a new web application builder
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -14,71 +13,62 @@ builder.Services.AddSwaggerGen();
 // Add transient services for logging
 // builder.Services.AddTransient<SqlLogTarget>();
 
+// Adding authorization services
 builder.Services.AddAuthorization();
 
-builder.Services.AddSingleton(new ConfigService(Path.Combine(AppContext.BaseDirectory, "config.local.txt")));
+// Adding configuration service
+builder.Services.AddSingleton(new ConfigService(Path.Combine("C:/Users/brand/Documents/GitHub/SpaceSurfer/SourceCode/SS.Backend/config.local.txt")));
 
+// Register services for dependency injection
 builder.Services.AddTransient<IAccountDeletion, AccountDeletion>();
 builder.Services.AddTransient<IDatabaseHelper, DatabaseHelper>();
-builder.Services.AddTransient<CustomSqlCommandBuilder>();
-builder.Services.AddTransient<SqlDAO>();
-builder.Services.AddTransient<SealedSqlDAO>();
-builder.Services.AddTransient<Credential>(provider =>
-{
-    // Provide appropriate values for user and pass here
-    return new Credential("sa", "grfragk");
-});
+
+//// Registers an instance of Credential for database access
+//builder.Services.AddTransient<ConfigService>(provider =>
+//{
+//    // Provide appropriate values for user and pass here
+//    return new Credential("sa", "grfragk");
+//});
 
 
-
+// builds the application
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    // Enables Swagger and the SwaggerUI
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseRouting();
 
-app.Use(async (httpContext, next) =>
+// Middleware to handle CORS preflight requests
+app.Use(async (context, next) =>
 {
+    // Get the origin header from the request
+    var origin = context.Request.Headers[HeaderNames.Origin].ToString();
 
-    await next();
-
-    // Explicitly only wanting code to execite on the way out of pipeline (Response/outbound direction)
-    if (httpContext.Response.Headers.ContainsKey(HeaderNames.XPoweredBy))
+    if (!string.IsNullOrEmpty(origin))
     {
-        httpContext.Response.Headers.Remove(HeaderNames.XPoweredBy);
+        context.Response.Headers.Append(HeaderNames.AccessControlAllowOrigin, origin);
+        context.Response.Headers.Append(HeaderNames.AccessControlAllowMethods, "GET, POST, PUT, DELETE, OPTIONS");
+        context.Response.Headers.Append(HeaderNames.AccessControlAllowHeaders, "Content-Type, Accept");
     }
-
-    httpContext.Response.Headers.Server = "";
-
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.StatusCode = StatusCodes.Status200OK;
+        await context.Response.CompleteAsync();
+    }
+    else
+    {
+        await next();
+    }
 });
 
-app.Use((httpContext, next) =>
-{
-    if (httpContext.Request.Method.ToUpper() == nameof(HttpMethod.Options).ToUpper() && httpContext.Request.Headers.XRequestedWith == "XMLHttpRequest")
-    {
-        var allowedMethods = new List<string>()
-        {
-            HttpMethods.Get,
-            HttpMethods.Post,
-            HttpMethods.Options,
-            HttpMethods.Head
-        };
-
-        httpContext.Response.Headers.Append(HeaderNames.AccessControlAllowOrigin, "*");
-        httpContext.Response.Headers.AccessControlAllowMethods = string.Join(",", allowedMethods); // "GET, POST, OPTIONS, HEAD"
-        httpContext.Response.Headers.AccessControlAllowHeaders = "*";
-        httpContext.Response.Headers.AccessControlMaxAge = TimeSpan.FromHours(2).Seconds.ToString();
-    }
-    next.Invoke(httpContext);
-
-    return next(httpContext);
-});
-
+// Maps the controller endpoints
 app.MapControllers();
 
+// runs the application
 app.Run();

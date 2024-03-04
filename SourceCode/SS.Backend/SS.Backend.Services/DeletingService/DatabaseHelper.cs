@@ -4,7 +4,7 @@ using SS.Backend.SharedNamespace;
 namespace SS.Backend.Services.DeletingService
 {
     /// <summary>
-    ///     DatabaseHelper class is responsible of retreiving table names from a database
+    ///     DatabaseHelper class is responsible of retrieving table names from a database
     /// </summary>
     ///
     public class DatabaseHelper : IDatabaseHelper
@@ -12,18 +12,19 @@ namespace SS.Backend.Services.DeletingService
         // Initializing temp credential
         Credential temp = Credential.CreateSAUser();
 
-        public async Task<Response> RetrieveTableNames()
+        public async Task<Response> RetrieveTable(string user)
         {
             // Opens connection to Data Accss
-            SealedSqlDAO sealedSqlDAO = new SealedSqlDAO(temp);
+            // ISqlDAO sqlDAO = new SqlDAO(temp);
 
-            //initialzing Sql Command builder
+            //initializing Sql Command builder
             CustomSqlCommandBuilder commandBuild = new CustomSqlCommandBuilder();
 
             // SQL Query to get the Table Names in the database
-            var tableNames = commandBuild.BeginSelect().SelectOne("*").From("INFORMATION_SCHEMA.COLUMNS ").Where("COLUMN_NAME = 'username' AND TABLE_NAME<>'Logs';").Build();
+            //var tableNames = commandBuild.BeginSelect().SelectOne("Username").From("dbo.userAccount ").Where("Username = '@user';").Build();
 
-            return await sealedSqlDAO.ReadSqlResult(tableNames);
+            //return await sqlDAO.ReadSqlResult(tableNames);
+            return null;
         }
     }
 }

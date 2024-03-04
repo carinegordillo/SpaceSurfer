@@ -1,4 +1,4 @@
-// AccountDeletionRequest
+// AccountDeletionRequest.cs
 namespace AccountDeletionAPI
 {
     public class DeletionRequest
@@ -6,9 +6,5 @@ namespace AccountDeletionAPI
 
         public required string username { get; set; }
 
-
-        // Need to see how to get OTP
-
-        // public string? OTP { get; set; }
     }
 }

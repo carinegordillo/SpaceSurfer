@@ -1,5 +1,4 @@
 using SS.Backend.DataAccess;
-using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -143,7 +142,7 @@ namespace SS.Backend.Services.AccountCreationService
                     .AddParameters(parameters)
                     .Build();
 
-                tablesresponse = await SQLDao.SqlRowsAffected(insertCommand);
+                //tablesresponse = await SQLDao.SqlRowsAffected(insertCommand);
                 if (tablesresponse.HasError)
                 {
                     tablesresponse.ErrorMessage += $"{tableName}: error inserting data; ";
@@ -159,7 +158,7 @@ namespace SS.Backend.Services.AccountCreationService
             Response response = new Response();
 
             SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
-            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(temp)));
+            //Logger logger = new Logger(new SqlLogTarget(new SqlDAO(temp)));
 
 
             string validationMessage = CheckUserInfoValidity(userInfo);
@@ -183,7 +182,7 @@ namespace SS.Backend.Services.AccountCreationService
                     category = "Data Store",
                     description = "Successful account creation"
                 };
-                await logger.SaveData(entry);
+                //await logger.SaveData(entry);
             }
             else
             {
@@ -196,7 +195,7 @@ namespace SS.Backend.Services.AccountCreationService
                     category = "Data Store",
                     description = "Error inserting user in data store."
                 };
-                await logger.SaveData(entry);
+                // await logger.SaveData(entry);
             }
             return response;
 
