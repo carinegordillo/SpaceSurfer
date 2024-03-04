@@ -92,23 +92,23 @@ namespace SS.Backend.Tests.AccountCreationTest
         {
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
             UserInfo userInfo = new UserInfo();
-            AccountCreation accountcreation = new AccountCreation(userInfo);
+            AccountCreation accountCreation = new AccountCreation();
             Stopwatch timer = new Stopwatch();
 
             //username must be unique in database
             var validUserInfo = new UserInfo
             {
-                username = "COMBINING@hotmail.com",
+                username = "newTable@hotmail.com",
                 dob = new DateTime(1990, 1, 1),
-                firstname = "COMBING",
-                lastname = "EVERYTHING", 
+                firstname = "newTable",
+                lastname = "newTable", 
                 role = 1,
                 status = "yes", 
                 backupEmail = "COMBININGEVERYTHING@backup.com"
             };
 
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo);
+            var response = await accountCreation.CreateUserAccount(validUserInfo);
             timer.Stop();
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);

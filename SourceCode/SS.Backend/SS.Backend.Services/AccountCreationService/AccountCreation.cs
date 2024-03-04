@@ -18,10 +18,10 @@ namespace SS.Backend.Services.AccountCreationService
         private readonly UserInfo _userInfo;
         private readonly ICustomSqlCommandBuilder _commandBuilder;
 
-        public AccountCreation(UserInfo userInfo)
-        {
-            _userInfo = userInfo;
-        }
+        // public AccountCreation(UserInfo userInfo)
+        // {
+        //     _userInfo = userInfo;
+        // }
 
         public bool CheckNullWhiteSpace(string str)
         {
@@ -176,7 +176,7 @@ namespace SS.Backend.Services.AccountCreationService
        
             //generating sql command 
             UserPepper userPepper = new UserPepper();
-            AccountCreation accountcreation = new AccountCreation(userInfo);
+            AccountCreation accountcreation = new AccountCreation();
             Hashing hashing = new Hashing();
 
             
@@ -264,10 +264,10 @@ namespace SS.Backend.Services.AccountCreationService
             var commandBuilder = new CustomSqlCommandBuilder();
             
             var insertCommand =  commandBuilder.BeginSelectAll()
-                                            .From($"dbo.userPofile")
+                                            .From(tableName)
                                             .Build();
 
-            response = await SQLDao.SqlRowsAffected(insertCommand);
+            response = await SQLDao.ReadSqlResult(insertCommand);
             if (response.HasError)
             {
                 response.ErrorMessage += $"{tableName}: error inserting data; ";

@@ -3,8 +3,9 @@
 <head>
     <title>Register!</title>
     <script src="registration.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    content-type="text/javascript"
+    <script src="node_modules/htmx.org/dist/htmx.js"></script>
     <link rel="stylesheet" href="Registration.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico?version=3">
 </head>
@@ -24,9 +25,9 @@
 <!-- <div id="aboutView" class="view">About content...</div>
 <div id="loginView" class="view" style="display: none;">Login content...</div> -->
 <!-- <div id = "registerView" class = "form-container" style="display: none;"> -->
-<div id = "registerView" class = "form-container" >
+<div hx-get="http://localhost:8080/abc" id = "registerView" class = "form-container"  >
 
-    <form id="registrationForm">
+    <form id="registrationForm" onsubmit="event.preventDefault(); createUserAccount();">
         <h2>Register to SpaceSurfer🤙</h2>
 
         <div class="form-row">
@@ -46,7 +47,7 @@
 
         <div class="form-row">
         <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br>
+        <input type="email" id="username" name="email" required><br>
         </div>
         
         <h3>Are You A Company/Facility?</h3>
@@ -96,27 +97,19 @@
 </html>
 <script>
     function createUserAccount(){
-        //all teh differetnt things 
-        // var firstName = document.getElementById("firstName").value;
-
-        // create object 
-        //userProfile 
-
         const userInfo = {
-            firstName: document.getElementById('firstName').value,
-            lastName: document.getElementById('lastName').value,
+            firstname: document.getElementById('firstName').value,
+            lastname: document.getElementById('lastName').value,
             dob: document.getElementById('dob').value,
             username: document.getElementById('username').value,
             role: Math.floor(Math.random() * 10), // Random role number between 0 and 9
-            status: ["Active", "Inactive", "Pending"][Math.floor(Math.random() * 3)], // Randomly selects a status
-            backupEmail: `user@example.com`,
+            status: "yes", // Randomly selects a status
+            backupEmail: `CONTROLLER@example.com`,
         };
-
         $.ajax({
-            url: '/api/registration/createAccount',
+            url: 'http://localhost:8080/api/registration/createAccount',
             type: 'POST',
             contentType: 'application/json',
-            // data: JSON.stringify({ userInfo: userInfo }),
             data: JSON.stringify({userInfo }),
             success: function (response) {
               
@@ -126,6 +119,8 @@
             },
             error: function (xhr, status, error) {
                 alert('Error sending verification code.');
+                console.log("THESE ARE  PASSING", userInfo.firstName);
+                console.log(CreateUserAccount.response);
             }
         });
     }
