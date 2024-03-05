@@ -1,6 +1,5 @@
 using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
-using System.Data.SqlClient;
 
 
 namespace SS.Backend.Services.ModificationService
@@ -9,12 +8,13 @@ namespace SS.Backend.Services.ModificationService
     {
         Credential removeMeLater = Credential.CreateSAUser();
 
-         public async Task<Response> UpdateDisplayName(string username, string newEmail, int newAge){
+        public async Task<Response> UpdateDisplayName(string username, string newEmail, int newAge)
+        {
 
             SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();
-            
+
             var columnValues = new Dictionary<string, object>{
             { "firstName", newEmail },
             { "Age", newAge }};
@@ -31,7 +31,7 @@ namespace SS.Backend.Services.ModificationService
                                             .Build();
 
 
-            return await SQLDao.SqlRowsAffected(updateCommand);
+            return null;
         }
     }
 
