@@ -3,11 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recovery Requests</title>
+    <title>Account Creation</title>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 <body>
-    <h1>Account Creation Requests</h1>
+    <h1>Account Creation</h1>
+    <form id="accountCreationForm">
+        <input type="text" id="username" name="username" placeholder="Username" required>
+        <input type="date" id="dob" name="dob" placeholder="DOB" required><br>
+        <input type="text" id="firstname" name="firstName" placeholder="First Name" required>
+        <input type="text" id="lastname" name="lastName" placeholder="Last Name" required>
+        <input type="text" id="role" name="role" placeholder="Role" required>
+        <input type="text" id="status" name="status" placeholder="Status" required>
+        <input type="text" id="backupEmail" name="backupEmail" placeholder="Backup Email" required>
+        
+        <!-- <h3>Are You A Company/Facility?</h3>
+        <div class="form-row" style="display: flex; justify-content: center;">
+        <input type="checkbox"  name="isCompany" onchange="handleCheckboxChange()" >
+        <label for="isCompany">Company</label>
+
+        <input type="checkbox"  name="isFacility" onchange="handleCheckboxChange()" >
+        <label for="isFacility">Facility</label>
+        </div>
+        
+        <div id="additionalFields">
+            <label for="name">Company/Facility Name:</label>
+            <input type="text" id="companyName" name="name"><br>
+
+            <label for="location">Location:</label>
+            <input type="text" id="address" name="location"><br>
+
+            <label for="openingHours">Opening Hours:</label>
+            <input type="time" id="openingHours" name="openingHours"> <br>
+
+            <label for="closingHours">Closing Hours:</label>
+            <input type="time" id="closingHours" name="closingHours"><br>
+
+            <fieldset id="daysOpen">
+                <legend>Days Open:</legend>
+                <label><input type="checkbox" name="daysOpen" value="Monday"> Monday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Tuesday"> Tuesday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Wednesday"> Wednesday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Thursday"> Thursday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Friday"> Friday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Saturday"> Saturday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Sunday"> Sunday</label><br>
+            </fieldset>
+         -->
+        
+        
+        <button id="postAccount" type="submit">Create Account</button>
+    </form>
     <button id="loadRequestsButton">Load Requests</button>
     <ul id="recoveryRequestsList"></ul>
 
@@ -33,6 +79,37 @@
                     error: function(error) {
                         console.error(error);
                     }
+                });
+                $('#accountCreationForm').submit(function(e) {
+                    e.preventDefault();
+                    var userInfo = {
+                        username: $('#username').val(),
+                        dob: $('#dob').val(),
+                        firstname: $('#firstname').val(),
+                        lastname: $('#lastname').val(),
+                        role: parseInt($('#role').val(), 10),
+                        status: $('#status').val(),
+                        backupEmail: $('#backupEmail').val()
+                        // companyName: "string",
+                        // address: "string",
+                        // openingHours: "string",
+                        // closingHours: "string",
+                        // daysOpen: "string"
+                    };
+                    $.ajax({
+                        url: 'http://localhost:8080/api/registration/postAccount',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(userInfo),
+                        success: function(response) {
+                            alert('Account created successfully!');
+                            console.log(response); // Log response for debugging
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(xhr.responseText); // Log response text for debugging
+                            alert('Error creating account. ' + xhr.responseText);
+                        }
+                    });
                 });
             });
         });

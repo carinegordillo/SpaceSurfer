@@ -94,12 +94,17 @@ public class DemoController : ControllerBase
 
 
     [HttpPost]
-    [Route("postDummyRequest")]
-    public async Task<ActionResult<List<UserInfo>>> PostDummyRequest([FromForm] UserInfo userInfo){
+    [Route("postAccount")]
+    // public async Task<ActionResult<List<UserInfo>>> PostCreateAccount([FromBody] UserInfo userInfo){
+    public async Task<IActionResult> PostCreateAccount([FromBody] UserInfo userInfo){
         var response = await _accountCreation.CreateUserAccount(userInfo);
-        return Ok(response);
-    }
-   
+        if (response.HasError)
+        {
+            return BadRequest(response.ErrorMessage);
+        }
+        return Ok(new { message = "Account created successfully!" + response});
+        // return Ok(response);
+    }  
 }
 
 
