@@ -59,8 +59,8 @@ public class DemoController : ControllerBase
 
     [HttpPost]
     [Route("postDummyRequest")]
-    public async Task<ActionResult<List<Employee>>> PostDummyRequest([FromForm] string employeeName, [FromForm] string position){
-        var response = await _accountRecovery.sendDummyRequest(employeeName, position);
+    public async Task<ActionResult<List<Employee>>> PostDummyRequest([FromForm] string name, [FromForm] string position){
+        var response = await _accountRecovery.sendDummyRequest(name, position);
         return Ok(response);
     }
    

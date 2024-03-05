@@ -1,44 +1,54 @@
-
-//using SS.Backend.SharedNamespace;
-//using System.Data.SqlClient;
-
-
-//namespace SS.Backend.UserManagement
-//{
-//    public class ProfileModifier : IProfileModifier
-//    {
-//        Credential removeMeLater = Credential.CreateSAUser();
+using SS.Backend.SharedNamespace;
+using System.Data.SqlClient;
 
 
-//        public async Task<Response> ModifyFirstName(string hashedUsername, string newFirstName){
+namespace SS.Backend.UserManagement
+{
+    public class ProfileModifier : IProfileModifier
+    {
+        Credential removeMeLater = Credential.CreateSAUser();
+        
 
-//            IUserManagementRepository userManagementRepository = new UserManagementRepository();
+        public async Task<Response> ModifyFirstName(string hashedUsername, string newFirstName){
 
-//            Response response = await (userManagementRepository.GeneralModifier("hashedUsername",hashedUsername,"firstName",newFirstName,"dbo.userProfile"));
+            IUserManagementRepository userManagementRepository = new UserManagementRepository();
 
-//            return response;
-//        }
+            Response response = await (userManagementRepository.GeneralModifier("hashedUsername",hashedUsername,"firstName",newFirstName,"dbo.userProfile"));
 
-//        public async Task<Response> ModifyLastName(string hashedUsername, string newLastName){
+            return response;
+        }
 
-//            IUserManagementRepository userManagementRepository = new UserManagementRepository();
+        public async Task<Response> ModifyLastName(string hashedUsername, string newLastName){
 
-//            Response response = await (userManagementRepository.GeneralModifier("hashedUsername",hashedUsername,"lastName",newLastName,"dbo.userProfile"));
+            IUserManagementRepository userManagementRepository = new UserManagementRepository();
 
-//            return response;
-//        }
+            Response response = await (userManagementRepository.GeneralModifier("hashedUsername",hashedUsername,"lastName",newLastName,"dbo.userProfile"));
 
-//        public async Task<Response> ModifyBackupEmail(string hashedUsername, string newBackupEmail){
+            return response;
+        }
 
-//            IUserManagementRepository userManagementRepository = new UserManagementRepository();
+        public async Task<Response> ModifyBackupEmail(string hashedUsername, string newBackupEmail){
 
-//            Response response = await (userManagementRepository.GeneralModifier("hashedUsername",hashedUsername,"backupEmail","newEamils@yahoo","dbo.userProfile"));
+            IUserManagementRepository userManagementRepository = new UserManagementRepository();
 
-//            return response;
+            Response response = await (userManagementRepository.GeneralModifier("hashedUsername",hashedUsername,"backupEmail","newEamils@yahoo","dbo.userProfile"));
 
-//        }
+            return response;
 
-//    }
+        }
+
+        public async Task<Response> getUserProfile(string hashedUsername){
+
+            IUserManagementRepository userManagementRepository = new UserManagementRepository();
+
+            Response response = await (userManagementRepository.readTableWhere("hashedUsername", hashedUsername, "dbo.userProfile"));
+
+            return response;
+        }
 
 
-//}
+
+    }
+
+
+}

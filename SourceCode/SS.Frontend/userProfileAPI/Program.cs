@@ -1,16 +1,17 @@
 using SS.Backend.UserManagement;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Add services to the container.
+//builder.Services.AddTransient<ISqlDAO, SealedSqlDAO>();
+builder.Services.AddTransient<IProfileModifier, ProfileModifier>();
+
+// Learn more about configuring Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddTransient<IAccountRecovery, AccountRecoveryNoInj>();
 
 
 builder.Services.AddCors(options =>
@@ -20,21 +21,14 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
-
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseDeveloperExceptionPage();
-    
-    
 }
-
-
-
 
 app.UseHttpsRedirection();
 
@@ -45,4 +39,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-

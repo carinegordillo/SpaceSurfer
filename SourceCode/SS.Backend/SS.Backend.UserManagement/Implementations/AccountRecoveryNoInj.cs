@@ -8,6 +8,15 @@ namespace SS.Backend.UserManagement
     {
 
 
+        /*
+         * This method creates a recovery request for a user.
+         * automatically sends the request status to pending
+         * @param userHash The user's hash.
+         * @param additionalInfo Additional information to be added to the request.
+         * @return Response object.
+         */
+
+
         public async Task<Response> createRecoveryRequest(string userHash, string additionalInfo = "")
         {
             IAccountRecoveryModifier accountRecoveryModifier = new AccountRecoveryModifier();
@@ -40,6 +49,11 @@ namespace SS.Backend.UserManagement
         }
         
 
+        /* 
+         * This method sends a recovery request to the userManagementRepository, updates activeAccount table to mark account as pending
+         * @param userHash - the hashed username of the user
+         * @return Response - the response object
+         */
 
         public async Task<Response> sendRecoveryRequest(string userHash)
         {
@@ -50,15 +64,21 @@ namespace SS.Backend.UserManagement
 
             if (response.HasError == false)
             {
-                response.ErrorMessage = "- Recovery request initiated. -";
+                response.ErrorMessage = "- Recovery request sent. -";
             }
             else
             {
-                response.ErrorMessage = "- Failed to initiate recovery request.- ";
+                response.ErrorMessage = "- Failed to send recovery request.- ";
             }
 
             return response;
         }
+
+        /*
+        * This method is used to recover a user account, and update the status of the user request in the userRequests table to accepted or denied
+        * @param userHash - the hashed username of the user
+        * @param adminDecision - the decision of the admin to accept or deny the request
+        */
 
         public async Task<Response> RecoverAccount(string userHash, bool adminDecision)
         {
@@ -77,6 +97,12 @@ namespace SS.Backend.UserManagement
             return response;
             
         }
+
+        /* 
+        *
+        * This method is used to read all the userRequests table from the database
+        * @return Response - the response object
+        */
 
         public async Task<Response> ReadUserRequests(){
 
@@ -97,6 +123,28 @@ namespace SS.Backend.UserManagement
 
             return response;
         }
+
+         public async Task<Response> ReadUserPendingRequests(){
+
+            IUserManagementRepository userManagementRepository = new UserManagementRepository();
+            
+            Response response = new Response();
+            
+            response = await userManagementRepository.readTableWhere("status", "Pending", "dbo.userRequests");
+
+            if (response.HasError == false)
+            {
+                response.ErrorMessage += "- ReadUserPendingRequests successful. -";
+            }
+            else
+            {
+                response.ErrorMessage += "- ReadUserPendingRequests Failed - ";
+            }
+
+            return response;
+        }
+        
+        
 
         public async Task<Response> ReadDummyTable(){
 

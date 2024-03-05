@@ -1,7 +1,8 @@
 /*
 using SS.Backend.SharedNamespace;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+
 
 namespace SS.Backend.DataAccess
 {
@@ -9,11 +10,9 @@ namespace SS.Backend.DataAccess
     {
         private readonly string connectionString;
 
-        private SqlTransaction transaction;
-
-        public SealedSqlDAO(Credential user)
+        public SealedSqlDAO(ConfigService configService)
         {
-            this.connectionString = string.Format(@"Data Source=localhost;Initial Catalog=SS_Server;User Id={0};Password={1};", user.user, user.pass);
+            this.connectionString = configService.GetConnectionString();
         }
 
         public async Task<Response> SqlRowsAffected(SqlCommand sql)
@@ -42,7 +41,6 @@ namespace SS.Backend.DataAccess
                     {
                         result.HasError = true;
                         result.RowsAffected = 0;
-                        result.ErrorMessage += " - Error in SqlRowsEffected -";
                     }
                 }
                 catch (Exception ex)
@@ -70,23 +68,12 @@ namespace SS.Backend.DataAccess
 
                     sql.Connection = connection;
 
-                    using (SqlDataReader reader = await sql.ExecuteReaderAsync().ConfigureAwait(false))
+                    using (SqlDataReader reader = await sql.ExecuteReaderAsync())
                     {
-                        List<List<object>> allValuesRead = new List<List<object>>();
+                        DataTable dataTable = new DataTable();
+                        dataTable.Load(reader);
 
-                        while (reader.Read())
-                        {
-                            List<object> valuesRead = new List<object>();
-
-                            for (int i = 0; i < reader.FieldCount; i++)
-                            {
-                                valuesRead.Add(reader[i]);
-                            }
-
-                            allValuesRead.Add(valuesRead);
-                        }
-
-                        if (allValuesRead.Count > 0)
+                        if (dataTable.Rows.Count > 0)
                         {
                             result.HasError = false;
                             //result.ValuesRead = allValuesRead;
@@ -94,7 +81,7 @@ namespace SS.Backend.DataAccess
                         else
                         {
                             result.HasError = true;
-                            result.ErrorMessage += "No rows found.";
+                            result.ErrorMessage = "No rows found.";
                         }
                     }
                 }

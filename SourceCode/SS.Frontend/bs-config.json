@@ -1,6 +1,6 @@
 {
-  "port": 3000,
-  "files": [ "C:/Users/brand/Documents/GitHub/SpaceSurfer/SourceCode/SS.Backend.{html,htm,css,js,cs}" ],
-  "server": { "baseDir": "C:/Users/brand/Documents/GitHub/SpaceSurfer/SourceCode/SS.Frontend" },
-  "browser": "msedge"
-}
+    "server": {
+      "baseDir": "./webpages",
+      "index": "recoveryRequests.html"
+    }
+  }

@@ -1,67 +1,41 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using SS.Backend.UserManagement;
 
-namespace accountRecoveryAPI.Controllers;
+namespace AccountManagement.Controllers;
 
 [ApiController]
-[Route("[controller]")]
-public class accountRecoveryController : ControllerBase
+[Route("api/requestRecovery")]
+public class RecoverRequestController : ControllerBase
 {
-
     private readonly IAccountRecovery _accountRecovery;
-    public accountRecoveryController (IAccountRecovery AccountRecoveryNoInj){
+    public RecoverRequestController (IAccountRecovery AccountRecoveryNoInj){
         _accountRecovery = AccountRecoveryNoInj;
     }
-    
-    [Route("getAllRequests")]
-    [HttpGet]
-    public async Task<ActionResult<List<UserRequestModel>>> GetAllRequests(){
 
-        var response = await _accountRecovery.ReadUserRequests();
 
+    [Route("sendRecoveryRequest")]
+    [HttpPost]
+    public async Task<IActionResult> sendRecoveryRequest ([FromForm] string email, [FromForm] string additionalInformation)
+    {
+
+        
+        var response = await _accountRecovery.createRecoveryRequest(email, additionalInformation);
         if (response.HasError)
         {
-            Console.WriteLine(response.ErrorMessage);
-            return StatusCode(500, response.ErrorMessage);
+            // Log the error or handle it as necessary
+            Console.WriteLine($"Error processing recovery request for user: {email}: {response.ErrorMessage}");
+            response.ErrorMessage = "Failed to initiate recovery request.";
         }
-
-        var requests = response.ValuesRead.Select(row => new UserRequestModel
+        else
         {
-            RequestId = (int)row[0],
-            UserHash = (string)row[1],
-            RequestDate = (DateTime)row[2],
-            Status = (string)row[3],
-            RequestType = (string)row[4],
-            ResolveDate = row[5] != DBNull.Value ? DateTime.Parse((string)row[5]) : (DateTime?)null,
-            AdditionalInformation = row[6] != DBNull.Value ? (string)row[6] : null
-        }).ToList();
+            // Log the success or handle it as necessary
+            Console.WriteLine($"Recovery request for user: {email} was successful");
+            response.ErrorMessage = "Recovery request initiated.";
 
-        return Ok(requests);
-    }
-    Route("getAllDummyRequests")]
-    [HttpGet]
-    public async Task<ActionResult<List<UserRequestModel>>> GetAllRequests(){
-
-        var response = await _accountRecovery.ReadUserRequests();
-
-        if (response.HasError)
-        {
-            Console.WriteLine(response.ErrorMessage);
-            return StatusCode(500, response.ErrorMessage);
         }
-
-        var requests = response.ValuesRead.Select(row => new UserRequestModel
-        {
-            RequestId = (int)row[0],
-            UserHash = (string)row[1],
-            RequestDate = (DateTime)row[2],
-            Status = (string)row[3],
-            RequestType = (string)row[4],
-            ResolveDate = row[5] != DBNull.Value ? DateTime.Parse((string)row[5]) : (DateTime?)null,
-            AdditionalInformation = row[6] != DBNull.Value ? (string)row[6] : null
-        }).ToList();
-
-        return Ok(requests);
+        
+        // Return the list of results as JSON 
+        return Ok(response);
     }
-   
 }

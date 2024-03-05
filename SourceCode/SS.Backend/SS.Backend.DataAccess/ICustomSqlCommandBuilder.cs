@@ -1,5 +1,6 @@
 using Microsoft.Data.SqlClient;
 
+
 namespace SS.Backend.DataAccess
 {
     public interface ICustomSqlCommandBuilder
