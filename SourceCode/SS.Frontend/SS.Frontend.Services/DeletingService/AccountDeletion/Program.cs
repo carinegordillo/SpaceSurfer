@@ -21,7 +21,6 @@ builder.Services.AddSingleton(new ConfigService(Path.Combine("C:/Users/brand/Doc
 
 // Register services for dependency injection
 builder.Services.AddTransient<IAccountDeletion, AccountDeletion>();
-builder.Services.AddTransient<IDatabaseHelper, DatabaseHelper>();
 
 
 // builds the application
@@ -51,6 +50,7 @@ app.Use(async (context, next) =>
         context.Response.Headers.Append(HeaderNames.AccessControlAllowOrigin, origin);
         context.Response.Headers.Append(HeaderNames.AccessControlAllowMethods, "POST, OPTIONS");
         context.Response.Headers.Append(HeaderNames.AccessControlAllowHeaders, "Content-Type, Accept");
+        context.Response.Headers.Append(HeaderNames.AccessControlAllowCredentials, "true");
     }
     if (context.Request.Method == "OPTIONS")
     {
