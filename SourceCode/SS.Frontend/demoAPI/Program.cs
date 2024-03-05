@@ -17,6 +17,13 @@ var app = builder.Build();
 
 app.Use((context, next) =>
 {
+    
+    context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
+    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Axios-Demo, Space-Surfer-Header");
+    context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+
+    
     if (context.Request.Method == "OPTIONS")
     {
         context.Response.Headers.Add("Access-Control-Max-Age", "86400"); 
@@ -28,6 +35,9 @@ app.Use((context, next) =>
 });
 
 
+
+
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
