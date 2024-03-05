@@ -3,8 +3,9 @@ using SS.Backend.Services.DeletingService;
 
 internal class ADRun
 {
-    private static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
+
         var filePath = "C:/Users/brand/Documents/GitHub/SpaceSurfer/SourceCode/SS.Backend/config.local.txt";
 
         ConfigService configService = new ConfigService(filePath);
@@ -17,6 +18,6 @@ internal class ADRun
 
         var result = acDeletion.DeleteAccount(userToDelete);
 
+        result.PrintDataTable();
     }
-
 }
