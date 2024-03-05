@@ -1,22 +1,28 @@
-﻿using SS.Backend.DataAccess;
+﻿using Microsoft.IdentityModel.Tokens;
+using SS.Backend.DataAccess;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace SS.Backend.Security
 {
-    public class SSAuthService : IAuthenticator, IAuthorizer
+    public class SSAuthService : IAuthenticator, IAuthorizer //add interfaces for the objects
     {
         private readonly GenOTP genotp;
         private readonly Hashing hasher;
         private readonly SqlDAO sqldao;
         private readonly Logger log;
+        private readonly string jwtSecret;
 
-        public SSAuthService(GenOTP genotp, Hashing hasher, SqlDAO sqldao, Logger log)
+        public SSAuthService(GenOTP genotp, Hashing hasher, SqlDAO sqldao, Logger log, string jwtSecret)
         {
             this.genotp = genotp;
             this.hasher = hasher;
             this.sqldao = sqldao;
             this.log = log;
+            this.jwtSecret = jwtSecret;
         }
 
         /// <summary>
@@ -315,6 +321,45 @@ namespace SS.Backend.Security
             }
             return true;
 
+        }
+
+        public SSPrincipal MapToSSPrincipal(ClaimsPrincipal claimsPrincipal)
+        {
+            if (claimsPrincipal == null)
+            {
+                return null;
+            }
+
+            var ssPrincipal = new SSPrincipal
+            {
+                UserIdentity = claimsPrincipal.Identity?.Name,
+                Claims = new Dictionary<string, string>()
+            };
+
+            foreach (var claim in claimsPrincipal.Claims)
+            {
+                ssPrincipal.Claims.Add(claim.Type, claim.Value);
+            }
+
+            return ssPrincipal;
+        }
+
+        private string GenerateJwtToken(string username, string role)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(jwtSecret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.Name, username),
+                    new Claim(ClaimTypes.Role, role)
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }

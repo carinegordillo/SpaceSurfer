@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using SS.Backend.DataAccess;
 using SS.Backend.Security;
 using SS.Backend.Services.LoggingService;
@@ -54,10 +55,7 @@ builder.Services.AddTransient<SSAuthService>(provider =>
     )
 );
 
-builder.Services.AddRazorPages();
-
 var app = builder.Build();
-app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -66,11 +64,37 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.Use(async (context, next) =>
+{
+    // Get the origin header from the request
+    var origin = context.Request.Headers[HeaderNames.Origin].ToString();
+
+    var allowedOrigins = new[] { "http://127.0.0.1:8080" };
+
+
+    if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
+    {
+        context.Response.Headers.Append(HeaderNames.AccessControlAllowOrigin, origin);
+        context.Response.Headers.Append(HeaderNames.AccessControlAllowMethods, "GET, POST, OPTIONS");
+        context.Response.Headers.Append(HeaderNames.AccessControlAllowHeaders, "Content-Type, Accept");
+    }
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.StatusCode = StatusCodes.Status200OK;
+        await context.Response.CompleteAsync();
+    }
+    else
+    {
+        await next();
+    }
+});
+
+app.UseStaticFiles();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapRazorPages();
 
 app.Run();
