@@ -4,22 +4,25 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Reflection;
 using SS.Backend.Services.LoggingService;
+using System.Text.RegularExpressions;
+
 
 
 namespace SS.Backend.Services.AccountCreationService
 {
     public class AccountCreation : IAccountCreation
     {
-        Credential temp = Credential.CreateSAUser();
+        // Credential temp = Credential.CreateSAUser();
+        string configFilePath = "C:/Users/kayka/Downloads/config.local.txt";
+        ConfigService configService = new ConfigService("C:/Users/kayka/Downloads/config.local.txt");
         private readonly UserInfo _userInfo;
         private readonly ICustomSqlCommandBuilder _commandBuilder;
 
-        public AccountCreation(UserInfo userInfo)
-        {
-            _userInfo = userInfo;
-        }
+        // public AccountCreation(UserInfo userInfo)
+        // {
+        //     _userInfo = userInfo;
+        // }
 
-        //checking for null and white space 
         public bool CheckNullWhiteSpace(string str)
         {
             return !string.IsNullOrWhiteSpace(str);
@@ -27,41 +30,109 @@ namespace SS.Backend.Services.AccountCreationService
         public string CheckUserInfoValidity(UserInfo userInfo)
         {
             string errorMsg = "";
-            int allValid = 0;
-            int totalStringFields = 0; 
             foreach (PropertyInfo prop in userInfo.GetType().GetProperties())
             {
-
-                //so if property is nullable its fine it doesnt pass thru this
-                if (prop.PropertyType == typeof(string))
+                var value = prop.GetValue(userInfo);
+                switch (prop.Name)
                 {
-                    totalStringFields++; 
-                    string value = prop.GetValue(userInfo) as string;
-
-                    if (!string.IsNullOrEmpty(value) && CheckNullWhiteSpace(value) && !value.Equals("NULL", StringComparison.OrdinalIgnoreCase))
-                    {
-                        allValid++;
-                    }
-                    else
-                    {
-                        errorMsg += $"Invalid {prop.Name.ToLower()}; ";
-                    }
+                    case "firstname":
+                    case "lastname":
+                        if (!IsValidName(value as string))
+                        {
+                            errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                        }
+                        break;
+                    case "username":
+                        if (!IsValidEmail(value as string))
+                        {
+                            string testing = "random gibbering";
+                            errorMsg += "Invalid email";
+                        }
+                        break;
+                    case "dob":
+                        if (!IsValidDateOfBirth(value as DateTime?))
+                        {
+                            errorMsg += "Invalid date of birth; ";
+                        }
+                        break;
+                    case "companyName":
+                        if (userInfo.role == 2 || userInfo.role == 3){
+                                if(!IsValidCompanyName(value as string))
+                            {
+                                errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                            }
+                            break;
+                        }
+                        break;
+                        
+                    case "address":
+                        if (userInfo.role == 2 || userInfo.role == 3){
+                            if(!IsValidAddress(value as string))
+                            {
+                                errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                            }
+                            break;
+                        }
+                        break;
+                    // case "openingHours":
+                    // case "closingHours":
+                    // case "daysOpen": //check if these need their own function
+                    //     if (CheckNullWhiteSpace(value as string))
+                    //     {
+                    //         errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                    //     }
+                    //     break;
                 }
             }
-            if (allValid == totalStringFields)
+            return string.IsNullOrEmpty(errorMsg) ? "Pass" : errorMsg;
+        }
+
+        private bool IsValidName(string name)
+        {
+            return !string.IsNullOrWhiteSpace(name) &&
+                name.Length >= 1 &&
+                name.Length <= 50 &&
+                Regex.IsMatch(name, @"^[a-zA-Z]+$");
+        }
+        private bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email) || email.Length < 3)
             {
-                errorMsg = "Pass";
-            }else{
-                errorMsg = "fail";
+                return false;
             }
-            return errorMsg;
+
+            string pattern = @"^[a-zA-Z0-9\.-]+@[a-zA-Z0-9\.-]+$";
+            return Regex.IsMatch(email, pattern);
+        }
+        private bool IsValidDateOfBirth(DateTime? dateOfBirth)
+        {
+            if (!dateOfBirth.HasValue)
+            {
+                return false;
+            }
+
+            var validStartDate = new DateTime(1970, 1, 1);
+            var validEndDate = DateTime.Now;
+            return dateOfBirth >= validStartDate && dateOfBirth <= validEndDate;
+        }
+        private bool IsValidCompanyName(string name)
+        {
+            return 
+                name.Length >= 1 &&
+                name.Length <= 60;
+        }
+        private bool IsValidAddress(string name)
+        {
+            //implement Geolocation API
+            return name == "Irvine";
         }
 
         //this method takes builds a dictionary with several sql commands to insert all at once 
         public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
         {
             
-            SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
+            // SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
+            SqlDAO SQLDao = new SqlDAO(configService);
             var builder = new CustomSqlCommandBuilder();
             Response tablesresponse = new Response();
 
@@ -87,12 +158,12 @@ namespace SS.Backend.Services.AccountCreationService
         }
 
 
-        public async Task<Response> CreateUserAccount(UserPepper userPepper, UserInfo userInfo, Dictionary<string, Dictionary<string, object>> tableData)
+        public async Task<Response> CreateUserAccount(UserInfo userInfo)
         {
             Response response = new Response();
 
-            SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
-            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(temp)));
+            SqlDAO SQLDao = new SqlDAO(configService);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
 
 
             string validationMessage = CheckUserInfoValidity(userInfo);
@@ -100,9 +171,61 @@ namespace SS.Backend.Services.AccountCreationService
             {
                 response.HasError = true;
                 response.ErrorMessage = "Invalid User Info entry: " + validationMessage;
+                return response;
             }
        
             //generating sql command 
+            UserPepper userPepper = new UserPepper();
+            AccountCreation accountcreation = new AccountCreation();
+            Hashing hashing = new Hashing();
+
+            
+            var builder = new CustomSqlCommandBuilder();
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
+          
+            var validPepper = new UserPepper
+            {
+                hashedUsername = hashing.HashData(userInfo.username, pepper)
+            };
+    
+            var userAccount_success_parameters = new Dictionary<string, object>
+            {
+                { "username", userInfo.username},
+                {"birthDate", userInfo.dob}   
+            };
+
+            var userProfile_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                { "FirstName", userInfo.firstname},
+                { "LastName", userInfo.lastname}, 
+                {"backupEmail", userInfo.backupEmail},
+                {"appRole", userInfo.role}, 
+            };
+            
+            var activeAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"isActive", userInfo.status} 
+            };
+
+            var hashedAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"username", userInfo.username},
+            };
+
+            var tableData = new Dictionary<string, Dictionary<string, object>>
+            {
+                { "userAccount", userAccount_success_parameters },
+                { "userProfile", userProfile_success_parameters },
+                { "activeAccount", activeAccount_success_parameters}, 
+                {"userHash", hashedAccount_success_parameters}
+            };
+
+
             response  = await InsertIntoMultipleTables(tableData);
             if (response.HasError == false)
             {
@@ -132,6 +255,29 @@ namespace SS.Backend.Services.AccountCreationService
             return response;            
          
         }
-        
+
+        public async Task<Response> ReadUserTable(string tableName)
+        {
+
+            SqlDAO SQLDao = new SqlDAO(configService);
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+            
+            var insertCommand =  commandBuilder.BeginSelectAll()
+                                            .From(tableName)
+                                            .Build();
+
+            response = await SQLDao.ReadSqlResult(insertCommand);
+            if (response.HasError)
+            {
+                response.ErrorMessage += $"{tableName}: error inserting data; ";
+                return response;
+            }else{
+                response.ErrorMessage += "- ReadUserTable- command successful -";
+            }
+          
+            return response;
+
+        }
     }
 }

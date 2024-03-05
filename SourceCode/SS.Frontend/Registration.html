@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register!</title>
+    <script src="registration.js"></script>
+    <link rel="stylesheet" href="Registration.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico?version=3">
+</head>
+<body class="background-image">
+    <nav>
+        <div class="logo-container">
+            <img src="astroSurf.png" alt="Company Logo" width="160" height="150" style="padding-left: 5px;">
+            <img src="ssName.png" alt="Company Name" width="440" height="80" style="padding: 25px 15px 0px 0px;">
+        </div>
+        <div class="nav-items">
+            <div class="nav-item" id="navAbout" onclick="showView('about')">About</div>
+            <div class="nav-item" id="navRegister" onclick="showView('register')">Register</div>
+            <div class="nav-item" id="navLogin" onclick="showView('login')">Login</div>
+        </div>
+    </nav>
+
+<!-- <div id="aboutView" class="view">About content...</div>
+<div id="loginView" class="view" style="display: none;">Login content...</div> -->
+<!-- <div id = "registerView" class = "form-container" style="display: none;"> -->
+<div id = "registerView" class = "form-container" >
+
+    <form id="registrationForm">
+        <h2>Register to SpaceSurfer🤙</h2>
+
+        <div class="form-row">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" required><br><br>
+        </div>
+
+        <div class="form-row">
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" required><br>
+        </div>
+
+        <div class="form-row">
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required><br>
+        </div>
+
+        <div class="form-row">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
+        </div>
+        
+        <h3>Are You A Company/Facility?</h3>
+        <div class="form-row" style="display: flex; justify-content: center;">
+        <input type="checkbox" id="isCompany" name="isCompany" onchange="handleCheckboxChange()" >
+        <label for="isCompany">Company</label>
+
+        <input type="checkbox" id="isFacility" name="isFacility" onchange="handleCheckboxChange()" >
+        <label for="isFacility">Facility</label>
+        </div>
+        
+        <div id="additionalFields" style="display: none;">
+            <label for="name">Company/Facility Name:</label>
+            <input type="text" id="name" name="name"><br>
+
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location"><br>
+
+            <label for="openingHours">Opening Hours:</label>
+            <input type="time" id="openingHours" name="openingHours"<br>
+
+            <label for="closingHours">Closing Hours:</label>
+            <input type="time" id="closingHours" name="closingHours"><br>
+
+            <fieldset>
+                <legend>Days Open:</legend>
+                <label><input type="checkbox" name="daysOpen" value="Monday"> Monday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Tuesday"> Tuesday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Wednesday"> Wednesday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Thursday"> Thursday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Friday"> Friday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Saturday"> Saturday</label><br>
+                <label><input type="checkbox" name="daysOpen" value="Sunday"> Sunday</label><br>
+            </fieldset>
+        
+        </div>
+        <input type="submit" value="Register">
+    </form>
+</div>
+<div>
+<footer>
+    Designed and Developed by the PixelPals Team
+</footer>
+</div>
+<!-- <div id="errorMessage" style="color: red;"></div> -->
+</body>
+</html>

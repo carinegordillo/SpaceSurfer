@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.AccountCre
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Security", "SS.Backend.Security\SS.Backend.Security.csproj", "{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Security", "SS.Backend.Security\SS.Backend.Security.csproj", "{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.SecurityTest", "SS.Backend.SecurityTest\SS.Backend.SecurityTest.csproj", "{CDC580DB-5FDC-4515-AAB8-63181EA726CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +57,8 @@ Global
 		{6035FCC0-2071-4DE7-A6D1-740A422DA888}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6035FCC0-2071-4DE7-A6D1-740A422DA888}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6035FCC0-2071-4DE7-A6D1-740A422DA888}.Release|Any CPU.Build.0 = Release|Any CPU
+<<<<<<<< HEAD:Source Code/SS.Backend.sln
+========
 		{ABD6D6CB-8786-4F24-8569-5B620A5C31B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ABD6D6CB-8786-4F24-8569-5B620A5C31B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABD6D6CB-8786-4F24-8569-5B620A5C31B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -61,6 +67,7 @@ Global
 		{15BF497F-DD35-4D95-9AD4-2A752F273379}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15BF497F-DD35-4D95-9AD4-2A752F273379}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15BF497F-DD35-4D95-9AD4-2A752F273379}.Release|Any CPU.Build.0 = Release|Any CPU
+>>>>>>>> main:Milestone2/Source Code/SS.Backend.sln
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -69,10 +76,13 @@ Global
 		{CDC580DB-5FDC-4515-AAB8-63181EA726CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDC580DB-5FDC-4515-AAB8-63181EA726CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDC580DB-5FDC-4515-AAB8-63181EA726CB}.Release|Any CPU.Build.0 = Release|Any CPU
+<<<<<<<< HEAD:Source Code/SS.Backend.sln
+========
 		{D0871303-1A98-4A19-B68A-DEF78438301B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D0871303-1A98-4A19-B68A-DEF78438301B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0871303-1A98-4A19-B68A-DEF78438301B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0871303-1A98-4A19-B68A-DEF78438301B}.Release|Any CPU.Build.0 = Release|Any CPU
+>>>>>>>> main:Milestone2/Source Code/SS.Backend.sln
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
