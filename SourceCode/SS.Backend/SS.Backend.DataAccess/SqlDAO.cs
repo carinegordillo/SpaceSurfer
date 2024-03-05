@@ -1,4 +1,4 @@
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using SS.Backend.SharedNamespace;
 using System.Data;
 

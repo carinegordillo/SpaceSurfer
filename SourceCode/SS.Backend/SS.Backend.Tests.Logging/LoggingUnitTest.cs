@@ -1,7 +1,7 @@
 using SS.Backend.DataAccess;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 
 namespace SS.Backend.Tests.Logging
@@ -16,25 +16,29 @@ namespace SS.Backend.Tests.Logging
         {
             var SAUser = Credential.CreateSAUser();
             //dao = new SqlDAO(SAUser);
+            string configFilePath =  "/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt";
+            ConfigService configService = new ConfigService(configFilePath);
         }
 
         private async Task CleanupTestData()
         {
             var SAUser = Credential.CreateSAUser();
-            var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+            string connectionString = "Data Source=localhost; Initial Catalog=SSDatabase; User Id=sa; Password=dockerStrongPwd123; TrustServerCertificate=True;";
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    await connection.OpenAsync().ConfigureAwait(false);
+                    connection.Open();
+                    await connection.OpenAsync();
 
                     string sql = $"DELETE FROM dbo.Logs WHERE [Username] = 'test@email'";
 
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
-                        await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        await command.ExecuteNonQueryAsync();
                     }
                 }
+                Console.WriteLine("Successful connection.");
             }
             catch (Exception ex)
             {
@@ -58,7 +62,7 @@ namespace SS.Backend.Tests.Logging
 
             // Act
             timer.Start();
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
             timer.Stop();
 
             // Assert
@@ -66,7 +70,7 @@ namespace SS.Backend.Tests.Logging
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -86,7 +90,7 @@ namespace SS.Backend.Tests.Logging
 
             // Act
             timer.Start();
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
             timer.Stop();
 
             // Assert
@@ -94,7 +98,7 @@ namespace SS.Backend.Tests.Logging
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -114,7 +118,7 @@ namespace SS.Backend.Tests.Logging
 
             // Act
             timer.Start();
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
             timer.Stop();
 
             // Assert
@@ -122,7 +126,7 @@ namespace SS.Backend.Tests.Logging
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -142,7 +146,7 @@ namespace SS.Backend.Tests.Logging
 
             // Act
             timer.Start();
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
             timer.Stop();
 
             // Assert
@@ -150,7 +154,7 @@ namespace SS.Backend.Tests.Logging
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -168,13 +172,13 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -192,13 +196,13 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -216,13 +220,13 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -240,13 +244,13 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -266,7 +270,7 @@ namespace SS.Backend.Tests.Logging
 
             // Act
             timer.Start();
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
             timer.Stop();
 
             // Assert
@@ -274,7 +278,7 @@ namespace SS.Backend.Tests.Logging
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
         [TestMethod]
         public async Task SaveData_Category_Business_Pass()
@@ -293,7 +297,7 @@ namespace SS.Backend.Tests.Logging
 
             // Act
             timer.Start();
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
             timer.Stop();
 
             // Assert
@@ -301,7 +305,7 @@ namespace SS.Backend.Tests.Logging
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
         [TestMethod]
         public async Task SaveData_Category_Server_Pass()
@@ -320,7 +324,7 @@ namespace SS.Backend.Tests.Logging
 
             // Act
             timer.Start();
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
             timer.Stop();
 
             // Assert
@@ -328,7 +332,7 @@ namespace SS.Backend.Tests.Logging
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
         [TestMethod]
         public async Task SaveData_Category_Data_Pass()
@@ -347,7 +351,7 @@ namespace SS.Backend.Tests.Logging
 
             // Act
             timer.Start();
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
             timer.Stop();
 
             // Assert
@@ -355,7 +359,7 @@ namespace SS.Backend.Tests.Logging
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
         [TestMethod]
         public async Task SaveData_Category_DataStore_Pass()
@@ -374,7 +378,7 @@ namespace SS.Backend.Tests.Logging
 
             // Act
             timer.Start();
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
             timer.Stop();
 
             // Assert
@@ -382,7 +386,7 @@ namespace SS.Backend.Tests.Logging
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
         [TestMethod]
         public async Task SaveData_Category_InvalidCategory_Pass()
@@ -399,13 +403,13 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -423,13 +427,13 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -447,13 +451,13 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -471,13 +475,13 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -495,13 +499,13 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -519,13 +523,13 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -543,13 +547,13 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -569,7 +573,7 @@ namespace SS.Backend.Tests.Logging
 
             // Act
             timer.Start();
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
             timer.Stop();
 
             // Assert
@@ -577,7 +581,7 @@ namespace SS.Backend.Tests.Logging
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -620,13 +624,13 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -644,13 +648,13 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -668,13 +672,13 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -692,16 +696,16 @@ namespace SS.Backend.Tests.Logging
             var logger = new Logger(logTarget);
 
             // Act
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
 
             // Assert
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
-        /*[TestMethod]
+        [TestMethod]
         public async Task Text_File_Log_Target_Success()
         {
             // Arrange
@@ -713,19 +717,19 @@ namespace SS.Backend.Tests.Logging
                 description = "Testing File Logger"
             };
             Stopwatch timer = new Stopwatch();
-            var textLogTarget = new TextFileLogTarget("C:/Users/kayka/Downloads/File_Log_Test.txt");
+            var textLogTarget = new TextFileLogTarget("C:/Users/epik1/Desktop/File_Log_Test.txt");
             Logger logger = new Logger(textLogTarget);
 
             // Act
             timer.Start();
-            var result = await logger.SaveData(log).ConfigureAwait(false);
+            var result = await logger.SaveData(log);
             timer.Stop();
 
             // Assert
             Assert.IsFalse(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
-        }*/
+            await CleanupTestData();
+        }
     }
 }

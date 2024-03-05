@@ -1,11 +1,3 @@
-using SS.Backend.DataAccess;
-using SS.Backend.Security;
-using SS.Backend.Services.LoggingService;
-using SS.Backend.SharedNamespace;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using Logger = SS.Backend.Services.LoggingService.Logger;
-
 namespace SS.Backend.Tests.Security.Authentication
 {
     [TestClass]
@@ -14,12 +6,12 @@ namespace SS.Backend.Tests.Security.Authentication
         private async Task CleanupTestData()
         {
             var SAUser = Credential.CreateSAUser();
-            var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+            var connectionString = string.Format(@"Data Source=localhost;Initial Catalog=SSDatabase;User Id={0};Password={1};", SAUser.user, SAUser.pass);
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    await connection.OpenAsync().ConfigureAwait(false);
+                    await connection.OpenAsync();
 
                     string sql1 = $"DELETE FROM OTP WHERE Username = 'test@email'";
                     string sql2 = $"DELETE FROM userProfile WHERE hashedUsername = 'test@email'";
@@ -27,15 +19,15 @@ namespace SS.Backend.Tests.Security.Authentication
 
                     using (SqlCommand command1 = new SqlCommand(sql1, connection))
                     {
-                        await command1.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        await command1.ExecuteNonQueryAsync();
                     }
                     using (SqlCommand command2 = new SqlCommand(sql2, connection))
                     {
-                        await command2.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        await command2.ExecuteNonQueryAsync();
                     }
                     using (SqlCommand command3 = new SqlCommand(sql3, connection))
                     {
-                        await command3.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        await command3.ExecuteNonQueryAsync();
                     }
                 }
             }
@@ -51,7 +43,7 @@ namespace SS.Backend.Tests.Security.Authentication
             // Arrange
             Response result = new Response();
             var builder = new CustomSqlCommandBuilder();
-            string configFilePath = Path.Combine(AppContext.BaseDirectory, "config.local.txt");
+            string configFilePath =  "/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt";
             ConfigService configService = new ConfigService(configFilePath);
             GenOTP genotp = new GenOTP();
             Hashing hasher = new Hashing();
@@ -77,7 +69,7 @@ namespace SS.Backend.Tests.Security.Authentication
                 .Values(parameters.Keys)
                 .AddParameters(parameters)
                 .Build();
-            await dao.SqlRowsAffected(insertCommand).ConfigureAwait(false);
+            await dao.SqlRowsAffected(insertCommand);
 
             var parameters2 = new Dictionary<string, object>
             {
@@ -92,7 +84,7 @@ namespace SS.Backend.Tests.Security.Authentication
                 .Values(parameters2.Keys)
                 .AddParameters(parameters2)
                 .Build();
-            await dao.SqlRowsAffected(insertCommand2).ConfigureAwait(false);
+            await dao.SqlRowsAffected(insertCommand2);
 
             request.UserIdentity = "test@email";
             request.Proof = null;
@@ -111,8 +103,10 @@ namespace SS.Backend.Tests.Security.Authentication
             Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
             // Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
+    //}
+//}
 
 
         [TestMethod]
@@ -121,7 +115,7 @@ namespace SS.Backend.Tests.Security.Authentication
             // Arrange
             Response result = new Response();
             var builder = new CustomSqlCommandBuilder();
-            string configFilePath = Path.Combine(AppContext.BaseDirectory, "config.local.txt");
+            string configFilePath =  "/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt";
             ConfigService configService = new ConfigService(configFilePath);
             GenOTP genotp = new GenOTP();
             Hashing hasher = new Hashing();
@@ -147,7 +141,7 @@ namespace SS.Backend.Tests.Security.Authentication
                 .Values(parameters.Keys)
                 .AddParameters(parameters)
                 .Build();
-            await dao.SqlRowsAffected(insertCommand).ConfigureAwait(false);
+            await dao.SqlRowsAffected(insertCommand);
 
             request.UserIdentity = "test@email";
             request.Proof = null;
@@ -166,7 +160,7 @@ namespace SS.Backend.Tests.Security.Authentication
             Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -175,7 +169,7 @@ namespace SS.Backend.Tests.Security.Authentication
             // Arrange
             Response result = new Response();
             var builder = new CustomSqlCommandBuilder();
-            string configFilePath = Path.Combine(AppContext.BaseDirectory, "config.local.txt");
+            string configFilePath =  "/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt";
             ConfigService configService = new ConfigService(configFilePath);
             GenOTP genotp = new GenOTP();
             Hashing hasher = new Hashing();
@@ -200,7 +194,7 @@ namespace SS.Backend.Tests.Security.Authentication
             Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -209,7 +203,7 @@ namespace SS.Backend.Tests.Security.Authentication
             // Arrange
             Response result = new Response();
             var builder = new CustomSqlCommandBuilder();
-            string configFilePath = Path.Combine(AppContext.BaseDirectory, "config.local.txt");
+            string configFilePath =  "/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt";
             ConfigService configService = new ConfigService(configFilePath);
             GenOTP genotp = new GenOTP();
             Hashing hasher = new Hashing();
@@ -235,7 +229,7 @@ namespace SS.Backend.Tests.Security.Authentication
                 .Values(parameters.Keys)
                 .AddParameters(parameters)
                 .Build();
-            await dao.SqlRowsAffected(insertCommand).ConfigureAwait(false);
+            await dao.SqlRowsAffected(insertCommand);
 
             var parameters2 = new Dictionary<string, object>
             {
@@ -250,7 +244,7 @@ namespace SS.Backend.Tests.Security.Authentication
                 .Values(parameters2.Keys)
                 .AddParameters(parameters2)
                 .Build();
-            await dao.SqlRowsAffected(insertCommand2).ConfigureAwait(false);
+            await dao.SqlRowsAffected(insertCommand2);
 
             request.UserIdentity = "test@email";
             request.Proof = null;
@@ -269,7 +263,7 @@ namespace SS.Backend.Tests.Security.Authentication
             Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -278,7 +272,7 @@ namespace SS.Backend.Tests.Security.Authentication
             // Arrange
             Response result = new Response();
             var builder = new CustomSqlCommandBuilder();
-            string configFilePath = Path.Combine(AppContext.BaseDirectory, "config.local.txt");
+            string configFilePath =  "/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt";
             ConfigService configService = new ConfigService(configFilePath);
             GenOTP genotp = new GenOTP();
             Hashing hasher = new Hashing();
@@ -304,7 +298,7 @@ namespace SS.Backend.Tests.Security.Authentication
                 .Values(parameters.Keys)
                 .AddParameters(parameters)
                 .Build();
-            await dao.SqlRowsAffected(insertCommand).ConfigureAwait(false);
+            await dao.SqlRowsAffected(insertCommand);
 
             var parameters2 = new Dictionary<string, object>
             {
@@ -319,7 +313,7 @@ namespace SS.Backend.Tests.Security.Authentication
                 .Values(parameters2.Keys)
                 .AddParameters(parameters2)
                 .Build();
-            await dao.SqlRowsAffected(insertCommand2).ConfigureAwait(false);
+            await dao.SqlRowsAffected(insertCommand2);
 
             request.UserIdentity = "test@email";
             request.Proof = null;
@@ -336,7 +330,7 @@ namespace SS.Backend.Tests.Security.Authentication
             Assert.IsTrue(result.HasError);
 
             //Cleanup
-            await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
     }
