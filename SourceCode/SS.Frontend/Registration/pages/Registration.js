@@ -17,7 +17,7 @@
 
 
 
-document.getElementById('registrationForm').onsubmit = function(event) {
+document.getElementById('accountCreationForm').onsubmit = function(event) {
     event.preventDefault();
 
     let firstName = document.getElementById('firstName').value;
@@ -53,18 +53,20 @@ function handleCheckboxChange() {
     if (isCompany || isFacility) {
         // If either checkbox is checked, display and require the additional fields
         additionalFields.style.display = 'block';
-        name.required = true;
-        location.required = true;
-        openingHours.required = true;
-        closingHours.required = true;
-    } else {
-        // If neither checkbox is checked, hide and make the additional fields optional
-        additionalFields.style.display = 'none';
-        name.required = false;
-        location.required = false;
-        openingHours.required = false;
-        closingHours.required = false;
+        // name.required = true;
+        // location.required = true;
+        // openingHours.required = true;
+        // closingHours.required = true;
     }
+    // } else {
+
+    //     // If neither checkbox is checked, hide and make the additional fields optional
+    //     additionalFields.style.display = 'none';
+    //     name.required = false;
+    //     location.required = false;
+    //     openingHours.required = false;
+    //     closingHours.required = false;
+    // }
 
     // Prevent both checkboxes from being checked simultaneously
     if (isCompany) {
