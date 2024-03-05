@@ -1,0 +1,150 @@
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #f2f2f2;
+}
+
+.navbar .logo {
+    font-size: 1.5rem;
+}
+
+.navbar nav ul {
+    list-style: none;
+    display: flex;
+}
+
+.navbar nav ul li {
+    padding: 0 1rem;
+}
+
+.navbar nav ul li a {
+    text-decoration: none;
+    color: #333;
+}
+
+.search-bar {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    background-color: #cec2c2;
+}
+
+.search-bar input {
+    padding: 0.5rem;
+    margin-right: 0.5rem;
+    border: none;
+    border-radius: 0.25rem;
+}
+
+.search-bar button {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.25rem;
+    background-color: #333;
+    color: white;
+}
+
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding: 3rem;
+    max-width: 200px;
+
+}
+
+.sidebar button {
+    display: block;
+    width: 12rem;
+    height: 3rem;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border: none;
+    border-radius: 13rem;
+    background-color: #d9b382;
+    color: white;
+}
+
+
+.location {
+    background-color: #fff8e1;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+}
+
+.location h2 {
+    margin: 0;
+}
+
+.location p {
+    color: #666;
+}
+
+.amenities span {
+    display: inline-block;
+    margin-right: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background-color: #e7e7e7;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+}
+
+
+.reservation-container-1{
+    display:flex;
+}
+
+
+.locations-container {
+    width: 70%;
+    max-height: 550px; 
+    overflow-y: auto;
+    background-color: #f0e6cc;
+    border-radius: 8px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    padding: 1rem;
+
+}
+
+.location-preview {
+    background-color: #fff; 
+    border-radius: 8px; 
+    margin-bottom: 1rem; 
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+}
+
+.location-preview h2 {
+    margin-top: 0;
+}
+
+.amenities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.amenities span {
+    background-color: #e0e0e0; 
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px; 
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+button:hover {
+    filter: brightness(85%);
+}
+

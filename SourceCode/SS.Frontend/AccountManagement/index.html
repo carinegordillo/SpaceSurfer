@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recovery Requests</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+
+    <h1>Recovery Requests</h1>
+    <button id="loadRequestsButton">Load Requests</button>
+    <ul id="recoveryRequestsList"></ul>
+
+    <script>
+        $(document).ready(function() {
+            $('#loadRequestsButton').click(function() {
+                $.ajax({
+                    url: 'http://localhost:5115/api/Requests/getAllRequests',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#recoveryRequestsList').empty(); 
+                        data.forEach(function(request) {
+                            var listItem = '<li>Request ID: ' + request.requestId + ', User Hash: ' + request.userHash + ', Request Date: ' + request.requestDate + ', Status: ' + request.status + ', Request Type: ' + request.requestType;
+                            if(request.resolveDate) {
+                                listItem += ', Resolve Date: ' + request.resolveDate;
+                            }
+                            if(request.additionalInformation) {
+                                listItem += ', Additional Information: ' + request.additionalInformation;
+                            }
+                            listItem += '</li>';
+                            $('#recoveryRequestsList').append(listItem);
+                        });
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

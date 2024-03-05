@@ -1,29 +1,23 @@
 ﻿using SS.Backend.DataAccess;
-using SS.Backend.Services.LoggingService;
-using SS.Backend.SharedNamespace;
-using System.Diagnostics;
+using SS.Backend.Services.DeletingService;
 
-internal class Program
+internal class ADRun
 {
-    private static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        Credential SAUser = Credential.CreateSAUser();
 
-        var dataAccess = new SqlDAO(SAUser);
+        var filePath = "C:/Users/brand/Documents/GitHub/SpaceSurfer/SourceCode/SS.Backend/config.local.txt";
 
-        var log = new LogEntry
-        {
-            level = "Debug",
-            username = "test@email",
-            category = "View",
-            description = "Testing File Logger"
-        };
-        Stopwatch timer = new Stopwatch();
-        var textLogTarget = new TextFileLogTarget("\"C:\\Users\\brand\\Documents\\Examples\\SS.Logging,DataAccess\\File_Logger_Test.txt\"");
-        Logger logger = new Logger(textLogTarget);
+        ConfigService configService = new ConfigService(filePath);
 
-        Console.WriteLine("Finished.");
+        SqlDAO dao = new SqlDAO(configService);
 
+        var acDeletion = new AccountDeletion();
+
+        var userToDelete = "temporaryemail@gmail.com";
+
+        var result = acDeletion.DeleteAccount(userToDelete);
+
+        result.PrintDataTable();
     }
-
 }

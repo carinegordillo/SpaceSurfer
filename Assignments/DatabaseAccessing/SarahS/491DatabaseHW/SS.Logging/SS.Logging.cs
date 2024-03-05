@@ -1,7 +1,8 @@
-﻿using SS.Logging.DataAccessing;
+﻿
 
 namespace SS.Logging
 {
+    using SS.DataAccess;
     public class Logger
     {
         // Set the data 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tierra Mia Cafe Reservation</title>
+<link rel="stylesheet" href="styles1.css">
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Tierra Mia Cafe</h1>
+        <p>123 Anywhere St., Any City</p>
+    </div>
+    <form class="booking-form">
+        <div class="form-group">
+            <label for="start-time">Start Time:</label>
+            <input type="time" id="start-time">
+        </div>
+        <div class="form-group">
+            <label for="end-time">End Time:</label>
+            <input type="time" id="end-time">
+        </div>
+        <div class="form-group">
+            <label for="date-select">Select Date:</label>
+            <select id="date-select">
+                <option value="">Select Date</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <span>Selected Seat:</span>
+            <span class="selected-seat">None</span>
+        </div>
+        <button type="submit" class="btn reserve">Reserve</button>
+    
+        <div class = "facility-layout">
+            <div class="map">
+                <img src="images/dummyFloorPlan.png" alt="Cafe Layout" class="map-image">
+            </div>
+            <div class="seats">
+                <button type="button" class="seat">A</button>
+                <button type="button" class="seat">B</button>
+                <button type="button" class="seat">C</button>
+                <button type="button" class="seat">D</button>
+                <button type="button" class="seat">E</button>
+                <button type="button" class="seat">F</button>
+            </div>
+
+        </div>
+    </form>
+   
+</div>
+</body>
+</html>

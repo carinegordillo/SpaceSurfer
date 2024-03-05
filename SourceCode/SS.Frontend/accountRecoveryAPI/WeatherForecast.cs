@@ -1,4 +1,4 @@
-namespace AccountManagement;
+namespace accountRecoveryAPI;
 
 public class WeatherForecast
 {

@@ -16,16 +16,19 @@ namespace SS.Backend.Tests.Logging
         {
             var SAUser = Credential.CreateSAUser();
             //dao = new SqlDAO(SAUser);
+            string configFilePath =  "/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt";
+            ConfigService configService = new ConfigService(configFilePath);
         }
 
         private async Task CleanupTestData()
         {
             var SAUser = Credential.CreateSAUser();
-            var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+            string connectionString = "Data Source=localhost; Initial Catalog=SSDatabase; User Id=sa; Password=dockerStrongPwd123; TrustServerCertificate=True;";
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
+                    connection.Open();
                     await connection.OpenAsync();
 
                     string sql = $"DELETE FROM dbo.Logs WHERE [Username] = 'test@email'";
@@ -35,6 +38,7 @@ namespace SS.Backend.Tests.Logging
                         await command.ExecuteNonQueryAsync();
                     }
                 }
+                Console.WriteLine("Successful connection.");
             }
             catch (Exception ex)
             {
