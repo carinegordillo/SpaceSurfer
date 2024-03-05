@@ -4,7 +4,7 @@ using SS.Backend.UserManagement;
 namespace AccountManagement.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/Requests")]
 public class RecoverRequestController : ControllerBase
 {
 
@@ -13,6 +13,7 @@ public class RecoverRequestController : ControllerBase
         _accountRecovery = AccountRecoveryNoInj;
     }
     
+    [Route("getAllRequests")]
     [HttpGet]
     public async Task<ActionResult<List<UserRequestModel>>> GetAllRequests(){
 

@@ -1,16 +1,19 @@
 {
-  "name": "front-end",
+  "name": "ss.frontend",
   "version": "1.0.0",
-  "main": "index.html",
-  "scripts": {
-    "build": "",
-    "dev": "lite-server",
-    "release": "npm run build & npm run test",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "",
+  "main": "main.js",
   "dependencies": {
-    "devDependencies": {
-      "lite-server": "^2.6.1"
-    }
-  }
+    "ajax": "^0.0.4",
+    "axios": "^0.26.0",
+    "typescript": "^4.6.2"
+  },
+  "scripts": {
+    "start": "npm install && lite-server"
+  },
+  "devDependencies": {
+    "lite-server": "^2.6.1"
+  },
+  "author": "",
+  "license": "ISC"
 }

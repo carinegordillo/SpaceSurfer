@@ -1,103 +1,150 @@
-//using SS.Backend.DataAccess;
-//using SS.Backend.SharedNamespace;
-//using System.Data.SqlClient;
-
-//namespace SS.Backend.UserManagement
-//{
-
-//    public class UserManagementRepository : IUserManagementRepository
-//    {
-
-//        Credential removeMeLater = Credential.CreateSAUser();
+using SS.Backend.DataAccess;
+using SS.Backend.SharedNamespace;
+using Microsoft.Data.SqlClient;
 
 
-//        public async Task<Response> GeneralModifier(string whereClause, object whereClauseval, string fieldName, object newValue, string tableName)
-//        {
-//            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
-//            Response response = new Response();
-//            var commandBuilder = new CustomSqlCommandBuilder();
+namespace SS.Backend.UserManagement
+{
 
+    public class UserManagementRepository : IUserManagementRepository
+    {
 
-//            var columnValues = new Dictionary<string, object>{
-//                { fieldName, newValue },{whereClause,whereClauseval}};
-
-//            SqlCommand updateCommand = commandBuilder.BeginUpdate(tableName)
-//                                            .Set(columnValues)
-//                                            .Where($"{whereClause} = @{whereClause}")
-//                                            .AddParameters(columnValues)
-//                                            .Build();
-
-//            response = await SQLDao.SqlRowsAffected(updateCommand);
-
-//            if (response.HasError == false){
-//                response.ErrorMessage += "- General Modifier - command successful -";
-//            }
-//            else{
-//                 response.ErrorMessage += $"- General Modifier - command : {updateCommand.CommandText} not successful -";
-
-//            }
-//            return response;
-//        }
-
-//        public async Task<Response> ReadUserTable(string tableName)
-//        {
-
-//            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
-//            Response response = new Response();
-//            var commandBuilder = new CustomSqlCommandBuilder();
+        public async Task<Response> GeneralModifier(string whereClause, object whereClauseval, string fieldName, object newValue, string tableName)
+        {
+            string configFilePath = "/Users/carinegordillo/config.txt";
+            ConfigService configService = new ConfigService(configFilePath);
+            SqlDAO sqldao = new SqlDAO(configService);
 
 
 
-//            SqlCommand selectRequestsCommand = commandBuilder.BeginSelectAll()
-//                                            .From($"{tableName}")
-//                                            .Build();
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+            
+            
+            var columnValues = new Dictionary<string, object>{
+                { fieldName, newValue },{whereClause,whereClauseval}};
 
-//            response = await SQLDao.ReadSqlResult(selectRequestsCommand);
+            var updateCommand = commandBuilder.BeginUpdate(tableName)
+                                            .Set(columnValues)
+                                            .Where($"{whereClause} = @{whereClause}")
+                                            .AddParameters(columnValues)
+                                            .Build();
 
-//            if (response.HasError == false){
-//                response.ErrorMessage += "- ReadUserTable- command successful -";
-//            }
-//            else{
-//                 response.ErrorMessage += "- ReadUserTable - command not successful -";
+            response = await sqldao.SqlRowsAffected(updateCommand);
 
-//            }
-//            return response;
-//        }
+            if (response.HasError == false){
+                response.ErrorMessage += "- General Modifier - command successful -";
+            }
+            else{
+                 response.ErrorMessage += $"- General Modifier - command : {updateCommand.CommandText} not successful -";
+
+            }
+            return response;
+        }
+
+        public async Task<Response> ReadUserTable(string tableName)
+        {
+
+            string configFilePath = "/Users/carinegordillo/config.txt";
+            ConfigService configService = new ConfigService(configFilePath);
+            SqlDAO sqldao = new SqlDAO(configService);
+
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+            
+
+
+            var selectRequestsCommand = commandBuilder.BeginSelectAll()
+                                            .From($"{tableName}")
+                                            .Build();
+
+            response = await sqldao.ReadSqlResult(selectRequestsCommand);
+
+            if (response.HasError == false){
+                response.ErrorMessage += "- ReadUserTable- command successful -";
+            }
+            else{
+                 response.ErrorMessage += "- ReadUserTable - command not successful -";
+
+            }
+            return response;
+        }
 
 
 
-//        public async Task<Response> createAccountRecoveryRequest(UserRequestModel userRequest, string tableName)
-//        {
-//            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
-//            Response response = new Response();
-//            var commandBuilder = new CustomSqlCommandBuilder();
+        public async Task<Response> createAccountRecoveryRequest(UserRequestModel userRequest, string tableName)
+        {
 
-//            var parameters = new Dictionary<string, object>
-//                        {
-//                            { "userHash", userRequest.UserHash },
-//                            { "requestDate", userRequest.RequestDate},
-//                            { "status", userRequest.Status },
-//                            { "requestType", userRequest.RequestType},
-//                            { "additionalInformation", userRequest.AdditionalInformation }
-//                        };
+            string configFilePath = "/Users/carinegordillo/config.txt";
+            ConfigService configService = new ConfigService(configFilePath);
+            SqlDAO sqldao = new SqlDAO(configService);
+            Response response = new Response();
 
-//            SqlCommand InsertRequestsCommand = commandBuilder.BeginInsert(tableName)
-//                                                            .Columns(parameters.Keys)
-//                                                            .Values(parameters.Keys)
-//                                                            .AddParameters(parameters)
-//                                                            .Build();
+            var commandBuilder = new CustomSqlCommandBuilder();
 
-//            response = await SQLDao.SqlRowsAffected(InsertRequestsCommand);
+            var parameters = new Dictionary<string, object>
+                        {
+                            { "userHash", userRequest.UserHash },
+                            { "requestDate", userRequest.RequestDate},
+                            { "status", userRequest.Status },
+                            { "requestType", userRequest.RequestType},
+                            { "additionalInformation", userRequest.AdditionalInformation }
+                        };
 
-//            if (response.HasError == false){
-//                response.ErrorMessage += "- createAccountRecoveryRequest - command successful - ";
-//            }
-//            else{
-//                 response.ErrorMessage += $"- createAccountRecoveryRequest - command : {InsertRequestsCommand} not successful - ";
+            var InsertRequestsCommand = commandBuilder.BeginInsert(tableName)
+                                                            .Columns(parameters.Keys)
+                                                            .Values(parameters.Keys)
+                                                            .AddParameters(parameters)
+                                                            .Build();
 
-//            }
-//            return response;
-//        }
+            response = await sqldao.SqlRowsAffected(InsertRequestsCommand);
 
-//    }
-//}
+            if (response.HasError == false){
+                response.ErrorMessage += "- createAccountRecoveryRequest - command successful - ";
+            }
+            else{
+                 response.ErrorMessage += $"- createAccountRecoveryRequest - command : {InsertRequestsCommand} not successful - ";
+
+            }
+            return response;
+        }
+
+
+
+        public async Task<Response> sendRequest(string employeeName, string position)
+        {
+            
+
+            string configFilePath = "/Users/carinegordillo/config.txt";
+            ConfigService configService = new ConfigService(configFilePath);
+            SqlDAO sqldao = new SqlDAO(configService);
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+
+            var parameters = new Dictionary<string, object>
+                        {
+                            { "Name", employeeName },
+                            { "Position", position}
+                        };
+
+            var InsertRequestsCommand = commandBuilder.BeginInsert("dbo.EmployeesDummyTable")
+                                                            .Columns(parameters.Keys)
+                                                            .Values(parameters.Keys)
+                                                            .AddParameters(parameters)
+                                                            .Build();
+
+            response = await sqldao.SqlRowsAffected(InsertRequestsCommand);
+
+            if (response.HasError == false){
+                response.ErrorMessage += "- sendRequest - command successful - ";
+            }
+            else{
+                 response.ErrorMessage += $"- sendRequest - command : {InsertRequestsCommand} not successful - ";
+
+            }
+            return response;
+        }
+
+
+    }
+}
