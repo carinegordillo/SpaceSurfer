@@ -13,15 +13,29 @@ builder.Services.AddTransient<IAccountRecovery, AccountRecoveryNoInj>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddCors(options =>
+var app = builder.Build();
+
+app.Use((context, next) =>
 {
-    options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod());
+    
+    context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
+    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Axios-Demo, Space-Surfer-Header");
+    context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+
+    
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.Headers.Add("Access-Control-Max-Age", "86400"); 
+        context.Response.StatusCode = 204; 
+        return Task.CompletedTask;
+    }
+
+    return next();
 });
 
-var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -37,8 +51,6 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseHttpsRedirection();
-
-app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthorization();
 

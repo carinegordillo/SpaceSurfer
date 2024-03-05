@@ -1,0 +1,63 @@
+/* General styling for the menu container */
+.menu {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 20px 0; /* Add some space below the menu before the form */
+}
+
+.menu li {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    margin-bottom: 6px; /* Space between menu items */
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.menu li:hover {
+    background-color: #0056b3;
+}
+
+/* Styling for the form */
+#dummyRequestForm {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#dummyRequestForm h3 {
+    margin-top: 0;
+}
+
+#dummyRequestForm input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0; /* Space between form fields */
+    box-sizing: border-box; /* Include padding in the width */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#dummyRequestForm button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#dummyRequestForm button:hover {
+    background-color: #218838;
+}

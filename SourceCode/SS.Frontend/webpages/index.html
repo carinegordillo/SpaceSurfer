@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <div>
+                <img src="sslogo.png" alt="Logo" class="header-logo flipped-image">
+            </div>
+            <div>
+                <img src="ssname.png" alt="Title" class="header-title">
+            </div>
+        </div>
+        <nav>
+            <a href="#">About</a>
+            <a href="#">Register</a>
+            <a href="#">Login</a>
+        </nav>
+    </header>
+
+    <section id="sendOTPSection" class="form-container">
+        <form id="sendOTPForm">
+            <label for="userIdentity">Login to SpaceSurfers</label>
+            <input type="text" id="userIdentity" name="userIdentity" required placeholder="Enter your username">
+            <button type="button" onclick="sendOTP()">Send Verification</button>
+            <a href="#" class="recover-link">Recover an account</a>
+        </form>
+    </section>
+
+    <section id="enterOTPSection" class="form-container" style="display: none;">
+        <form id="enterOTPForm">
+            <label for="otp">Enter Verification Code</label>
+            <input type="text" id="otp" name="otp" required placeholder="Verification code">
+            <button type="button" onclick="authenticateUser()">Login</button>
+        </form>
+    </section>
+
+    <section id="successResult" class="form-container" style="display: none;">
+        <label style="color:#03fc52; font-size: 18px;">Authentication was successful!</label>
+    </section>
+
+    <section id="failResult" class="form-container" style="display: none;">
+        <label style="color: #e33434; font-size: 18px;">Incorrect verification code. Please double-check and try again.</label>
+    </section>
+
+    <footer>
+        <p>Designed and Developed by the PixelPals Team</p>
+    </footer>
+</body>
+</html>

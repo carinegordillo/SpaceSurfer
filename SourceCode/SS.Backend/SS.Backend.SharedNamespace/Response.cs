@@ -38,6 +38,4 @@ namespace SS.Backend.SharedNamespace
         }
     }
 
-
 }
-
