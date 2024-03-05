@@ -113,10 +113,10 @@ namespace SS.Backend.Tests.Security.Authentication
             // Cleanup
             await CleanupTestData();
         }
-    }
-}
+    //}
+//}
 
-/*
+
         [TestMethod]
         public async Task Authenticate_RegisteredUser_NeverAuthenticatedBefore_Pass()
         {
@@ -343,4 +343,3 @@ namespace SS.Backend.Tests.Security.Authentication
 
     }
 }
-*/

@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj" />
+    <ProjectReference Include="..\..\..\SS.Backend.Security.AuthN\SS.Backend.Security.AuthN.csproj" />
+    <ProjectReference Include="..\..\..\SS.Backend.Security\SS.Backend.Security.csproj" />
+    <ProjectReference Include="..\..\..\SS.Backend.Services\SS.Backend.Services.csproj" />
+    <ProjectReference Include="..\..\..\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
+    <ProjectReference Include="..\..\..\SS.Backend.Test.DataAccess\SS.Backend.Test.DataAccess.csproj" />
+    <ProjectReference Include="..\..\..\SS.Backend.Tests.Logging\SS.Backend.Tests.Logging.csproj" />
+    <ProjectReference Include="..\..\..\SS.Backend.Test.Security.Authentication\SS.Backend.Test.Security.Authentication.csproj" />
+    <ProjectReference Include="..\..\..\SS.Backend.Tests.Security.Authorization\SS.Backend.Tests.Security.Authorization.csproj" />
+    <ProjectReference Include="..\..\..\SS.Backend.ConsoleApp\SS.Backend.ConsoleApp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="System.Threading.Tasks" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>

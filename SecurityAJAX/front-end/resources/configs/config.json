@@ -1,0 +1,20 @@
+{
+    "authenticationService": {
+        "server_port": 8080,
+        "hostname": "",
+        "schema": "",
+        "verbs": {
+            "get": "",
+            "post": "",
+            "put": "",
+            "options": "",
+            "delete": "",
+            "head": "",
+            "patch": "",
+            "connect": ""
+        }
+    },
+    "registrationService": {
+
+    }
+}
