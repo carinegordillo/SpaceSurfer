@@ -1,4 +1,3 @@
-
 using SS.Backend.SharedNamespace;
 using System.Data.SqlClient;
 
@@ -37,6 +36,17 @@ namespace SS.Backend.UserManagement
             return response;
 
         }
+
+        public async Task<Response> getUserProfile(string hashedUsername){
+
+            IUserManagementRepository userManagementRepository = new UserManagementRepository();
+
+            Response response = await (userManagementRepository.readTableWhere("hashedUsername", hashedUsername, "dbo.userProfile"));
+
+            return response;
+        }
+
+
 
     }
 

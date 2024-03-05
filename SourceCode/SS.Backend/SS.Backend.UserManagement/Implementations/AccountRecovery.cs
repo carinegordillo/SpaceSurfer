@@ -1,3 +1,4 @@
+
 using SS.Backend.SharedNamespace;
 
 
@@ -70,6 +71,15 @@ namespace SS.Backend.UserManagement
             {
                 
                 response = await _accountRecoveryModifier.EnableAccount(userHash);
+
+                if (response.HasError == false)
+                {
+                    response.ErrorMessage += $"Recovery request accepted by admin. for userHash {userHash}";
+                }
+                else
+                {
+                    response.ErrorMessage += "Recovery request failed to be accepted by admin.";
+                }
             }
             else
             {
@@ -78,6 +88,7 @@ namespace SS.Backend.UserManagement
             return response;
             
         }
+
 
         public async Task<Response> ReadUserRequests(){
 
@@ -97,6 +108,60 @@ namespace SS.Backend.UserManagement
 
             return response;
         }
+
+        public async Task<Response> ReadUserPendingRequests(){
+
+            IUserManagementRepository userManagementRepository = new UserManagementRepository();
+            
+            Response response = new Response();
+            
+            response = await userManagementRepository.readTableWhere("status", "Pending", "dbo.userRequests");
+
+            if (response.HasError == false)
+            {
+                response.ErrorMessage = "- ReadUserRequests successful. -";
+            }
+            else
+            {
+                response.ErrorMessage = "- ReadUserRequests Failed - ";
+            }
+
+            return response;
+        }
+        
+
+        public async Task<Response> ReadDummyTable(){
+
+            IUserManagementRepository userManagementRepository = new UserManagementRepository();
+            Response response = new Response();
+            
+            response = await userManagementRepository.ReadUserTable("dbo.EmployeesDummyTable");
+
+            if (response.HasError == false)
+            {
+                response.ErrorMessage += "- ReadDummyTable successful. -";
+            }
+            else
+            {
+                response.ErrorMessage += "- ReadDummyTable Failed - ";
+            }
+
+            return response;
+        }
+
+         public async Task<Response> sendDummyRequest(string name, string position)
+        {
+
+            IUserManagementRepository userManagementRepository = new UserManagementRepository();
+
+            Response response = new Response();
+            response = await userManagementRepository.sendRequest(name, position);
+
+            return response;
+
+        }
+
+
 
         
 

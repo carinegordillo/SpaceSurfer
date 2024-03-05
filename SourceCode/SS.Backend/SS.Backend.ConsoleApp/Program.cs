@@ -1,29 +1,43 @@
-﻿using SS.Backend.DataAccess;
+using SS.Backend.DataAccess;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
 using System.Diagnostics;
 
 internal class Program
 {
-    private static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        Credential SAUser = Credential.CreateSAUser();
+        Response result = new Response();
+        var builder = new CustomSqlCommandBuilder();
+        string configFilePath = "/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt";
+        ConfigService configService = new ConfigService(configFilePath);
+        SqlDAO dao = new SqlDAO(configService);
 
-        var dataAccess = new SqlDAO(SAUser);
-
-        var log = new LogEntry
+        
+        var parameters = new Dictionary<string, object>
         {
-            level = "Debug",
-            username = "test@email",
-            category = "View",
-            description = "Testing File Logger"
+            { "hashedUsername", "test@email" },
+            { "firstName", "benny" },
+            { "lastName", "bennington" },
+            { "backupEmail", "backup@email" },
+            { "appRole", "1" }
         };
-        Stopwatch timer = new Stopwatch();
-        var textLogTarget = new TextFileLogTarget("\"C:\\Users\\brand\\Documents\\Examples\\SS.Logging,DataAccess\\File_Logger_Test.txt\"");
-        Logger logger = new Logger(textLogTarget);
+        var insertCommand = builder
+            .BeginInsert("userProfile")
+            .Columns(parameters.Keys)
+            .Values(parameters.Keys)
+            .AddParameters(parameters)
+            .Build();
+        result = await dao.SqlRowsAffected(insertCommand);
+        
+        var selectCommand = builder
+                    .BeginSelectAll()
+                    .From("userProfile")
+                    .Where($"hashedUsername = 'helloworld'")
+                    .Build();
+        result = await dao.ReadSqlResult(selectCommand);
 
-        Console.WriteLine("Finished.");
-
+        result.PrintDataTable();
     }
 
 }

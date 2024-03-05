@@ -1,5 +1,5 @@
-
-using System.Data.SqlClient;
+﻿
+using Microsoft.Data.SqlClient;
 using System.Text;
 
 namespace SS.Backend.DataAccess;
@@ -41,12 +41,6 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
-    public ICustomSqlCommandBuilder SelectOne(string column)
-    {
-        _commandText.Append(column);
-        return this;
-    }
-
     public ICustomSqlCommandBuilder BeginSelect()
     {
         _commandText.Clear();
@@ -57,7 +51,7 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
     public ICustomSqlCommandBuilder BeginSelectAll()
     {
         _commandText.Clear();
-        _commandText.Append("SELECT * ");
+        _commandText.Append("SELECT *");
         return this;
     }
 
@@ -82,7 +76,7 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
 
     public ICustomSqlCommandBuilder Where(string whereClause)
     {
-        _commandText.Append($"WHERE {whereClause}");
+        _commandText.Append($" WHERE {whereClause}");
         return this;
     }
 
@@ -118,10 +112,5 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
     {
         _command.CommandText = _commandText.ToString();
         return _command;
-    }
-
-    public ICustomSqlCommandBuilder Select()
-    {
-        throw new NotImplementedException();
     }
 }

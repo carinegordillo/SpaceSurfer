@@ -3,7 +3,7 @@
 namespace SS.Backend.Services.DeletingService
 
 /// <summary>
-///     IAccountDeletion an interface resposible of deleting user records of a database
+///     IAccountDeletion an interface responsible of deleting user records of a database
 /// </summary>
 ///
 /// <param username> String value representing a username.</param>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="profilePage.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Space Surfer</h1>
+            <nav>
+                <a href="#">Home</a>
+                <a href="#">About</a>
+                <span id="userName">Hi, User</span>
+            </nav>
+        </header>
+        <div class="profile">
+            <div id="leftPanel" class="left-panel">
+                <!-- Dynamic user profile information will be loaded here -->
+            </div>
+            <div class="right-panel">
+                <button class="edit-button" onclick="toggleEdit()">Edit Profile</button>
+                <div id="accountDetails" class="account-details">
+                    <!-- Dynamic account details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetchUserProfile();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const userEmail = "testUsername2"; // Replace this with the actual method to obtain the user's email
+    fetchUserProfile(userEmail);
+});
+
+function fetchUserProfile(email) {
+    fetch(`http://localhost:5048/api/profile/getUserProfile?email=${encodeURIComponent(email)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if(data && data.length > 0){
+                displayUserProfile(data[0]);
+            } else {
+                console.error('User profile data is empty');
+            }
+        })
+        .catch(error => console.error('Error fetching user profile:', error));
+}
+
+
+function displayUserProfile(userProfile) {
+    const leftPanel = document.getElementById('leftPanel');
+    const accountDetails = document.getElementById('accountDetails');
+    const userNameSpan = document.getElementById('userName');
+
+    // Update greeting
+    userNameSpan.textContent = `Hi, ${userProfile.firstName}`;
+
+    // Populate left panel
+    leftPanel.innerHTML = `
+        <h2>${userProfile.firstName} ${userProfile.lastName}</h2>
+        <div class="about">
+            <p>About</p>
+            <p>${userProfile.about || "User biography not provided."}</p>
+        </div>
+        <!-- Add any additional sections dynamically as needed -->
+    `;
+
+    // Populate account details
+    accountDetails.innerHTML = `
+        <h2>Account Details</h2>
+
+        <p>Email: ${userProfile.email}</p>
+        <p>Backup Email: ${userProfile.backupEmail || "Not provided"}</p>
+        <p>Role: ${userProfile.appRole || "User role not specified"}</p>
+    `;
+}
+
+function toggleEdit() {
+    console.log('Edit button clicked');
+}
+
+
+    </script>
+</body>
+</html>

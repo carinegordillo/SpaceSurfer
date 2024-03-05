@@ -1,0 +1,108 @@
+body, h1, p, label, span {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    margin: auto;
+    width: 40%;
+    overflow-y: auto;
+    border-radius: 8px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    padding: 1rem;
+
+}
+
+.header h1 {
+    text-align: center;
+    color: #333;
+    padding: 16px 0;
+}
+
+.header p {
+    text-align: center;
+    color: #666;
+    padding-bottom: 16px;
+}
+
+.booking-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 14px;
+    padding-bottom: 8px;
+}
+
+.form-group input,
+.form-group select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.selected-seat {
+    display: inline-block;
+    padding: 8px;
+    margin-top: 8px;
+    background-color: #eee;
+    border-radius: 4px;
+}
+
+.reserve {
+    grid-column: 1 / -1;
+    width: 10rem;
+    padding: 12px 24px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    justify-self: right;
+}
+
+.map {
+    text-align: center;
+    padding: 16px;
+}
+
+.map img {
+    max-width: 100%;
+    height: auto;
+}
+
+.seats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.seat {
+    padding: 12px 24px;
+    margin-bottom: 8px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.facility-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reserve:hover {
+    background-color: #b41010;
+}

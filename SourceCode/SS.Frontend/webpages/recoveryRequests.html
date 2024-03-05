@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Manage Recovery Requests</title>
+    <link rel="stylesheet" href="recoveryRequests.css">
+</head>
+<body>
+    <h1>Manage Recovery Requests</h1>
+
+    <section>
+        <h2>Pending Requests</h2>
+        <form id="approvalForm">
+            <div id="pendingRequests" class="requests-container"></div>
+            <button type="submit">Approve Selected</button>
+        </form>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', fetchPendingRequests);
+
+        document.getElementById('approvalForm').addEventListener('submit', function(e) {
+            e.preventDefault(); 
+
+            const selectedRequests = document.querySelectorAll('.request-card input[type="checkbox"]:checked');
+            const approvedUserHashes = Array.from(selectedRequests).map(checkbox => checkbox.dataset.userHash);
+
+            approveRequestsByUserHash(approvedUserHashes);
+        });
+
+        function fetchPendingRequests() {
+            fetch('http://localhost:5115/api/requestRecovery/sendRecoveryRequest') // Update the URL to your actual API endpoint
+            .then(response => response.json())
+            .then(data => renderRequests(data))
+            .catch(error => console.error('Fetch error:', error));
+        }
+
+        function renderRequests(data) {
+            const container = document.getElementById('pendingRequests');
+            container.innerHTML = ''; // Clear previous content
+
+            data.forEach(request => {
+                const card = document.createElement('div');
+                card.className = 'request-card';
+                card.innerHTML = `
+                    <h4>User Hash: ${request.userHash}</h4>
+                    <p>Request Date: ${new Date(request.requestDate).toLocaleString()}</p>
+                    <p>Status: ${request.status}</p>
+                    <p>Request Type: ${request.requestType}</p>
+                    <p>Additional Info: ${request.additionalInformation || 'None'}</p>
+                    <label>
+                        <input type="checkbox" data-user-hash="${request.userHash}"> Select for Approval
+                    </label>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function approveRequestsByUserHash(userHashes) {
+            fetch('http://localhost:5115/api/requests/acceptRequests', { // Update the URL to your actual API endpoint
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userHashes),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Successfully approved requests by userHash:', data);
+                fetchPendingRequests();
+            })
+            .catch(error => {
+                console.error('Error approving requests by userHash:', error);
+            });
+        }
+        
+    </script>
+</body>
+</html>

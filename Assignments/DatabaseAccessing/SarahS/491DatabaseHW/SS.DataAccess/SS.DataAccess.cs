@@ -1,13 +1,13 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 
-namespace SS.Logging.DataAccessing
+namespace SS.DataAccess
 {
     public class DataAccess
     {
         public void SaveData(string userName, string password, DateTime dateTime)
         {
             // connect to the database server
-            string connectionString = "Data Source=localhost; Initial Catalog=SS_Server; User Id=sa; Password=D0ck3rHaras;";
+            string connectionString = "Data Source=localhost; Initial Catalog=SSDatabase; User Id=sa; Password=dockerStrongPwd123; TrustServerCertificate=True;";
 
             try
             {
