@@ -53,7 +53,7 @@ app.Use(async (context, next) =>
     if (!string.IsNullOrEmpty(origin))
     {
         context.Response.Headers.Append(HeaderNames.AccessControlAllowOrigin, origin);
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowMethods, "GET, POST, PUT, DELETE, OPTIONS");
+        context.Response.Headers.Append(HeaderNames.AccessControlAllowMethods, "POST, OPTIONS");
         context.Response.Headers.Append(HeaderNames.AccessControlAllowHeaders, "Content-Type, Accept");
     }
     if (context.Request.Method == "OPTIONS")
