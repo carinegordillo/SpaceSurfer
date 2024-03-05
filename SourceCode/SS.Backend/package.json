@@ -1,0 +1,18 @@
+{
+  "author": "",
+  "dependencies": {
+    "axios": "^1.6.7",
+    "express": "^4.18.2",
+    "exprss": "^0.0.1-security",
+    "package": "^1.0.1"
+  },
+  "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "SS.Backend",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.0"
+}

@@ -17,11 +17,44 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.ConsoleApp", "SS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.Services", "SS.Backend.Tests.Deletion\SS.Backend.Tests.Services.csproj", "{D0871303-1A98-4A19-B68A-DEF78438301B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.UserManagement", "SS.Backend.Tests.UserManagement\SS.Backend.Tests.UserManagement.csproj", "{ABD6D6CB-8786-4F24-8569-5B620A5C31B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.UserManagement", "SS.Backend.Tests.UserManagement\SS.Backend.Tests.UserManagement.csproj", "{ABD6D6CB-8786-4F24-8569-5B620A5C31B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.AccountCreation", "SS.Backend.Tests.AccountCreation\SS.Backend.Tests.AccountCreation.csproj", "{15BF497F-DD35-4D95-9AD4-2A752F273379}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.AccountCreation", "SS.Backend.Tests.AccountCreation\SS.Backend.Tests.AccountCreation.csproj", "{15BF497F-DD35-4D95-9AD4-2A752F273379}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Security", "SS.Backend.Security\SS.Backend.Security.csproj", "{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Security", "SS.Backend.Security\SS.Backend.Security.csproj", "{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SS.FrontEnd", "SS.FrontEnd", "{26858018-4ED5-462E-95B0-5A2DA42A0112}"
+	ProjectSection(SolutionItems) = preProject
+		..\SS.Frontend\AccountDeletionFunction.js = ..\SS.Frontend\AccountDeletionFunction.js
+		..\SS.Frontend\AccountDeletionStyle.css = ..\SS.Frontend\AccountDeletionStyle.css
+		..\SS.Frontend\AccountDeletionView.html = ..\SS.Frontend\AccountDeletionView.html
+		..\SS.Frontend\AIfire_transparent.png = ..\SS.Frontend\AIfire_transparent.png
+		..\SS.Frontend\astroSurf.png = ..\SS.Frontend\astroSurf.png
+		..\SS.Frontend\bs-config.json = ..\SS.Frontend\bs-config.json
+		..\SS.Frontend\favicon.ico = ..\SS.Frontend\favicon.ico
+		..\SS.Frontend\index.html = ..\SS.Frontend\index.html
+		..\SS.Frontend\package-lock.json = ..\SS.Frontend\package-lock.json
+		..\SS.Frontend\package.json = ..\SS.Frontend\package.json
+		..\SS.Frontend\Registration.css = ..\SS.Frontend\Registration.css
+		..\SS.Frontend\Registration.html = ..\SS.Frontend\Registration.html
+		..\SS.Frontend\Registration.js = ..\SS.Frontend\Registration.js
+		..\SS.Frontend\ssName.png = ..\SS.Frontend\ssName.png
+		..\SS.Frontend\test.txt = ..\SS.Frontend\test.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SS.Backend", "SS.Backend", "{4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}"
+	ProjectSection(SolutionItems) = preProject
+		bs-config.json = bs-config.json
+		package-lock.json = package-lock.json
+		package.json = package.json
+		server.js = server.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B01F06E3-7BFC-4E7C-BD5B-33065115F025}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountDeletionAPI", "..\SS.Frontend\SS.Frontend.Services\DeletingService\AccountDeletion\AccountDeletionAPI.csproj", "{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.UserManagement", "SS.Backend.UserManagement\SS.Backend.UserManagement.csproj", "{2F6B7963-623D-4D58-B7B6-4704DC3805FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +86,10 @@ Global
 		{6035FCC0-2071-4DE7-A6D1-740A422DA888}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6035FCC0-2071-4DE7-A6D1-740A422DA888}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6035FCC0-2071-4DE7-A6D1-740A422DA888}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0871303-1A98-4A19-B68A-DEF78438301B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0871303-1A98-4A19-B68A-DEF78438301B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0871303-1A98-4A19-B68A-DEF78438301B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0871303-1A98-4A19-B68A-DEF78438301B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ABD6D6CB-8786-4F24-8569-5B620A5C31B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ABD6D6CB-8786-4F24-8569-5B620A5C31B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABD6D6CB-8786-4F24-8569-5B620A5C31B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -65,17 +102,31 @@ Global
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CDC580DB-5FDC-4515-AAB8-63181EA726CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CDC580DB-5FDC-4515-AAB8-63181EA726CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CDC580DB-5FDC-4515-AAB8-63181EA726CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CDC580DB-5FDC-4515-AAB8-63181EA726CB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D0871303-1A98-4A19-B68A-DEF78438301B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D0871303-1A98-4A19-B68A-DEF78438301B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D0871303-1A98-4A19-B68A-DEF78438301B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D0871303-1A98-4A19-B68A-DEF78438301B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F6B7963-623D-4D58-B7B6-4704DC3805FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F6B7963-623D-4D58-B7B6-4704DC3805FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F6B7963-623D-4D58-B7B6-4704DC3805FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F6B7963-623D-4D58-B7B6-4704DC3805FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AE4EC0B6-813A-46D2-9EB6-2153FE03E6D6} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{13331E6E-A835-41E9-831F-4ADA5BB5CE0D} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{A22E5CBB-793E-4D6C-B442-A87565282464} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{8484A174-D9E4-4F9B-B27F-3CF292EAB5F8} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{C9364A4E-A22A-46CD-AA2B-2FB26BED0BE0} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{6035FCC0-2071-4DE7-A6D1-740A422DA888} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{D0871303-1A98-4A19-B68A-DEF78438301B} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{ABD6D6CB-8786-4F24-8569-5B620A5C31B3} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{15BF497F-DD35-4D95-9AD4-2A752F273379} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B} = {26858018-4ED5-462E-95B0-5A2DA42A0112}
+		{2F6B7963-623D-4D58-B7B6-4704DC3805FD} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {27FF35A7-BBB6-414D-87FC-32255A9F675F}
