@@ -55,29 +55,49 @@ function hideView(viewId) {
 }
 
 // Ajax function to call
+//function deleteAccount(username) {
+//    var requestData = { username: username };
+
+//    fetch('http://localhost:5198/api/AccountDeletion/Delete', {
+//        method: 'POST',
+//        headers: {
+//            'Content-Type': 'application/json'
+//        },
+//        body: JSON.stringify(requestData)
+//    })
+//        .then(response => {
+//            if (!response.ok) {
+//                throw new Error('Network response was not ok');
+//            }
+//            return response.json();
+//        })
+//        .then(data => {
+//            // Handle success response
+//            changeView('AccountDeletedView');
+//            console.log(data);
+//        })
+//        .catch(error => {
+//            // Handle error response
+//            console.error('Error:', error);
+//        });
+//}
+
 function deleteAccount(username) {
     var requestData = { username: username };
 
-    fetch('http://localhost:5198/api/AccountDeletion/Delete', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestData)
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
+    $.ajax({
+        url: 'http://localhost:5198/api/AccountDeletion/Delete',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(requestData),
+        success: function (data) {
             // Handle success response
             changeView('AccountDeletedView');
             console.log(data);
-        })
-        .catch(error => {
+        },
+        error: function (xhr, status, error) {
             // Handle error response
             console.error('Error:', error);
-        });
+        }
+    });
 }
