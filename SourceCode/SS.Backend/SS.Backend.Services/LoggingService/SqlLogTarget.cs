@@ -1,6 +1,6 @@
-﻿using SS.Backend.DataAccess;
+﻿using Microsoft.Data.SqlClient;
+using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
-using System.Data.SqlClient;
 
 namespace SS.Backend.Services.LoggingService
 {

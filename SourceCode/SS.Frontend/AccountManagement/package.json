@@ -1,0 +1,16 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm install && lite-server"
+  },
+  "dependencies": {
+    "axios": "^0.26.0",
+    "lite-server": "^2.6.1",
+    "typescript": "^4.6.2"
+  },
+  "author": "",
+  "license": "ISC"
+}

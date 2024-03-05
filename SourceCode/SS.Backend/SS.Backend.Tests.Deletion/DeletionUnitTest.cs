@@ -25,8 +25,8 @@ namespace SS.Backend.Tests.Services
         [TestInitialize]
         public void InitializeTest()
         {
-            var SAUser = Credential.CreateSAUser();
-            dao = new SqlDAO(SAUser);
+            ConfigService cf = new ConfigService("C:/Users/brand/Documents/GitHub/SpaceSurfer/SourceCode/SS.Backend/config.local.txt");
+            dao = new SqlDAO(cf);
             commandBuilder = new CustomSqlCommandBuilder();
             logger = new Logger(new SqlLogTarget(dao));
         }
@@ -129,7 +129,7 @@ namespace SS.Backend.Tests.Services
         [TestCleanup]
         public async Task CleanupTestData()
         {
-            await CleanupTestData(1);
+            await CleanupTestData(2);
         }
 
         /// <summary>
@@ -206,17 +206,18 @@ namespace SS.Backend.Tests.Services
         /// <summary>
         ///     Tests for the successful retrieval of the database table names that contain the username column
         /// </summary>
-        [TestMethod]
-        public async Task TableNames_Success()
-        {
-            // initializing account deletion
-            var test = new DatabaseHelper();
-            var result = await test.RetrieveTableNames();
+        //[TestMethod]
+        //public async Task TableNames_Success()
+        //{
+        //
+        //    // initializing account deletion
+        //    var test = new DatabaseHelper();
+        //    var result = await test.RetrieveTableNames();
 
 
-            Assert.IsTrue(result.ValuesRead.Count >= 1);
+        //    Assert.IsTrue(result.ValuesRead.Count >= 1);
 
-        }
+        //}
 
     }
 

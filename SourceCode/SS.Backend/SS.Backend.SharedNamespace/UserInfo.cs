@@ -12,10 +12,10 @@ namespace SS.Backend.SharedNamespace
 
 
         // Only for company/facility managers: 
-        public string companyName {get; set;}
-        public string address {get;set;}
-        public string openingHours {get;set;}
-        public string closingHours {get;set;}
-        public string daysOpen{get;set;}
+        public string? companyName {get; set;}
+        public string? address {get;set;}
+        public string? openingHours {get;set;}
+        public string? closingHours {get;set;}
+        public string? daysOpen{get;set;}
     }
 }

@@ -1,24 +1,24 @@
 using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Reflection;
-using SS.Backend.Services.LoggingService;
 using System.Text.RegularExpressions;
+
 
 
 namespace SS.Backend.Services.AccountCreationService
 {
     public class AccountCreation : IAccountCreation
     {
-        Credential temp = Credential.CreateSAUser();
+        // Credential temp = Credential.CreateSAUser();
+        string configFilePath = "C:/Users/kayka/Downloads/config.local.txt";
+        ConfigService configService = new ConfigService("C:/Users/kayka/Downloads/config.local.txt");
         private readonly UserInfo _userInfo;
         private readonly ICustomSqlCommandBuilder _commandBuilder;
 
-        public AccountCreation(UserInfo userInfo)
-        {
-            _userInfo = userInfo;
-        }
+        // public AccountCreation(UserInfo userInfo)
+        // {
+        //     _userInfo = userInfo;
+        // }
 
         public bool CheckNullWhiteSpace(string str)
         {
@@ -53,32 +53,34 @@ namespace SS.Backend.Services.AccountCreationService
                         }
                         break;
                     case "companyName":
-                        if (userInfo.role == 2 || userInfo.role == 3){
-                                if(!IsValidCompanyName(value as string))
+                        if (userInfo.role == 2 || userInfo.role == 3)
+                        {
+                            if (!IsValidCompanyName(value as string))
                             {
                                 errorMsg += $"Invalid {prop.Name.ToLower()}; ";
                             }
                             break;
                         }
                         break;
-                        
+
                     case "address":
-                        if (userInfo.role == 2 || userInfo.role == 3){
-                            if(!IsValidAddress(value as string))
+                        if (userInfo.role == 2 || userInfo.role == 3)
+                        {
+                            if (!IsValidAddress(value as string))
                             {
                                 errorMsg += $"Invalid {prop.Name.ToLower()}; ";
                             }
                             break;
                         }
                         break;
-                    // case "openingHours":
-                    // case "closingHours":
-                    // case "daysOpen": //check if these need their own function
-                    //     if (CheckNullWhiteSpace(value as string))
-                    //     {
-                    //         errorMsg += $"Invalid {prop.Name.ToLower()}; ";
-                    //     }
-                    //     break;
+                        // case "openingHours":
+                        // case "closingHours":
+                        // case "daysOpen": //check if these need their own function
+                        //     if (CheckNullWhiteSpace(value as string))
+                        //     {
+                        //         errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                        //     }
+                        //     break;
                 }
             }
             return string.IsNullOrEmpty(errorMsg) ? "Pass" : errorMsg;
@@ -114,7 +116,7 @@ namespace SS.Backend.Services.AccountCreationService
         }
         private bool IsValidCompanyName(string name)
         {
-            return 
+            return
                 name.Length >= 1 &&
                 name.Length <= 60;
         }
@@ -127,8 +129,11 @@ namespace SS.Backend.Services.AccountCreationService
         //this method takes builds a dictionary with several sql commands to insert all at once 
         public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
         {
+
             
-            SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
+            // SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
+            SqlDAO SQLDao = new SqlDAO(configService);
+
             var builder = new CustomSqlCommandBuilder();
             Response tablesresponse = new Response();
 
@@ -137,13 +142,13 @@ namespace SS.Backend.Services.AccountCreationService
             {
                 string tableName = tableEntry.Key;
                 Dictionary<string, object> parameters = tableEntry.Value;
-                var insertCommand =  builder.BeginInsert(tableName)
+                var insertCommand = builder.BeginInsert(tableName)
                     .Columns(parameters.Keys)
                     .Values(parameters.Keys)
                     .AddParameters(parameters)
                     .Build();
 
-                tablesresponse = await SQLDao.SqlRowsAffected(insertCommand);
+                //tablesresponse = await SQLDao.SqlRowsAffected(insertCommand);
                 if (tablesresponse.HasError)
                 {
                     tablesresponse.ErrorMessage += $"{tableName}: error inserting data; ";
@@ -154,12 +159,14 @@ namespace SS.Backend.Services.AccountCreationService
         }
 
 
-        public async Task<Response> CreateUserAccount(UserPepper userPepper, UserInfo userInfo, Dictionary<string, Dictionary<string, object>> tableData)
+        public async Task<Response> CreateUserAccount(UserInfo userInfo)
         {
             Response response = new Response();
 
-            SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
-            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(temp)));
+
+            SqlDAO SQLDao = new SqlDAO(configService);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+
 
 
             string validationMessage = CheckUserInfoValidity(userInfo);
@@ -169,9 +176,62 @@ namespace SS.Backend.Services.AccountCreationService
                 response.ErrorMessage = "Invalid User Info entry: " + validationMessage;
                 return response;
             }
-       
+
             //generating sql command 
+
+            UserPepper userPepper = new UserPepper();
+            AccountCreation accountcreation = new AccountCreation();
+            Hashing hashing = new Hashing();
+
+            
+            var builder = new CustomSqlCommandBuilder();
+            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            string pepper = await pepperDao.ReadPepperAsync();
+
+          
+            var validPepper = new UserPepper
+            {
+                hashedUsername = hashing.HashData(userInfo.username, pepper)
+            };
+    
+            var userAccount_success_parameters = new Dictionary<string, object>
+            {
+                { "username", userInfo.username},
+                {"birthDate", userInfo.dob}   
+            };
+
+            var userProfile_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                { "FirstName", userInfo.firstname},
+                { "LastName", userInfo.lastname}, 
+                {"backupEmail", userInfo.backupEmail},
+                {"appRole", userInfo.role}, 
+            };
+            
+            var activeAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"isActive", userInfo.status} 
+            };
+
+            var hashedAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"username", userInfo.username},
+            };
+
+            var tableData = new Dictionary<string, Dictionary<string, object>>
+            {
+                { "userAccount", userAccount_success_parameters },
+                { "userProfile", userProfile_success_parameters },
+                { "activeAccount", activeAccount_success_parameters}, 
+                {"userHash", hashedAccount_success_parameters}
+            };
+
+
             response  = await InsertIntoMultipleTables(tableData);
+
             if (response.HasError == false)
             {
                 LogEntry entry = new LogEntry()
@@ -183,9 +243,10 @@ namespace SS.Backend.Services.AccountCreationService
                     category = "Data Store",
                     description = "Successful account creation"
                 };
-                await logger.SaveData(entry);
+                //await logger.SaveData(entry);
             }
-            else{
+            else
+            {
                 LogEntry entry = new LogEntry()
 
                 {
@@ -195,10 +256,34 @@ namespace SS.Backend.Services.AccountCreationService
                     category = "Data Store",
                     description = "Error inserting user in data store."
                 };
-                await logger.SaveData(entry);
+                // await logger.SaveData(entry);
             }
-            return response;            
-         
+            return response;
+
+        }
+
+        public async Task<Response> ReadUserTable(string tableName)
+        {
+
+            SqlDAO SQLDao = new SqlDAO(configService);
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+            
+            var insertCommand =  commandBuilder.BeginSelectAll()
+                                            .From(tableName)
+                                            .Build();
+
+            response = await SQLDao.ReadSqlResult(insertCommand);
+            if (response.HasError)
+            {
+                response.ErrorMessage += $"{tableName}: error inserting data; ";
+                return response;
+            }else{
+                response.ErrorMessage += "- ReadUserTable- command successful -";
+            }
+          
+            return response;
+
         }
     }
 }
