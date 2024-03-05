@@ -23,13 +23,6 @@ builder.Services.AddSingleton(new ConfigService(Path.Combine("C:/Users/brand/Doc
 builder.Services.AddTransient<IAccountDeletion, AccountDeletion>();
 builder.Services.AddTransient<IDatabaseHelper, DatabaseHelper>();
 
-//// Registers an instance of Credential for database access
-//builder.Services.AddTransient<ConfigService>(provider =>
-//{
-//    // Provide appropriate values for user and pass here
-//    return new Credential("sa", "grfragk");
-//});
-
 
 // builds the application
 var app = builder.Build();
@@ -50,7 +43,10 @@ app.Use(async (context, next) =>
     // Get the origin header from the request
     var origin = context.Request.Headers[HeaderNames.Origin].ToString();
 
-    if (!string.IsNullOrEmpty(origin))
+    var allowedOrigins = new[] { "http://localhost:3000" };
+
+
+    if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
     {
         context.Response.Headers.Append(HeaderNames.AccessControlAllowOrigin, origin);
         context.Response.Headers.Append(HeaderNames.AccessControlAllowMethods, "POST, OPTIONS");
