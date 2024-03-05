@@ -1,0 +1,137 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+}
+
+.flipped-image {
+    transform: scaleX(-1);
+}
+
+h1 {
+    font-family: 'Georgia', sans-serif;
+    font-size: 60px;
+    margin-left: 5px;
+    margin-top: 10px;
+    color: #fff;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to bottom, #495EA8, #A29CAF);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-logo {
+    width: 150px;
+    height: auto;
+}
+
+.header-title {
+    width: 450px;
+    height: auto;
+}
+
+header h1 {
+    color: #fff;
+    margin-left: 10px;
+}
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+}
+
+    nav a {
+        color: #fff;
+        text-decoration: none;
+        margin: 0 15px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+h1, h2 {
+    color: #fff;
+}
+
+footer {
+    background-color: #B8D3DA;
+    color: #fff;
+    text-align: center;
+    margin-top: auto;
+}
+
+section {
+    margin-bottom: 20px;
+}
+
+.form-container {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 40px;
+    max-width: 300px;
+    margin: 0 auto;
+    margin-top: 75px;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.recover-link {
+    color: #539CC9;
+    font-size: 12px;
+    text-decoration: none;
+    margin-top: 20px;
+}
+
+label {
+    color: black;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 10px;
+}
+
+input {
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #4CAF50;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+    button:hover {
+        background-color: #2F7232;
+    }
+
+#enterOTPSection {
+    display: none;
+}

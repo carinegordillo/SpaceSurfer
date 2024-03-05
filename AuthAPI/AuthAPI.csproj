@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
@@ -19,6 +20,10 @@
     <ProjectReference Include="..\SourceCode\SS.Backend\SS.Backend.Security\SS.Backend.Security.csproj" />
     <ProjectReference Include="..\SourceCode\SS.Backend\SS.Backend.Services\SS.Backend.Services.csproj" />
     <ProjectReference Include="..\SourceCode\SS.Backend\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>
