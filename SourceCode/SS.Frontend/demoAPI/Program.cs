@@ -13,17 +13,21 @@ builder.Services.AddTransient<IAccountRecovery, AccountRecoveryNoInj>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod());
-});
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.Use((context, next) =>
+{
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.Headers.Add("Access-Control-Max-Age", "86400"); 
+        context.Response.StatusCode = 204; 
+        return Task.CompletedTask;
+    }
+
+    return next();
+});
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -37,8 +41,6 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseHttpsRedirection();
-
-app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthorization();
 

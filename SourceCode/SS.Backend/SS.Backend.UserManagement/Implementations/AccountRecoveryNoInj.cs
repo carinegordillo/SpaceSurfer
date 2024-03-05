@@ -63,11 +63,11 @@ namespace SS.Backend.UserManagement
 
             if (response.HasError == false)
             {
-                response.ErrorMessage = "- Recovery request initiated. -";
+                response.ErrorMessage = "- Recovery request sent. -";
             }
             else
             {
-                response.ErrorMessage = "- Failed to initiate recovery request.- ";
+                response.ErrorMessage = "- Failed to send recovery request.- ";
             }
 
             return response;

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="demoIndex.css">
     <title>AJAX Demo</title>
 
 </head>
@@ -28,19 +29,18 @@
         
     </div>
 
-        <!-- Third Party Dependencies -->
-        <script src="node_modules/axios/dist/axios.js"></script>
 
-        <!-- MyApp Dependencies -->
-    
-        <!-- Page Specific -->
-    
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
 
     <script>
        document.getElementById('get').addEventListener('click', function() {
-        fetch('http://localhost:5137/api/employees/getAllDummyRequests')
+            fetch('http://localhost:5137/api/employees/getAllDummyRequests',{
+            method: 'GET',
+            headers: {
+                'Axios-Demo': 'request-demo-item-list', 
+            }
+        })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -71,11 +71,13 @@
 
         const name = document.getElementById('name').value;
         const position = document.getElementById('position').value;
+        var result;
 
         fetch('http://localhost:5137/api/employees/postDummyRequest', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
+                'Axios-Demo': 'send-item-demo', 
             },
             body: new URLSearchParams({
                 name: name,
@@ -84,22 +86,11 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data); // Process the response data
+            console.log(data); 
+
         })
         .catch(error => {
             console.error('Error:', error);
         });
     });
-
-
     </script>
-
-    
-</body>
-</html>
-
-
-
-<!-- MyApp Dependencies -->
-
-<!-- Page Specific -->

@@ -22,18 +22,16 @@
         document.addEventListener('DOMContentLoaded', fetchPendingRequests);
 
         document.getElementById('approvalForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent default form submission
+            e.preventDefault(); 
 
-            // Gather all checked requests by userHash
             const selectedRequests = document.querySelectorAll('.request-card input[type="checkbox"]:checked');
             const approvedUserHashes = Array.from(selectedRequests).map(checkbox => checkbox.dataset.userHash);
 
-            // Call your function to approve the selected requests by userHash
             approveRequestsByUserHash(approvedUserHashes);
         });
 
         function fetchPendingRequests() {
-            fetch('http://localhost:5115/api/requests/getPendingRequests') // Update the URL to your actual API endpoint
+            fetch('http://localhost:5115/api/requestRecovery/sendRecoveryRequest') // Update the URL to your actual API endpoint
             .then(response => response.json())
             .then(data => renderRequests(data))
             .catch(error => console.error('Fetch error:', error));
@@ -82,6 +80,7 @@
                 console.error('Error approving requests by userHash:', error);
             });
         }
+        
     </script>
 </body>
 </html>
