@@ -216,7 +216,7 @@ config.*.json
 config.*.xml
 config.*.txt
 */Configs/config.txt
-SourceCode/SS.Backend/Configs/*
+
 
 
 # Microsoft Azure Emulator
