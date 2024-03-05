@@ -1,4 +1,5 @@
 ﻿using System.Data;
+
 namespace SS.Backend.SharedNamespace
 {
     public class Response
@@ -36,4 +37,7 @@ namespace SS.Backend.SharedNamespace
             }
         }
     }
+
+
 }
+

@@ -1,4 +1,3 @@
-
 using SS.Backend.SharedNamespace;
 using System.Data.SqlClient;
 

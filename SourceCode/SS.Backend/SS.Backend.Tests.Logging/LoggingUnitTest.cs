@@ -15,7 +15,7 @@ namespace SS.Backend.Tests.Logging
         public void TestInitialize()
         {
             var SAUser = Credential.CreateSAUser();
-            dao = new SqlDAO(SAUser);
+            //dao = new SqlDAO(SAUser);
         }
 
         private async Task CleanupTestData()

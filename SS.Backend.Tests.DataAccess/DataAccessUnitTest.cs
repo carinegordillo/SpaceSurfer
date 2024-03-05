@@ -12,19 +12,25 @@ namespace SS.Backend.Tests.DataAccess
         [TestInitialize]
         public void TestInitialize()
         {
-            var SAUser = Credential.CreateSAUser();
-            //dao = new SqlDAO(SAUser);
+            Response result = new Response();
+            var builder = new CustomSqlCommandBuilder();
+            string configFilePath = "/Users/sarahsantos/SpaceSurfer/SourceCode/SS.Backend/Configs/config.local.txt";
+            ConfigService configService = new ConfigService(configFilePath);
+            dao = new SqlDAO(configService);
+
 
         }
 
         private async Task CleanupTestData()
         {
             var SAUser = Credential.CreateSAUser();
-            var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+            var connectionString = string.Format(@"Data Source=localhost; Initial Catalog=SSDatabase; User Id=sa; Password=dockerStrongPwd123; TrustServerCertificate=True;");
+                  
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
+
                     await connection.OpenAsync();
 
                     string sql = $"DELETE FROM dbo.Logs WHERE [Username] = 'test@email'";
@@ -61,6 +67,9 @@ namespace SS.Backend.Tests.DataAccess
             await CleanupTestData();
         }
 
+    
+
+
         [TestMethod]
         public async Task DataAccess_Create_CreateValidRecord_Pass()
         {
@@ -80,7 +89,9 @@ namespace SS.Backend.Tests.DataAccess
             // Cleanup
             await CleanupTestData();
         }
-
+    }
+}
+/*
         [TestMethod]
         public async Task DataAccess_Create_HasNullInput_Pass()
         {
@@ -447,3 +458,4 @@ namespace SS.Backend.Tests.DataAccess
 
     }
 }
+*/

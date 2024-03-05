@@ -1,3 +1,4 @@
+/*
 using SS.Backend.SharedNamespace;
 using System.Data;
 using Microsoft.Data.SqlClient;
@@ -5,7 +6,7 @@ using Microsoft.Data.SqlClient;
 
 namespace SS.Backend.DataAccess
 {
-    public sealed class SealedSqlDAO : ISqlDAO
+    public sealed class SealedSqlDAO
     {
         private readonly string connectionString;
 
@@ -45,7 +46,7 @@ namespace SS.Backend.DataAccess
                 catch (Exception ex)
                 {
                     result.HasError = true;
-                    result.ErrorMessage = ex.Message;
+                    result.ErrorMessage += " - Error in SqlRowsEffected - " + ex.Message;
                 }
             }
 
@@ -75,7 +76,7 @@ namespace SS.Backend.DataAccess
                         if (dataTable.Rows.Count > 0)
                         {
                             result.HasError = false;
-                            result.ValuesRead = dataTable;
+                            //result.ValuesRead = allValuesRead;
                         }
                         else
                         {
@@ -87,13 +88,62 @@ namespace SS.Backend.DataAccess
                 catch (Exception ex)
                 {
                     result.HasError = true;
-                    result.ErrorMessage = ex.Message;
+                    result.ErrorMessage += "Error in Read Sql Results" + ex.Message;
                 }
             }
 
             return result;
         }
+        public async Task<Response> ExecuteSqlAsync(string sql, Dictionary<string, object> parameters)
+        {
+            Response response = new Response();
+            SqlConnection connection = new SqlConnection(connectionString);
+            try
+            {
 
+                await connection.OpenAsync();
+                transaction = connection.BeginTransaction();
+
+                using (var command = new SqlCommand(sql, connection, transaction))
+                {
+                    // Add parameters to the command
+                    foreach (var param in parameters)
+                    {
+                        command.Parameters.AddWithValue(param.Key, param.Value);
+                    }
+
+                    var rowsAffected = await command.ExecuteNonQueryAsync();
+                    response.RowsAffected = rowsAffected;
+
+                    if (rowsAffected > 0)
+                    {
+                        response.HasError = false;
+                        // Handle the LastInsertedId if needed
+                    }
+                    else
+                    {
+                        response.HasError = true;
+                        response.ErrorMessage += "No rows affected.";
+                    }
+
+                    transaction.Commit();
+                }
+            }
+            catch (Exception ex)
+            {
+                transaction?.Rollback();
+                response.HasError = true;
+                response.ErrorMessage += " could not connect to DB: " + ex.Message;
+                // Log the error
+            }
+            finally
+            {
+                connection?.Close();
+            }
+
+            return response;
+        }
 
     }
 }
+*/

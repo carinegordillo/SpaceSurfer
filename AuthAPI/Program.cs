@@ -34,7 +34,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 builder.Services.AddTransient<ConfigService>(provider =>
-    new ConfigService(Path.Combine(AppContext.BaseDirectory, "config.local.txt")));
+    new ConfigService(Path.Combine("/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt")));//AppContext.BaseDirectory, "config.local.txt")));
 builder.Services.AddTransient<SqlDAO>();
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
@@ -49,12 +49,20 @@ builder.Services.AddTransient<SSAuthService>(provider =>
         provider.GetRequiredService<GenOTP>(),
         provider.GetRequiredService<Hashing>(),
         provider.GetRequiredService<SqlDAO>(),
-        provider.GetRequiredService<Logger>(),
-        "g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn"
+        provider.GetRequiredService<Logger>()//,
+        //"g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn"
     )
 );
 
 builder.Services.AddRazorPages();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 var app = builder.Build();
 app.UseStaticFiles();
@@ -64,9 +72,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthorization();
 
