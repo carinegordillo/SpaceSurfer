@@ -215,6 +215,8 @@ csx/
 config.*.json
 config.*.xml
 config.*.txt
+*/Configs/config.txt
+
 
 
 # Microsoft Azure Emulator
