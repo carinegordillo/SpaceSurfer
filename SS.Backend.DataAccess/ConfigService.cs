@@ -4,7 +4,7 @@ namespace SS.Backend.DataAccess
 {
     public class ConfigService
     {
-        private readonly Dictionary<string, string> configValues;
+        private readonly string configValues;
 
         public ConfigService(string configFilePath)
         {
@@ -17,10 +17,7 @@ namespace SS.Backend.DataAccess
         /// <returns>The connection string</returns>
         public string GetConnectionString()
         {
-            if (configValues.TryGetValue("ConnectionString", out var connectionString))
-            {
-                return connectionString;
-            }
+            return configValues;
 
             throw new InvalidOperationException("ConnectionString not found in the configuration file.");
         }
@@ -30,17 +27,15 @@ namespace SS.Backend.DataAccess
         /// </summary>
         /// <param name="filePath">The path of where the config file is on your system</param>
         /// <returns>Each line read in</returns>
-        private Dictionary<string, string> LoadConfig(string filePath)
+        private string LoadConfig(string filePath)
         {
-            var config = new Dictionary<string, string>();
-
+            string config = "";
             try
             {
                 var lines = File.ReadAllLines(filePath, Encoding.UTF8);
                 if (lines.Length > 0)
                 {
-                    var connectionString = lines[0].Trim();
-                    config["ConnectionString"] = connectionString;
+                    config = lines[0];
                 }
             }
             catch (Exception ex)
@@ -50,6 +45,7 @@ namespace SS.Backend.DataAccess
             }
 
             return config;
+
         }
 
 

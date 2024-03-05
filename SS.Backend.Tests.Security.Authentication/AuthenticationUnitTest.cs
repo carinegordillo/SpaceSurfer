@@ -1,11 +1,3 @@
-using SS.Backend.DataAccess;
-using SS.Backend.Security;
-using SS.Backend.Services.LoggingService;
-using SS.Backend.SharedNamespace;
-using Microsoft.Data.SqlClient;
-using System.Diagnostics;
-using Logger = SS.Backend.Services.LoggingService.Logger;
-
 namespace SS.Backend.Tests.Security.Authentication
 {
     [TestClass]

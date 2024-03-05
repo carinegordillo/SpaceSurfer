@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<div>
+
+    <a href="@Url.Action("Index", "AuthNTest")">Go to AuthNTest</a>
+
+</div>
+
+<div>
+    <!-- Change the link to point to the Index action of the Products controller -->
+    <a href="@Url.Action("Index", "Product")">Go to Products</a>
+</div>
+
+<div>
+    <!-- Change the link to point to the Index action of the Products controller -->
+    <a href="@Url.Action("Index", "Product")">Go to Products</a>
+</div>

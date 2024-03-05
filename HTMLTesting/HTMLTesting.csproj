@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="config.local.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="config.local.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.16" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj" />
+    <ProjectReference Include="..\SS.Backend.Security\SS.Backend.Security.csproj" />
+    <ProjectReference Include="..\SS.Backend.Services\SS.Backend.Services.csproj" />
+    <ProjectReference Include="..\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
+    <ProjectReference Include="..\SS.Backend.Tests.DataAccess\SS.Backend.Tests.DataAccess.csproj" />
+    <ProjectReference Include="..\SS.Backend.Tests.Logging\SS.Backend.Tests.Logging.csproj" />
+    <ProjectReference Include="..\SS.Backend.Tests.Security.Authentication\SS.Backend.Tests.Security.Authentication.csproj" />
+    <ProjectReference Include="..\SS.Backend.Tests.Security.Authorization\SS.Backend.Tests.Security.Authorization.csproj" />
+  </ItemGroup>
+
+</Project>
