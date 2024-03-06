@@ -21,18 +21,18 @@ namespace SS.Backend.UserManagement
             return response;
         }
 
-        public async Task<Response> ModifyLastName(string hashedUsername, string newLastName){
+        public async Task<Response> ModifyLastName(string hashedUsername, string lastName){
 
 
-            Response response = await (_userManagementDao.GeneralModifier("hashedUsername",hashedUsername,"lastName",newLastName,"dbo.userProfile"));
+            Response response = await (_userManagementDao.GeneralModifier("hashedUsername",hashedUsername,"lastName",lastName,"dbo.userProfile"));
 
             return response;
         }
 
-        public async Task<Response> ModifyBackupEmail(string hashedUsername, string newBackupEmail){
+        public async Task<Response> ModifyBackupEmail(string hashedUsername, string backupEmail){
 
 
-            Response response = await (_userManagementDao.GeneralModifier("hashedUsername",hashedUsername,"backupEmail","newEamils@yahoo","dbo.userProfile"));
+            Response response = await (_userManagementDao.GeneralModifier("hashedUsername",hashedUsername,"backupEmail",backupEmail,"dbo.userProfile"));
 
             return response;
 

@@ -7,7 +7,7 @@
 // namespace SS.Backend.Tests.UserManagement;
 
 // [TestClass]
-// public class ProfileModification
+// public class ProfileModificationUnit2Test
 // {
 
 //    [TestMethod]
@@ -120,13 +120,5 @@
 //            Assert.IsTrue(responseNull.HasError);
 //            Assert.IsTrue(responseEmpty.HasError);
 //        }
-
-//        //create an email formatter for valid emails 
-
-
-
-
-
-
 
 // }

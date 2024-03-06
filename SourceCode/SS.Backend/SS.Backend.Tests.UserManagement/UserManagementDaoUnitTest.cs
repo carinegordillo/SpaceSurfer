@@ -167,14 +167,8 @@ namespace SS.Backend.Tests.UserManagement;
             var commandText = "DELETE FROM dbo.userRequests WHERE userHash = 'testUserHash'";
             
             // Create a SQL command object
-            using (var connection = new SqlConnection(_configService.GetConnectionString()))
-            {
-                connection.Open();
-                using (var command = new SqlCommand(commandText, connection))
-                {
-                    command.ExecuteNonQuery();
-                }
-            }
+            SqlCommand sqlCommand = new SqlCommand(commandText);
+            _sqlDao.SqlRowsAffected(sqlCommand);
         }
 
 
