@@ -12,6 +12,8 @@ namespace SS.Backend.UserManagement
 
         public Task<Response> PendingRequest(string userhash);
 
+         public  Task<Response> ResolveRequest(string userHash, string resolveStatus);
+
     
 
 

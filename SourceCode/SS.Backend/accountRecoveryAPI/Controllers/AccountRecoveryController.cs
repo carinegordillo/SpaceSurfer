@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using SS.Backend.UserManagement;
+using SS.Backend.DataAccess;
 
 namespace AccountManagement.Controllers;
 
@@ -9,8 +10,8 @@ namespace AccountManagement.Controllers;
 public class RecoverRequestController : ControllerBase
 {
     private readonly IAccountRecovery _accountRecovery;
-    public RecoverRequestController (IAccountRecovery AccountRecoveryNoInj){
-        _accountRecovery = AccountRecoveryNoInj;
+    public RecoverRequestController (IAccountRecovery AccountRecovery){
+        _accountRecovery = AccountRecovery;
     }
 
 

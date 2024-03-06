@@ -38,13 +38,14 @@ namespace SS.Backend.DataAccess
                     else
                     {
                         result.HasError = true;
+                        result.ErrorMessage += "No rows affected.";
                         result.RowsAffected = 0;
                     }
                 }
                 catch (Exception ex)
                 {
                     result.HasError = true;
-                    result.ErrorMessage = ex.Message;
+                    result.ErrorMessage += ex.Message;
                 }
             }
 
@@ -79,14 +80,15 @@ namespace SS.Backend.DataAccess
                         else
                         {
                             result.HasError = true;
-                            result.ErrorMessage = "No rows found.";
+
+                            result.ErrorMessage += "No rows found.";
                         }
                     }
                 }
                 catch (Exception ex)
                 {
                     result.HasError = true;
-                    result.ErrorMessage = ex.Message;
+                    result.ErrorMessage += ex.Message;
                 }
             }
 
