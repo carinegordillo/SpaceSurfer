@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using SS.Backend.UserManagement;
+using SS.Backend.DataAccess;
+
 
 namespace AccountManagement.Controllers;
 
@@ -10,8 +12,8 @@ public class RecoverRequestController : ControllerBase
 {
 
     private readonly IAccountRecovery _accountRecovery;
-    public RecoverRequestController (IAccountRecovery AccountRecoveryNoInj){
-        _accountRecovery = AccountRecoveryNoInj;
+    public RecoverRequestController (IAccountRecovery AccountRecovery){
+        _accountRecovery = AccountRecovery;
     }
     
     [Route("getAllRequests")]
@@ -39,9 +41,7 @@ public class RecoverRequestController : ControllerBase
                     RequestDate = Convert.ToDateTime(row["requestDate"]),
                     Status = Convert.ToString(row["status"]),
                     RequestType = Convert.ToString(row["requestType"]),
-                    // Check if resolveDate is DBNull and only then parse it to DateTime
                     ResolveDate = row["resolveDate"] != DBNull.Value ? Convert.ToDateTime(row["resolveDate"]) : (DateTime?)null,
-                    // Check if additionalInformation is DBNull before converting
                     AdditionalInformation = row["additionalInformation"] != DBNull.Value ? Convert.ToString(row["additionalInformation"]) : null
                 };
                 requestList.Add(userRequest);

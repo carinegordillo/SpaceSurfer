@@ -1,14 +1,14 @@
 
-//using SS.Backend.SharedNamespace;
-//using SS.Backend.UserManagement;
-//using System.Data.SqlClient;
+// using SS.Backend.SharedNamespace;
+// using SS.Backend.UserManagement;
+// using System.Data.SqlClient;
 
 
-//namespace SS.Backend.Tests.UserManagement;
+// namespace SS.Backend.Tests.UserManagement;
 
-//[TestClass]
-//public class ProfileModification
-//{
+// [TestClass]
+// public class ProfileModification
+// {
 
 //    [TestMethod]
 //    public async Task ProfileModification_ModifyFirstName_Pass()
@@ -129,4 +129,4 @@
 
 
 
-//}
+// }

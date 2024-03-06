@@ -9,6 +9,13 @@ namespace SS.Backend.UserManagement
     public class AccountRecoveryModifier : IAccountRecoveryModifier
     {
 
+        private IUserManagementDao _userManagementDao;
+
+        public AccountRecoveryModifier(IUserManagementDao userManagementDao)
+        {
+            _userManagementDao = userManagementDao;
+        }
+
         /* 
         * This method is used to update the status of a user account in the ActiveAccount table to enabled
         * @param userhash - the hashed username of the user
@@ -17,9 +24,10 @@ namespace SS.Backend.UserManagement
 
         public async Task<Response> EnableAccount(string userhash){
 
-            IUserManagementRepository userManagementRepository = new UserManagementRepository();
+            Console.WriteLine("Enabling account");
 
-            Response table1Result = await userManagementRepository.GeneralModifier("hashedUsername", userhash, "IsActive", "yes", "dbo.activeAccount");
+
+            Response table1Result = await _userManagementDao.GeneralModifier("hashedUsername", userhash, "IsActive", "yes", "dbo.activeAccount");
             Response table2Result = new Response();
 
             if (table1Result.HasError == false){
@@ -55,16 +63,15 @@ namespace SS.Backend.UserManagement
         * @return Response - the response object
         */
 
-
         public async Task<Response> ResolveRequest(string userHash, string resolveStatus){
+            Console.WriteLine("Resolving account");
 
-            IUserManagementRepository userManagementRepository = new UserManagementRepository();
             Response response = new Response();
 
             try{
-                response = await userManagementRepository.GeneralModifier("userHash", userHash, "status" , resolveStatus, "dbo.userRequests");
+                response = await _userManagementDao.GeneralModifier("userHash", userHash, "status" , resolveStatus, "dbo.userRequests");
                  DateTime now = DateTime.Now;
-                response = await userManagementRepository.GeneralModifier("userHash", userHash, "resolveDate" , now, "dbo.userRequests");
+                response = await _userManagementDao.GeneralModifier("userHash", userHash, "resolveDate" , now, "dbo.userRequests");
             }
             catch (Exception e){
                 response.HasError = true;
@@ -84,9 +91,7 @@ namespace SS.Backend.UserManagement
         */
         public async Task<Response> PendingRequest(string userhash){
 
-            IUserManagementRepository userManagementRepository = new UserManagementRepository();
-
-            Response result = await userManagementRepository.GeneralModifier("hashedUsername", userhash, "IsActive", "pending", "dbo.activeAccount");
+            Response result = await _userManagementDao.GeneralModifier("hashedUsername", userhash, "IsActive", "pending", "dbo.activeAccount");
 
             if (result.HasError == false){
                 result.ErrorMessage += "- Updated account status to pending successful -";
@@ -99,20 +104,18 @@ namespace SS.Backend.UserManagement
         }
 
         public async Task<Response> ReadUserPendingRequests(){
-
-            IUserManagementRepository userManagementRepository = new UserManagementRepository();
             
             Response response = new Response();
             
-            response = await userManagementRepository.readTableWhere("status", "Pending", "dbo.userRequests");
+            response = await _userManagementDao.readTableWhere("status", "Pending", "dbo.userRequests");
 
             if (response.HasError == false)
             {
-                response.ErrorMessage = "- ReadUserRequests successful. -";
+                response.ErrorMessage += "- ReadUserRequests successful. -";
             }
             else
             {
-                response.ErrorMessage = "- ReadUserRequests Failed - ";
+                response.ErrorMessage += "- ReadUserRequests Failed - ";
             }
 
             return response;
