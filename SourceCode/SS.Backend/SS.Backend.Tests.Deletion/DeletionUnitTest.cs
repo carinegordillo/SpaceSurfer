@@ -1,11 +1,12 @@
+using Microsoft.Data.SqlClient;
 using SS.Backend.DataAccess;
 using SS.Backend.Services.DeletingService;
 using SS.Backend.Services.LoggingService;
-using SS.Backend.SharedNamespace;
-using System.Data.SqlClient;
 
 namespace SS.Backend.Tests.Services
 {
+
+
     /// <summary>
     ///     DeletionUnitTest class that performd units tests on the methods in AccountDeletion
     /// <summary>
@@ -18,6 +19,7 @@ namespace SS.Backend.Tests.Services
         private CustomSqlCommandBuilder? commandBuilder;
         private Logger? logger;
 
+
         /// <summary>
         ///     Initializes unit tests
         /// </summary>
@@ -25,18 +27,30 @@ namespace SS.Backend.Tests.Services
         [TestInitialize]
         public void InitializeTest()
         {
-            ConfigService cf = new ConfigService("C:/Users/brand/Documents/GitHub/SpaceSurfer/SourceCode/SS.Backend/config.local.txt");
-            dao = new SqlDAO(cf);
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+
+            ConfigService configFile = new ConfigService(configFilePath);
+            var connectionString = configFile.GetConnectionString();
+            dao = new SqlDAO(configFile);
             commandBuilder = new CustomSqlCommandBuilder();
             logger = new Logger(new SqlLogTarget(dao));
         }
 
         private async Task CleanupTestData(int choice)
         {
-            var SAUser = Credential.CreateSAUser();
-            var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+
+            //var SAUser = Credential.CreateSAUser();
+            //var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+
             try
             {
+                var baseDirectory = AppContext.BaseDirectory;
+                var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+                var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+                ConfigService configFile = new ConfigService(configFilePath);
+                var connectionString = configFile.GetConnectionString();
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     await connection.OpenAsync().ConfigureAwait(false);
@@ -87,9 +101,11 @@ namespace SS.Backend.Tests.Services
         ///
         public async Task insertUser()
         {
-            var SAUser = Credential.CreateSAUser();
-
-            var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            ConfigService configFile = new ConfigService(configFilePath);
+            var connectionString = configFile.GetConnectionString();
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
