@@ -25,9 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Security", "SS.B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SS.FrontEnd", "SS.FrontEnd", "{26858018-4ED5-462E-95B0-5A2DA42A0112}"
 	ProjectSection(SolutionItems) = preProject
-		..\SS.Frontend\AccountDeletionFunction.js = ..\SS.Frontend\AccountDeletionFunction.js
-		..\SS.Frontend\AccountDeletionStyle.css = ..\SS.Frontend\AccountDeletionStyle.css
-		..\SS.Frontend\AccountDeletionView.html = ..\SS.Frontend\AccountDeletionView.html
 		..\SS.Frontend\AIfire_transparent.png = ..\SS.Frontend\AIfire_transparent.png
 		..\SS.Frontend\astroSurf.png = ..\SS.Frontend\astroSurf.png
 		..\SS.Frontend\bs-config.json = ..\SS.Frontend\bs-config.json
@@ -35,9 +32,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SS.FrontEnd", "SS.FrontEnd"
 		..\SS.Frontend\index.html = ..\SS.Frontend\index.html
 		..\SS.Frontend\package-lock.json = ..\SS.Frontend\package-lock.json
 		..\SS.Frontend\package.json = ..\SS.Frontend\package.json
-		..\SS.Frontend\Registration.css = ..\SS.Frontend\Registration.css
-		..\SS.Frontend\Registration.html = ..\SS.Frontend\Registration.html
-		..\SS.Frontend\Registration.js = ..\SS.Frontend\Registration.js
 		..\SS.Frontend\ssName.png = ..\SS.Frontend\ssName.png
 		..\SS.Frontend\test.txt = ..\SS.Frontend\test.txt
 	EndProjectSection
@@ -47,14 +41,35 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SS.Backend", "SS.Backend", 
 		bs-config.json = bs-config.json
 		package-lock.json = package-lock.json
 		package.json = package.json
-		server.js = server.js
 	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B01F06E3-7BFC-4E7C-BD5B-33065115F025}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountDeletionAPI", "..\SS.Frontend\SS.Frontend.Services\DeletingService\AccountDeletion\AccountDeletionAPI.csproj", "{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.UserManagement", "SS.Backend.UserManagement\SS.Backend.UserManagement.csproj", "{2F6B7963-623D-4D58-B7B6-4704DC3805FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "APIs", "APIs", "{B6120DE4-5D16-4CC9-8BC4-C85B98109BCE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AccountDeletion", "AccountDeletion", "{B15D16B8-4867-4CE1-B3CC-F9EFE1FACE33}"
+	ProjectSection(SolutionItems) = preProject
+		..\SS.Frontend\AccountDeletionFunction.js = ..\SS.Frontend\AccountDeletionFunction.js
+		..\SS.Frontend\AccountDeletionStyle.css = ..\SS.Frontend\AccountDeletionStyle.css
+		..\SS.Frontend\AccountDeletionView.html = ..\SS.Frontend\AccountDeletionView.html
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Registration", "Registration", "{E7D24CF4-360B-48D2-B7E0-68734A0D35A0}"
+	ProjectSection(SolutionItems) = preProject
+		..\SS.Frontend\Registration.css = ..\SS.Frontend\Registration.css
+		..\SS.Frontend\Registration.html = ..\SS.Frontend\Registration.html
+		..\SS.Frontend\Registration.js = ..\SS.Frontend\Registration.js
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "accountRecoveryAPI", "..\SS.Frontend\accountRecoveryAPI\accountRecoveryAPI.csproj", "{6EC65C7B-AC1F-4BDC-A9F1-0796FD9E67D3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Registration", "..\SS.Frontend\Registration\Registration.csproj", "{F800B5EA-1CE8-40B3-AB76-B4DF100DDCD1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "userProfileAPI", "..\SS.Frontend\userProfileAPI\userProfileAPI.csproj", "{70F9AAA3-DB44-436B-9D59-30813A2C66AE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountManagement", "..\SS.Frontend\AccountManagement\AccountManagement.csproj", "{7273EF6F-349A-4FE7-9BDD-14146B2D403E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -110,6 +125,22 @@ Global
 		{2F6B7963-623D-4D58-B7B6-4704DC3805FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F6B7963-623D-4D58-B7B6-4704DC3805FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F6B7963-623D-4D58-B7B6-4704DC3805FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EC65C7B-AC1F-4BDC-A9F1-0796FD9E67D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EC65C7B-AC1F-4BDC-A9F1-0796FD9E67D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EC65C7B-AC1F-4BDC-A9F1-0796FD9E67D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EC65C7B-AC1F-4BDC-A9F1-0796FD9E67D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F800B5EA-1CE8-40B3-AB76-B4DF100DDCD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F800B5EA-1CE8-40B3-AB76-B4DF100DDCD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F800B5EA-1CE8-40B3-AB76-B4DF100DDCD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F800B5EA-1CE8-40B3-AB76-B4DF100DDCD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70F9AAA3-DB44-436B-9D59-30813A2C66AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70F9AAA3-DB44-436B-9D59-30813A2C66AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70F9AAA3-DB44-436B-9D59-30813A2C66AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70F9AAA3-DB44-436B-9D59-30813A2C66AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7273EF6F-349A-4FE7-9BDD-14146B2D403E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7273EF6F-349A-4FE7-9BDD-14146B2D403E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7273EF6F-349A-4FE7-9BDD-14146B2D403E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7273EF6F-349A-4FE7-9BDD-14146B2D403E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,8 +156,15 @@ Global
 		{ABD6D6CB-8786-4F24-8569-5B620A5C31B3} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{15BF497F-DD35-4D95-9AD4-2A752F273379} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
-		{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B} = {26858018-4ED5-462E-95B0-5A2DA42A0112}
+		{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B} = {B6120DE4-5D16-4CC9-8BC4-C85B98109BCE}
 		{2F6B7963-623D-4D58-B7B6-4704DC3805FD} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{B6120DE4-5D16-4CC9-8BC4-C85B98109BCE} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{B15D16B8-4867-4CE1-B3CC-F9EFE1FACE33} = {26858018-4ED5-462E-95B0-5A2DA42A0112}
+		{E7D24CF4-360B-48D2-B7E0-68734A0D35A0} = {26858018-4ED5-462E-95B0-5A2DA42A0112}
+		{6EC65C7B-AC1F-4BDC-A9F1-0796FD9E67D3} = {B6120DE4-5D16-4CC9-8BC4-C85B98109BCE}
+		{F800B5EA-1CE8-40B3-AB76-B4DF100DDCD1} = {B6120DE4-5D16-4CC9-8BC4-C85B98109BCE}
+		{70F9AAA3-DB44-436B-9D59-30813A2C66AE} = {B6120DE4-5D16-4CC9-8BC4-C85B98109BCE}
+		{7273EF6F-349A-4FE7-9BDD-14146B2D403E} = {B6120DE4-5D16-4CC9-8BC4-C85B98109BCE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {27FF35A7-BBB6-414D-87FC-32255A9F675F}
