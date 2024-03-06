@@ -1,4 +1,8 @@
+using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using SS.Backend.UserManagement;
+using SS.Backend.DataAccess;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +14,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<IAccountRecovery, AccountRecoveryNoInj>();
+builder.Services.AddTransient<ConfigService>(provider =>
+    new ConfigService(Path.Combine("//Users/carinegordillo/config.txt")));//AppContext.BaseDirectory, "config.local.txt")));
+builder.Services.AddTransient<ISqlDAO, SqlDAO>();
+builder.Services.AddTransient<CustomSqlCommandBuilder>();
+builder.Services.AddTransient<IUserManagementDao, UserManagementDao>();
+builder.Services.AddTransient<IAccountRecoveryModifier, AccountRecoveryModifier>();
+builder.Services.AddTransient<IProfileModifier, ProfileModifier>();
+builder.Services.AddTransient<IAccountRecovery, AccountRecovery>();
 
 
 builder.Services.AddCors(options =>

@@ -6,16 +6,18 @@ using Microsoft.Data.SqlClient;
 namespace SS.Backend.UserManagement
 {
 
-    public class UserManagementRepository : IUserManagementRepository
+    public class UserManagementDao : IUserManagementDao
     {
+        private ISqlDAO _sqldao;
+
+        public UserManagementDao(ISqlDAO sqldao)
+        {
+            _sqldao = sqldao;
+        }
+
 
         public async Task<Response> GeneralModifier(string whereClause, object whereClauseval, string fieldName, object newValue, string tableName)
         {
-            string configFilePath = "/Users/carinegordillo/config.txt";
-            ConfigService configService = new ConfigService(configFilePath);
-            SqlDAO sqldao = new SqlDAO(configService);
-
-
 
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();
@@ -30,7 +32,7 @@ namespace SS.Backend.UserManagement
                                             .AddParameters(columnValues)
                                             .Build();
 
-            response = await sqldao.SqlRowsAffected(updateCommand);
+            response = await _sqldao.SqlRowsAffected(updateCommand);
 
             if (response.HasError == false){
                 response.ErrorMessage += "- General Modifier - command successful -";
@@ -45,10 +47,6 @@ namespace SS.Backend.UserManagement
         public async Task<Response> ReadUserTable(string tableName)
         {
 
-            string configFilePath = "/Users/carinegordillo/config.txt";
-            ConfigService configService = new ConfigService(configFilePath);
-            SqlDAO sqldao = new SqlDAO(configService);
-
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();
             
@@ -58,7 +56,7 @@ namespace SS.Backend.UserManagement
                                             .From($"{tableName}")
                                             .Build();
 
-            response = await sqldao.ReadSqlResult(selectRequestsCommand);
+            response = await _sqldao.ReadSqlResult(selectRequestsCommand);
 
             if (response.HasError == false){
                 response.ErrorMessage += "- ReadUserTable- command successful -";
@@ -75,9 +73,7 @@ namespace SS.Backend.UserManagement
         public async Task<Response> createAccountRecoveryRequest(UserRequestModel userRequest, string tableName)
         {
 
-            string configFilePath = "/Users/carinegordillo/config.txt";
-            ConfigService configService = new ConfigService(configFilePath);
-            SqlDAO sqldao = new SqlDAO(configService);
+
             Response response = new Response();
 
             var commandBuilder = new CustomSqlCommandBuilder();
@@ -97,7 +93,7 @@ namespace SS.Backend.UserManagement
                                                             .AddParameters(parameters)
                                                             .Build();
 
-            response = await sqldao.SqlRowsAffected(InsertRequestsCommand);
+            response = await _sqldao.SqlRowsAffected(InsertRequestsCommand);
 
             if (response.HasError == false){
                 response.ErrorMessage += "- createAccountRecoveryRequest - command successful - ";
@@ -114,10 +110,6 @@ namespace SS.Backend.UserManagement
         public async Task<Response> sendRequest(string employeeName, string position)
         {
             
-
-            string configFilePath = "/Users/carinegordillo/config.txt";
-            ConfigService configService = new ConfigService(configFilePath);
-            SqlDAO sqldao = new SqlDAO(configService);
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();
 
@@ -133,7 +125,7 @@ namespace SS.Backend.UserManagement
                                                             .AddParameters(parameters)
                                                             .Build();
 
-            response = await sqldao.SqlRowsAffected(InsertRequestsCommand);
+            response = await _sqldao.SqlRowsAffected(InsertRequestsCommand);
 
             if (response.HasError == false){
                 response.ErrorMessage += "- sendRequest - command successful - ";
@@ -147,9 +139,7 @@ namespace SS.Backend.UserManagement
 
         public async Task<Response> readTableWhere(string whereClause, object whereClauseval, string tableName)
         {
-            string configFilePath = "/Users/carinegordillo/config.txt";
-            ConfigService configService = new ConfigService(configFilePath);
-            SqlDAO sqldao = new SqlDAO(configService);
+
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();
 
@@ -162,7 +152,7 @@ namespace SS.Backend.UserManagement
                         .AddParameters(parameters)
                         .Build();
             
-            response = await sqldao.ReadSqlResult(command);
+            response = await _sqldao.ReadSqlResult(command);
 
             if (response.HasError == false){
                 response.ErrorMessage += "- readTableWhere- command successful -";

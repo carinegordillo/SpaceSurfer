@@ -1,5 +1,6 @@
 using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
+using SS.Backend.Services.LoggingService;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -10,8 +11,11 @@ namespace SS.Backend.Services.AccountCreationService
     public class AccountCreation : IAccountCreation
     {
         // Credential temp = Credential.CreateSAUser();
-        string configFilePath = "C:/Users/kayka/Downloads/config.local.txt";
-        ConfigService configService = new ConfigService("C:/Users/kayka/Downloads/config.local.txt");
+        // string configFilePath = "../../../Configs/config.local.txt";
+        // var baseDirectory = AppContext.BaseDirectory;
+        // var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+        // var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+        // ConfigService configService = new ConfigService(configFilePath);
         private readonly UserInfo _userInfo;
         private readonly ICustomSqlCommandBuilder _commandBuilder;
 
@@ -132,6 +136,10 @@ namespace SS.Backend.Services.AccountCreationService
 
             
             // SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            ConfigService configService = new ConfigService(configFilePath);
             SqlDAO SQLDao = new SqlDAO(configService);
 
             var builder = new CustomSqlCommandBuilder();
@@ -148,7 +156,7 @@ namespace SS.Backend.Services.AccountCreationService
                     .AddParameters(parameters)
                     .Build();
 
-                //tablesresponse = await SQLDao.SqlRowsAffected(insertCommand);
+                tablesresponse = await SQLDao.SqlRowsAffected(insertCommand);
                 if (tablesresponse.HasError)
                 {
                     tablesresponse.ErrorMessage += $"{tableName}: error inserting data; ";
@@ -163,7 +171,10 @@ namespace SS.Backend.Services.AccountCreationService
         {
             Response response = new Response();
 
-
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            ConfigService configService = new ConfigService(configFilePath);
             SqlDAO SQLDao = new SqlDAO(configService);
             Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
 
@@ -185,8 +196,9 @@ namespace SS.Backend.Services.AccountCreationService
 
             
             var builder = new CustomSqlCommandBuilder();
-            SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
-            string pepper = await pepperDao.ReadPepperAsync();
+            // SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
+            // string pepper = await pepperDao.ReadPepperAsync();
+            string pepper = "DA06";
 
           
             var validPepper = new UserPepper
@@ -220,6 +232,17 @@ namespace SS.Backend.Services.AccountCreationService
                 {"hashedUsername", validPepper.hashedUsername},
                 {"username", userInfo.username},
             };
+
+            // var companyInfo_success_parameters = new Dictionary<string, object>
+            // {
+            //     {"hashedUsername", validPepper.hashedUsername},
+            //     {"companyName", userInfo.companyName}, 
+            //     {"address", userInfo.address}, 
+            //     {"openingHours", userInfo.openingHours}, 
+            //     {"closingHours", userInfo.closingHours}, 
+            //     {"daysOpen", userInfo.daysOpen}
+            // };
+            // {"companyProfile", companyInfo_success_parameters}
 
             var tableData = new Dictionary<string, Dictionary<string, object>>
             {
@@ -265,6 +288,13 @@ namespace SS.Backend.Services.AccountCreationService
         public async Task<Response> ReadUserTable(string tableName)
         {
 
+            // var baseDirectory = AppContext.BaseDirectory;
+            // var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            // var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            ConfigService configService = new ConfigService(configFilePath);
             SqlDAO SQLDao = new SqlDAO(configService);
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();

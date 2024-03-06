@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using SS.Backend.UserManagement;
+using SS.Backend.DataAccess;
 
 namespace demoAPI.Controllers;
 
@@ -10,8 +11,8 @@ public class DemoController : ControllerBase
 {
 
     private readonly IAccountRecovery _accountRecovery;
-    public DemoController (IAccountRecovery AccountRecoveryNoInj){
-        _accountRecovery = AccountRecoveryNoInj;
+    public DemoController (IAccountRecovery AccountRecovery){
+        _accountRecovery = AccountRecovery;
     }
     
     [Route("getAllDummyRequests")]
