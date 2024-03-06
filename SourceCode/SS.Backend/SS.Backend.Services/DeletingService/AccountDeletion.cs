@@ -10,8 +10,7 @@ namespace SS.Backend.Services.DeletingService
     ///
     public class AccountDeletion : IAccountDeletion
     {
-
-        ConfigService configService = new ConfigService("C:/Users/brand/Documents/GitHub/SpaceSurfer/SourceCode/SS.Backend/config.local.txt");
+        ConfigService? configService;
 
         /// <summary>
         ///     DeleteAccount deletes the account by username
@@ -25,6 +24,11 @@ namespace SS.Backend.Services.DeletingService
 
             try
             {
+                var baseDirectory = AppContext.BaseDirectory;
+                var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+                var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+
+                configService = new ConfigService(configFilePath);
 
                 // initializes a new instance of SqlDAO
                 SqlDAO SQLDao = new SqlDAO(configService);
@@ -39,8 +43,6 @@ namespace SS.Backend.Services.DeletingService
                         .From("dbo.userAccount ")
                         .Where($"Username = '{username}'")
                         .Build();
-                // initializes a new instance of Database Helper
-                //DatabaseHelper dbHelper = new DatabaseHelper();
 
                 // Sets the tables names from the Database Helper Response
                 result = await SQLDao.ReadSqlResult(command);
