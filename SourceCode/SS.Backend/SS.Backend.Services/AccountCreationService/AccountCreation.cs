@@ -233,6 +233,17 @@ namespace SS.Backend.Services.AccountCreationService
                 {"username", userInfo.username},
             };
 
+            // var companyInfo_success_parameters = new Dictionary<string, object>
+            // {
+            //     {"hashedUsername", validPepper.hashedUsername},
+            //     {"companyName", userInfo.companyName}, 
+            //     {"address", userInfo.address}, 
+            //     {"openingHours", userInfo.openingHours}, 
+            //     {"closingHours", userInfo.closingHours}, 
+            //     {"daysOpen", userInfo.daysOpen}
+            // };
+            // {"companyProfile", companyInfo_success_parameters}
+
             var tableData = new Dictionary<string, Dictionary<string, object>>
             {
                 { "userAccount", userAccount_success_parameters },
