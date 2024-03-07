@@ -1,31 +1,3 @@
-/*
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-//app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
-*/
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using SS.Backend.DataAccess;
@@ -34,25 +6,13 @@ using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-//using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.Net.Http.Headers;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-/*
-builder.Services.AddTransient<SqlDAO>();
-
-//builder.Services.AddTransient<Credential>();      //need help with transient order
-builder.Services.AddTransient<Hashing>();
-
-builder.Services.AddTransient<GenOTP>();
-builder.Services.AddTransient<SSAuthService>();
-*/
-builder.Services.AddControllers();
+.Services.AddControllers();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -79,13 +39,13 @@ builder.Services.AddSwaggerGen(options =>
 });
 */
 
-builder.Services.AddAuthentication();
-
 builder.Services.AddAuthorization();
 
-//builder.Services.AddTransient<Credential>();
-builder.Services.AddTransient<ConfigService>(provider =>
-    new ConfigService(Path.Combine("/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt")));
+var baseDirectory = AppContext.BaseDirectory;
+var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+builder.Services.AddTransient<ConfigService>(provider =>new ConfigService(configFilePath));
+
 builder.Services.AddTransient<SqlDAO>();
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
@@ -105,40 +65,36 @@ builder.Services.AddTransient<SSAuthService>(provider =>
     )
 );
 
-//builder.Services.AddTransient<IAuthenticator, SSAuthService>();
-//builder.Services.AddTransient<IAuthorizor, SSAuthService>();
-//builder.Services.AddTransient<SSAuthService>();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-/*
-builder.Services.AddCors(options => 
-{
-    options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod());
-});
-*/
 
 var app = builder.Build();
 
-app.Use(async (context, next) =>
+app.Use((httpContext, next) =>
 {
+    httpContext.Response.Headers.AccessControlAllowOrigin = "http://localhost:3000/";
+    httpContext.Response.Headers.AccessControlAllowMethods = "GET, POST, OPTIONS, PUT, DELETE";
+    httpContext.Response.Headers.AccessControlAllowHeaders = "*";   //dont use *, specify what they have access to (comma separarted list)
+    httpContext.Response.Headers.AccessControlAllowCredentials = "true";
 
-    context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    context.Response.Headers.Add("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    return next();
+});
 
-    
-    if (context.Request.Method == "OPTIONS")
+//CORS implementation (set vatiable values)
+app.Use((httpContext, next) =>
+{
+    //address browser's preflight OPTIONS request
+    if(httpContext.Request.Method == nameof(HttpMethod.Options).ToUpperInvariant())
     {
-        context.Response.StatusCode = 200;
-        await context.Response.CompleteAsync();
-        return;
-    }
+        httpContext.Response.StatusCode = 204; //everythign okay with no payload
+        httpContext.Response.Headers.AccessControlAllowOrigin = "http://localhost:3000/";
+        httpContext.Response.Headers.AccessControlAllowMethods = "GET, POST, OPTIONS, PUT, DELETE";
+        httpContext.Response.Headers.AccessControlAllowHeaders = "*";   //dont use *, specify what they have access to (comma separarted list)
+        httpContext.Response.Headers.AccessControlAllowCredentials = "true";
 
-    await next();
+        return Task.CompletedTask; //terminate HTTP request
+    }
+    return next();
 });
 
 //app.UseStaticFiles();
@@ -154,8 +110,6 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
-app.UseCors("AllowSpecificOrigin");
 
 app.MapControllers();
 

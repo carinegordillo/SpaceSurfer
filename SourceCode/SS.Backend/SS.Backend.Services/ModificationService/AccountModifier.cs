@@ -11,7 +11,7 @@ namespace SS.Backend.Services.ModificationService
         public async Task<Response> UpdateDisplayName(string username, string newEmail, int newAge)
         {
 
-            SealedSqlDAO SQLDao = new SealedSqlDAO(removeMeLater);
+            //SqlDAO SQLDao = new SqlDAO(removeMeLater);
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();
 
