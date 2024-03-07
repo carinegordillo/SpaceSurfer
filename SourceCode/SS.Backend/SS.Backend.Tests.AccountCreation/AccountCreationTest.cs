@@ -1,9 +1,9 @@
 using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
-using System.Data.SqlClient;
+// using System.Data.SqlClient;
 using SS.Backend.Services.AccountCreationService;
-using System.Data.SqlClient;
 using System.Diagnostics;
+using Microsoft.Data.SqlClient;
 
 namespace SS.Backend.Tests.AccountCreationTest
 {
@@ -12,8 +12,14 @@ namespace SS.Backend.Tests.AccountCreationTest
     {
         private async Task CleanupTestData()
         {
-            var SAUser = Credential.CreateSAUser();
-            var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+            // var SAUser = Credential.CreateSAUser();
+            // var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+
+            ConfigService configFile = new ConfigService(configFilePath);
+            var connectionString = configFile.GetConnectionString();
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -98,10 +104,10 @@ namespace SS.Backend.Tests.AccountCreationTest
             //username must be unique in database
             var validUserInfo = new UserInfo
             {
-                username = "tryingcompanyeamil@hotmail.com",
+                username = "teamreviewl@hotmail.com",
                 dob = new DateTime(1990, 1, 1),
-                firstname = "CONFIG",
-                lastname = "CONDFIG", 
+                firstname = "Team",
+                lastname = "REVIEW", 
                 role = 1,
                 status = "yes", 
                 backupEmail = "COMBININGEVERYTHING@backup.com"
@@ -127,7 +133,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             //username must be unique in database
             var validUserInfo = new UserInfo
             {
-                username = "newbsuinessemail@hotmail.com",
+                username = "newteamreviewtru@hotmail.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "NewCompanyBusinessCofig",
                 lastname = "NewCompanyBusinessCofig", 
