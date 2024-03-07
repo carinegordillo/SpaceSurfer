@@ -61,18 +61,22 @@ public class SecurityController : ControllerBase
     [HttpPost("postAuthorize")]
     public async Task<IActionResult> PostAuthorize([FromQuery] SSPrincipal currentPrincipal, [FromQuery] IDictionary<string, string> requiredClaims)
     {
-        // Perform authorization check
-        bool isAuthorized = await _authService.IsAuthorize(currentPrincipal, requiredClaims);
+        if postAuthenticate
+        {
+            // Perform authorization check
+            bool isAuthorized = await _authService.IsAuthorize(currentPrincipal, requiredClaims);
 
-        // Return appropriate HTTP response
-        if (isAuthorized)
-        {
-            return Ok("User is authorized.");
+            // Return appropriate HTTP response
+            if (isAuthorized)
+            {
+                return Ok("User is authorized.");
+            }
+            else
+            {
+                return Forbid("User is not authorized.");
+            }
         }
-        else
-        {
-            return Forbid("User is not authorized.");
-        }
+        
     }
 
 }
