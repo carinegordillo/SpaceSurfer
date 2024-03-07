@@ -22,18 +22,20 @@ namespace SS.Backend.UserManagement
         * @return Response - the response object
         */
 
-        public async Task<Response> EnableAccount(string userhash){
+        public async Task<Response> EnableAccount(string hashedUsername){
 
             Console.WriteLine("Enabling account");
 
 
-            Response table1Result = await _userManagementDao.GeneralModifier("hashedUsername", userhash, "IsActive", "yes", "dbo.activeAccount");
+            Response table1Result = await _userManagementDao.GeneralModifier("hashedUsername", hashedUsername, "IsActive", "yes", "dbo.activeAccount");
             Response table2Result = new Response();
+
+            Console.WriteLine("hased username: " + hashedUsername  );
 
             if (table1Result.HasError == false){
 
                 table1Result.ErrorMessage += "- Updated account status to enabled successful -";
-                table2Result = await ResolveRequest(userhash, "accepted");
+                table2Result = await ResolveRequest(hashedUsername, "accepted");
 
                 if (table2Result.HasError == false)
                 {
@@ -50,6 +52,8 @@ namespace SS.Backend.UserManagement
                  table1Result.ErrorMessage += "- Could not update account status to enabled - ";
 
             }
+
+            Console.WriteLine(table1Result.ErrorMessage + " " + table2Result.ErrorMessage + " - Enable Account -");
 
             return table1Result;
 

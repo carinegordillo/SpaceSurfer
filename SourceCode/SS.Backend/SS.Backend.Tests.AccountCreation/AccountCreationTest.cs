@@ -98,7 +98,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             //username must be unique in database
             var validUserInfo = new UserInfo
             {
-                username = "1trythisnewTable@hotmail.com",
+                username = "tryingcompanyeamil@hotmail.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "CONFIG",
                 lastname = "CONDFIG", 
@@ -118,39 +118,39 @@ namespace SS.Backend.Tests.AccountCreationTest
         }
 
 
-        // [TestMethod]
-        // public async Task CreateManagerAccount_Success()
-        // {
-        //     // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
-        //     AccountCreation accountcreation = new AccountCreation();
-        //     Stopwatch timer = new Stopwatch();
-        //     //username must be unique in database
-        //     var validUserInfo = new UserInfo
-        //     {
-        //         username = "WORKSUCCESScompanyManager@hotmail.com",
-        //         dob = new DateTime(1990, 1, 1),
-        //         firstname = "COMPANY",
-        //         lastname = "MANAGER", 
-        //         role = 2,
-        //         status = "yes", 
-        //         backupEmail = "test@backup.com", 
-        //         companyName = "Kay's Billion Dollar Company", 
-        //         address = "Irvine", 
-        //         openingHours = "2:00:00",
-        //         closingHours = "2:00:00" ,
-        //         daysOpen = "Monday,Tuesday"
-        //     };
+        [TestMethod]
+        public async Task CreateManagerAccount_Success()
+        {
+            // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
+            AccountCreation accountcreation = new AccountCreation();
+            Stopwatch timer = new Stopwatch();
+            //username must be unique in database
+            var validUserInfo = new UserInfo
+            {
+                username = "newbsuinessemail@hotmail.com",
+                dob = new DateTime(1990, 1, 1),
+                firstname = "NewCompanyBusinessCofig",
+                lastname = "NewCompanyBusinessCofig", 
+                role = 2,
+                status = "yes", 
+                backupEmail = "test@backup.com", 
+                companyName = "NewCompanyBusinessCofig", 
+                address = "Irvine", 
+                openingHours = "2:00:00",
+                closingHours = "2:00:00" ,
+                daysOpen = "Monday,Tuesday"
+            };
 
             
-        //     timer.Start();
-        //     var response = await accountcreation.CreateUserAccount(validUserInfo);
-        //     timer.Stop();
+            timer.Start();
+            var response = await accountcreation.CreateUserAccount(validUserInfo);
+            timer.Stop();
 
-        //     Assert.IsFalse(response.HasError, response.ErrorMessage);
-        //     Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-        //     await CleanupTestData().ConfigureAwait(false);
+            Assert.IsFalse(response.HasError, response.ErrorMessage);
+            Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
+            await CleanupTestData().ConfigureAwait(false);
           
-        // }
+        }
 
 
         [TestMethod]

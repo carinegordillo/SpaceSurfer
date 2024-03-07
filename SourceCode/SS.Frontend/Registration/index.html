@@ -40,10 +40,10 @@
         
         <h3>Are You A Company/Facility?</h3>
         <div class="form-row" style="display: flex; justify-content: center;">
-        <input type="checkbox" id="isCompany" name="isCompany" onchange="handleCheckboxChange()" >
+        <input type="checkbox" id="isCompany" name="isCompany" onchange="handleCheckboxChange(this)" >
         <label for="isCompany">Company</label>
 
-        <input type="checkbox" id="isFacility" name="isFacility" onchange="handleCheckboxChange()" >
+        <input type="checkbox" id="isFacility" name="isFacility" onchange="handleCheckboxChange(this)" >
         <label for="isFacility">Facility</label>
         </div>
         
@@ -109,6 +109,19 @@
                     } else if ($('#isFacility').is(':checked')) {
                         role = 3; // Role for facility
                     }
+
+                    // Gather additional fields if 'isCompany' or 'isFacility' is checked
+                    var additionalFields = {};
+                    if ($('#isCompany').is(':checked') || $('#isFacility').is(':checked')) {
+                        additionalFields = {
+                            companyName: $('#companyName').val(),
+                            address: $('#address').val(),
+                            openingHours: $('#openingHours').val(),
+                            closingHours: $('#closingHours').val(),
+                            daysOpen: Array.from($("input[name='daysOpen']:checked")).map(cb => cb.value).join(', ') // Join checked days with a comma
+                        };
+                    }
+
                     var userInfo = {
                         username: $('#username').val(),
                         dob: $('#dob').val(),
@@ -116,12 +129,8 @@
                         lastname: $('#lastname').val(),
                         role: role,
                         status: $('#status').val(),
-                        backupEmail: $('#backupEmail').val()
-                        // companyName: "string",
-                        // address: "string",
-                        // openingHours: "string",
-                        // closingHours: "string",
-                        // daysOpen: "string"
+                        backupEmail: $('#backupEmail').val(),
+                        ...additionalFields // Spread additional fields into userInfo
                     };
                     $.ajax({
                         url: 'http://localhost:8080/api/registration/postAccount',
