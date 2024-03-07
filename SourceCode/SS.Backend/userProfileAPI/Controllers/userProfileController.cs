@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using SS.Backend.UserManagement;
+using SS.Backend.DataAccess;
 
 namespace userProfileAPI.Controllers;
 
