@@ -1,6 +1,6 @@
-﻿namespace SS.Backend.ConsoleApp.Configs
-{
-    internal class ConfigTests
-    {
-    }
-}
+﻿// namespace SS.Backend.ConsoleApp.Configs
+// {
+//     internal class ConfigTests
+//     {
+//     }
+// }
