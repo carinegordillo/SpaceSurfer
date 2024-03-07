@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../SS.Backend/SS.Backend.UserManagement/SS.Backend.UserManagement.csproj" />
+    <ProjectReference Include="../../SS.Backend/SS.Backend.DataAccess/SS.Backend.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

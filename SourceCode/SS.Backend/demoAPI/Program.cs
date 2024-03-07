@@ -1,4 +1,5 @@
 using SS.Backend.UserManagement;
+using SS.Backend.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +8,27 @@ builder.Services.AddControllers();
 
 // Add services to the container.
 //builder.Services.AddTransient<ISqlDAO, SealedSqlDAO>();
-builder.Services.AddTransient<IAccountRecovery, AccountRecoveryNoInj>();
+
+
+
+var baseDirectory = AppContext.BaseDirectory;
+var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+
+
+
+builder.Services.AddTransient<ConfigService>(provider =>new ConfigService(configFilePath));
+
+
+
+builder.Services.AddTransient<ISqlDAO, SqlDAO>();
+
+builder.Services.AddTransient<CustomSqlCommandBuilder>();
+builder.Services.AddTransient<IUserManagementDao, UserManagementDao>();
+builder.Services.AddTransient<IAccountRecoveryModifier, AccountRecoveryModifier>();
+builder.Services.AddTransient<IProfileModifier, ProfileModifier>();
+builder.Services.AddTransient<IAccountRecovery, AccountRecovery>();
+
 
 // Learn more about configuring Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();

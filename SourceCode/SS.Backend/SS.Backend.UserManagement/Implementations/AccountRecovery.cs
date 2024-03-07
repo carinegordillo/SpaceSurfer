@@ -6,12 +6,24 @@ namespace SS.Backend.UserManagement
 {
     public class AccountRecovery : IAccountRecovery
     {
-        private AccountRecoveryModifier _accountRecoveryModifier;
+        private IAccountRecoveryModifier _accountRecoveryModifier;
+        private IUserManagementDao _userManagementDao;
 
-        public AccountRecovery(AccountRecoveryModifier accountRecoveryModifier)
+        public AccountRecovery(IAccountRecoveryModifier accountRecoveryModifier, IUserManagementDao userManagementDao)
         {
             _accountRecoveryModifier = accountRecoveryModifier;
+            _userManagementDao = userManagementDao;
         }
+
+        /*
+         * This method creates a recovery request for a user.
+         * automatically sends the request status to pending
+         * updates activeAccount table to mark account as pending
+         * @param userHash The user's hash.
+         * @param additionalInfo Additional information to be added to the request.
+         * @return Response object.
+         */
+
 
         public async Task<Response> createRecoveryRequest(string userHash, string additionalInfo = "")
         {
@@ -25,43 +37,40 @@ namespace SS.Backend.UserManagement
                 AdditionalInformation = additionalInfo
             };
 
-            IUserManagementRepository userManagementRepository = new UserManagementRepository();
             Response response = new Response();
+            Response response2 = new Response();
             
-            response = await userManagementRepository.createAccountRecoveryRequest(userRequest,"dbo.userRequests" );
+            response = await _userManagementDao.createAccountRecoveryRequest(userRequest,"dbo.userRequests" );
 
             if (response.HasError == false)
             {
                 response.ErrorMessage += "Recovery request initiated.";
+                response2 = await _accountRecoveryModifier.PendingRequest(userHash);
+                if(response2.HasError == false)
+                {
+                    response.ErrorMessage += response2.ErrorMessage;
+                }
+                else
+                {
+                    response.ErrorMessage += response2.ErrorMessage;
+                }
             }
             else
             {
                 response.ErrorMessage += "Failed to initiate recovery request.";
             }
-    
             
             return response;
         }
         
 
 
-        public async Task<Response> sendRecoveryRequest(string userHash)
-        {
-            
-            Response response = new Response();
-            response = await _accountRecoveryModifier.PendingRequest(userHash);
 
-            if (response.HasError == false)
-            {
-                response.ErrorMessage = "- Recovery request initiated. -";
-            }
-            else
-            {
-                response.ErrorMessage = "- Failed to initiate recovery request.- ";
-            }
-
-            return response;
-        }
+        /*
+        * This method is used to recover a user account, and update the status of the user request in the userRequests table to accepted or denied
+        * @param userHash - the hashed username of the user
+        * @param adminDecision - the decision of the admin to accept or deny the request
+        */
 
         public async Task<Response> RecoverAccount(string userHash, bool adminDecision)
         {
@@ -69,33 +78,40 @@ namespace SS.Backend.UserManagement
 
             if (adminDecision)
             {
+                try
+                {
+                    response = await _accountRecoveryModifier.EnableAccount(userHash);
+                }
+                catch (Exception e)
+                {
+                    response.HasError = true;
+                    response.ErrorMessage += e.Message + "- Recovery Request  Failed -";
+                }
+            
                 
-                response = await _accountRecoveryModifier.EnableAccount(userHash);
-
-                if (response.HasError == false)
-                {
-                    response.ErrorMessage += $"Recovery request accepted by admin. for userHash {userHash}";
-                }
-                else
-                {
-                    response.ErrorMessage += "Recovery request failed to be accepted by admin.";
-                }
             }
             else
             {
-                response = new Response { HasError = true, ErrorMessage = "Recovery request denied by admin." };
+                response = await _accountRecoveryModifier.ResolveRequest(userHash, "Denied");
+                response.ErrorMessage = "Recovery request denied by admin.";
+                
             }
             return response;
             
         }
 
+        /* 
+        *
+        * This method is used to read all the userRequests table from the database
+        * @return Response - the response object
+        */
 
         public async Task<Response> ReadUserRequests(){
 
-            IUserManagementRepository userManagementRepository = new UserManagementRepository();
+            
             Response response = new Response();
             
-            response = await userManagementRepository.ReadUserTable("dbo.userRequests");
+            response = await _userManagementDao.ReadUserTable("dbo.userRequests");
 
             if (response.HasError == false)
             {
@@ -109,33 +125,32 @@ namespace SS.Backend.UserManagement
             return response;
         }
 
-        public async Task<Response> ReadUserPendingRequests(){
+         public async Task<Response> ReadUserPendingRequests(){
 
-            IUserManagementRepository userManagementRepository = new UserManagementRepository();
             
             Response response = new Response();
             
-            response = await userManagementRepository.readTableWhere("status", "Pending", "dbo.userRequests");
+            response = await _userManagementDao.readTableWhere("status", "Pending", "dbo.userRequests");
 
             if (response.HasError == false)
             {
-                response.ErrorMessage = "- ReadUserRequests successful. -";
+                response.ErrorMessage += "- ReadUserPendingRequests successful. -";
             }
             else
             {
-                response.ErrorMessage = "- ReadUserRequests Failed - ";
+                response.ErrorMessage += "- ReadUserPendingRequests Failed - ";
             }
 
             return response;
         }
         
+        
 
         public async Task<Response> ReadDummyTable(){
 
-            IUserManagementRepository userManagementRepository = new UserManagementRepository();
             Response response = new Response();
             
-            response = await userManagementRepository.ReadUserTable("dbo.EmployeesDummyTable");
+            response = await _userManagementDao.ReadUserTable("dbo.EmployeesDummyTable");
 
             if (response.HasError == false)
             {
@@ -149,21 +164,16 @@ namespace SS.Backend.UserManagement
             return response;
         }
 
-         public async Task<Response> sendDummyRequest(string name, string position)
+        public async Task<Response> sendDummyRequest(string name, string position)
         {
 
-            IUserManagementRepository userManagementRepository = new UserManagementRepository();
-
             Response response = new Response();
-            response = await userManagementRepository.sendRequest(name, position);
+            response = await _userManagementDao.sendRequest(name, position);
 
             return response;
 
         }
 
-
-
-        
 
     }
 }

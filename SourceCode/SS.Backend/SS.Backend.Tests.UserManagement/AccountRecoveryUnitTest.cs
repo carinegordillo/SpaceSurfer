@@ -1,12 +1,12 @@
 
-//using SS.Backend.SharedNamespace;
-//using SS.Backend.UserManagement;
+// using SS.Backend.SharedNamespace;
+// using SS.Backend.UserManagement;
 
-//namespace SS.Backend.Tests.UserManagement;
+// namespace SS.Backend.Tests.UserManagement;
 
-//[TestClass]
-//public class AccountRecoveryTests
-//{
+// [TestClass]
+// public class AccountRecoveryTests
+// {
 //    private AccountRecovery _accountRecovery;
 //    private AccountDisabler _accountDisabler;
 
@@ -165,13 +165,4 @@
 //        Console.Write(response.ErrorMessage);
 //        Assert.IsFalse(response.HasError);
 //    }
-
-
-
-
-
-
-
-
-
-//}
+// }
