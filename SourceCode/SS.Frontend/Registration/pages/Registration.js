@@ -33,7 +33,7 @@ document.getElementById('accountCreationForm').onsubmit = function(event) {
 
     // Check required fields
     if (!firstName || !lastName || !dob || !email || (isCompany && !name) || (isFacility && !name)) {
-        document.getElementById('errorMessage').innerText = "Cannot create account. Please enter all required fields";
+        alert("Cannot create account. Please enter all required fields.");
         return false;
     }
 
@@ -41,38 +41,33 @@ document.getElementById('accountCreationForm').onsubmit = function(event) {
     alert("Form Submitted Successfully!");
 };
 
-function handleCheckboxChange() {
+function handleCheckboxChange(checkedBox) {
     let isCompany = document.getElementById('isCompany').checked;
     let isFacility = document.getElementById('isFacility').checked;
     let additionalFields = document.getElementById('additionalFields');
-    let name = document.getElementById('name');
-    let location = document.getElementById('location');
-    let openingHours = document.getElementById('openingHours');
-    let closingHours = document.getElementById('closingHours');
+
+    if (checkedBox.id === "isCompany" && isCompany) {
+        document.getElementById('isFacility').checked = false;
+    } else if (checkedBox.id === "isFacility" && isFacility) {
+        document.getElementById('isCompany').checked = false;
+    }
+
+    // Update display based on current checkbox state
+    updateAdditionalFieldsDisplay();
+}
+
+// Function to update the display of additional fields
+function updateAdditionalFieldsDisplay() {
+    let isCompany = document.getElementById('isCompany').checked;
+    let isFacility = document.getElementById('isFacility').checked;
+    let additionalFields = document.getElementById('additionalFields');
 
     if (isCompany || isFacility) {
-        // If either checkbox is checked, display and require the additional fields
         additionalFields.style.display = 'block';
-        // name.required = true;
-        // location.required = true;
-        // openingHours.required = true;
-        // closingHours.required = true;
-    }
-    // } else {
-
-    //     // If neither checkbox is checked, hide and make the additional fields optional
-    //     additionalFields.style.display = 'none';
-    //     name.required = false;
-    //     location.required = false;
-    //     openingHours.required = false;
-    //     closingHours.required = false;
-    // }
-
-    // Prevent both checkboxes from being checked simultaneously
-    if (isCompany) {
-        document.getElementById('isFacility').checked = false;
-    } else if (isFacility) {
-        document.getElementById('isCompany').checked = false;
+    } else {
+        additionalFields.style.display = 'none';
     }
 }
 
+// Set initial display state for additional fields
+updateAdditionalFieldsDisplay();

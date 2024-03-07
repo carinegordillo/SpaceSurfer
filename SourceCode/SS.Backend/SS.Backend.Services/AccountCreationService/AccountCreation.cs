@@ -16,8 +16,9 @@ namespace SS.Backend.Services.AccountCreationService
         // var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
         // var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
         // ConfigService configService = new ConfigService(configFilePath);
-        private readonly UserInfo _userInfo;
-        private readonly ICustomSqlCommandBuilder _commandBuilder;
+
+        // private readonly UserInfo _userInfo;
+        // private readonly ICustomSqlCommandBuilder _commandBuilder;
 
         // public AccountCreation(UserInfo userInfo)
         // {
@@ -46,7 +47,6 @@ namespace SS.Backend.Services.AccountCreationService
                     case "username":
                         if (!IsValidEmail(value as string))
                         {
-                            string testing = "random gibbering";
                             errorMsg += "Invalid email";
                         }
                         break;
@@ -233,16 +233,6 @@ namespace SS.Backend.Services.AccountCreationService
                 {"username", userInfo.username},
             };
 
-            // var companyInfo_success_parameters = new Dictionary<string, object>
-            // {
-            //     {"hashedUsername", validPepper.hashedUsername},
-            //     {"companyName", userInfo.companyName}, 
-            //     {"address", userInfo.address}, 
-            //     {"openingHours", userInfo.openingHours}, 
-            //     {"closingHours", userInfo.closingHours}, 
-            //     {"daysOpen", userInfo.daysOpen}
-            // };
-            // {"companyProfile", companyInfo_success_parameters}
 
             var tableData = new Dictionary<string, Dictionary<string, object>>
             {
@@ -251,6 +241,22 @@ namespace SS.Backend.Services.AccountCreationService
                 { "activeAccount", activeAccount_success_parameters}, 
                 {"userHash", hashedAccount_success_parameters}
             };
+
+            if (!string.IsNullOrEmpty(userInfo.companyName))
+            {
+                var companyProfile_success_parameters = new Dictionary<string, object>
+                {
+                    {"hashedUsername", validPepper.hashedUsername},
+                    {"companyName", userInfo.companyName},
+                    {"address", userInfo.address},
+                    {"openingHours", userInfo.openingHours},
+                    {"closingHours", userInfo.closingHours},
+                    {"daysOpen", userInfo.daysOpen}
+                };
+                
+                // Add the companyProfile dictionary to tableData
+                tableData.Add("companyProfile", companyProfile_success_parameters);
+            }
 
 
             response  = await InsertIntoMultipleTables(tableData);

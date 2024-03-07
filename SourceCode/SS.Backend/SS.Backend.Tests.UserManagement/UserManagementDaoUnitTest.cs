@@ -170,9 +170,5 @@ namespace SS.Backend.Tests.UserManagement;
             SqlCommand sqlCommand = new SqlCommand(commandText);
             _sqlDao.SqlRowsAffected(sqlCommand);
         }
-
-
-
-
 }
 
