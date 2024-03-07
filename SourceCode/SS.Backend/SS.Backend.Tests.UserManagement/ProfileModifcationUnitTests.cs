@@ -26,17 +26,6 @@ public class ProfileModifierUnitTests
         _sqlDao = new SqlDAO(_configService);
         _userManagementDao = new UserManagementDao(_sqlDao);
         _profileModifier = new ProfileModifier(_userManagementDao);
-
-        var commandText = @"
-        INSERT INTO [dbo].[userProfile] (hashedUsername, firstName, lastName, backupEmail) VALUES ('testUserHash1', 'TestFirstName1', 'TestLastName1', 'test1@example.com');
-        INSERT INTO [dbo].[userProfile] (hashedUsername, firstName, lastName, backupEmail) VALUES ('testUserHash2', 'TestFirstName2', 'TestLastName2', 'test2@example.com');
-        INSERT INTO [dbo].[userProfile] (hashedUsername, firstName, lastName, backupEmail) VALUES ('testUserHash3', 'TestFirstName3', 'TestLastName3', 'test3@example.com');
-        INSERT INTO [dbo].[userProfile] (hashedUsername, firstName, lastName, backupEmail) VALUES ('testUserHash4', 'TestFirstName4', 'TestLastName4', 'test4@example.com');
-        INSERT INTO [dbo].[userProfile] (hashedUsername, firstName, lastName, backupEmail) VALUES ('testUserHash5', 'TestFirstName5', 'TestLastName5', 'test5@example.com');
-        ";
-
-        SqlCommand sqlCommand = new SqlCommand(commandText);
-        _sqlDao.SqlRowsAffected(sqlCommand);
         
     }
 
@@ -144,18 +133,7 @@ public class ProfileModifierUnitTests
     }
 
 
-    [TestCleanup]
-    public void Cleanup()
-    {
-        var commandText = @"
-        DELETE FROM [dbo].[userProfile] WHERE hashedUsername = 'testUserHash1';
-        DELETE FROM [dbo].[userProfile] WHERE hashedUsername = 'testUserHash2';
-        DELETE FROM [dbo].[userProfile] WHERE hashedUsername = 'testUserHash3';
-        DELETE FROM [dbo].[userProfile] WHERE hashedUsername = 'testUserHash4';
-        DELETE FROM [dbo].[userProfile] WHERE hashedUsername = 'testUserHash5';
-        ";
 
-        SqlCommand sqlCommand = new SqlCommand(commandText);
-        _sqlDao.SqlRowsAffected(sqlCommand);
-    }
 }
+
+
