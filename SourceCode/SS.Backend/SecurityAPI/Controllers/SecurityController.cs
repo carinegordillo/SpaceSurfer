@@ -32,30 +32,35 @@ public class SecurityController : ControllerBase
     [HttpPost("postAuthenticate")]
     //[Route("/authN")]
     public async Task<IActionResult> PostAuthenticate([FromBody] AuthenticationRequest authRequest)
+    {
+        var (principal, response) = await _authService.Authenticate(authRequest);
+
+        if (response == null)
         {
-            var (principal, response) = await _authService.Authenticate(authRequest);
-
-            if (response.HasError)
-            {
-                return BadRequest(response.ErrorMessage);
-            }
-
-            return Ok(new { principal });
-            /*
-            if (result.HasError)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-            else if (principal != null)
-            {
-                return Ok(principal);//return Ok(new { principal });
-            }
-            else
-            {
-                return Unauthorized();
-            }
-            */
+            return BadRequest("Authentication response is null.");
         }
+
+        if (response.HasError)
+        {
+            return BadRequest(response.ErrorMessage);
+        }
+
+        return Ok(principal);
+        /*
+        if (result.HasError)
+        {
+            return BadRequest(result.ErrorMessage);
+        }
+        else if (principal != null)
+        {
+            return Ok(principal);//return Ok(new { principal });
+        }
+        else
+        {
+            return Unauthorized();
+        }
+        */
+    }
     
 
     [HttpPost("postAuthorize")]

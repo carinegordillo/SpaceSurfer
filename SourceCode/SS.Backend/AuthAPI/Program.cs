@@ -34,8 +34,11 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddTransient<ConfigService>(provider =>
-    new ConfigService(Path.Combine("/Users/sarahsantos/SpaceSurfer/Configs/config.local.txt")));//AppContext.BaseDirectory, "config.local.txt")));
+var baseDirectory = AppContext.BaseDirectory;
+var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+builder.Services.AddTransient<ConfigService>(provider =>new ConfigService(configFilePath));
+
 builder.Services.AddTransient<SqlDAO>();
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
@@ -50,8 +53,8 @@ builder.Services.AddTransient<SSAuthService>(provider =>
         provider.GetRequiredService<GenOTP>(),
         provider.GetRequiredService<Hashing>(),
         provider.GetRequiredService<SqlDAO>(),
-        provider.GetRequiredService<Logger>()//,
-        //"g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn"
+        provider.GetRequiredService<Logger>(),
+        "g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn"
     )
 );
 var app = builder.Build();

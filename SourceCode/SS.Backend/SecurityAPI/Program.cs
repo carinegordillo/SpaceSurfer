@@ -72,30 +72,28 @@ var app = builder.Build();
 
 app.Use((httpContext, next) =>
 {
-    httpContext.Response.Headers.AccessControlAllowOrigin = "http://localhost:3000/";
-    httpContext.Response.Headers.AccessControlAllowMethods = "GET, POST, OPTIONS, PUT, DELETE";
-    httpContext.Response.Headers.AccessControlAllowHeaders = "*";   //dont use *, specify what they have access to (comma separarted list)
-    httpContext.Response.Headers.AccessControlAllowCredentials = "true";
+    var origin = httpContext.Request.Headers[HeaderNames.Origin].ToString();
 
-    return next();
-});
+    httpContext.Response.Headers.Add("Access-Control-Allow-Origin", origin);
+    httpContext.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+    httpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Specify allowed headers
+    httpContext.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
 
-//CORS implementation (set vatiable values)
-app.Use((httpContext, next) =>
-{
-    //address browser's preflight OPTIONS request
-    if(httpContext.Request.Method == nameof(HttpMethod.Options).ToUpperInvariant())
+    // Handle preflight OPTIONS request
+    if (httpContext.Request.Method == nameof(HttpMethod.Options).ToUpperInvariant())
     {
-        httpContext.Response.StatusCode = 204; //everythign okay with no payload
-        httpContext.Response.Headers.AccessControlAllowOrigin = "http://localhost:3000/";
-        httpContext.Response.Headers.AccessControlAllowMethods = "GET, POST, OPTIONS, PUT, DELETE";
-        httpContext.Response.Headers.AccessControlAllowHeaders = "*";   //dont use *, specify what they have access to (comma separarted list)
-        httpContext.Response.Headers.AccessControlAllowCredentials = "true";
+        httpContext.Response.StatusCode = 204; // Everything okay with no payload
+        httpContext.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000/");
+        httpContext.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+        httpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Specify allowed headers
+        httpContext.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
 
-        return Task.CompletedTask; //terminate HTTP request
+        return Task.CompletedTask; // Terminate HTTP request
     }
+
     return next();
 });
+
 
 //app.UseStaticFiles();
 

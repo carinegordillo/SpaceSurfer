@@ -1,0 +1,22 @@
+{
+  "name": "security",
+  "version": "1.0.0",
+  "description": "",
+  "main": "SecurityTest.js",
+  "dependencies": {
+    "ajax": "^0.0.4",
+    "axios": "^0.26.1",
+    "cors": "^2.8.5",
+    "typescript": "^4.6.2"
+  },
+  "scripts": {
+    "start": "npm install && lite-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "lite-server": "^2.6.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
