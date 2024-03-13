@@ -64,6 +64,7 @@ public class SecurityController : ControllerBase
     
 
     [HttpPost("postAuthorize")]
+    //[PostAuthorize(Policy = "RequireClaimPolicy")]
     public async Task<IActionResult> PostAuthorize([FromQuery] SSPrincipal currentPrincipal, [FromQuery] IDictionary<string, string> requiredClaims)
     {
         

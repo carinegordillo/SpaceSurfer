@@ -72,7 +72,7 @@ app.Use(async (context, next) =>
     // Get the origin header from the request
     var origin = context.Request.Headers[HeaderNames.Origin].ToString();
 
-    var allowedOrigins = new[] { "http://127.0.0.1:8080" };
+    var allowedOrigins = new[] { "http://127.0.0.1:3001" };
 
 
     if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))

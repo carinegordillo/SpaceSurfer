@@ -7,11 +7,9 @@
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <!-- jQuery, if used in your ajax.js -->
-        <script
-            src="/Security/securityServer.js"
-            defer></script>
-
+        
     </head>
+    <script src="../Security/securityServer.js"></script>
     <body>
 
         <!-- Form for sending OTP -->
@@ -41,7 +39,7 @@
             <button id="authorize">Authorize</button>
         </div>
 
-        <script>
+    <script>
         document.getElementById("sendOTP").addEventListener("click", postSendOTP);
         document
             .getElementById("authenticate")

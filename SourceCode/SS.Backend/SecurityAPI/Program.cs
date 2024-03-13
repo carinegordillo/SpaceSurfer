@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using SS.Backend.DataAccess;
 using SS.Backend.Security;
 using SS.Backend.Services.LoggingService;
@@ -28,8 +29,39 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = "https://spacesurfers.auth.com/", //not sure if this is right
         ValidAudience = "spacesurfers", //not sure if this is right
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn"))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn")),
+        
+        // Custom validation for additional claims
+        LifetimeValidator = (before, expires, token, param) => expires > DateTime.UtcNow,
+        AudienceValidator = (audiences, securityToken, validationParameters) => audiences.Contains("spacesurfers")
     };
+
+    // Hook into OnTokenValidated event to perform custom validation
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = context =>
+        {
+            var userClaims = context.Principal.Claims;
+            var scopeClaim = userClaims.FirstOrDefault(c => c.Type == "scope")?.Value;
+
+            // Perform your custom validation on the scope claim
+            if (string.IsNullOrEmpty(scopeClaim) || !scopeClaim.Contains("read:all"))
+            {
+                // Fail validation if the required scope is not present
+                context.Fail("The required scope is missing");
+            }
+
+            return Task.CompletedTask;
+        }
+    };
+
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireClaimPolicy", policy =>
+        policy.RequireClaim("YourClaimType", "ExpectedValue"));
+    // Adjust the policy name and claim requirements as necessary.
 });
 
 /*
@@ -39,7 +71,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 */
 
-builder.Services.AddAuthorization();
+//builder.Services.AddAuthorization();
 
 var baseDirectory = AppContext.BaseDirectory;
 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
@@ -72,23 +104,21 @@ var app = builder.Build();
 
 app.Use((httpContext, next) =>
 {
-    var origin = httpContext.Request.Headers[HeaderNames.Origin].ToString();
+    //var origin = httpContext.Request.Headers[HeaderNames.Origin].ToString();
 
-    httpContext.Response.Headers.Add("Access-Control-Allow-Origin", origin);
+    const string allowedOrigin = "http://localhost:8080";
+
+    httpContext.Response.Headers.Add("Access-Control-Allow-Origin", allowedOrigin);
     httpContext.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-    httpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Specify allowed headers
+    httpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Accept"); // Specify allowed headers
     httpContext.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
 
     // Handle preflight OPTIONS request
-    if (httpContext.Request.Method == nameof(HttpMethod.Options).ToUpperInvariant())
+    if (httpContext.Request.Method.Equals("OPTIONS", StringComparison.InvariantCultureIgnoreCase))
     {
-        httpContext.Response.StatusCode = 204; // Everything okay with no payload
-        httpContext.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000/");
-        httpContext.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-        httpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Specify allowed headers
-        httpContext.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
-
-        return Task.CompletedTask; // Terminate HTTP request
+        httpContext.Response.Headers.Add("Access-Control-Max-Age", "86400"); // Preflight cache duration
+        httpContext.Response.StatusCode = 204; // No Content
+        return Task.CompletedTask;
     }
 
     return next();
@@ -107,7 +137,9 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 
-app.UseAuthorization();
+//app.UseAuthorization();
+
+app.UseCors("AllowSpecificOrigin");
 
 app.MapControllers();
 
