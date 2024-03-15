@@ -14,9 +14,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<ConfigService>(provider =>
-    new ConfigService(Path.Combine("//Users/carinegordillo/config.txt")));//AppContext.BaseDirectory, "config.local.txt")));
+var baseDirectory = AppContext.BaseDirectory;
+var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+
+builder.Services.AddTransient<ConfigService>(provider =>new ConfigService(configFilePath));
+
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
+
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
 builder.Services.AddTransient<IUserManagementDao, UserManagementDao>();
 builder.Services.AddTransient<IAccountRecoveryModifier, AccountRecoveryModifier>();

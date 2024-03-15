@@ -20,7 +20,6 @@ var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local
 builder.Services.AddTransient<ConfigService>(provider =>new ConfigService(configFilePath));
 
 
-
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
 
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
