@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register!</title>
+    <script src="pages/Registration.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <script src="node_modules/htmx.org/dist/htmx.js"></script>
+    <link rel="stylesheet" href="pages/Registration.css">
+    <link rel="icon" type="image/x-icon" href="pages/favicon.ico">
+</head>
+<body class="background-image">
+    <nav>
+        <div class="logo-container">
+            <img src="pages/astroSurf.png" alt="Company Logo" width="160" height="150" style="padding-left: 5px;">
+            <img src="pages/ssName.png" alt="Company Name" width="440" height="80" style="padding: 25px 15px 0px 0px;">
+        </div>
+        <div class="nav-items">
+            <div class="nav-item" id="navAbout" onclick="showView('about')">About</div>
+            <div class="nav-item" id="navRegister" onclick="showView('register')">Register</div>
+            <div class="nav-item" id="navLogin" onclick="showView('login')">Login</div>
+        </div>
+    </nav>
+
+    <!-- Space Manager -->
+    <button class="accordion">Upload Space</button>
+    <div class="form-container" style="display:none;">
+        <form id="accountCreationForm">
+            
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <input type="date" id="dob" name="dob" placeholder="Date of Birth" required><br>
+            <input type="text" id="firstname" name="firstName" placeholder="First Name" required>
+            <input type="text" id="lastname" name="lastName" placeholder="Last Name" required>
+
+            <button id="postAccount" type="submit">Create Account</button>
+            <button id="loadRequestsButton">Load Requests</button>
+            <ul id="recoveryRequestsList"></ul>
+        </form>
+    </div>
+    <button class="accordion">Modify Space</button>
+    <div class="form-container" style="display:none;">
+        <form id="accountCreationForm">
+            
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <input type="date" id="dob" name="dob" placeholder="Date of Birth" required><br>
+            <input type="text" id="firstname" name="firstName" placeholder="First Name" required>
+            <input type="text" id="lastname" name="lastName" placeholder="Last Name" required>
+
+            <button id="postAccount" type="submit">Create Account</button>
+            <button id="loadRequestsButton">Load Requests</button>
+            <ul id="recoveryRequestsList"></ul>
+        </form>
+    </div>
+    
+
+
+    <script>
+
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+
+        for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.maxHeight) {
+            panel.style.maxHeight = null;
+            } else {
+            panel.style.maxHeight = panel.scrollHeight + "px";
+            }
+        });
+         }
+    
+        $(document).ready(function() {
+            $('.accordion').click(function() {
+                this.classList.toggle("active");
+                var formContainer = $(this).next('.form-container');
+                if (formContainer.css('display') === "none") {
+                    formContainer.css('display', 'flex'); // Show the form
+                } else {
+                    formContainer.css('display', 'none'); // Hide the form
+                }
+            });
+
+            $('#loadRequestsButton').click(function() {
+                $.ajax({
+                    url: 'http://localhost:8080/api/registration/createAccount',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#recoveryRequestsList').empty(); 
+                        data.forEach(function(request) {
+                            var listItem = '<li>Name : ' + request.firstname + ', Lat Name : ' + request.lastname;
+                            if(request.resolveDate) {
+                                listItem += ', Resolve Date: ' + request.resolveDate;
+                            }
+                          
+                            listItem += '</li>';
+                            $('#recoveryRequestsList').append(listItem);
+                        });
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });
+                $('#accountCreationForm').submit(function(e) {
+                    e.preventDefault();
+                    var role = 1; // Default role
+                    if ($('#isCompany').is(':checked')) {
+                        role = 2; // Role for company
+                    } else if ($('#isFacility').is(':checked')) {
+                        role = 3; // Role for facility
+                    }
+
+                    // Gather additional fields if 'isCompany' or 'isFacility' is checked
+                    var additionalFields = {};
+                    if ($('#isCompany').is(':checked') || $('#isFacility').is(':checked')) {
+                        additionalFields = {
+                            companyName: $('#companyName').val(),
+                            address: $('#address').val(),
+                            openingHours: $('#openingHours').val(),
+                            closingHours: $('#closingHours').val(),
+                            daysOpen: Array.from($("input[name='daysOpen']:checked")).map(cb => cb.value).join(', ') // Join checked days with a comma
+                        };
+                    }
+
+                    var userInfo = {
+                        username: $('#username').val(),
+                        dob: $('#dob').val(),
+                        firstname: $('#firstname').val(),
+                        lastname: $('#lastname').val(),
+                        role: role,
+                        status: $('#status').val(),
+                        backupEmail: $('#backupEmail').val(),
+                        ...additionalFields // Spread additional fields into userInfo
+                    };
+                    $.ajax({
+                        url: 'http://localhost:8080/api/registration/postAccount',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(userInfo),
+                        success: function(response) {
+                            alert('Account created successfully!');
+                            console.log(response); // Log response for debugging
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(xhr.responseText); // Log response text for debugging
+                            alert('Error creating account. ' + xhr.responseText);
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</div>
+<div>
+<footer>
+    Designed and Developed by the PixelPals Team
+</footer>
+</body>
+</html>
+
