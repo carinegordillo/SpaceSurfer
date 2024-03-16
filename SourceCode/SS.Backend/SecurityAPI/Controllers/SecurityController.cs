@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace SecurityAPI.Controllers;
 
 [ApiController]
-[Route("api/securityAuth")]
+[Route("/api/securityAuth")]
 
 public class SecurityController : ControllerBase
 {

@@ -64,13 +64,6 @@ builder.Services.AddAuthorization(options =>
     // Adjust the policy name and claim requirements as necessary.
 });
 
-/*
-builder.Services.AddSwaggerGen(options =>
-{
-    options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
-});
-*/
-
 //builder.Services.AddAuthorization();
 
 var baseDirectory = AppContext.BaseDirectory;
