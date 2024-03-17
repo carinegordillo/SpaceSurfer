@@ -13,8 +13,8 @@ SpaceSurfer is a tool used for enhancing productivity for users ranging from emp
 - [Business Requirements Document](https://github.com/carinegordillo/SpaceSurfer/blob/main/Documents/BRD/SpaceSurferBRDV7_approved.pdf)
 - [Glossary](https://github.com/carinegordillo/SpaceSurfer/blob/main/Documents/BRD/SpaceSurferGlossaryV5_approved.pdf)
 ## Product Design 
-- [High Level Design](https://github.com/carinegordillo/SpaceSurfer/blob/main/Milestone1/Space%20Surfer%20High%20Level%20Design.pdf)
-- [Network Diagram](https://github.com/carinegordillo/SpaceSurfer/blob/main/Milestone2/Network%20Diagram.pdf)
-- [Project Plan](https://github.com/carinegordillo/SpaceSurfer/blob/main/Milestone1/Project%20Plan/Space%20Surfer%20Project%20Plan.pdf)
+- [High Level Design](https://github.com/carinegordillo/SpaceSurfer/blob/main/Documents/Milestone1/Space%20Surfer%20High%20Level%20Design.pdf)
+- [Network Diagram](https://github.com/carinegordillo/SpaceSurfer/blob/main/Documents/Milestone2/Network%20Diagram.pdf)
+- [Project Plan](https://github.com/carinegordillo/SpaceSurfer/blob/main/Documents/Modified%20Project%20Plan.pdf)
   
 
