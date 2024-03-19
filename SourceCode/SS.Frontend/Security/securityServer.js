@@ -29,8 +29,12 @@ async function postAuthenticate(event) {
       body: JSON.stringify({ email: email, OTP: otp }),
     });
     if (!response.ok) throw new Error("Authentication failed.");
-    const principal = await response.json();
-    console.log(principal);
+    // const principal = await response.json();
+    // console.log(principal);
+    const data = await response.json();
+    // Assuming the server response contains the access token in an accessToken property
+    localStorage.setItem('accessToken', data.accessToken); // Store the token
+    console.log("Authentication successful.", data);
     alert("Authentication successful.");
   } catch (error) {
     alert(error.message);
@@ -52,16 +56,27 @@ async function postAuthorize() {
     },
   };
 
+  const accessToken = localStorage.getItem('accessToken'); // Retrieve the token
+  if (!accessToken) {
+    alert("No access token stored. Please authenticate first.");
+    return;
+  }
+
   try {
     const response = await fetch(`${baseUrl}/postAuthorize`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`  
+      },
       body: JSON.stringify(requestBody),
     });
     if (!response.ok) throw new Error("Authorization check failed.");
+    const result = await response.json();
+    console.log(result);
     alert("Authorization check passed.");
   } catch (error) {
-    alert(error.message);
+    alert("Error accessing protected resource: " + error.message);
   }
 }
 

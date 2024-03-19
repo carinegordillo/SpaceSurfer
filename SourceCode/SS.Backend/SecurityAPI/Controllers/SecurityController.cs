@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using SS.Backend.Security;
 using System.Data;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SecurityAPI.Controllers;
 
@@ -45,25 +46,22 @@ public class SecurityController : ControllerBase
             return BadRequest(response.ErrorMessage);
         }
 
-        return Ok(principal);
-        /*
-        if (result.HasError)
-        {
-            return BadRequest(result.ErrorMessage);
-        }
-        else if (principal != null)
-        {
-            return Ok(principal);//return Ok(new { principal });
-        }
-        else
-        {
-            return Unauthorized();
-        }
-        */
+        // Assuming your principal object contains necessary information like username and roles
+        // You might need to adjust this based on your actual implementation
+        var username = principal.UserIdentity;
+        var roles = principal.Claims.Where(c => c.Key == "Role").Select(c => c.Value);
+
+        // Generate ID Token and Access Token after successful authentication
+        var idToken = _authService.GenerateJwtToken(username, roles.FirstOrDefault()); // Ensure you have implemented this method
+        var accessToken = _authService.GenerateAccessToken(username, roles); // Adjust implementation as needed
+
+        // Return both tokens in the response
+        return Ok(new { idToken, accessToken });
     }
     
 
     [HttpPost("postAuthorize")]
+    [Authorize]
     //[PostAuthorize(Policy = "RequireClaimPolicy")]
     public async Task<IActionResult> PostAuthorize([FromQuery] SSPrincipal currentPrincipal, [FromQuery] IDictionary<string, string> requiredClaims)
     {
@@ -82,6 +80,24 @@ public class SecurityController : ControllerBase
         }
         
         
+    }
+
+    [HttpGet("getUserData")]
+    public IActionResult GetUserData()
+    {
+        // Check if user is authenticated
+        if (HttpContext.User.Identity?.IsAuthenticated == true)
+        {
+            // Directly use ClaimsPrincipal for standard operations
+            var userName = HttpContext.User.Identity.Name;
+
+            // Custom authorization check (if needed) could be performed here, but typically handled by attributes
+            return Ok($"Hello, {userName}");
+        }
+        else
+        {
+            return Unauthorized("User is not authenticated.");
+        }
     }
 
 }

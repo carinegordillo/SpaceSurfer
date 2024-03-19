@@ -344,7 +344,8 @@ namespace SS.Backend.Security
             return ssPrincipal;
         }
 
-        private string GenerateJwtToken(string username, string role)
+        //should be turned back to private
+        public string GenerateJwtToken(string username, string role)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(jwtSecret);
@@ -362,7 +363,8 @@ namespace SS.Backend.Security
             return tokenHandler.WriteToken(token);
         }
 
-        private string GenerateAccessToken(string username, IEnumerable<string> roles)
+        
+        public string GenerateAccessToken(string username, IEnumerable<string> roles)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes("g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn"); // Use the same key or a different one based on your security model
@@ -386,6 +388,19 @@ namespace SS.Backend.Security
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+        
+        public bool UserHasRequiredRole(SSPrincipal user, string requiredRole)
+        {
+            // Check if the Claims dictionary contains the role key and if corresponding value matches required role
+            if (user.Claims != null && user.Claims.TryGetValue("Role", out var userRoles))
+            {
+                // If the role claim can contain multiple roles separated by a comma need to split the string and check each role
+                var rolesArray = userRoles.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                return rolesArray.Any(role => role.Trim().Equals(requiredRole, StringComparison.OrdinalIgnoreCase));
+            }
+
+            return false;
         }
     }
 }

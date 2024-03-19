@@ -8,6 +8,7 @@ using SS.Backend.SharedNamespace;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
+using SecurityAPI;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,27 +33,8 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn")),
         
         // Custom validation for additional claims
-        LifetimeValidator = (before, expires, token, param) => expires > DateTime.UtcNow,
-        AudienceValidator = (audiences, securityToken, validationParameters) => audiences.Contains("spacesurfers")
-    };
-
-    // Hook into OnTokenValidated event to perform custom validation
-    options.Events = new JwtBearerEvents
-    {
-        OnTokenValidated = context =>
-        {
-            var userClaims = context.Principal.Claims;
-            var scopeClaim = userClaims.FirstOrDefault(c => c.Type == "scope")?.Value;
-
-            // Perform your custom validation on the scope claim
-            if (string.IsNullOrEmpty(scopeClaim) || !scopeClaim.Contains("read:all"))
-            {
-                // Fail validation if the required scope is not present
-                context.Fail("The required scope is missing");
-            }
-
-            return Task.CompletedTask;
-        }
+        //LifetimeValidator = (before, expires, token, param) => expires > DateTime.UtcNow,
+        //AudienceValidator = (audiences, securityToken, validationParameters) => audiences.Contains("spacesurfers")
     };
 
 });
@@ -129,8 +111,9 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
-
-//app.UseAuthorization();
+app.UseMiddleware<AuthZMiddleware>();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseCors("AllowSpecificOrigin");
 
