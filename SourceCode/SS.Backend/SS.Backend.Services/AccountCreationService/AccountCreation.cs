@@ -56,27 +56,27 @@ namespace SS.Backend.Services.AccountCreationService
                             errorMsg += "Invalid date of birth; ";
                         }
                         break;
-                    case "companyName":
-                        if (userInfo.role == 2 || userInfo.role == 3)
-                        {
-                            if (!IsValidCompanyName(value as string))
-                            {
-                                errorMsg += $"Invalid {prop.Name.ToLower()}; ";
-                            }
-                            break;
-                        }
-                        break;
+                    // case "companyName":
+                    //     if (userInfo.role == 2 || userInfo.role == 3)
+                    //     {
+                    //         if (!IsValidCompanyName(value as string))
+                    //         {
+                    //             errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                    //         }
+                    //         break;
+                    //     }
+                    //     break;
 
-                    case "address":
-                        if (userInfo.role == 2 || userInfo.role == 3)
-                        {
-                            if (!IsValidAddress(value as string))
-                            {
-                                errorMsg += $"Invalid {prop.Name.ToLower()}; ";
-                            }
-                            break;
-                        }
-                        break;
+                    // case "address":
+                    //     if (userInfo.role == 2 || userInfo.role == 3)
+                    //     {
+                    //         if (!IsValidAddress(value as string))
+                    //         {
+                    //             errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                    //         }
+                    //         break;
+                    //     }
+                    //     break;
                         // case "openingHours":
                         // case "closingHours":
                         // case "daysOpen": //check if these need their own function
@@ -167,7 +167,7 @@ namespace SS.Backend.Services.AccountCreationService
         }
 
 
-        public async Task<Response> CreateUserAccount(UserInfo userInfo)
+        public async Task<Response> CreateUserAccount(UserInfo userInfo, CompanyInfo? companyInfo)
         {
             Response response = new Response();
 
@@ -242,16 +242,16 @@ namespace SS.Backend.Services.AccountCreationService
                 {"userHash", hashedAccount_success_parameters}
             };
 
-            if (!string.IsNullOrEmpty(userInfo.companyName))
+            if (companyInfo != null)
             {
                 var companyProfile_success_parameters = new Dictionary<string, object>
                 {
                     {"hashedUsername", validPepper.hashedUsername},
-                    {"companyName", userInfo.companyName},
-                    {"address", userInfo.address},
-                    {"openingHours", userInfo.openingHours},
-                    {"closingHours", userInfo.closingHours},
-                    {"daysOpen", userInfo.daysOpen}
+                    {"companyName", companyInfo.companyName},
+                    {"address", companyInfo.address},
+                    {"openingHours", companyInfo.openingHours},
+                    {"closingHours", companyInfo.closingHours},
+                    {"daysOpen", companyInfo.daysOpen}
                 };
                 
                 // Add the companyProfile dictionary to tableData

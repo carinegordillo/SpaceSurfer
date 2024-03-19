@@ -104,17 +104,17 @@ namespace SS.Backend.Tests.AccountCreationTest
             //username must be unique in database
             var validUserInfo = new UserInfo
             {
-                username = "teamreviewl@hotmail.com",
+                username = "objectcompanyl@hotmail.com",
                 dob = new DateTime(1990, 1, 1),
-                firstname = "Team",
-                lastname = "REVIEW", 
+                firstname = "OBJECT",
+                lastname = "COMPANY", 
                 role = 1,
                 status = "yes", 
                 backupEmail = "COMBININGEVERYTHING@backup.com"
             };
 
             timer.Start();
-            var response = await accountCreation.CreateUserAccount(validUserInfo);
+            var response = await accountCreation.CreateUserAccount(validUserInfo, null);
             timer.Stop();
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);
@@ -133,14 +133,18 @@ namespace SS.Backend.Tests.AccountCreationTest
             //username must be unique in database
             var validUserInfo = new UserInfo
             {
-                username = "newteamreviewtru@hotmail.com",
+                username = "newCOMPANYOBJECT@hotmail.com",
                 dob = new DateTime(1990, 1, 1),
-                firstname = "NewCompanyBusinessCofig",
-                lastname = "NewCompanyBusinessCofig", 
+                firstname = "CPMAPNYOBJECT",
+                lastname = "COMPANYOBJECT", 
                 role = 2,
                 status = "yes", 
                 backupEmail = "test@backup.com", 
-                companyName = "NewCompanyBusinessCofig", 
+            };
+
+            var validCompanyInfo = new CompanyInfo
+            {
+                companyName = "COMPANYOBJECTg", 
                 address = "Irvine", 
                 openingHours = "2:00:00",
                 closingHours = "2:00:00" ,
@@ -149,7 +153,7 @@ namespace SS.Backend.Tests.AccountCreationTest
 
             
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo);
+            var response = await accountcreation.CreateUserAccount(validUserInfo, validCompanyInfo);
             timer.Stop();
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);
@@ -178,7 +182,7 @@ namespace SS.Backend.Tests.AccountCreationTest
                 backupEmail = "test@backup.com"
             };
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo);
+            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
             timer.Stop();
 
             Assert.IsTrue(response.HasError, response.ErrorMessage);
@@ -206,7 +210,7 @@ namespace SS.Backend.Tests.AccountCreationTest
                 backupEmail = "test@backup.com"
             };
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo);
+            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
             timer.Stop();
 
             Assert.IsTrue(response.HasError, response.ErrorMessage);
@@ -235,7 +239,7 @@ namespace SS.Backend.Tests.AccountCreationTest
                 backupEmail = "test@backup.com"
             };
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo);
+            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
             timer.Stop();
 
             Assert.IsTrue(response.HasError, response.ErrorMessage);
@@ -264,7 +268,7 @@ namespace SS.Backend.Tests.AccountCreationTest
                 backupEmail = "test@backup.com"
             };
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo);
+            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
@@ -292,7 +296,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             };
 
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo);
+            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
@@ -318,7 +322,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             };
 
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo);
+            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
@@ -346,7 +350,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             };
 
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo);
+            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsFalse(timer.ElapsedMilliseconds <= 1);
@@ -371,7 +375,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             };
 
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo);
+            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);

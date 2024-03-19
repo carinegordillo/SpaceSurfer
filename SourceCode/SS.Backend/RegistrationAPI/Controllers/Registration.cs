@@ -64,13 +64,12 @@ public class DemoController : ControllerBase
     [HttpPost]
     [Route("postAccount")]
     // public async Task<ActionResult<List<UserInfo>>> PostCreateAccount([FromBody] UserInfo userInfo){
-    public async Task<IActionResult> PostCreateAccount([FromBody] UserInfo userInfo){
-        var response = await _accountCreation.CreateUserAccount(userInfo);
+    public async Task<IActionResult> PostCreateAccount([FromBody] AccountCreationRequest request){
+        var response = await _accountCreation.CreateUserAccount(request.UserInfo, request.CompanyInfo);
         if (response.HasError)
         {
             return BadRequest(response.ErrorMessage);
         }
-        return Ok(new { message = "Account created successfully!" + response});
-        // return Ok(response);
+        return Ok(new { message = "Account created successfully!", response });
     }  
 }
