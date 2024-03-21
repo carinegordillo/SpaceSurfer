@@ -6,5 +6,6 @@ namespace SS.Backend.SpaceManager
     {
         public Task<Response> CreateSpace(CompanyInfo? companyInfo, CompanyFloor? companyFloor);
         public List<Dictionary<string, object>> ListSpace(CompanyFloor? companyFloor);
+        public Task<Response> ReadUserTable(string tableName);
     }
 }

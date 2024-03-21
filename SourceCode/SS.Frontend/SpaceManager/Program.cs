@@ -1,8 +1,8 @@
-using SS.Backend.Services.AccountCreationService;
+using SS.Backend.SpaceManager;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddTransient<IAccountCreation, AccountCreation>();
+builder.Services.AddTransient<ISpaceCreation, SpaceCreation>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

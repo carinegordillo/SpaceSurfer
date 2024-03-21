@@ -33,7 +33,7 @@ namespace SS.Backend.SpaceManager
             var companyFloorParameters = new Dictionary<string, object>
             {
                 // Assuming companyID is already available
-                {"companyID", 2/* fetch or assume companyID here */},
+                {"companyID", 4/* fetch or assume companyID here */},
                 {"floorPlanName", companyFloor.FloorPlanName ?? "Name is Null"},
                 {"floorPlanImage", companyFloor.FloorPlanImage ?? new byte[0]}
             };
@@ -180,6 +180,37 @@ namespace SS.Backend.SpaceManager
             }
             return IDresponse;
             
+        }
+
+        public async Task<Response> ReadUserTable(string tableName)
+        {
+
+            // var baseDirectory = AppContext.BaseDirectory;
+            // var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            // var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            ConfigService configService = new ConfigService(configFilePath);
+            SqlDAO SQLDao = new SqlDAO(configService);
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+            
+            var insertCommand =  commandBuilder.BeginSelectAll()
+                                            .From(tableName)
+                                            .Build();
+
+            response = await SQLDao.ReadSqlResult(insertCommand);
+            if (response.HasError)
+            {
+                response.ErrorMessage += $"{tableName}: error inserting data; ";
+                return response;
+            }else{
+                response.ErrorMessage += "- ReadUserTable- command successful -";
+            }
+          
+            return response;
+
         }
         
     }

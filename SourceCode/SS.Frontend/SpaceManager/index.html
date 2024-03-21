@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register!</title>
+    <title>Space Manager</title>
     <script src="pages/Registration.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
     <script src="node_modules/htmx.org/dist/htmx.js"></script>
-    <link rel="stylesheet" href="pages/Registration.css">
+    <link rel="stylesheet" href="pages/SpaceManager.css">
     <link rel="icon" type="image/x-icon" href="pages/favicon.ico">
 </head>
 <body class="background-image">
@@ -18,9 +18,9 @@
             <img src="pages/ssName.png" alt="Company Name" width="440" height="80" style="padding: 25px 15px 0px 0px;">
         </div>
         <div class="nav-items">
+            <div class="nav-item" id="navSpaceManager" onclick="showView('spaceManager')">Space Manager</div>
             <div class="nav-item" id="navAbout" onclick="showView('about')">About</div>
-            <div class="nav-item" id="navRegister" onclick="showView('register')">Register</div>
-            <div class="nav-item" id="navLogin" onclick="showView('login')">Login</div>
+            <div class="nav-item" id="navLogin" onclick="showView('login')">Logout</div>
         </div>
     </nav>
 
@@ -28,20 +28,32 @@
     <button class="accordion">Upload Space</button>
     <div class="form-container" style="display:none;">
         <form id="accountCreationForm">
-            
-            <input type="text" id="username" name="username" placeholder="Username" required>
-            <input type="date" id="dob" name="dob" placeholder="Date of Birth" required><br>
-            <input type="text" id="firstname" name="firstName" placeholder="First Name" required>
-            <input type="text" id="lastname" name="lastName" placeholder="Last Name" required>
+            <div class="spaceRow">
+                <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
+                <small>Max file size: 5MB</small>
+                <input type="text" id="floorPlanName" name="floorPlanName" placeholder="Floor Plan Name" required><br/>
+                <input type="hidden" id="imageBase64" name="imageBase64">
+            </div>
+            <div id="imagePreviewContainer"></div><br>
+            <button type="button" id="addSpace">Add Space ID</button><br/>
+            <div id="spacesContainer">
+                <div class="spaceRow">
+                    <input type="text" class="spaceID" name="spaceID[]" placeholder="Space ID">
+                    <input type="text" class="timeLimit" name="timeLimit[]" placeholder="Time Limit">
+                </div>
+            </div>
 
-            <button id="postAccount" type="submit">Create Account</button>
-            <button id="loadRequestsButton">Load Requests</button>
+            <button id="postSpace" type="submit">Create Space</button>
+            <button id="loadRequestsButton" type="button">Load Requests</button>
             <ul id="recoveryRequestsList"></ul>
         </form>
     </div>
+           
+     
+    </div>
     <button class="accordion">Modify Space</button>
     <div class="form-container" style="display:none;">
-        <form id="accountCreationForm">
+        <form id="modifyaccountCreationForm">
             
             <input type="text" id="username" name="username" placeholder="Username" required>
             <input type="date" id="dob" name="dob" placeholder="Date of Birth" required><br>
@@ -57,6 +69,67 @@
 
 
     <script>
+        document.getElementById('imageUpload').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+
+            if (!file) {
+                alert('No file selected.');
+                return;
+            }
+
+            if (file.size > 5242880) { // 5MB in bytes
+                alert('The file is too large. Please select a file smaller than 5MB.');
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                // Display image preview
+                var imagePreviewContainer = document.getElementById('imagePreviewContainer');
+                imagePreviewContainer.innerHTML = '';
+                var img = document.createElement('img');
+                img.src = e.target.result; // Display the image preview
+                img.style.maxWidth = '200px';
+                img.style.maxHeight = '200px';
+                imagePreviewContainer.appendChild(img);
+
+                // Set the hidden input field's value to the base64 string
+                var base64String = e.target.result.split(',')[1]; // Extract base64 data
+                document.getElementById('imageBase64').value = base64String; // Assign to hidden input
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('addSpace').addEventListener('click', function() {
+            console.log('Button clicked!'); // This should appear in the browser console when the button is clicked.
+            const container = document.getElementById('spacesContainer');
+            const newRow = document.createElement('div');
+            newRow.classList.add('spaceRow');
+            newRow.innerHTML = `
+                <input type="text" class="spaceID" name="spaceID[]" placeholder="Space ID">
+                <input type="text" class="timeLimit" name="timeLimit[]" placeholder="Time Limit">
+            `;
+            container.appendChild(newRow);
+        });
+
+        function collectSpacesAndTimeLimits() {
+            let spacesDict = {};
+            // Assuming each spaceID input is directly followed by its corresponding timeLimit input
+            const spaceIDs = document.querySelectorAll('.spaceID');
+            const timeLimits = document.querySelectorAll('.timeLimit');
+
+            spaceIDs.forEach((spaceInput, index) => {
+                const spaceID = spaceInput.value;
+                const timeLimit = timeLimits[index].value; // Assuming the same index
+                if (spaceID && timeLimit) {
+                    spacesDict[spaceID] = parseInt(timeLimit);
+                }
+            });
+
+            return spacesDict;
+        }
+
 
         var acc = document.getElementsByClassName("accordion");
         var i;
@@ -86,13 +159,13 @@
 
             $('#loadRequestsButton').click(function() {
                 $.ajax({
-                    url: 'http://localhost:8080/api/registration/createAccount',
+                    url: 'http://localhost:8080/api/SpaceManager/createSpace',
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {
                         $('#recoveryRequestsList').empty(); 
                         data.forEach(function(request) {
-                            var listItem = '<li>Name : ' + request.firstname + ', Lat Name : ' + request.lastname;
+                            var listItem = '<li>Name : ' + request.floorPlanName + ', Spaces : ' + request.spaceList;
                             if(request.resolveDate) {
                                 listItem += ', Resolve Date: ' + request.resolveDate;
                             }
@@ -105,51 +178,30 @@
                         console.error(error);
                     }
                 });
-                $('#accountCreationForm').submit(function(e) {
-                    e.preventDefault();
-                    var role = 1; // Default role
-                    if ($('#isCompany').is(':checked')) {
-                        role = 2; // Role for company
-                    } else if ($('#isFacility').is(':checked')) {
-                        role = 3; // Role for facility
-                    }
+            });
+            $('#accountCreationForm').submit(function(e) {
+                e.preventDefault();
+                
 
-                    // Gather additional fields if 'isCompany' or 'isFacility' is checked
-                    var additionalFields = {};
-                    if ($('#isCompany').is(':checked') || $('#isFacility').is(':checked')) {
-                        additionalFields = {
-                            companyName: $('#companyName').val(),
-                            address: $('#address').val(),
-                            openingHours: $('#openingHours').val(),
-                            closingHours: $('#closingHours').val(),
-                            daysOpen: Array.from($("input[name='daysOpen']:checked")).map(cb => cb.value).join(', ') // Join checked days with a comma
-                        };
+                var companyFloor = {
+                    FloorPlanName: $('#floorPlanName').val(),
+                    FloorPLanImage: $('#imageBase64').val(),
+                    FloorSpaces: collectSpacesAndTimeLimits()
+                    
+                };
+                $.ajax({
+                    url: 'http://localhost:8080/api/SpaceManager/postSpace',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(companyFloor),
+                    success: function(response) {
+                        alert('Account created successfully!');
+                        console.log(response); // Log response for debugging
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText); // Log response text for debugging
+                        alert('Error creating account. ' + xhr.responseText);
                     }
-
-                    var userInfo = {
-                        username: $('#username').val(),
-                        dob: $('#dob').val(),
-                        firstname: $('#firstname').val(),
-                        lastname: $('#lastname').val(),
-                        role: role,
-                        status: $('#status').val(),
-                        backupEmail: $('#backupEmail').val(),
-                        ...additionalFields // Spread additional fields into userInfo
-                    };
-                    $.ajax({
-                        url: 'http://localhost:8080/api/registration/postAccount',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(userInfo),
-                        success: function(response) {
-                            alert('Account created successfully!');
-                            console.log(response); // Log response for debugging
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(xhr.responseText); // Log response text for debugging
-                            alert('Error creating account. ' + xhr.responseText);
-                        }
-                    });
                 });
             });
         });
