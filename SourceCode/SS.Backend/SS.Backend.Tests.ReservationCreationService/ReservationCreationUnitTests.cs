@@ -51,7 +51,7 @@ namespace SS.Backend.Tests.ReservationCreationService{
                 ReservationDate = DateTime.Parse("2022-01-01"),
                 ReservationStartTime = TimeSpan.Parse("13:00"), // 1:00 PM as TimeSpan
                 ReservationEndTime = TimeSpan.Parse("15:00"), // 2:00 PM as TimeSpan
-                Status = "testStatus"
+                Status = ReservationStatus.Active
             };
 
 
@@ -77,7 +77,7 @@ namespace SS.Backend.Tests.ReservationCreationService{
                 ReservationDate = DateTime.Parse("2023-01-01"),
                 ReservationStartTime = TimeSpan.Parse("13:00"), // 1:00 PM as TimeSpan
                 ReservationEndTime = TimeSpan.Parse("15:00"), // 2:00 PM as TimeSpan
-                Status = "testStatusforFirstReservation"
+                Status = ReservationStatus.Active
             };
 
             // Act 1: Create the first reservation
@@ -94,7 +94,7 @@ namespace SS.Backend.Tests.ReservationCreationService{
                 ReservationDate = DateTime.Parse("2023-01-01"),
                 ReservationStartTime = TimeSpan.Parse("14:00"), // 1:00 PM as TimeSpan
                 ReservationEndTime = TimeSpan.Parse("16:00"), // 2:00 PM as TimeSpan 
-                Status = "testStatusforConflictingReservation"
+                Status = ReservationStatus.Active
             };
 
             // Act 2 Check for conflicts before creating the second reservation
@@ -119,7 +119,7 @@ namespace SS.Backend.Tests.ReservationCreationService{
                 ReservationDate = DateTime.Parse("2025-03-01"),
                 ReservationStartTime = TimeSpan.Parse("13:00"), // 1:00 PM as TimeSpan
                 ReservationEndTime = TimeSpan.Parse("14:00"), // 2:00 PM as TimeSpan
-                Status = "testStatusforFirstReservationforNONCONFLICTING"
+                Status = ReservationStatus.Active
             };
 
             // Act 1: Create the first reservation
@@ -136,7 +136,7 @@ namespace SS.Backend.Tests.ReservationCreationService{
                 ReservationDate = DateTime.Parse("2025-03-01"),
                 ReservationStartTime = TimeSpan.Parse("16:00"), // 1:00 PM as TimeSpan
                 ReservationEndTime = TimeSpan.Parse("18:00"), // 2:00 PM as TimeSpan
-                Status = "testStatusforNONCONFLICTINGReservation"
+                Status = ReservationStatus.Active
             };
 
             // Act 2 Check for conflicts before creating the second reservation
@@ -160,7 +160,7 @@ namespace SS.Backend.Tests.ReservationCreationService{
                 ReservationDate = DateTime.Parse("2023-01-01"),
                 ReservationStartTime = TimeSpan.Parse("07:00"), // 1:00 PM as TimeSpan
                 ReservationEndTime = TimeSpan.Parse("08:00"), // 2:00 PM as TimeSpan
-                Status = "testStatusforReservationWithinBusinessHours"
+                Status = ReservationStatus.Active
             };
 
             // Act 1: Create the first reservation
@@ -182,7 +182,7 @@ namespace SS.Backend.Tests.ReservationCreationService{
                 ReservationDate = DateTime.Parse("2023-01-01"),
                 ReservationStartTime = TimeSpan.Parse("13:00"), // 1:00 PM as TimeSpan
                 ReservationEndTime = TimeSpan.Parse("14:00"), // 2:00 PM as TimeSpan
-                Status = "testStatusforReservationWithinBusinessHoursFAIL"
+                Status = ReservationStatus.Active
             };
 
             // Act 1: Create the first reservation
