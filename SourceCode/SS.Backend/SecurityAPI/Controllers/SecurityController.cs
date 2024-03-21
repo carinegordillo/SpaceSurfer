@@ -49,25 +49,30 @@ public class SecurityController : ControllerBase
         // Assuming your principal object contains necessary information like username and roles
         // You might need to adjust this based on your actual implementation
         var username = principal.UserIdentity;
-        var roles = principal.Claims.Where(c => c.Key == "Role").Select(c => c.Value);
+        var roleClaims = principal.Claims.Where(c => c.Key == "Role").ToList();
+        var rolesDictionary = roleClaims.ToDictionary(roleClaim => roleClaim.Value, roleClaim => roleClaim.Value);
+
+
 
         // Generate ID Token and Access Token after successful authentication
-        var idToken = _authService.GenerateJwtToken(username, roles.FirstOrDefault()); // Ensure you have implemented this method
-        var accessToken = _authService.GenerateAccessToken(username, roles); // Adjust implementation as needed
+        //var idToken = _authService.GenerateJwtToken(username, roleClaims.FirstOrDefault()); 
+        var accessToken = _authService.GenerateAccessToken(username, rolesDictionary);
 
-        // Return both tokens in the response
-        return Ok(new { idToken, accessToken });
+       
+        return Ok(new {accessToken });
     }
     
 
-    [HttpPost("postAuthorize")]
+    [HttpGet("getAuthorize")]
     [Authorize]
     //[PostAuthorize(Policy = "RequireClaimPolicy")]
-    public async Task<IActionResult> PostAuthorize([FromQuery] SSPrincipal currentPrincipal, [FromQuery] IDictionary<string, string> requiredClaims)
+    public async Task<IActionResult> GetAuthorize(/*[FromQuery] SSPrincipal currentPrincipal, [FromQuery] IDictionary<string, string> requiredClaims*/)
     {
-        
+        var currentPrincipal = _authService.MapToSSPrincipal(User);
+        // example claims needed for some function
+        var requiredClaims = new Dictionary<string, string> {{ "Role", "Admin" }};
         // Perform authorization check
-        bool isAuthorized = await _authService.IsAuthorize(currentPrincipal, requiredClaims);
+        var isAuthorized = await _authService.IsAuthorize(currentPrincipal, requiredClaims);
 
         // Return appropriate HTTP response
         if (isAuthorized)
@@ -82,6 +87,7 @@ public class SecurityController : ControllerBase
         
     }
 
+    /*
     [HttpGet("getUserData")]
     public IActionResult GetUserData()
     {
@@ -99,6 +105,7 @@ public class SecurityController : ControllerBase
             return Unauthorized("User is not authenticated.");
         }
     }
+    */
 
 }
 
