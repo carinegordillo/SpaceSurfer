@@ -101,7 +101,6 @@ public class RecoverRequestController : ControllerBase
             var response = await _accountRecovery.RecoverAccount(requestId, true);
             if (response.HasError)
             {
-                // Log the error or handle it as necessary
                 Console.WriteLine($"Error processing request {requestId}: {response.ErrorMessage}");
                 results.Add(new { RequestId = requestId, Success = false, Message = response.ErrorMessage });
             }
