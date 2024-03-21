@@ -28,7 +28,7 @@ namespace SS.Backend.ReservationCreationService{
                             { "reservationDate", userReservationsModel.ReservationDate},
                             { "reservationStartTime", userReservationsModel.ReservationStartTime },
                             { "reservationEndTime", userReservationsModel.ReservationEndTime },
-                            { "status", userReservationsModel.Status},
+                            { "status", userReservationsModel.Status.ToString()},
                         };
 
             var InsertRequestsCommand = commandBuilder.BeginInsert(tableName)
