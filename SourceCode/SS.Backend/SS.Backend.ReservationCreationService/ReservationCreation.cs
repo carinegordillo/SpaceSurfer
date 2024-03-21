@@ -3,7 +3,21 @@ using SS.Backend.SharedNamespace;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
-namespace SS.Backend.ReservationCreationService{
+/* 
+objects needed :
+user reservation model - give detials about the user reservtaions 
+compnay profile - give details about the company profile 
+space
+
+*/
+
+namespace SS.Backend.ReservationServices{
+    public enum TimeUnit
+    {
+        Days,
+        Hours,
+        Minutes
+    }
 
     public class ReservationCreation : IReservationCreation
     {
@@ -59,8 +73,8 @@ namespace SS.Backend.ReservationCreationService{
             string query = @"
                 SELECT reservationID
                 FROM dbo.Reservations 
-                WHERE floorPlanID = @floorPlanID AND spaceID = @spaceID AND 
-                    (reservationStartTime < @reservationEndTime AND reservationEndTime > @reservationStartTime)";
+                WHERE floorPlanID = @floorPlanID AND spaceID = @spaceID AND status = 'Active'
+              AND (reservationStartTime < @reservationEndTime AND reservationEndTime > @reservationStartTime)";
 
   
             SqlCommand command = new SqlCommand(query);
@@ -151,6 +165,97 @@ namespace SS.Backend.ReservationCreationService{
         
 
             return result;
+        }
+
+        public async Task<Response> ValidateReservationDuration(UserReservationsModel userReservationsModel){
+            Response result = new Response();
+
+             string query = @"
+                SELECT timeLimit
+                FROM dbo.companyFloorSpaces 
+                WHERE spaceID = @spaceID";
+
+            SqlCommand command = new SqlCommand(query);
+            command.Parameters.AddWithValue("@spaceID", userReservationsModel.SpaceID);
+
+            var userReservationDuration = userReservationsModel.ReservationEndTime - userReservationsModel.ReservationStartTime;
+
+            try
+            {
+                result = await _sqldao.ReadSqlResult(command);
+
+                if (result.ValuesRead.Rows.Count > 0)
+                {
+                    
+                    int spaceTimeLimitInMinutes = ((int)(result.ValuesRead.Rows[0]["timeLimit"])*60); 
+                    
+                    if (userReservationDuration.TotalMinutes >= spaceTimeLimitInMinutes)
+                    {
+                       
+                        result.ErrorMessage = $"The Space has a time limit of {spaceTimeLimitInMinutes} minutes. The reservation duration of {userReservationDuration} exceeds the time limit.";
+                        result.HasError = true;
+                    }
+                    else
+                    {
+                        result.ErrorMessage = $"The Space has a time limit of {spaceTimeLimitInMinutes} minutes. The reservation duration of {userReservationDuration} DOES NOT exceed the time limit.";
+                        result.HasError = false;
+                    }
+                    
+                }
+                else
+                {
+                    result.ErrorMessage = "SpaceID does not exist or is Invalid.";
+                    result.HasError = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.HasError = true;
+                result.ErrorMessage += ex.Message;
+            }
+
+            return result;
+        }
+
+        public async Task<Response> validateReservationLeadTime(UserReservationsModel userReservationsModel, int maxLeadTime, TimeUnit unitOfTime){
+            var currentDateTime = DateTime.UtcNow; 
+            var maxLeadDateTime = currentDateTime;
+
+            Response result = new Response();
+
+            
+            switch (unitOfTime)
+            {
+                case TimeUnit.Days:
+                    maxLeadDateTime = currentDateTime.AddDays(maxLeadTime);
+                    break;
+                case TimeUnit.Hours:
+                    maxLeadDateTime = currentDateTime.AddHours(maxLeadTime);
+                    break;
+                case TimeUnit.Minutes:
+                    maxLeadDateTime = currentDateTime.AddMinutes(maxLeadTime);
+                    break;
+                default:
+                    throw new ArgumentException("Unsupported time unit");
+            }
+
+            var reservationDateTime = userReservationsModel.ReservationDate.Date + userReservationsModel.ReservationStartTime;
+
+            if (reservationDateTime <= maxLeadDateTime)
+            {
+                result.HasError = false;
+                
+            }
+            else
+            {
+                result.HasError = true;
+                result.ErrorMessage = "Reservation exceeds the allowed lead time.";
+            }
+
+
+            
+            return result;
+
         }
 
         

@@ -1,4 +1,4 @@
-namespace SS.Backend.ReservationCreationService
+namespace SS.Backend.ReservationServices
 {
     public enum ReservationStatus
     {
