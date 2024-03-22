@@ -28,7 +28,7 @@ namespace SS.Backend.ReservationServices{
             _sqldao = sqldao;
         }
 
-        public async Task<Response> CreateReservation(string tableName, UserReservationsModel userReservationsModel){
+        public async Task<Response> CreateReservationWithAutoID(string tableName, UserReservationsModel userReservationsModel){
             Response response = new Response();
 
             var commandBuilder = new CustomSqlCommandBuilder();
@@ -54,16 +54,63 @@ namespace SS.Backend.ReservationServices{
             response = await _sqldao.SqlRowsAffected(InsertRequestsCommand);
 
             if (response.HasError == false){
-                response.ErrorMessage += "- CreateReservation - command successful - ";
+                response.ErrorMessage += "- CreateReservationWithAutoID - command successful - ";
             }
             else{
-                    response.ErrorMessage += $"- CreateReservation - command : {InsertRequestsCommand.CommandText} not successful - ";
+                    response.ErrorMessage += $"- CreateReservationWithAutoID - command : {InsertRequestsCommand.CommandText} not successful - ";
 
             }
             return response;
 
 
         }
+
+        public async Task<Response> CreateReservationWithManualID(string tableName, UserReservationsModel userReservationsModel){
+            Response response = new Response();
+
+            var commandBuilder = new CustomSqlCommandBuilder();
+
+            Console.WriteLine("inside CreateReservationWithManualID with tableName: " + tableName+"and userReservationsModel: "+userReservationsModel.ReservationID);
+
+
+            var parameters = new Dictionary<string, object>
+                        {
+                            { "reservationID", userReservationsModel.ReservationID},
+                            { "companyID", userReservationsModel.CompanyID },
+                            { "floorPlanID", userReservationsModel.FloorPlanID},
+                            { "spaceID", userReservationsModel.SpaceID },
+                            { "reservationDate", userReservationsModel.ReservationDate},
+                            { "reservationStartTime", userReservationsModel.ReservationStartTime },
+                            { "reservationEndTime", userReservationsModel.ReservationEndTime },
+                            { "status", userReservationsModel.Status.ToString()},
+                        };
+
+            var InsertRequestsCommand = commandBuilder.BeginInsert(tableName)
+                                                            .Columns(parameters.Keys)
+                                                            .Values(parameters.Keys)
+                                                            .AddParameters(parameters)
+                                                            .Build();
+
+            response = await _sqldao.SqlRowsAffected(InsertRequestsCommand);
+
+            if (response.HasError == false){
+                response.ErrorMessage += "- CreateReservationWithManualID - command successful - ";
+            }
+            else{
+                response.HasError = true;
+                response.ErrorMessage += $"- CreateReservationWithManualID - command : {InsertRequestsCommand.CommandText} not successful - ";
+                
+
+            }
+
+            Console.WriteLine(response.ErrorMessage);
+            Console.WriteLine("in methos " + response.HasError);
+            return response;
+
+
+        }
+
+
 
 
         public async Task<Response> CheckConflictingReservations(int floorPlanID, string spaceID, TimeSpan proposedStart, TimeSpan proposedEnd){

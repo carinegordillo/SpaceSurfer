@@ -56,7 +56,7 @@ namespace SS.Backend.Tests.ReservationCreationService{
 
 
             // Act
-            var response = await _reservationcreationService.CreateReservation(tableName,userReservationsModel);
+            var response = await _reservationcreationService.CreateReservationWithAutoID(tableName,userReservationsModel);
             Console.WriteLine(response.ErrorMessage);
             
             // Assert
@@ -81,7 +81,7 @@ namespace SS.Backend.Tests.ReservationCreationService{
             };
 
             // Act 1: Create the first reservation
-            response = await _reservationcreationService.CreateReservation(tableName, reservation1);
+            response = await _reservationcreationService.CreateReservationWithAutoID(tableName, reservation1);
             Console.WriteLine(response.ErrorMessage);
             Assert.IsFalse(response.HasError);
 
@@ -123,7 +123,7 @@ namespace SS.Backend.Tests.ReservationCreationService{
             };
 
             // Act 1: Create the first reservation
-            response = await _reservationcreationService.CreateReservation(tableName, reservation1);
+            response = await _reservationcreationService.CreateReservationWithAutoID(tableName, reservation1);
             Console.WriteLine(response.ErrorMessage);
             Assert.IsFalse(response.HasError);
 

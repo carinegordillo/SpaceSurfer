@@ -44,14 +44,13 @@ public class ReservationCancellation
 
             var parameters = new Dictionary<string, object>
                         {
-                            { "status", "Cancelled" },
-                            { "reservationID", reservationID }
+                            { "status", "Cancelled" }
                         };
 
     
             var updateCommand = commandBuilder.BeginUpdate(tableName)
                                             .Set(parameters)
-                                            .Where("reservationID = @reservationID")
+                                            .Where($"reservationID = {reservationID}")
                                             .AddParameters(parameters)
                                             .Build();
 

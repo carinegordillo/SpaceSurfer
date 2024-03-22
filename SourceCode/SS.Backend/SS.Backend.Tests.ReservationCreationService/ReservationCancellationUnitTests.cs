@@ -1,47 +1,54 @@
 
+
+
 using SS.Backend.DataAccess;
 using System.IO;
 using System.Threading.Tasks;
 using SS.Backend.ReservationServices;
 using SS.Backend.SharedNamespace;
 using Microsoft.Data.SqlClient;
+namespace SS.Backend.Tests.ReservationCreationService{
 
-
-namespace SS.Backend.Tests.ReservationCancellationService
-{
     [TestClass]
-    public class ReservationCancellationUnitTest
+    public class ReservationUnitTests
     {
-
         private SqlDAO _sqlDao;
         private ConfigService _configService;
         private SqlCommand _command;
-
-        string tableName = "dbo.Reservations";
+        private ReservationCreation  _reservationcreationService;
         private ReservationCancellation _reservationCancellationService;
 
-        private ReservationCreation _reservationCreationService;
+        string tableName = "dbo.TestReservations";
 
+        
+        
         [TestInitialize]
         public void Setup()
         {
+
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
             var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
             _configService = new ConfigService(configFilePath);
             _sqlDao = new SqlDAO(_configService);
 
+            _reservationcreationService = new ReservationCreation(_sqlDao);
             _reservationCancellationService = new ReservationCancellation(_sqlDao);
-            _reservationCreationService = new ReservationCreation(_sqlDao);
+
+
         }
 
         [TestMethod]
-        public void TestCancellation()
+        public async Task TestCancellation()
         {
             // Arrange
 
+            Response reservtaionCreationResult = new Response();
+            Response reservtaionCancellationResult = new Response();
+
             UserReservationsModel reservationToBeCancelled = new UserReservationsModel
             {
+                ReservationID = 104,
                 CompanyID = 2,
                 FloorPlanID = 3,
                 SpaceID = "SPACE302",
@@ -51,15 +58,23 @@ namespace SS.Backend.Tests.ReservationCancellationService
                 Status = ReservationStatus.Active
             };
             
-            _reservationCreationService.CreateReservation(tableName, reservationToBeCancelled);
-            
-            
+           reservtaionCreationResult = await _reservationcreationService.CreateReservationWithManualID(tableName,reservationToBeCancelled);
 
-            // Act
-            // TODO: Add code to perform the cancellation
+            Assert.IsFalse(reservtaionCreationResult.HasError);
 
-            // Assert
-            // TODO: Add assertions to verify the cancellation result
+            // cancel reservtion
+            reservtaionCancellationResult = await _reservationCancellationService.CancelReservation(tableName, reservationToBeCancelled.ReservationID.Value);
+            Assert.IsFalse(reservtaionCancellationResult.HasError);
+            Assert.IsTrue(reservtaionCancellationResult.RowsAffected > 0);
+            
         }
+
+        
+
+
+
+
     }
+       
 }
+
