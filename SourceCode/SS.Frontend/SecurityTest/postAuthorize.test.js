@@ -1,8 +1,10 @@
 // postAuthorize.test.js
 describe('postAuthorize function', () => {
     beforeEach(() => {
+        // Setup global.fetch mock
       global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
-      //global.localStorage = { getItem: jest.fn().mockReturnValue('fakeToken') };
+
+      // Mocking localStorage and its methods
       Object.defineProperty(window, 'localStorage', {
         value: {
             setItem: jest.fn(),
@@ -12,10 +14,14 @@ describe('postAuthorize function', () => {
         },
         writable: true
     });
+
+        //mocking alert and document.getElementId
       global.alert = jest.fn();
       document.getElementById = jest.fn().mockImplementation(id => ({ value: id }));
+
     });
-  
+
+    // clear mocks
     afterEach(() => {
       jest.clearAllMocks();
     });
@@ -24,7 +30,8 @@ describe('postAuthorize function', () => {
       const { postAuthorize } = require('../Security/securityServer.js');
   
       await postAuthorize();
-  
+        
+      // check fetch 
       expect(global.fetch).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
         method: "POST",
         headers: {
