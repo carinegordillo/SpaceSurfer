@@ -133,18 +133,18 @@ namespace SS.Backend.Tests.AccountCreationTest
             //username must be unique in database
             var validUserInfo = new UserInfo
             {
-                username = "newCOMPANYOBJECT@hotmail.com",
+                username = "compnayfortestinf@hotmail.com",
                 dob = new DateTime(1990, 1, 1),
-                firstname = "CPMAPNYOBJECT",
-                lastname = "COMPANYOBJECT", 
-                role = 2,
+                firstname = "TESTINFT",
+                lastname = "TESTING", 
+                role = 3,
                 status = "yes", 
                 backupEmail = "test@backup.com", 
             };
 
             var validCompanyInfo = new CompanyInfo
             {
-                companyName = "COMPANYOBJECTg", 
+                companyName = "Testing for Company", 
                 address = "Irvine", 
                 openingHours = "2:00:00",
                 closingHours = "2:00:00" ,

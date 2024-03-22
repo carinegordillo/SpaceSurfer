@@ -6,10 +6,10 @@ using SS.Backend.SpaceManager;
 using System.Diagnostics;
 using Microsoft.Data.SqlClient;
 
-namespace SS.Backend.Tests.SpaceManagerTest
+namespace SS.Backend.Tests.SpaceCreationTest
 {
     [TestClass]
-    public class SpaceManagerTests
+    public class SpaceCreationTest
     {
         private async Task CleanupTestData()
         {
@@ -43,7 +43,7 @@ namespace SS.Backend.Tests.SpaceManagerTest
 
      
         [TestMethod]
-        public async Task CreateUserAccount_Success()
+        public async Task CreateSpace_Success()
         {
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
             CompanyInfo companyInfo = new CompanyInfo();
@@ -52,24 +52,17 @@ namespace SS.Backend.Tests.SpaceManagerTest
             Stopwatch timer = new Stopwatch();
 
 
-            var validCompanyInfo = new CompanyInfo
-            {
-                companyName = "NewService", 
-                address = "Irvine", 
-                openingHours = "2:00:00",
-                closingHours = "2:00:00" ,
-                daysOpen = "Monday,Tuesday"
-            };
+            int validCompanyID = 6;
            
             var validFloorInfo = new CompanyFloor
             {
-                FloorPlanName = "New Company",
+                FloorPlanName = "jack's Floor Plan",
                 FloorPlanImage = new byte[] { 0x01, 0x02, 0x03, 0x04 },
-                FloorSpaces = new Dictionary<string, int> { { "F5", 2 }, { "F6", 3 } },
+                FloorSpaces = new Dictionary<string, int> { { "J1", 2 }, { "J3", 3 }, {"JK", 3} },
             };
 
             timer.Start();
-            var response = await spaceCreation.CreateSpace(validCompanyInfo, validFloorInfo);
+            var response = await spaceCreation.CreateSpace(validCompanyID, validFloorInfo);
             timer.Stop();
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);

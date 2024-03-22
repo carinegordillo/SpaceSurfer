@@ -49,26 +49,70 @@
         </form>
     </div>
            
-     
     </div>
     <button class="accordion">Modify Space</button>
     <div class="form-container" style="display:none;">
-        <form id="modifyaccountCreationForm">
-            
-            <input type="text" id="username" name="username" placeholder="Username" required>
-            <input type="date" id="dob" name="dob" placeholder="Date of Birth" required><br>
-            <input type="text" id="firstname" name="firstName" placeholder="First Name" required>
-            <input type="text" id="lastname" name="lastName" placeholder="Last Name" required>
+        <form id="modifySpaceForm">
+            <h3>Warning: CANNOT Modify Space if an existing Reservation Associated Exists</h3>
+            <div class="spaceRowModify">
+                <input type="text" id="modifyFloorPlanName" name="floorPlanName" placeholder="Floor Plan Name"><br/>
+                <input type="file" id="replaceImage" name="replaceImage" accept="image/*">
+                <button id="modifyImage" type="button" class = "btn btn-modify">Replace Floor Plan Image - Max file size: 5MB</button>
+                <input type="hidden" id="modifyImageBase64" name="modifyImageBase64">
+                <button id="deleteFloor" type="button" class="btn btn-danger">Delete Floor</button>
+            </div>
+            <div id="modifyImagePreviewContainer"></div><br>
+            <button type="button" id="addSpaceModify"  class="btn btn-add-space">Add Space ID</button><br/>
+            <div id="spacesModificationContainer">
+                <div class="spaceRowModify">
+                    <input type="text" class="modifySpaceID" name="spaceID[]" placeholder="Space ID">
+                    <input type="text" class="modifyTimeLimit" name="modifytimeLimit[]" placeholder="Modify Time Limit">
+                    <button id="deleteSpace" type="button" class = "btn btn-danger">Delete Space</button>
+                </div>
+            </div>
 
-            <button id="postAccount" type="submit">Create Account</button>
-            <button id="loadRequestsButton">Load Requests</button>
-            <ul id="recoveryRequestsList"></ul>
+            <button id="modifyTimeLimits" type="submit"  class="btn btn-modify">Modify Time Limits</button>
+            <!-- <button id="loadRequestsButton">Load Requests</button> -->
+            <!-- <ul id="recoveryRequestsList"></ul> -->
         </form>
     </div>
     
 
 
     <script>
+        document.getElementById('replaceImage').addEventListener('change', function(event) {
+            var fileModify = event.target.files[0];
+
+            if (!fileModify) {
+                alert('No file selected.');
+                return;
+            }
+
+            if (fileModify.size > 5242880) { // 5MB in bytes
+                alert('The file is too large. Please select a file smaller than 5MB.');
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                // Display image preview
+                var imagePreviewContainer = document.getElementById('modifyImagePreviewContainer');
+                imagePreviewContainer.innerHTML = '';
+                var img = document.createElement('img');
+                img.src = e.target.result; // Display the image preview
+                img.style.maxWidth = '200px';
+                img.style.maxHeight = '200px';
+                imagePreviewContainer.appendChild(img);
+
+                // Set the hidden input field's value to the base64 string
+                var base64String = e.target.result.split(',')[1]; // Extract base64 data
+                document.getElementById('modifyImageBase64').value = base64String; // Assign to hidden input
+            };
+
+            reader.readAsDataURL(fileModify);
+        });
+
+
         document.getElementById('imageUpload').addEventListener('change', function(event) {
             var file = event.target.files[0];
 
@@ -113,11 +157,41 @@
             container.appendChild(newRow);
         });
 
+        document.getElementById('addSpaceModify').addEventListener('click', function() {
+            console.log('Button clicked!'); // This should appear in the browser console when the button is clicked.
+            const container = document.getElementById('spacesModificationContainer');
+            const newRow = document.createElement('div');
+            newRow.classList.add('spaceRowModify');
+            newRow.innerHTML = `
+                <input type="text" class="modifySpaceID" name="spaceID[]" placeholder="Space ID">
+                <input type="text" class="modifyTimeLimit" name="modifytimeLimit[]" placeholder="Time Limit">
+                <button id="deleteSpace" type="submit" class = "btn btn-danger">Delete Space</button>
+            `;
+            container.appendChild(newRow);
+        });
+
         function collectSpacesAndTimeLimits() {
             let spacesDict = {};
             // Assuming each spaceID input is directly followed by its corresponding timeLimit input
             const spaceIDs = document.querySelectorAll('.spaceID');
             const timeLimits = document.querySelectorAll('.timeLimit');
+
+            spaceIDs.forEach((spaceInput, index) => {
+                const spaceID = spaceInput.value;
+                const timeLimit = timeLimits[index].value; // Assuming the same index
+                if (spaceID && timeLimit) {
+                    spacesDict[spaceID] = parseInt(timeLimit);
+                }
+            });
+
+            return spacesDict;
+        }
+
+        function collectSpacesAndTimeLimitsToModify() {
+            let spacesDict = {};
+            // Assuming each spaceID input is directly followed by its corresponding timeLimit input
+            const spaceIDs = document.querySelectorAll('.modifySpaceID');
+            const timeLimits = document.querySelectorAll('.modifyTimeLimit');
 
             spaceIDs.forEach((spaceInput, index) => {
                 const spaceID = spaceInput.value;
@@ -185,7 +259,7 @@
 
                 var companyFloor = {
                     FloorPlanName: $('#floorPlanName').val(),
-                    FloorPLanImage: $('#imageBase64').val(),
+                    FloorPlanImage: $('#imageBase64').val(),
                     FloorSpaces: collectSpacesAndTimeLimits()
                     
                 };
@@ -195,12 +269,114 @@
                     contentType: 'application/json',
                     data: JSON.stringify(companyFloor),
                     success: function(response) {
-                        alert('Account created successfully!');
+                        alert('Space created successfully!');
                         console.log(response); // Log response for debugging
                     },
                     error: function(xhr, status, error) {
                         console.error(xhr.responseText); // Log response text for debugging
-                        alert('Error creating account. ' + xhr.responseText);
+                        alert('Error creating space. ' + xhr.responseText);
+                    }
+                });
+            });
+
+
+
+
+            $('#modifySpaceForm').submit(function(e) {
+                e.preventDefault();
+
+                var spacesToModify = collectSpacesAndTimeLimitsToModify();
+                console.log("Submitting with data:", spacesToModify); // Debug output
+
+                $.ajax({
+                    url: 'http://localhost:8080/api/SpaceManager/modifyTimeLimits',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(spacesToModify),
+                    success: function(response) {
+                        console.log("Response from server:", response); // Debug output
+                        alert('Modified Time Limit successfully!');
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMsg = xhr.responseJSON?.message || xhr.statusText;
+                        console.error("Error from server:", errorMsg); // Debug output
+                        alert('Error Modifying Time Limit: ' + errorMsg);
+                    }
+                });
+            });
+
+            $('#modifyImage').click(function(e) {
+                e.preventDefault();
+                console.log('Modify image button clicked');
+
+               
+                var newFloor = {
+                    FloorPlanName: $('#modifyFloorPlanName').val(),
+                    NewFloorPlanImage: $('#modifyImageBase64').val()
+                };
+
+                $.ajax({
+                    url: 'http://localhost:8080/api/SpaceManager/modifyFloorPlan',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(newFloor),
+                    success: function(response) {
+                        console.log("Response from server:", response); // Debug output
+                        alert('Modified Image successfully!');
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMsg = xhr.responseJSON?.message || xhr.statusText;
+                        console.error("Error from server:", errorMsg); // Debug output
+                        alert('Error Modifying Image: ' + errorMsg);
+                    }
+                });
+            });
+            $('#deleteFloor').click(function(e) {
+                e.preventDefault();
+                console.log('Modify image button clicked');
+                var spaceID = $(this).closest('.spaceRowModify').find('.modifySpaceID').val();
+                console.log("Space ID to delete:", spaceID);
+                
+                // Log the spaceID to the console for debugging
+                console.log("Space ID to delete:", spaceID);
+
+                $.ajax({
+                    url: 'http://localhost:8080/api/SpaceManager/deleteSpace',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ spaceID: spaceID}),
+                    success: function(response) {
+                        console.log("Response from server:", response); // Debug output
+                        alert('Deleted Space successfully!');
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMsg = xhr.responseJSON?.message || xhr.statusText;
+                        console.error("Error from server:", errorMsg); // Debug output
+                        alert('Error Deleting Space: ' + errorMsg);
+                    }
+                });
+            });
+
+            $('#deleteFloor').click(function(e) {
+                e.preventDefault();
+                console.log('Delete Floor button clicked');
+                var FloorPlanName = $('#modifyFloorPlanName').val();
+                console.log("Floor PLan to delete to delete:", FloorPlanName);
+                
+
+                $.ajax({
+                    url: 'http://localhost:8080/api/SpaceManager/deleteFloor',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ FloorPlanName: FloorPlanName}),
+                    success: function(response) {
+                        console.log("Response from server:", response); // Debug output
+                        alert('Deleted Floor successfully!');
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMsg = xhr.responseJSON?.message || xhr.statusText;
+                        console.error("Error from server:", errorMsg); // Debug output
+                        alert('Error Deleting Floor: ' + errorMsg);
                     }
                 });
             });

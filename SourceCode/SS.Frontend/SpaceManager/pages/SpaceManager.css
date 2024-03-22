@@ -135,6 +135,7 @@ nav a:hover {
     /* height: 100vh; */
     flex-grow: 1;
     padding: 50px; 
+    margin: auto;
 }
 
 #accountCreationForm {
@@ -146,6 +147,19 @@ nav a:hover {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 45px;
     text-align: center; 
+}
+
+#modifySpaceForm {
+    width: 100%; 
+    max-width: 500px; 
+    /* background: rgb(205, 216, 247); */
+    background: linear-gradient(to bottom, rgb(182, 198, 255), rgb(188, 221, 231));
+    padding: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 45px;
+    text-align: center; 
+    margin : 10px;
+    margin-bottom: 20px;
 }
 
 .container {
@@ -256,6 +270,42 @@ input[type="checkbox"] {
     margin-bottom: 10px; /* Adds some space between each row of inputs */
 }
 
+.spaceRowModify {
+    display: flex;
+    /* align-items: center; */
+    gap: 10px; /* Adjust the gap between inputs as needed */
+    margin-bottom: 10px; /* Adds some space between each row of inputs */
+}
+
+
+.btn {
+    padding: 10px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+}
+
+.btn-add-space {
+    background-color: #28a745;
+    margin-bottom: 10px;
+}
+
+.btn-modify {
+    background-color: #f1d683;
+    color: black;
+}
+
+.btn-load-requests {
+    background-color: #17a2b8;
+}
+
 
 @media (max-width: 768px) {
     .container {
@@ -266,6 +316,10 @@ input[type="checkbox"] {
     }
     #additionalFields div {
         flex-basis: 100%; /* Full width on smaller screens */
+    }
+    #accountCreationForm, #modifySpaceForm {
+        max-width: 100%;
+        margin: 10px 0; /* Adjust margins for small screens */
     }
 }
 

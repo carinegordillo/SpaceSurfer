@@ -6,14 +6,15 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
-// using SpaceCreation;
+
 
 namespace SS.Backend.SpaceManager
 {
     public class SpaceCreation : ISpaceCreation
     {
-        public async Task<Response> CreateSpace(CompanyInfo? companyInfo, CompanyFloor? companyFloor)
+        public async Task<Response> CreateSpace(int companyID, CompanyFloor? companyFloor)
         {
+            
             Response response = new Response();
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
@@ -21,8 +22,12 @@ namespace SS.Backend.SpaceManager
             ConfigService configService = new ConfigService(configFilePath);
             SqlDAO SQLDao = new SqlDAO(configService);
             Logger logger = new Logger(new SqlLogTarget(SQLDao));
-
-
+                
+            if (companyID <= 0)
+            {
+                response.ErrorMessage = "companyID is not valid.";
+                return response;
+            }
             // Temporary business rules
             if (companyFloor is null || companyFloor.FloorPlanName == null)
             {
@@ -33,7 +38,7 @@ namespace SS.Backend.SpaceManager
             var companyFloorParameters = new Dictionary<string, object>
             {
                 // Assuming companyID is already available
-                {"companyID", 4/* fetch or assume companyID here */},
+                {"companyID", companyID},
                 {"floorPlanName", companyFloor.FloorPlanName ?? "Name is Null"},
                 {"floorPlanImage", companyFloor.FloorPlanImage ?? new byte[0]}
             };
@@ -49,7 +54,7 @@ namespace SS.Backend.SpaceManager
             {
                 return floorInsertResponse; // Return or handle error
             }
-            int companyID = Convert.ToInt32(companyFloorParameters["companyID"]);
+            // int companyID = Convert.ToInt32(companyFloorParameters["companyID"]);
             // Assuming floorPlanID retrieval method after insert
             if (companyFloor.FloorPlanName != null)
             {
