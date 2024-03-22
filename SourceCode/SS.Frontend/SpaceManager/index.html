@@ -146,8 +146,15 @@
         });
 
         document.getElementById('addSpace').addEventListener('click', function() {
-            console.log('Button clicked!'); // This should appear in the browser console when the button is clicked.
             const container = document.getElementById('spacesContainer');
+            const currentSpaces = container.getElementsByClassName('spaceRow').length;
+
+            if (currentSpaces >= 20) {
+                alert('You cannot add more than 20 spaces.');
+                return; // Stop the function here
+            }
+
+            console.log('Button clicked!'); // This should appear in the browser console when the button is clicked.
             const newRow = document.createElement('div');
             newRow.classList.add('spaceRow');
             newRow.innerHTML = `
@@ -158,16 +165,28 @@
         });
 
         document.getElementById('addSpaceModify').addEventListener('click', function() {
-            console.log('Button clicked!'); // This should appear in the browser console when the button is clicked.
             const container = document.getElementById('spacesModificationContainer');
+            const currentModifiedSpaces = container.getElementsByClassName('spaceRowModify').length;
+
+            if (currentModifiedSpaces >= 20) {
+                alert('You cannot add more than 20 modified spaces.');
+                return; // Stop the function here
+            }
+
+            console.log('Button clicked!'); // This should appear in the browser console when the button is clicked.
             const newRow = document.createElement('div');
             newRow.classList.add('spaceRowModify');
             newRow.innerHTML = `
                 <input type="text" class="modifySpaceID" name="spaceID[]" placeholder="Space ID">
                 <input type="text" class="modifyTimeLimit" name="modifytimeLimit[]" placeholder="Time Limit">
-                <button id="deleteSpace" type="submit" class = "btn btn-danger">Delete Space</button>
+                <button type="button" class="btn btn-danger deleteSpace">Delete Space</button>
             `;
             container.appendChild(newRow);
+
+            // Attach event listener to the newly added delete button for dynamic deletion
+            newRow.querySelector('.deleteSpace').addEventListener('click', function() {
+                this.closest('.spaceRowModify').remove();
+            });
         });
 
         function collectSpacesAndTimeLimits() {

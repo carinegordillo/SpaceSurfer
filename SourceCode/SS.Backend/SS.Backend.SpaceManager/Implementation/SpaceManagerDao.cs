@@ -15,6 +15,78 @@ namespace SS.Backend.SpaceManager
             _sqldao = sqldao;
         }
 
+        public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
+        {   
+            var builder = new CustomSqlCommandBuilder();
+            Response tablesresponse = new Response();
+
+            // For each table
+            foreach (var tableEntry in tableData)
+            {
+                string tableName = tableEntry.Key;
+                Dictionary<string, object> parameters = tableEntry.Value;
+
+                var insertCommand = builder.BeginInsert(tableName)
+                    .Columns(parameters.Keys)
+                    .Values(parameters.Keys)
+                    .AddParameters(parameters)
+                    .Build();
+
+                tablesresponse = await _sqldao.SqlRowsAffected(insertCommand);
+
+                if (tablesresponse.HasError)
+                {
+                    tablesresponse.ErrorMessage += $"{tableName}: error inserting data; ";
+                    return tablesresponse;
+                }
+            }
+            return tablesresponse;
+        }
+
+        public async Task<Response> GetCompanyFloorIDByName(string floorPlanName, int companyID)
+        {
+            Response tablesresponse = new Response();
+            var builder = new CustomSqlCommandBuilder();
+            var command = builder.BeginSelect()
+                                .SelectColumns("floorPlanID")
+                                .From("companyFloor")
+                                .Where("floorPlanName = @FloorPlanName AND companyID = @CompanyID")
+                                .AddParameters(new Dictionary<string, object>
+                                {
+                                    { "FloorPlanName", floorPlanName },
+                                    { "CompanyID", companyID }
+                                })
+                                .Build();
+
+            var IDresponse = await _sqldao.ReadSqlResult(command);
+            if (IDresponse.HasError)
+            {
+                tablesresponse.ErrorMessage += $"Error selecting floor ID; ";
+            }
+            return IDresponse;
+        }
+
+        public async Task<Response> ReadUserTable(string tableName)
+        {
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+            
+            var selectCommand = commandBuilder.BeginSelectAll()
+                                              .From(tableName)
+                                              .Build();
+
+            response = await _sqldao.ReadSqlResult(selectCommand);
+            if (response.HasError)
+            {
+                response.ErrorMessage += $"{tableName}: error reading data; ";
+            }
+            else
+            {
+                response.ErrorMessage += "- ReadUserTable - command successful -";
+            }
+
+            return response;
+        }
 
         public async Task<Response> GeneralModifier(Dictionary<string, object> whereClauses, string fieldName, object newValue, string tableName)
         {

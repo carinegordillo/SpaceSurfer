@@ -11,6 +11,24 @@ namespace SS.Backend.Tests.SpaceCreationTest
     [TestClass]
     public class SpaceCreationTest
     {
+        private SpaceCreation? _spaceCreation;
+        private ISpaceManagerDao? _spaceManagerDao; 
+        private SqlDAO? _sqlDao;
+        private ConfigService? _configService;
+        // private SqlCommand? _command;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            _configService = new ConfigService(configFilePath);
+            _sqlDao = new SqlDAO(_configService);
+            _spaceManagerDao = new SpaceManagerDao(_sqlDao);
+            _spaceCreation = new SpaceCreation(_spaceManagerDao);
+            
+        }
         private async Task CleanupTestData()
         {
             // var SAUser = Credential.CreateSAUser();
@@ -48,12 +66,10 @@ namespace SS.Backend.Tests.SpaceCreationTest
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
             CompanyInfo companyInfo = new CompanyInfo();
             CompanyFloor companyFloor = new CompanyFloor();
-            SpaceCreation spaceCreation = new SpaceCreation();
             Stopwatch timer = new Stopwatch();
 
 
             int validCompanyID = 6;
-           
             var validFloorInfo = new CompanyFloor
             {
                 FloorPlanName = "jack's Floor Plan",
@@ -62,7 +78,9 @@ namespace SS.Backend.Tests.SpaceCreationTest
             };
 
             timer.Start();
-            var response = await spaceCreation.CreateSpace(validCompanyID, validFloorInfo);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var response = await _spaceCreation.CreateSpace(validCompanyID, validFloorInfo);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);

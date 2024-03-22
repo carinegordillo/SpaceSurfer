@@ -158,7 +158,7 @@ public class DemoController : ControllerBase
     public async Task<IActionResult> DeleteFloor([FromBody] FloorPlanModel model)
     {
         // Assuming dummyCompanyID is fetched or defined elsewhere
-        int dummyCompanyID = 6;
+        int dummyCompanyID = 4;
         
         var response = await _spaceModification.DeleteFloor(dummyCompanyID, model.FloorPlanName);
         if (response.HasError)

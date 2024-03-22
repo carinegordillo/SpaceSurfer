@@ -12,16 +12,17 @@ namespace SS.Backend.SpaceManager
 {
     public class SpaceCreation : ISpaceCreation
     {
+
+        private readonly ISpaceManagerDao _spaceManagerDao;
+
+        public SpaceCreation(ISpaceManagerDao spaceManagerDao)
+        {
+            _spaceManagerDao = spaceManagerDao;
+        }
         public async Task<Response> CreateSpace(int companyID, CompanyFloor? companyFloor)
         {
             
             Response response = new Response();
-            var baseDirectory = AppContext.BaseDirectory;
-            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-            ConfigService configService = new ConfigService(configFilePath);
-            SqlDAO SQLDao = new SqlDAO(configService);
-            Logger logger = new Logger(new SqlLogTarget(SQLDao));
                 
             if (companyID <= 0)
             {
@@ -49,7 +50,7 @@ namespace SS.Backend.SpaceManager
             };
 
             // Insert the company floor first
-            var floorInsertResponse = await InsertIntoMultipleTables(floorTableData);
+            var floorInsertResponse = await _spaceManagerDao.InsertIntoMultipleTables(floorTableData);
             if (floorInsertResponse.HasError)
             {
                 return floorInsertResponse; // Return or handle error
@@ -59,7 +60,7 @@ namespace SS.Backend.SpaceManager
             if (companyFloor.FloorPlanName != null)
             {
                 // Response tableResponse = new Response();
-                Response tableResponse = await GetCompanyFloorIDByName(companyFloor.FloorPlanName, companyID);
+                Response tableResponse = await _spaceManagerDao.GetCompanyFloorIDByName(companyFloor.FloorPlanName, companyID);
                 // DataTable? floorPlanID = await GetCompanyFloorIDByName(companyFloor.FloorPlanName);
                 if(tableResponse.ValuesRead != null)
                 {
@@ -83,7 +84,7 @@ namespace SS.Backend.SpaceManager
                                     { "companyFloorSpaces", spaceDict }
                                 };
 
-                                var spaceInsertResponse = await InsertIntoMultipleTables(spaceTableData);
+                                var spaceInsertResponse = await _spaceManagerDao.InsertIntoMultipleTables(spaceTableData);
                                 if (spaceInsertResponse.HasError)
                                 {
                                     return spaceInsertResponse;
@@ -98,7 +99,7 @@ namespace SS.Backend.SpaceManager
             }
             
             // Return response based on overall operation success or specific error handling
-            return floorInsertResponse; // This should be replaced with appropriate response handling
+            return floorInsertResponse; 
         }
 
         public List<Dictionary<string, object>> ListSpace(CompanyFloor? companyFloor)
@@ -121,102 +122,100 @@ namespace SS.Backend.SpaceManager
             return listOfDicts;
         }
 
-        public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
-        {   
-            // SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
-            var baseDirectory = AppContext.BaseDirectory;
-            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-            ConfigService configService = new ConfigService(configFilePath);
-            SqlDAO SQLDao = new SqlDAO(configService);
+        // public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
+        // {   
+        //     // SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
+        //     var baseDirectory = AppContext.BaseDirectory;
+        //     var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+        //     var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+        //     ConfigService configService = new ConfigService(configFilePath);
+        //     SqlDAO SQLDao = new SqlDAO(configService);
 
-            var builder = new CustomSqlCommandBuilder();
-            Response tablesresponse = new Response();
+        //     var builder = new CustomSqlCommandBuilder();
+        //     Response tablesresponse = new Response();
 
-            //for each table 
-            foreach (var tableEntry in tableData)
-            {
-                string tableName = tableEntry.Key;
-                Dictionary<string, object> parameters = tableEntry.Value;
-                var insertCommand = builder.BeginInsert(tableName)
-                    .Columns(parameters.Keys)
-                    .Values(parameters.Keys)
-                    .AddParameters(parameters)
-                    .Build();
+        //     //for each table 
+        //     foreach (var tableEntry in tableData)
+        //     {
+        //         string tableName = tableEntry.Key;
+        //         Dictionary<string, object> parameters = tableEntry.Value;
+        //         var insertCommand = builder.BeginInsert(tableName)
+        //             .Columns(parameters.Keys)
+        //             .Values(parameters.Keys)
+        //             .AddParameters(parameters)
+        //             .Build();
 
-                tablesresponse = await SQLDao.SqlRowsAffected(insertCommand);
-                if (tablesresponse.HasError)
-                {
-                    tablesresponse.ErrorMessage += $"{tableName}: error inserting data; ";
-                    return tablesresponse;
-                }
-            }
-            return tablesresponse;
-        }
-
-
-        public async Task<Response> GetCompanyFloorIDByName(string floorPlanName, int companyID)
-        {
-            var baseDirectory = AppContext.BaseDirectory;
-            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-            ConfigService configService = new ConfigService(configFilePath);
-            SqlDAO SQLDao = new SqlDAO(configService);
+        //         tablesresponse = await SQLDao.SqlRowsAffected(insertCommand);
+        //         if (tablesresponse.HasError)
+        //         {
+        //             tablesresponse.ErrorMessage += $"{tableName}: error inserting data; ";
+        //             return tablesresponse;
+        //         }
+        //     }
+        //     return tablesresponse;
+        // }
 
 
-            Response tablesresponse = new Response();
-            var builder = new CustomSqlCommandBuilder();
-            var command = builder.BeginSelect()
-                                .SelectColumns("floorPlanID")
-                                .From("companyFloor")
-                                .Where("floorPlanName = @FloorPlanName AND companyID = @CompanyID")
-                                .AddParameters(new Dictionary<string, object>
-                                {
-                                    { "FloorPlanName", floorPlanName },
-                                    { "CompanyID", companyID }
-                                })
-                                .Build();
+        // public async Task<Response> GetCompanyFloorIDByName(string floorPlanName, int companyID)
+        // {
+        //     var baseDirectory = AppContext.BaseDirectory;
+        //     var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+        //     var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+        //     ConfigService configService = new ConfigService(configFilePath);
+        //     SqlDAO SQLDao = new SqlDAO(configService);
 
 
-            var IDresponse = await SQLDao.ReadSqlResult(command);
-            if (IDresponse.HasError)
-            {
-                tablesresponse.ErrorMessage += $"Error selecting floor ID; ";
-            }
-            return IDresponse;
+        //     Response tablesresponse = new Response();
+        //     var builder = new CustomSqlCommandBuilder();
+        //     var command = builder.BeginSelect()
+        //                         .SelectColumns("floorPlanID")
+        //                         .From("companyFloor")
+        //                         .Where("floorPlanName = @FloorPlanName AND companyID = @CompanyID")
+        //                         .AddParameters(new Dictionary<string, object>
+        //                         {
+        //                             { "FloorPlanName", floorPlanName },
+        //                             { "CompanyID", companyID }
+        //                         })
+        //                         .Build();
+
+
+        //     var IDresponse = await SQLDao.ReadSqlResult(command);
+        //     if (IDresponse.HasError)
+        //     {
+        //         tablesresponse.ErrorMessage += $"Error selecting floor ID; ";
+        //     }
+        //     return IDresponse;
             
-        }
+        // }
 
-        public async Task<Response> ReadUserTable(string tableName)
-        {
+        // public async Task<Response> ReadUserTable(string tableName)
+        // {
 
-            // var baseDirectory = AppContext.BaseDirectory;
-            // var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-            // var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-            var baseDirectory = AppContext.BaseDirectory;
-            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-            ConfigService configService = new ConfigService(configFilePath);
-            SqlDAO SQLDao = new SqlDAO(configService);
-            Response response = new Response();
-            var commandBuilder = new CustomSqlCommandBuilder();
             
-            var insertCommand =  commandBuilder.BeginSelectAll()
-                                            .From(tableName)
-                                            .Build();
+        //     var baseDirectory = AppContext.BaseDirectory;
+        //     var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+        //     var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+        //     ConfigService configService = new ConfigService(configFilePath);
+        //     SqlDAO SQLDao = new SqlDAO(configService);
+        //     Response response = new Response();
+        //     var commandBuilder = new CustomSqlCommandBuilder();
+            
+        //     var insertCommand =  commandBuilder.BeginSelectAll()
+        //                                     .From(tableName)
+        //                                     .Build();
 
-            response = await SQLDao.ReadSqlResult(insertCommand);
-            if (response.HasError)
-            {
-                response.ErrorMessage += $"{tableName}: error inserting data; ";
-                return response;
-            }else{
-                response.ErrorMessage += "- ReadUserTable- command successful -";
-            }
+        //     response = await SQLDao.ReadSqlResult(insertCommand);
+        //     if (response.HasError)
+        //     {
+        //         response.ErrorMessage += $"{tableName}: error inserting data; ";
+        //         return response;
+        //     }else{
+        //         response.ErrorMessage += "- ReadUserTable- command successful -";
+        //     }
           
-            return response;
+        //     return response;
 
-        }
+        // }
         
     }
 }
