@@ -1,5 +1,6 @@
 using SS.Backend.SharedNamespace;
 using System.Data.SqlClient;
+using System.Data;
 
 
 namespace SS.Backend.SpaceManager
@@ -15,8 +16,29 @@ namespace SS.Backend.SpaceManager
             _spaceManagerDao = spaceManagerDao;
         }
 
-        public async Task<Response> ModifyFloorImage(int companyID, string floorPlanName, byte[] newFloorPlanImage)
+        public async Task<Response> ModifyFloorImage(string hashedUsername, string floorPlanName, byte[] newFloorPlanImage)
         {
+            Response response = new Response();
+            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
+
+            if (companyIDResponse.HasError || companyIDResponse.ValuesRead == null || companyIDResponse.ValuesRead.Rows.Count == 0)
+            {
+                response.ErrorMessage = "Invalid hashedUsername or companyID not found.";
+                return response;
+            }
+
+            // Assuming we have only one row per hashedUsername
+            DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
+            int companyID = Convert.ToInt32(companyIDRow["companyID"]);
+            Console.WriteLine($"Debug: CompanyID is {companyID}");
+
+            // Check for valid companyID and companyFloor
+            if (companyID <= 0)
+            {
+                response.ErrorMessage = "companyID is not valid.";
+                return response;
+            }
+
             // Check if companyID is involved in any reservations
             var checkResponse = await CheckCompanyReservation(companyID);
             if (checkResponse.HasError)
@@ -33,13 +55,34 @@ namespace SS.Backend.SpaceManager
             };
 
             // Now call the GeneralModifier with the updated signature
-            Response response = await _spaceManagerDao.GeneralModifier(whereClauses, "floorPlanImage", newFloorPlanImage, "dbo.companyFloor");
+            response = await _spaceManagerDao.GeneralModifier(whereClauses, "floorPlanImage", newFloorPlanImage, "dbo.companyFloor");
 
             return response;
         }
 
-        public async Task<Response> ModifyTimeLimit(int companyID, string spaceID, int newTimeLimit)
+        public async Task<Response> ModifyTimeLimit(string hashedUsername, string spaceID, int newTimeLimit)
         {
+            Response response = new Response();
+            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
+
+            if (companyIDResponse.HasError || companyIDResponse.ValuesRead == null || companyIDResponse.ValuesRead.Rows.Count == 0)
+            {
+                response.ErrorMessage = "Invalid hashedUsername or companyID not found.";
+                return response;
+            }
+
+            // Assuming we have only one row per hashedUsername
+            DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
+            int companyID = Convert.ToInt32(companyIDRow["companyID"]);
+            Console.WriteLine($"Debug: CompanyID is {companyID}");
+
+            // Check for valid companyID and companyFloor
+            if (companyID <= 0)
+            {
+                response.ErrorMessage = "companyID is not valid.";
+                return response;
+            }
+
             // Check if companyID is involved in any reservations
             var checkResponse = await CheckCompanyReservation(companyID);
             if (checkResponse.HasError)
@@ -56,13 +99,33 @@ namespace SS.Backend.SpaceManager
             };
 
             // Now call the GeneralModifier with the updated signature
-            Response response = await _spaceManagerDao.GeneralModifier(whereClauses, "timeLimit", newTimeLimit, "dbo.companyFloorSpaces");
+            response = await _spaceManagerDao.GeneralModifier(whereClauses, "timeLimit", newTimeLimit, "dbo.companyFloorSpaces");
 
             return response;
         }
 
-        public async Task<Response> DeleteSpace(int companyID, string spaceID)
+        public async Task<Response> DeleteSpace(string hashedUsername, string spaceID)
         {
+            Response response = new Response();
+            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
+
+            if (companyIDResponse.HasError || companyIDResponse.ValuesRead == null || companyIDResponse.ValuesRead.Rows.Count == 0)
+            {
+                response.ErrorMessage = "Invalid hashedUsername or companyID not found.";
+                return response;
+            }
+
+            // Assuming we have only one row per hashedUsername
+            DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
+            int companyID = Convert.ToInt32(companyIDRow["companyID"]);
+            Console.WriteLine($"Debug: CompanyID is {companyID}");
+
+            // Check for valid companyID and companyFloor
+            if (companyID <= 0)
+            {
+                response.ErrorMessage = "companyID is not valid.";
+                return response;
+            }
             
             // Check if companyID is involved in any reservations
             var checkResponse = await CheckCompanyReservation(companyID);
@@ -77,20 +140,60 @@ namespace SS.Backend.SpaceManager
                 { "spaceID", spaceID }
             };
 
-            Response response = await _spaceManagerDao.DeleteField(conditions, "dbo.companyFloorSpaces");
+            response = await _spaceManagerDao.DeleteField(conditions, "dbo.companyFloorSpaces");
 
             return response;
         }
 
-        public async Task<Response> getCompanyFloor(int companyID){
-            Response response = await (_spaceManagerDao.readTableWhere("companyID", companyID, "dbo.companyFloor"));
+        public async Task<Response> getCompanyFloor(string hashedUsername){
+            Response response = new Response();
+            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
+
+            if (companyIDResponse.HasError || companyIDResponse.ValuesRead == null || companyIDResponse.ValuesRead.Rows.Count == 0)
+            {
+                response.ErrorMessage = "Invalid hashedUsername or companyID not found.";
+                return response;
+            }
+
+            // Assuming we have only one row per hashedUsername
+            DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
+            int companyID = Convert.ToInt32(companyIDRow["companyID"]);
+            Console.WriteLine($"Debug: CompanyID is {companyID}");
+
+            // Check for valid companyID and companyFloor
+            if (companyID <= 0)
+            {
+                response.ErrorMessage = "companyID is not valid.";
+                return response;
+            }
+            response = await (_spaceManagerDao.readTableWhere("companyID", companyID, "dbo.companyFloor"));
 
             return response;
         }
 
 
-        public async Task<Response> DeleteFloor(int companyID, string floorPlanName)
+        public async Task<Response> DeleteFloor(string hashedUsername, string floorPlanName)
         {
+            Response response = new Response();
+            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
+
+            if (companyIDResponse.HasError || companyIDResponse.ValuesRead == null || companyIDResponse.ValuesRead.Rows.Count == 0)
+            {
+                response.ErrorMessage = "Invalid hashedUsername or companyID not found.";
+                return response;
+            }
+
+            // Assuming we have only one row per hashedUsername
+            DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
+            int companyID = Convert.ToInt32(companyIDRow["companyID"]);
+            Console.WriteLine($"Debug: CompanyID is {companyID}");
+
+            // Check for valid companyID and companyFloor
+            if (companyID <= 0)
+            {
+                response.ErrorMessage = "companyID is not valid.";
+                return response;
+            }
 
             // Check if companyID is involved in any reservations
             var checkResponse = await CheckCompanyReservation(companyID);
@@ -122,10 +225,7 @@ namespace SS.Backend.SpaceManager
         private async Task<Response> CheckCompanyReservation(int companyID)
         {
             var response = await _spaceManagerDao.readTableWhere("companyID", companyID, "dbo.Reservations");
-            // if (response.HasError)
-            // {
-            //     return new Response { HasError = true, ErrorMessage = "Error checking for reservations." };
-            // }
+
             if (response.ValuesRead != null && response.ValuesRead.Rows.Count > 0)
             {
                 // If there are rows, then there are reservations for this companyID

@@ -6,6 +6,7 @@ namespace SS.Backend.SpaceManager
 
     public interface ISpaceManagerDao
     {
+        public Task<Response> GetCompanyIDByHashedUsername(string hashedUsername);
         
         public Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData);
         public Task<Response> GetCompanyFloorIDByName(string floorPlanName, int companyID);

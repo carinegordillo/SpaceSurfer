@@ -1,6 +1,3 @@
-{
-    "server": {
-      "baseDir": "./webpages",
-      "index": "recoveryRequests.html"
-    }
-  }
+{ 
+    "startPath": "index.html" 
+}

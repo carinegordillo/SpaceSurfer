@@ -15,6 +15,38 @@ namespace SS.Backend.SpaceManager
             _sqldao = sqldao;
         }
 
+        public async Task<Response> GetCompanyIDByHashedUsername(string hashedUsername)
+        {
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "HashedUsername", hashedUsername }
+            };
+
+            var selectCommand = commandBuilder.BeginSelect()
+                                            .SelectColumns("companyID")
+                                            .From("companyProfile")
+                                            .Where("hashedUsername = @HashedUsername")
+                                            .AddParameters(parameters)
+                                            .Build();
+
+            response = await _sqldao.ReadSqlResult(selectCommand);
+
+            if (!response.HasError)
+            {
+                response.ErrorMessage += "- GetCompanyIDByHashedUsername - command successful -";
+            }
+            else
+            {
+                response.ErrorMessage += $"- GetCompanyIDByHashedUsername - command: {selectCommand.CommandText} not successful -";
+            }
+
+            return response;
+        }
+
+
         public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
         {   
             var builder = new CustomSqlCommandBuilder();

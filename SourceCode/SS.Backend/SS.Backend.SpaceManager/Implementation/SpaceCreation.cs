@@ -19,10 +19,22 @@ namespace SS.Backend.SpaceManager
         {
             _spaceManagerDao = spaceManagerDao;
         }
-        public async Task<Response> CreateSpace(int companyID, CompanyFloor? companyFloor)
+        public async Task<Response> CreateSpace(string hashedUsername, CompanyFloor? companyFloor)
         {
-            
             Response response = new Response();
+            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
+
+            if (companyIDResponse.HasError || companyIDResponse.ValuesRead == null || companyIDResponse.ValuesRead.Rows.Count == 0)
+            {
+                response.ErrorMessage = "Invalid hashedUsername or companyID not found.";
+                return response;
+            }
+
+            // Assuming we have only one row per hashedUsername
+            DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
+            int companyID = Convert.ToInt32(companyIDRow["companyID"]);
+            Console.WriteLine($"Debug: CompanyID is {companyID}");
+            // Response response = new Response();
                 
             if (companyID <= 0)
             {
@@ -56,7 +68,6 @@ namespace SS.Backend.SpaceManager
                 return floorInsertResponse; // Return or handle error
             }
             // int companyID = Convert.ToInt32(companyFloorParameters["companyID"]);
-            // Assuming floorPlanID retrieval method after insert
             if (companyFloor.FloorPlanName != null)
             {
                 // Response tableResponse = new Response();
@@ -121,101 +132,5 @@ namespace SS.Backend.SpaceManager
 
             return listOfDicts;
         }
-
-        // public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
-        // {   
-        //     // SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
-        //     var baseDirectory = AppContext.BaseDirectory;
-        //     var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-        //     var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-        //     ConfigService configService = new ConfigService(configFilePath);
-        //     SqlDAO SQLDao = new SqlDAO(configService);
-
-        //     var builder = new CustomSqlCommandBuilder();
-        //     Response tablesresponse = new Response();
-
-        //     //for each table 
-        //     foreach (var tableEntry in tableData)
-        //     {
-        //         string tableName = tableEntry.Key;
-        //         Dictionary<string, object> parameters = tableEntry.Value;
-        //         var insertCommand = builder.BeginInsert(tableName)
-        //             .Columns(parameters.Keys)
-        //             .Values(parameters.Keys)
-        //             .AddParameters(parameters)
-        //             .Build();
-
-        //         tablesresponse = await SQLDao.SqlRowsAffected(insertCommand);
-        //         if (tablesresponse.HasError)
-        //         {
-        //             tablesresponse.ErrorMessage += $"{tableName}: error inserting data; ";
-        //             return tablesresponse;
-        //         }
-        //     }
-        //     return tablesresponse;
-        // }
-
-
-        // public async Task<Response> GetCompanyFloorIDByName(string floorPlanName, int companyID)
-        // {
-        //     var baseDirectory = AppContext.BaseDirectory;
-        //     var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-        //     var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-        //     ConfigService configService = new ConfigService(configFilePath);
-        //     SqlDAO SQLDao = new SqlDAO(configService);
-
-
-        //     Response tablesresponse = new Response();
-        //     var builder = new CustomSqlCommandBuilder();
-        //     var command = builder.BeginSelect()
-        //                         .SelectColumns("floorPlanID")
-        //                         .From("companyFloor")
-        //                         .Where("floorPlanName = @FloorPlanName AND companyID = @CompanyID")
-        //                         .AddParameters(new Dictionary<string, object>
-        //                         {
-        //                             { "FloorPlanName", floorPlanName },
-        //                             { "CompanyID", companyID }
-        //                         })
-        //                         .Build();
-
-
-        //     var IDresponse = await SQLDao.ReadSqlResult(command);
-        //     if (IDresponse.HasError)
-        //     {
-        //         tablesresponse.ErrorMessage += $"Error selecting floor ID; ";
-        //     }
-        //     return IDresponse;
-            
-        // }
-
-        // public async Task<Response> ReadUserTable(string tableName)
-        // {
-
-            
-        //     var baseDirectory = AppContext.BaseDirectory;
-        //     var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-        //     var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-        //     ConfigService configService = new ConfigService(configFilePath);
-        //     SqlDAO SQLDao = new SqlDAO(configService);
-        //     Response response = new Response();
-        //     var commandBuilder = new CustomSqlCommandBuilder();
-            
-        //     var insertCommand =  commandBuilder.BeginSelectAll()
-        //                                     .From(tableName)
-        //                                     .Build();
-
-        //     response = await SQLDao.ReadSqlResult(insertCommand);
-        //     if (response.HasError)
-        //     {
-        //         response.ErrorMessage += $"{tableName}: error inserting data; ";
-        //         return response;
-        //     }else{
-        //         response.ErrorMessage += "- ReadUserTable- command successful -";
-        //     }
-          
-        //     return response;
-
-        // }
-        
     }
 }

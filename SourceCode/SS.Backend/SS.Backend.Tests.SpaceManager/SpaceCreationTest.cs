@@ -64,22 +64,22 @@ namespace SS.Backend.Tests.SpaceCreationTest
         public async Task CreateSpace_Success()
         {
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
-            CompanyInfo companyInfo = new CompanyInfo();
-            CompanyFloor companyFloor = new CompanyFloor();
+            // CompanyInfo companyInfo = new CompanyInfo();
+            // CompanyFloor companyFloor = new CompanyFloor();
             Stopwatch timer = new Stopwatch();
 
 
-            int validCompanyID = 6;
+            string validCompanyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
             var validFloorInfo = new CompanyFloor
             {
-                FloorPlanName = "jack's Floor Plan",
+                FloorPlanName = "AI Floor Plan",
                 FloorPlanImage = new byte[] { 0x01, 0x02, 0x03, 0x04 },
-                FloorSpaces = new Dictionary<string, int> { { "J1", 2 }, { "J3", 3 }, {"JK", 3} },
+                FloorSpaces = new Dictionary<string, int> { { "Z1", 2 }, { "Z3", 3 }, {"ZK", 3} },
             };
 
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceCreation.CreateSpace(validCompanyID, validFloorInfo);
+            var response = await _spaceCreation.CreateSpace(validCompanyHash, validFloorInfo);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
 

@@ -69,6 +69,7 @@ nav {
     font-family: Arial, sans-serif; /* Set the font, with a fallback */
     margin-top: 0px;
     font-size: 20px;
+    cursor: pointer;
 
 }
 
