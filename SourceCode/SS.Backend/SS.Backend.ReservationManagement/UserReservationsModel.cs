@@ -1,4 +1,4 @@
-namespace SS.Backend.ReservationCreationService
+namespace SS.Backend.ReservationManagement
 {
     public enum ReservationStatus
     {
@@ -9,6 +9,7 @@ namespace SS.Backend.ReservationCreationService
 
     public class UserReservationsModel
     {
+        public int? ReservationID { get; set;}
         public int CompanyID { get; set; }
         public int FloorPlanID { get; set; }
         public string SpaceID { get; set; }
@@ -16,8 +17,5 @@ namespace SS.Backend.ReservationCreationService
         public TimeSpan ReservationStartTime { get; set; }
         public TimeSpan ReservationEndTime { get; set; }
         public ReservationStatus Status { get; set; }
-
-        // Optional: For scenarios where you need the status as a string
-        public string StatusString => Status.ToString();
     }
 }
