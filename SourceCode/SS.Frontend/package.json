@@ -13,6 +13,7 @@
     "start": "npm install && lite-server"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "lite-server": "^2.6.1"
   },
   "author": "",

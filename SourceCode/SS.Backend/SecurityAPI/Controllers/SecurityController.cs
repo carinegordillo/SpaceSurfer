@@ -52,14 +52,11 @@ public class SecurityController : ControllerBase
         var roleClaims = principal.Claims.Where(c => c.Key == "Role").ToList();
         var rolesDictionary = roleClaims.ToDictionary(roleClaim => roleClaim.Value, roleClaim => roleClaim.Value);
 
-
-
-        // Generate ID Token and Access Token after successful authentication
-        //var idToken = _authService.GenerateJwtToken(username, roleClaims.FirstOrDefault()); 
+        // Generate Access Token after successful authentication
         var accessToken = _authService.GenerateAccessToken(username, rolesDictionary);
 
        
-        return Ok(new {accessToken });
+        return Ok(new {accessToken});
     }
     
 

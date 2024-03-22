@@ -80,9 +80,5 @@ async function postAuthorize() {
   }
 }
 
-// Example usage:
-// sendOTP('user@example.com');
-// authenticate('user@example.com', 'OTP_received');
-// authorize({userId: 'user1'}, {claim1: 'Admin'});
+module.exports = { postSendOTP, postAuthenticate, postAuthorize }; 
 
-//})(window, window.ajaxClient);

@@ -406,7 +406,7 @@ namespace SS.Backend.Security
         public string GenerateAccessToken(string username, IDictionary<string, string> roles)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn"); // Use the same key or a different one based on your security model
+            var key = Encoding.ASCII.GetBytes(jwtSecret); 
 
             var claims = new List<Claim>
             {

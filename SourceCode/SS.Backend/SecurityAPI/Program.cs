@@ -43,7 +43,6 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireClaimPolicy", policy =>
         policy.RequireClaim("YourClaimType", "ExpectedValue"));
-    // Adjust the policy name and claim requirements as necessary.
 });
 
 //builder.Services.AddAuthorization();
