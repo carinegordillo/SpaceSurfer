@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SS.Backend.Security;
+using SS.Backend.Services.EmailService;
 
 namespace AuthAPI.Controllers
 {
@@ -8,16 +9,26 @@ namespace AuthAPI.Controllers
     public class AuthNController : Controller
     {
         private readonly SSAuthService _authService;
+        private readonly IConfiguration _config;
 
-        public AuthNController(SSAuthService authService)
+        public AuthNController(SSAuthService authService, IConfiguration config)
         {
             _authService = authService;
+            _config = config;
         }
 
         [HttpPost("sendOTP")]
         public async Task<IActionResult> SendOTP([FromBody] AuthenticationRequest request)
         {
             var (otp, response) = await _authService.SendOTP_and_SaveToDB(request);
+
+            if (response.HasError == false)
+            {
+                string targetEmail = request.UserIdentity;
+                string subject = "Verfication Code";
+                string msg = "Verification code: " + otp;
+                await MailSender.SendEmail(targetEmail, subject, msg);
+            }
 
             if (response.HasError)
             {
@@ -37,7 +48,18 @@ namespace AuthAPI.Controllers
                 return BadRequest(response.ErrorMessage);
             }
 
-            return Ok(new { principal });
+            var rolesDictionary = principal.Claims;
+            var token = _authService.GenerateAccessToken(principal.UserIdentity, rolesDictionary);
+
+            return Ok(token);
+        }
+
+        [HttpPost("decodeToken")]
+        public async Task<IActionResult> decodeToken([FromBody] string accessToken)
+        {
+            List<string> info = _authService.GetRolesFromToken(accessToken);
+
+            return Ok(info);
         }
     }
 }
