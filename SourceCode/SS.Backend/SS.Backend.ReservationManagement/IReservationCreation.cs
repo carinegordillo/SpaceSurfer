@@ -1,7 +1,7 @@
 
 using SS.Backend.SharedNamespace;
 
-namespace SS.Backend.ReservationServices
+namespace SS.Backend.ReservationManagement
 {
     public interface IReservationCreation
     {

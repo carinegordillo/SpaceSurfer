@@ -11,7 +11,7 @@ space
 
 */
 
-namespace SS.Backend.ReservationServices{
+namespace SS.Backend.ReservationManagement{
     public enum TimeUnit
     {
         Days,

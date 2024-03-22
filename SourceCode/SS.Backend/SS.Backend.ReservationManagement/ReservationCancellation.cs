@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 
 
-namespace SS.Backend.ReservationServices{
+namespace SS.Backend.ReservationManagement{
 
 public class ReservationCancellation
 {

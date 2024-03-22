@@ -4,10 +4,10 @@
 using SS.Backend.DataAccess;
 using System.IO;
 using System.Threading.Tasks;
-using SS.Backend.ReservationServices;
+using SS.Backend.ReservationManagement;
 using SS.Backend.SharedNamespace;
 using Microsoft.Data.SqlClient;
-namespace SS.Backend.Tests.ReservationCreationService{
+namespace SS.Backend.Tests.ReservationManagemnt{
 
     [TestClass]
     public class ReservationUnitTests
