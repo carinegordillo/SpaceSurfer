@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using SS.Backend.ReservationManagement;
 using SS.Backend.SharedNamespace;
 using Microsoft.Data.SqlClient;
-namespace SS.Backend.Tests.ReservationManagemnt{
+namespace SS.Backend.Tests.ReservationManagement{
 
     [TestClass]
     public class ReservationCreationUnitTests

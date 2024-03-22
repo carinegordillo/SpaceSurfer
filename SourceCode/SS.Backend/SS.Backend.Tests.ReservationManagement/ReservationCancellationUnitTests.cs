@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using SS.Backend.ReservationManagement;
 using SS.Backend.SharedNamespace;
 using Microsoft.Data.SqlClient;
-namespace SS.Backend.Tests.ReservationManagemnt{
+namespace SS.Backend.Tests.ReservationManagement{
 
     [TestClass]
-    public class ReservationUnitTests
+    public class ReservationCancellationUnitTests
     {
         private SqlDAO _sqlDao;
         private ConfigService _configService;
@@ -48,7 +48,7 @@ namespace SS.Backend.Tests.ReservationManagemnt{
 
             UserReservationsModel reservationToBeCancelled = new UserReservationsModel
             {
-                ReservationID = 104,
+                ReservationID = 108,
                 CompanyID = 2,
                 FloorPlanID = 3,
                 SpaceID = "SPACE302",
@@ -68,7 +68,19 @@ namespace SS.Backend.Tests.ReservationManagemnt{
             Assert.IsTrue(reservtaionCancellationResult.RowsAffected > 0);
             
         }
+        
 
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            // clean up the test data
+            var commandBuilder = new CustomSqlCommandBuilder();
+            var deleteCommand = commandBuilder.BeginDelete(tableName)
+                .Where("reservationID = 108")
+                .Build();
+            _sqlDao.SqlRowsAffected(deleteCommand);
+        }
         
 
 
