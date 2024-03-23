@@ -67,7 +67,7 @@ namespace SS.Backend.Tests.SpacemodificationTest
             timer.Start();
             var newFloorPlanImage = new byte[] { 0x01, 0x02, 0x03, 0x09 };
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceModification.ModifyFloorImage(4, "new flooroa", newFloorPlanImage);
+            var response = await _spaceModification.ModifyFloorImage("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "new flooroa", newFloorPlanImage);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
             Assert.IsFalse(response.HasError, response.ErrorMessage);
@@ -81,7 +81,7 @@ namespace SS.Backend.Tests.SpacemodificationTest
             Stopwatch timer = new Stopwatch();
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceModification.ModifyTimeLimit(4, "A4a", 3);
+            var response = await _spaceModification.ModifyTimeLimit("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "A4a", 3);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
             Assert.IsFalse(response.HasError, response.ErrorMessage);
@@ -96,7 +96,7 @@ namespace SS.Backend.Tests.SpacemodificationTest
             Stopwatch timer = new Stopwatch();
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceModification.DeleteSpace(4, "A4a");
+            var response = await _spaceModification.DeleteSpace("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "A4a");
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
             Assert.IsFalse(response.HasError, response.ErrorMessage);
@@ -110,7 +110,7 @@ namespace SS.Backend.Tests.SpacemodificationTest
             Stopwatch timer = new Stopwatch();
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceModification.DeleteFloor(6, "Testing Floor");
+            var response = await _spaceModification.DeleteFloor("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "Testing Floor");
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
             Assert.IsFalse(response.HasError, response.ErrorMessage);
@@ -124,7 +124,7 @@ namespace SS.Backend.Tests.SpacemodificationTest
             Stopwatch timer = new Stopwatch();
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceModification.getCompanyFloor(4);
+            var response = await _spaceModification.getCompanyFloor("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ");
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
             Assert.IsFalse(response.HasError, response.ErrorMessage);

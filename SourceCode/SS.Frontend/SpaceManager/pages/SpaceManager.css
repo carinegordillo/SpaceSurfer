@@ -18,6 +18,15 @@ body {
     min-height: 100vh;
     /* overflow: hidden; */
     height: auto;
+
+    background-image: url(AIfire_transparent.png);
+    background-size: cover; /* Scale the background image as large as possible */
+    background-repeat: no-repeat; /* Prevent the background image from repeating */
+    padding: 0;
+    margin: 0;
+    display: flex; /* Make the body a flex container */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: space-between; /* Push content to the top and bottom */
   }
   
   .background-image::before {
@@ -85,49 +94,18 @@ nav a:hover {
 }
 
 
-
-/* CSS */
-.button-73 {
-  appearance: none;
-  background-color: #FFFFFF;
-  border-radius: 40em;
-  border-style: none;
-  box-shadow: #ADCFFF 0 -12px 6px inset;
-  box-sizing: border-box;
-  color: #000000;
-  cursor: pointer;
-  display: inline-block;
-  font-family: -apple-system,sans-serif;
-  font-size: 1.2rem;
-  font-weight: 700;
-  letter-spacing: -.24px;
-  margin: 0;
-  outline: none;
-  padding: 1rem 1.3rem;
-  quotes: auto;
-  text-align: center;
-  text-decoration: none;
-  transition: all .15s;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
-
-.button-73:hover {
-  background-color: #297fff;
-  box-shadow: #FF6314 0 -6px 8px inset;
-  transform: scale(1.125);
-}
-
-.button-73:active {
-  transform: scale(1.025);
-}
-
 @media (min-width: 768px) {
   .button-73 {
     font-size: 1.5rem;
     padding: .75rem 2rem;
   }
+}
+
+.mainSection{
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 .form-container {
     display: flex;
@@ -148,6 +126,7 @@ nav a:hover {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 45px;
     text-align: center; 
+    margin: auto;
 }
 
 #modifySpaceForm {
@@ -161,6 +140,18 @@ nav a:hover {
     text-align: center; 
     margin : 10px;
     margin-bottom: 20px;
+    margin: auto;
+}
+
+.creationSection{
+    flex-direction: column;
+    margin: auto;
+}
+
+.modifySection{
+    flex-direction: column;
+    margin: auto;
+
 }
 
 .container {
@@ -193,6 +184,8 @@ nav a:hover {
 .form-row input[type="time"] {
     flex-grow: 1; /*Input field takes up remaining space*/
 }
+
+
 .accordion {
     background-color: #4b79a1; /* Light blue background */
     color: white; /* White text color */
@@ -209,6 +202,8 @@ nav a:hover {
     font-size: 26px; /* Adjust font size as needed */
     display: block; /* Block display to enable margin auto */
     max-width: 300px; /* Max width so it doesn't span the entire width of the page */
+    margin: auto;
+    margin-top: 20px;
   }
   
   .accordion:hover {

@@ -148,17 +148,26 @@ acc[i].addEventListener("click", function() {
     }
 });
  }
-
-$(document).ready(function() {
-    $('.accordion').click(function() {
-        this.classList.toggle("active");
-        var formContainer = $(this).next('.form-container');
-        if (formContainer.css('display') === "none") {
-            formContainer.css('display', 'flex'); // Show the form
+ document.querySelectorAll('.accordion').forEach(button => {
+    button.addEventListener('click', () => {
+        const formContainer = button.nextElementSibling;
+        if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+            formContainer.style.display = 'flex';
         } else {
-            formContainer.css('display', 'none'); // Hide the form
+            formContainer.style.display = 'none';
         }
     });
+});
+$(document).ready(function() {
+    // $('.accordion').click(function() {
+    //     this.classList.toggle("active");
+    //     var formContainer = $(this).next('.form-container');
+    //     if (formContainer.css('display') === "none") {
+    //         formContainer.css('display', 'flex'); // Show the form
+    //     } else {
+    //         formContainer.css('display', 'none'); // Hide the form
+    //     }
+    // });
 
     $('#loadRequestsButton').click(function() {
         $.ajax({

@@ -35,69 +35,74 @@ namespace SS.Backend.Services.AccountCreationService
             foreach (PropertyInfo prop in userInfo.GetType().GetProperties())
             {
                 var value = prop.GetValue(userInfo);
-                switch (prop.Name)
-                {
-                    case "firstname":
-                    case "lastname":
-                        if (!IsValidName(value as string))
-                        {
-                            errorMsg += $"Invalid {prop.Name.ToLower()}; ";
-                        }
-                        break;
-                    case "username":
-                        if (!IsValidEmail(value as string))
-                        {
-                            errorMsg += "Invalid email";
-                        }
-                        break;
-                    case "dob":
-                        if (!IsValidDateOfBirth(value as DateTime?))
-                        {
-                            errorMsg += "Invalid date of birth; ";
-                        }
-                        break;
-                    // case "companyName":
-                    //     if (userInfo.role == 2 || userInfo.role == 3)
-                    //     {
-                    //         if (!IsValidCompanyName(value as string))
-                    //         {
-                    //             errorMsg += $"Invalid {prop.Name.ToLower()}; ";
-                    //         }
-                    //         break;
-                    //     }
-                    //     break;
-
-                    // case "address":
-                    //     if (userInfo.role == 2 || userInfo.role == 3)
-                    //     {
-                    //         if (!IsValidAddress(value as string))
-                    //         {
-                    //             errorMsg += $"Invalid {prop.Name.ToLower()}; ";
-                    //         }
-                    //         break;
-                    //     }
-                    //     break;
-                        // case "openingHours":
-                        // case "closingHours":
-                        // case "daysOpen": //check if these need their own function
-                        //     if (CheckNullWhiteSpace(value as string))
+                if (value as string != null){
+                    switch (prop.Name)
+                    {
+                        case "firstname":
+                        case "lastname":
+                            if (!IsValidName(value as string))
+                            {
+                                errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                            }
+                            break;
+                        case "username":
+                            if (!IsValidEmail(value as string))
+                            {
+                                errorMsg += "Invalid email";
+                            }
+                            break;
+                        case "dob":
+                            if (!IsValidDateOfBirth(value as DateTime?))
+                            {
+                                errorMsg += "Invalid date of birth; ";
+                            }
+                            break;
+                        // case "companyName":
+                        //     if (userInfo.role == 2 || userInfo.role == 3)
                         //     {
-                        //         errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                        //         if (!IsValidCompanyName(value as string))
+                        //         {
+                        //             errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                        //         }
+                        //         break;
                         //     }
                         //     break;
+
+                        // case "address":
+                        //     if (userInfo.role == 2 || userInfo.role == 3)
+                        //     {
+                        //         if (!IsValidAddress(value as string))
+                        //         {
+                        //             errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                        //         }
+                        //         break;
+                        //     }
+                        //     break;
+                            // case "openingHours":
+                            // case "closingHours":
+                            // case "daysOpen": //check if these need their own function
+                            //     if (CheckNullWhiteSpace(value as string))
+                            //     {
+                            //         errorMsg += $"Invalid {prop.Name.ToLower()}; ";
+                            //     }
+                            //     break;
+                    }
+
+
                 }
+                
             }
             return string.IsNullOrEmpty(errorMsg) ? "Pass" : errorMsg;
         }
 
-        private bool IsValidName(string name)
+        private bool IsValidName(string? name)
         {
             return !string.IsNullOrWhiteSpace(name) &&
                 name.Length >= 1 &&
                 name.Length <= 50 &&
                 Regex.IsMatch(name, @"^[a-zA-Z]+$");
         }
-        private bool IsValidEmail(string email)
+        private bool IsValidEmail(string? email)
         {
             if (string.IsNullOrWhiteSpace(email) || email.Length < 3)
             {
@@ -118,13 +123,13 @@ namespace SS.Backend.Services.AccountCreationService
             var validEndDate = DateTime.Now;
             return dateOfBirth >= validStartDate && dateOfBirth <= validEndDate;
         }
-        private bool IsValidCompanyName(string name)
-        {
-            return
-                name.Length >= 1 &&
-                name.Length <= 60;
-        }
-        private bool IsValidAddress(string name)
+        // private bool IsValidCompanyName(string? name)
+        // {
+        //     return
+        //         name.Length >= 1 &&
+        //         name.Length <= 60;
+        // }
+        private bool IsValidAddress(string? name)
         {
             //implement Geolocation API
             return name == "Irvine";
@@ -200,18 +205,23 @@ namespace SS.Backend.Services.AccountCreationService
             // string pepper = await pepperDao.ReadPepperAsync();
             string pepper = "DA06";
 
-          
+
+#pragma warning disable CS8604 // Possible null reference argument.
             var validPepper = new UserPepper
             {
                 hashedUsername = hashing.HashData(userInfo.username, pepper)
             };
-    
+#pragma warning restore CS8604 // Possible null reference argument.
+
+#pragma warning disable CS8604 // Possible null reference argument.
             var userAccount_success_parameters = new Dictionary<string, object>
             {
                 { "username", userInfo.username},
                 {"birthDate", userInfo.dob}   
             };
+#pragma warning restore CS8604 // Possible null reference argument.
 
+#pragma warning disable CS8604 // Possible null reference argument.
             var userProfile_success_parameters = new Dictionary<string, object>
             {
                 {"hashedUsername", validPepper.hashedUsername},
@@ -220,12 +230,15 @@ namespace SS.Backend.Services.AccountCreationService
                 {"backupEmail", userInfo.backupEmail},
                 {"appRole", userInfo.role}, 
             };
-            
+#pragma warning restore CS8604 // Possible null reference argument.
+
+#pragma warning disable CS8604 // Possible null reference argument.
             var activeAccount_success_parameters = new Dictionary<string, object>
             {
                 {"hashedUsername", validPepper.hashedUsername},
                 {"isActive", userInfo.status} 
             };
+#pragma warning restore CS8604 // Possible null reference argument.
 
             var hashedAccount_success_parameters = new Dictionary<string, object>
             {
@@ -244,6 +257,7 @@ namespace SS.Backend.Services.AccountCreationService
 
             if (companyInfo != null)
             {
+#pragma warning disable CS8604 // Possible null reference argument.
                 var companyProfile_success_parameters = new Dictionary<string, object>
                 {
                     {"hashedUsername", validPepper.hashedUsername},
@@ -253,7 +267,8 @@ namespace SS.Backend.Services.AccountCreationService
                     {"closingHours", companyInfo.closingHours},
                     {"daysOpen", companyInfo.daysOpen}
                 };
-                
+#pragma warning restore CS8604 // Possible null reference argument.
+
                 // Add the companyProfile dictionary to tableData
                 tableData.Add("companyProfile", companyProfile_success_parameters);
             }

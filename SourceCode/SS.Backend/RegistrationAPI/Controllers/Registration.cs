@@ -49,27 +49,29 @@ public class DemoController : ControllerBase
 
                 return Ok(userList);
 
-            foreach (var userInfo in userList){
-                Console.WriteLine($"Name: {userInfo.firstname}, Position: {userInfo.lastname}");
-            }
         }
         catch (Exception ex)
         {
             return StatusCode(500, $"An error occurred: {ex.Message}");
         }
 
-        return Ok(userList);
     }
 
     [HttpPost]
     [Route("postAccount")]
     // public async Task<ActionResult<List<UserInfo>>> PostCreateAccount([FromBody] UserInfo userInfo){
     public async Task<IActionResult> PostCreateAccount([FromBody] AccountCreationRequest request){
-        var response = await _accountCreation.CreateUserAccount(request.UserInfo, request.CompanyInfo);
-        if (response.HasError)
-        {
-            return BadRequest(response.ErrorMessage);
+        Response response = new Response();
+        response.HasError = true;
+
+        if(request.UserInfo != null){
+            response = await _accountCreation.CreateUserAccount(request.UserInfo, request.CompanyInfo);
         }
+        if (response.HasError)
+            {
+                return BadRequest(response.ErrorMessage);
+            }
         return Ok(new { message = "Account created successfully!", response });
-    }  
-}
+        }
+        
+}  

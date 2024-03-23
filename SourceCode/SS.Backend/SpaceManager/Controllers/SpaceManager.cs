@@ -65,7 +65,7 @@ public class DemoController : ControllerBase
     // public async Task<ActionResult<List<UserInfo>>> PostCreateAccount([FromBody] UserInfo userInfo){
     public async Task<IActionResult> PostCreateSpace([FromBody] CompanyFloor companyFloor){
         
-        int dummyHash = "12345";
+        string dummyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
         
         var response = await _spaceCreation.CreateSpace(dummyHash, companyFloor);
         if (response.HasError)
@@ -81,7 +81,7 @@ public class DemoController : ControllerBase
     public async Task<IActionResult> ModifyTimeLimits([FromBody] Dictionary<string, int> spaceTimeLimits)
     {
         // Assuming dummyCompanyID is fetched or defined elsewhere
-        int dummyHash = "12345";
+        string dummyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
         List<string> messages = new List<string>();
 
         foreach (var entry in spaceTimeLimits)
@@ -106,8 +106,8 @@ public class DemoController : ControllerBase
     //edit floor plan image 
     public class FloorPlanUpdateRequest
     {
-        public string FloorPlanName { get; set; }
-        public byte[] NewFloorPlanImage { get; set; }
+        public required string FloorPlanName { get; set; }
+        public required byte[] NewFloorPlanImage { get; set; }
     }
 
     [HttpPost]
@@ -115,7 +115,7 @@ public class DemoController : ControllerBase
     public async Task<IActionResult> ModifyFloorImage([FromBody] FloorPlanUpdateRequest request)
     {
         // Assuming dummyCompanyID is fetched or defined elsewhere
-        int dummyHash = "12345";
+        string dummyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
         
         var response = await _spaceModification.ModifyFloorImage(dummyHash, request.FloorPlanName, request.NewFloorPlanImage);
         if (response.HasError)
@@ -129,7 +129,7 @@ public class DemoController : ControllerBase
 
     public class SpaceIdModel
     {
-        public string SpaceID { get; set; }
+        public required string SpaceID { get; set; }
     }
 
     [HttpPost]
@@ -137,7 +137,7 @@ public class DemoController : ControllerBase
     public async Task<IActionResult> DeleteSpaceID([FromBody] SpaceIdModel model)
     {
         // Assuming dummyCompanyID is fetched or defined elsewhere
-        int dummyHash = "12345";
+        string dummyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
         
         var response = await _spaceModification.DeleteSpace(dummyHash, model.SpaceID);
         if (response.HasError)
@@ -150,7 +150,7 @@ public class DemoController : ControllerBase
 
     public class FloorPlanModel
     {
-        public string FloorPlanName { get; set; }
+        public required string FloorPlanName { get; set; }
     }
 
     [HttpPost]
@@ -158,7 +158,7 @@ public class DemoController : ControllerBase
     public async Task<IActionResult> DeleteFloor([FromBody] FloorPlanModel model)
     {
         // Assuming dummyCompanyID is fetched or defined elsewhere
-        int dummyHash = "12345";
+        string dummyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
         
         var response = await _spaceModification.DeleteFloor(dummyHash, model.FloorPlanName);
         if (response.HasError)
