@@ -18,6 +18,8 @@ namespace SS.Backend.Tests.ReservationManagement{
         private ReservationCreation  _reservationcreationService;
         private ReservationCancellation _reservationCancellationService;
 
+        private ReservationValidationService _reservationValidationService;
+
         string tableName = "dbo.TestReservations";
 
         
@@ -32,7 +34,9 @@ namespace SS.Backend.Tests.ReservationManagement{
             _configService = new ConfigService(configFilePath);
             _sqlDao = new SqlDAO(_configService);
 
-            _reservationcreationService = new ReservationCreation(_sqlDao);
+            _reservationValidationService = new ReservationValidationService();
+
+            _reservationcreationService = new ReservationCreation(_sqlDao, _reservationValidationService);
             _reservationCancellationService = new ReservationCancellation(_sqlDao);
 
 

@@ -10,6 +10,7 @@ namespace SS.Backend.UserManagement
     {
         private ISqlDAO _sqldao;
 
+
         public UserManagementDao(ISqlDAO sqldao)
         {
             _sqldao = sqldao;
@@ -21,16 +22,10 @@ namespace SS.Backend.UserManagement
 
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();
-            
-            
-            var columnValues = new Dictionary<string, object>{
-                { fieldName, newValue },{whereClause,whereClauseval}};
 
-            var updateCommand = commandBuilder.BeginUpdate(tableName)
-                                            .Set(columnValues)
-                                            .Where($"{whereClause} = @{whereClause}")
-                                            .AddParameters(columnValues)
-                                            .Build();
+            UpdateOnlyBuiltSqlCommands updateOnlysqlCommands = new UpdateOnlyBuiltSqlCommands(commandBuilder);
+
+            SqlCommand updateCommand = updateOnlysqlCommands.GenericUpdateOne(whereClause, whereClauseval, fieldName, newValue, tableName);
 
             response = await _sqldao.SqlRowsAffected(updateCommand);
 
@@ -49,12 +44,10 @@ namespace SS.Backend.UserManagement
 
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();
-            
 
+            ReadOnlyBuiltSqlCommands readOnlysqlCommands = new ReadOnlyBuiltSqlCommands(commandBuilder);
 
-            var selectRequestsCommand = commandBuilder.BeginSelectAll()
-                                            .From($"{tableName}")
-                                            .Build();
+            SqlCommand selectRequestsCommand = readOnlysqlCommands.GenericReadAllFrom(tableName);
 
             response = await _sqldao.ReadSqlResult(selectRequestsCommand);
 
@@ -87,11 +80,9 @@ namespace SS.Backend.UserManagement
                             { "additionalInformation", userRequest.AdditionalInformation }
                         };
 
-            var InsertRequestsCommand = commandBuilder.BeginInsert(tableName)
-                                                            .Columns(parameters.Keys)
-                                                            .Values(parameters.Keys)
-                                                            .AddParameters(parameters)
-                                                            .Build();
+            CreateOnlyBuiltSqlCommands createOnlysqlCommands = new CreateOnlyBuiltSqlCommands(commandBuilder);
+
+            var InsertRequestsCommand = createOnlysqlCommands.GenericInsert(parameters, "dbo.userRequests");
 
             response = await _sqldao.SqlRowsAffected(InsertRequestsCommand);
 
@@ -119,12 +110,10 @@ namespace SS.Backend.UserManagement
                             { "Position", position}
                         };
 
-            var InsertRequestsCommand = commandBuilder.BeginInsert("dbo.EmployeesDummyTable")
-                                                            .Columns(parameters.Keys)
-                                                            .Values(parameters.Keys)
-                                                            .AddParameters(parameters)
-                                                            .Build();
+            CreateOnlyBuiltSqlCommands createOnlysqlCommands = new CreateOnlyBuiltSqlCommands(commandBuilder);
 
+            var InsertRequestsCommand = createOnlysqlCommands.GenericInsert(parameters, "dbo.userRequests");
+            
             response = await _sqldao.SqlRowsAffected(InsertRequestsCommand);
 
             if (response.HasError == false){
@@ -143,14 +132,9 @@ namespace SS.Backend.UserManagement
             Response response = new Response();
             var commandBuilder = new CustomSqlCommandBuilder();
 
-            var parameters = new Dictionary<string, object>
-            {{ whereClause, whereClauseval }};
+            ReadOnlyBuiltSqlCommands readOnlysqlCommands = new ReadOnlyBuiltSqlCommands(commandBuilder);
 
-            var command = commandBuilder.BeginSelectAll()
-                        .From(tableName)
-                        .Where($"{whereClause} = @{whereClause}")
-                        .AddParameters(parameters)
-                        .Build();
+            SqlCommand command = readOnlysqlCommands.GenericReadWhereSingular(whereClause, whereClauseval, tableName);
             
             response = await _sqldao.ReadSqlResult(command);
 
@@ -163,11 +147,7 @@ namespace SS.Backend.UserManagement
             }
             return response;
 
-
-
         }
-
-
 
     }
 }
