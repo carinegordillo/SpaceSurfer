@@ -19,7 +19,7 @@
 
     root.myApp = root.myApp || {};
     async function init() {
-        window.location = "Registration/index.html"
+        window.location = "Login/index.html"
     }
 
     init();

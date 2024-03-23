@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SS.Backend.Security;
 using SS.Backend.Services.EmailService;
 
 namespace AuthAPI.Controllers
