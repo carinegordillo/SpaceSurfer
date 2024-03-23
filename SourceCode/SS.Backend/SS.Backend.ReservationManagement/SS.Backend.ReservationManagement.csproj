@@ -1,15 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-     <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
+
+    <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
     <ProjectReference Include="..\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj" />
     <ProjectReference Include="..\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
-    <!-- <ProjectReference Include="..\SS.Backend.Services\SS.Backend.Services.csproj" /> -->
   </ItemGroup>
 
 </Project>

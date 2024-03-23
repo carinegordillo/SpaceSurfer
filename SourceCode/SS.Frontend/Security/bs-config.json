@@ -1,0 +1,14 @@
+{
+    "port": 8080, 
+    "ui": {
+        "port": 8081
+      },
+    "files": ["./**/*.{html,htm,css,js}"],
+    "server": {
+      "baseDir": "../webpages",
+      "index": "securityView.html",
+      "routes": {
+        "/Security": "."
+      }
+    }
+  }

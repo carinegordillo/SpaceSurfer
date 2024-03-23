@@ -14,15 +14,13 @@ namespace SS.Backend.Security
         private readonly Hashing hasher;
         private readonly SqlDAO sqldao;
         private readonly Logger log;
-        private readonly string jwtSecret;
 
-        public SSAuthService(GenOTP genotp, Hashing hasher, SqlDAO sqldao, Logger log, string jwtSecret)
+        public SSAuthService(GenOTP genotp, Hashing hasher, SqlDAO sqldao, Logger log)
         {
             this.genotp = genotp;
             this.hasher = hasher;
             this.sqldao = sqldao;
             this.log = log;
-            this.jwtSecret = jwtSecret;
         }
 
         /// <summary>
@@ -48,7 +46,7 @@ namespace SS.Backend.Security
                 if (result.ValuesRead == null || result.ValuesRead.Rows.Count == 0)
                 {
                     result.HasError = true;
-                    result.ErrorMessage = "User does not exist.";
+                    result.ErrorMessage = $"User: '{user}' does not exist.";
                     LogEntry entry = new()
                     {
                         timestamp = DateTime.UtcNow,
@@ -308,6 +306,44 @@ namespace SS.Backend.Security
         {
             if (currentPrincipal?.Claims == null)
             {
+                return false; // If user claims are null, authorization fails
+            }
+
+            foreach (var requiredClaim in requiredClaims)
+            {
+                if (currentPrincipal.Claims.TryGetValue(requiredClaim.Key, out var claimValue))
+                {
+                    // Special handling for roles, assuming they might be stored as comma-separated values
+                    if (requiredClaim.Key == "Role")
+                    {
+                        var roles = claimValue.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                            .Select(role => role.Trim())
+                                            .ToList();
+
+                        // Check if any of the required roles are present
+                        var requiredRoles = requiredClaim.Value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                                            .Select(role => role.Trim());
+
+                        if (!requiredRoles.All(requiredRole => roles.Contains(requiredRole)))
+                        {
+                            return false; // If any required role is missing, authorization fails
+                        }
+                    }
+                    else if (claimValue != requiredClaim.Value)
+                    {
+                        return false; // For non-role claims, fail if the claim doesn't match the required value
+                    }
+                }
+                else
+                {
+                    return false; // Fail if the required claim is missing
+                }
+            }
+
+            return true; // Passes all checks
+            /*
+            if (currentPrincipal?.Claims == null)
+            {
                 // If user claims are null, authorization fails
                 return false;
             }
@@ -320,6 +356,7 @@ namespace SS.Backend.Security
                 }
             }
             return true;
+            */
 
         }
 
@@ -344,22 +381,46 @@ namespace SS.Backend.Security
             return ssPrincipal;
         }
 
-        private string GenerateJwtToken(string username, string role)
+
+        public string GenerateAccessToken(string username, IDictionary<string, string> roles)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(jwtSecret);
+            var key = Encoding.ASCII.GetBytes("g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn");
+
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, username),
+                new Claim(JwtRegisteredClaimNames.Iss, "https://spacesurfers.auth.com/"),
+                new Claim(JwtRegisteredClaimNames.Aud, "spacesurfers"),
+            };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.Value));
+            }
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.Role, role)
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
+
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+        
+        public List<string> GetRolesFromToken(string accessToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.ReadJwtToken(accessToken);
+
+            string subject = token.Subject;
+            string expirationTime = token.ValidTo.ToString("yyyy-MM-ddTHH:mm:ssZ");
+            string? roleClaim = token.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value;
+
+            return new List<string> { subject, expirationTime, roleClaim ?? "Role claim not found" };
+        }
+
     }
 }
