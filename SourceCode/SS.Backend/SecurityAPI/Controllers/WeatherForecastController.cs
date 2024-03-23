@@ -1,4 +1,4 @@
-
+/*
 using Microsoft.AspNetCore.Mvc;
 
 namespace SecurityAPI.Controllers;
@@ -31,3 +31,4 @@ public class WeatherForecastController : ControllerBase
         .ToArray();
     }
 }
+*/

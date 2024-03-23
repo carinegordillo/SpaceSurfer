@@ -1,0 +1,79 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Monserrat", sans-serif;
+}
+
+body{
+    background: #171a46;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-form{
+    margin: auto;
+    background-color: rgb(161, 167, 216);
+    display: flex;
+    height: 500px;
+    width: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    box-shadow: 10px 10px rgba(17, 30, 84, 0.308);
+}
+
+.form{
+    width: 70%;
+    margin: auto;
+}
+
+.form h3{
+    margin: 15px 0;
+    font-size: 30px;
+}
+
+.form input{
+    width: 100%;
+    padding: 13px;
+    font-size: 15px;
+    margin-bottom: 20px;
+    border-radius: 2px;
+    border: 2px solid royalblue;
+    opacity: 0.5;
+    outline: none;
+}
+
+.form button{
+    width: 100%;
+    padding: 13px;
+    font-size: 15px;
+    margin-bottom: 20px;
+    border-radius: 2px;
+    border: none;
+    outline: none;
+    background-color: rgba(48, 42, 128, 0.778);
+    cursor: pointer;
+}
+
+.form buttom:hover{
+    background-color: rgb(98, 98, 202);
+}
+
+span{
+    color: rgb(22, 22, 112);
+    font-size: 35px;
+}
+
+.register-link {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.register-link a {
+    color: #0866ca;
+    text-decoration: none;
+}

@@ -46,7 +46,7 @@ namespace SS.Backend.Security
                 if (result.ValuesRead == null || result.ValuesRead.Rows.Count == 0)
                 {
                     result.HasError = true;
-                    result.ErrorMessage = "User does not exist.";
+                    result.ErrorMessage = $"User: '{user}' does not exist.";
                     LogEntry entry = new()
                     {
                         timestamp = DateTime.UtcNow,
@@ -306,6 +306,44 @@ namespace SS.Backend.Security
         {
             if (currentPrincipal?.Claims == null)
             {
+                return false; // If user claims are null, authorization fails
+            }
+
+            foreach (var requiredClaim in requiredClaims)
+            {
+                if (currentPrincipal.Claims.TryGetValue(requiredClaim.Key, out var claimValue))
+                {
+                    // Special handling for roles, assuming they might be stored as comma-separated values
+                    if (requiredClaim.Key == "Role")
+                    {
+                        var roles = claimValue.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                            .Select(role => role.Trim())
+                                            .ToList();
+
+                        // Check if any of the required roles are present
+                        var requiredRoles = requiredClaim.Value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                                            .Select(role => role.Trim());
+
+                        if (!requiredRoles.All(requiredRole => roles.Contains(requiredRole)))
+                        {
+                            return false; // If any required role is missing, authorization fails
+                        }
+                    }
+                    else if (claimValue != requiredClaim.Value)
+                    {
+                        return false; // For non-role claims, fail if the claim doesn't match the required value
+                    }
+                }
+                else
+                {
+                    return false; // Fail if the required claim is missing
+                }
+            }
+
+            return true; // Passes all checks
+            /*
+            if (currentPrincipal?.Claims == null)
+            {
                 // If user claims are null, authorization fails
                 return false;
             }
@@ -318,6 +356,7 @@ namespace SS.Backend.Security
                 }
             }
             return true;
+            */
 
         }
 
@@ -341,6 +380,7 @@ namespace SS.Backend.Security
 
             return ssPrincipal;
         }
+
 
         public string GenerateAccessToken(string username, IDictionary<string, string> roles)
         {
@@ -369,7 +409,7 @@ namespace SS.Backend.Security
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-
+        
         public List<string> GetRolesFromToken(string accessToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
