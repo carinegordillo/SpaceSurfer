@@ -1,10 +1,27 @@
-using SS.Backend.Services.AccountCreationService;
+using SS.Backend.SpaceManager;
+using SS.Backend.DataAccess;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddTransient<IAccountCreation, AccountCreation>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+
+
+var baseDirectory = AppContext.BaseDirectory;
+var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+
+builder.Services.AddTransient<ConfigService>(provider =>new ConfigService(configFilePath));
+
+builder.Services.AddTransient<ISqlDAO, SqlDAO>();
+
+builder.Services.AddTransient<ISpaceCreation, SpaceCreation>();
+builder.Services.AddTransient<CustomSqlCommandBuilder>();
+builder.Services.AddTransient<ISpaceManagerDao, SpaceManagerDao>();
+builder.Services.AddTransient<ISpaceModification, SpaceModification>();
+
 
 var app = builder.Build();
 
@@ -40,45 +57,3 @@ app.MapControllers();
 
 app.Run();
 
-
-
-
-// using SS.Backend.Services.AccountCreationService;
-
-// var builder = WebApplication.CreateBuilder(args);
-
-// builder.Services.AddControllers();
-// builder.Services.AddTransient<IAccountCreation, AccountCreation>();
-
-// // Define a CORS policy
-// const string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
-// builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen();
-
-// // Add CORS services
-// builder.Services.AddCors();
-
-// var app = builder.Build();
-
-// // Enable CORS
-// app.UseCors(policy =>
-// {
-//     policy.AllowAnyOrigin();
-//     policy.AllowAnyHeader();
-//     policy.AllowAnyMethod();
-// });
-
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-//     app.UseDeveloperExceptionPage();
-// }
-
-// app.UseHttpsRedirection();
-// app.UseAuthorization();
-
-// app.MapControllers();
-
-// app.Run();

@@ -80,6 +80,13 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
+    public ICustomSqlCommandBuilder WhereMultiple(Dictionary<string, object> conditions, string logicalOperator = "AND")
+    {
+        var conditionStrings = conditions.Select(kv => $"{kv.Key} = @{kv.Key}");
+        _commandText.Append($" WHERE {string.Join($" {logicalOperator} ", conditionStrings)}");
+        return this;
+    }
+
     public ICustomSqlCommandBuilder Join(string joinTable, string fromColumn, string toColumn)
     {
         _commandText.Append($" JOIN {joinTable} ON {fromColumn} = {toColumn}");
