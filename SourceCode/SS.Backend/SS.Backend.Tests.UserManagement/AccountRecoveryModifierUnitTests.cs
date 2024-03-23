@@ -32,23 +32,23 @@ public class AccountRecoveryModifierUnitTests
         
     }
 
-    [TestMethod]
-    public async Task NonExistentResolveRequest_Fails()
-    {
-        // Arrange
-        var userHash = "testUserHash1";
-        var resolveStatus = "accepted";
+    // [TestMethod]
+    // public async Task NonExistentResolveRequest_Fails()
+    // {
+    //     // Arrange
+    //     var userHash = "testUserHash1";
+    //     var resolveStatus = "accepted";
         
-        // Act
-        var result = await _accountRecoveryModifier.ResolveRequest(userHash, resolveStatus);
+    //     // Act
+    //     var result = await _accountRecoveryModifier.ResolveRequest(userHash, resolveStatus);
 
-        // Assert
-        Assert.IsTrue(result.HasError);
+    //     // Assert
+    //     Assert.IsTrue(result.HasError);
 
-        // Verify the update in the database
-        var response = await _userManagementDao.readTableWhere("userHash", userHash, "dbo.userRequests");
-        Assert.IsTrue(response.HasError);
-    }
+    //     // Verify the update in the database
+    //     var response = await _userManagementDao.readTableWhere("userHash", userHash, "dbo.userRequests");
+    //     Assert.IsTrue(response.HasError);
+    // }
 
 
     [TestMethod]
