@@ -52,7 +52,7 @@ function submitAccountCreationForm() {
         dob: $('#dob').val(),
         firstname: $('#firstname').val(),
         lastname: $('#lastname').val(),
-        role: $('#isCompany').is(':checked') ? 2 : $('#isFacility').is(':checked') ? 3 : 1,
+        role: $('#isCompany').is(':checked') ? 2 : $('#isFacility').is(':checked') ? 3 : 5,
         status: "yes",
         backupEmail: $('#backupEmail').val(),
     };

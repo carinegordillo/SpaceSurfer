@@ -171,7 +171,7 @@ $(document).ready(function() {
 
     $('#loadRequestsButton').click(function() {
         $.ajax({
-            url: 'http://localhost:8080/api/SpaceManager/createSpace',
+            url: 'http://localhost:8081/api/SpaceManager/createSpace',
             type: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -202,7 +202,7 @@ $(document).ready(function() {
             
         };
         $.ajax({
-            url: 'http://localhost:8080/api/SpaceManager/postSpace',
+            url: 'http://localhost:8081/api/SpaceManager/postSpace',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(companyFloor),
@@ -227,7 +227,7 @@ $(document).ready(function() {
         console.log("Submitting with data:", spacesToModify); // Debug output
 
         $.ajax({
-            url: 'http://localhost:8080/api/SpaceManager/modifyTimeLimits',
+            url: 'http://localhost:8081/api/SpaceManager/modifyTimeLimits',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(spacesToModify),
@@ -254,7 +254,7 @@ $(document).ready(function() {
         };
 
         $.ajax({
-            url: 'http://localhost:8080/api/SpaceManager/modifyFloorPlan',
+            url: 'http://localhost:8081/api/SpaceManager/modifyFloorPlan',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(newFloor),
@@ -269,7 +269,7 @@ $(document).ready(function() {
             }
         });
     });
-    $('#deleteFloor').click(function(e) {
+    $('#deleteSpace').click(function(e) {
         e.preventDefault();
         console.log('Modify image button clicked');
         var spaceID = $(this).closest('.spaceRowModify').find('.modifySpaceID').val();
@@ -279,7 +279,7 @@ $(document).ready(function() {
         console.log("Space ID to delete:", spaceID);
 
         $.ajax({
-            url: 'http://localhost:8080/api/SpaceManager/deleteSpace',
+            url: 'http://localhost:8081/api/SpaceManager/deleteSpace',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ spaceID: spaceID}),
@@ -303,7 +303,7 @@ $(document).ready(function() {
         
 
         $.ajax({
-            url: 'http://localhost:8080/api/SpaceManager/deleteFloor',
+            url: 'http://localhost:8081/api/SpaceManager/deleteFloor',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ FloorPlanName: FloorPlanName}),
