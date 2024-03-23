@@ -63,12 +63,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//// Content Security Policy (CSP) middleware
-//app.Use(async (context, next) =>
-//{
-//    context.Response.Headers.Add(HeaderNames.ContentSecurityPolicy, "default-src 'self'; script-src 'self' 'unsafe-inline';");
-//    await next();
-//});
+// Content Security Policy (CSP) middleware
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add(HeaderNames.ContentSecurityPolicy, "default-src 'self'; script-src 'self' 'unsafe-inline';");
+    await next();
+});
 
 app.Use(async (context, next) =>
 {

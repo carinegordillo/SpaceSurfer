@@ -12,20 +12,18 @@ space
 */
 
 namespace SS.Backend.ReservationManagement{
-    public enum TimeUnit
-    {
-        Days,
-        Hours,
-        Minutes
-    }
+
 
     public class ReservationCreation : IReservationCreation
     {
         private ISqlDAO _sqldao;
 
-        public ReservationCreation(ISqlDAO sqldao)
+        private ReservationValidationService _reservationValidationService;
+
+        public ReservationCreation(ISqlDAO sqldao, ReservationValidationService reservationValidationService)
         {
             _sqldao = sqldao;
+            _reservationValidationService = reservationValidationService;
         }
 
         public async Task<Response> CreateReservationWithAutoID(string tableName, UserReservationsModel userReservationsModel){
@@ -134,9 +132,10 @@ namespace SS.Backend.ReservationManagement{
             {
                 // Assuming _sqldao.ReadSqlResult executes the command and returns a DataTable
                 result = await _sqldao.ReadSqlResult(command);
-                
 
-                if (result.ValuesRead != null && result.ValuesRead.Rows.Count > 0 )
+                bool isValid = await _reservationValidationService.HasConflictingReservations(result);
+
+                if (isValid == true)
                 {
                     // Conflicts exist
                     result.ErrorMessage = "Conflict with existing reservation.";
@@ -172,19 +171,18 @@ namespace SS.Backend.ReservationManagement{
             SqlCommand command = new SqlCommand(query);
             command.Parameters.AddWithValue("@companyID", companyID);
 
-
             try
             {
                 result = await _sqldao.ReadSqlResult(command);
 
+
                 if (result.ValuesRead.Rows.Count > 0)
                 {
                     
-                    TimeSpan openingHours = (TimeSpan)(result.ValuesRead.Rows[0]["openingHours"]); 
-                    TimeSpan closingHours = (TimeSpan)(result.ValuesRead.Rows[0]["closingHours"]);
+                    bool isValid = await _reservationValidationService.IsWithinHours(result, proposedStart, proposedEnd);
                     
                     
-                    if (proposedStart >= openingHours && proposedEnd <= closingHours)
+                    if (isValid == true)
                     {
                        
                         result.ErrorMessage = "The reservation is within company operating hours.";
@@ -225,26 +223,24 @@ namespace SS.Backend.ReservationManagement{
             SqlCommand command = new SqlCommand(query);
             command.Parameters.AddWithValue("@spaceID", userReservationsModel.SpaceID);
 
-            var userReservationDuration = userReservationsModel.ReservationEndTime - userReservationsModel.ReservationStartTime;
 
             try
             {
                 result = await _sqldao.ReadSqlResult(command);
 
+               
                 if (result.ValuesRead.Rows.Count > 0)
                 {
+                    bool isValid = await _reservationValidationService.IsValidDuration(userReservationsModel, result);
                     
-                    int spaceTimeLimitInMinutes = ((int)(result.ValuesRead.Rows[0]["timeLimit"])*60); 
-                    
-                    if (userReservationDuration.TotalMinutes >= spaceTimeLimitInMinutes)
+                    if (isValid == false)
                     {
                        
-                        result.ErrorMessage = $"The Space has a time limit of {spaceTimeLimitInMinutes} minutes. The reservation duration of {userReservationDuration} exceeds the time limit.";
+                        result.ErrorMessage = $"The reservtaion Duration exceeds the Space Time limit.";
                         result.HasError = true;
                     }
                     else
                     {
-                        result.ErrorMessage = $"The Space has a time limit of {spaceTimeLimitInMinutes} minutes. The reservation duration of {userReservationDuration} DOES NOT exceed the time limit.";
                         result.HasError = false;
                     }
                     
@@ -265,33 +261,15 @@ namespace SS.Backend.ReservationManagement{
         }
 
         public async Task<Response> validateReservationLeadTime(UserReservationsModel userReservationsModel, int maxLeadTime, TimeUnit unitOfTime){
-            var currentDateTime = DateTime.UtcNow; 
-            var maxLeadDateTime = currentDateTime;
+            
 
             Response result = new Response();
-
             
-            switch (unitOfTime)
-            {
-                case TimeUnit.Days:
-                    maxLeadDateTime = currentDateTime.AddDays(maxLeadTime);
-                    break;
-                case TimeUnit.Hours:
-                    maxLeadDateTime = currentDateTime.AddHours(maxLeadTime);
-                    break;
-                case TimeUnit.Minutes:
-                    maxLeadDateTime = currentDateTime.AddMinutes(maxLeadTime);
-                    break;
-                default:
-                    throw new ArgumentException("Unsupported time unit");
-            }
+            var isValid = await _reservationValidationService.IsValidReservationLeadTime(userReservationsModel, maxLeadTime, unitOfTime);
 
-            var reservationDateTime = userReservationsModel.ReservationDate.Date + userReservationsModel.ReservationStartTime;
-
-            if (reservationDateTime <= maxLeadDateTime)
+            if (isValid == true)
             {
                 result.HasError = false;
-                
             }
             else
             {
@@ -299,8 +277,6 @@ namespace SS.Backend.ReservationManagement{
                 result.ErrorMessage = "Reservation exceeds the allowed lead time.";
             }
 
-
-            
             return result;
 
         }

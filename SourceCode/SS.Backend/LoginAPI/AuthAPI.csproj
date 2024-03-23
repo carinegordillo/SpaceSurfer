@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
+    <PackageReference Include="MimeKit" Version="4.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj" />
+    <ProjectReference Include="..\SS.Backend.Security.AuthN\SS.Backend.Security.AuthN.csproj" />
+    <ProjectReference Include="..\SS.Backend.Security\SS.Backend.Security.csproj" />
+    <ProjectReference Include="..\SS.Backend.Services\SS.Backend.Services.csproj" />
+    <ProjectReference Include="..\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
+    <ProjectReference Include="..\SS.Backend.Tests.DataAccess\SS.Backend.Tests.DataAccess.csproj" />
+    <ProjectReference Include="..\SS.Backend.Tests.Logging\SS.Backend.Tests.Logging.csproj" />
+    <ProjectReference Include="..\SS.Backend.Tests.Security.Authentication\SS.Backend.Tests.Security.Authentication.csproj" />
+    <ProjectReference Include="..\SS.Backend.Tests.Security.Authorization\SS.Backend.Tests.Security.Authorization.csproj" />
+    <ProjectReference Include="..\SS.ConsoleApp\SS.ConsoleApp.csproj" />
+  </ItemGroup>
+
+</Project>
