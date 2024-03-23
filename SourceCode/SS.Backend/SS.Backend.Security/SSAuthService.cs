@@ -14,15 +14,13 @@ namespace SS.Backend.Security
         private readonly Hashing hasher;
         private readonly SqlDAO sqldao;
         private readonly Logger log;
-        private readonly string jwtSecret;
 
-        public SSAuthService(GenOTP genotp, Hashing hasher, SqlDAO sqldao, Logger log, string jwtSecret)
+        public SSAuthService(GenOTP genotp, Hashing hasher, SqlDAO sqldao, Logger log)
         {
             this.genotp = genotp;
             this.hasher = hasher;
             this.sqldao = sqldao;
             this.log = log;
-            this.jwtSecret = jwtSecret;
         }
 
         /// <summary>
@@ -383,45 +381,28 @@ namespace SS.Backend.Security
             return ssPrincipal;
         }
 
-        //should be turned back to private
-        public string GenerateJwtToken(string username, string role)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(jwtSecret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.Role, role)
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
 
-        
         public string GenerateAccessToken(string username, IDictionary<string, string> roles)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(jwtSecret); 
+            var key = Encoding.ASCII.GetBytes("g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn");
 
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, username),
                 new Claim(JwtRegisteredClaimNames.Iss, "https://spacesurfers.auth.com/"),
                 new Claim(JwtRegisteredClaimNames.Aud, "spacesurfers"),
-                // Add roles or scopes as claims
             };
 
-            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role.Value)));
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.Value));
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddHours(1), // Shorter expiration for access tokens is typical
+                Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
@@ -429,17 +410,17 @@ namespace SS.Backend.Security
             return tokenHandler.WriteToken(token);
         }
         
-        public bool UserHasRequiredRole(SSPrincipal user, string requiredRole)
+        public List<string> GetRolesFromToken(string accessToken)
         {
-            // Check if the Claims dictionary contains the role key and if corresponding value matches required role
-            if (user.Claims != null && user.Claims.TryGetValue("Role", out var userRoles))
-            {
-                // If the role claim can contain multiple roles separated by a comma need to split the string and check each role
-                var rolesArray = userRoles.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                return rolesArray.Any(role => role.Trim().Equals(requiredRole, StringComparison.OrdinalIgnoreCase));
-            }
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.ReadJwtToken(accessToken);
 
-            return false;
+            string subject = token.Subject;
+            string expirationTime = token.ValidTo.ToString("yyyy-MM-ddTHH:mm:ssZ");
+            string? roleClaim = token.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value;
+
+            return new List<string> { subject, expirationTime, roleClaim ?? "Role claim not found" };
         }
+
     }
 }

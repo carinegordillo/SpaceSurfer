@@ -57,6 +57,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.UserManagement",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.Tokens", "SS.Backend.Tests.Tokens\SS.Backend.Tests.Tokens.csproj", "{2AB7F8EB-71F5-444A-9C9B-65A8741329B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.ReservationManagement", "SS.Backend.Tests.ReservationManagement\SS.Backend.Tests.ReservationManagement.csproj", "{6DD69DD0-F48E-42F8-81C4-113D37D126D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,10 @@ Global
 		{2AB7F8EB-71F5-444A-9C9B-65A8741329B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AB7F8EB-71F5-444A-9C9B-65A8741329B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AB7F8EB-71F5-444A-9C9B-65A8741329B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DD69DD0-F48E-42F8-81C4-113D37D126D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DD69DD0-F48E-42F8-81C4-113D37D126D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DD69DD0-F48E-42F8-81C4-113D37D126D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DD69DD0-F48E-42F8-81C4-113D37D126D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -132,6 +138,7 @@ Global
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B} = {26858018-4ED5-462E-95B0-5A2DA42A0112}
 		{2F6B7963-623D-4D58-B7B6-4704DC3805FD} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{6DD69DD0-F48E-42F8-81C4-113D37D126D9} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {27FF35A7-BBB6-414D-87FC-32255A9F675F}
