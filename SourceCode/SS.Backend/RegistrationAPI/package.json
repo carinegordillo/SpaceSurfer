@@ -1,0 +1,19 @@
+{
+  "name": "registration",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "lite-server",
+    "start": "npm run dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "htmx.org": "^1.9.10"
+  },
+  "devDependencies": {
+    "lite-server": "2.6.1"
+  }
+}

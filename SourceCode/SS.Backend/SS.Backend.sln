@@ -55,9 +55,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountDeletionAPI", "..\SS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.UserManagement", "SS.Backend.UserManagement\SS.Backend.UserManagement.csproj", "{2F6B7963-623D-4D58-B7B6-4704DC3805FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.Tokens", "SS.Backend.Tests.Tokens\SS.Backend.Tests.Tokens.csproj", "{2AB7F8EB-71F5-444A-9C9B-65A8741329B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.Tokens", "SS.Backend.Tests.Tokens\SS.Backend.Tests.Tokens.csproj", "{2AB7F8EB-71F5-444A-9C9B-65A8741329B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.ReservationManagement", "SS.Backend.Tests.ReservationManagement\SS.Backend.Tests.ReservationManagement.csproj", "{6DD69DD0-F48E-42F8-81C4-113D37D126D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.ReservationManagement", "SS.Backend.Tests.ReservationManagement\SS.Backend.Tests.ReservationManagement.csproj", "{6DD69DD0-F48E-42F8-81C4-113D37D126D9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.SpaceManager", "SS.Backend.SpaceManager\SS.Backend.SpaceManager.csproj", "{5B5C6973-4229-48D8-82FC-4053FA6D2F9E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.SpaceManager", "SS.Backend.Tests.SpaceManager\SS.Backend.Tests.SpaceManager.csproj", "{D10F31FC-367A-4A02-9105-D1CC2109A5A8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Registration", "RegistrationAPI\Registration.csproj", "{5D6B398B-3086-41BD-A941-8A49FAF855F2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceManager", "SpaceManager\SpaceManager.csproj", "{0FEFBFDA-A2FD-4347-A524-3A2B4B7CDE1B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configs", "Configs", "{3733BDB6-2D40-4FB6-AEFA-679B7E07CAA2}"
+	ProjectSection(SolutionItems) = preProject
+		config.local.txt = config.local.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,6 +134,22 @@ Global
 		{6DD69DD0-F48E-42F8-81C4-113D37D126D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DD69DD0-F48E-42F8-81C4-113D37D126D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DD69DD0-F48E-42F8-81C4-113D37D126D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B5C6973-4229-48D8-82FC-4053FA6D2F9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B5C6973-4229-48D8-82FC-4053FA6D2F9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B5C6973-4229-48D8-82FC-4053FA6D2F9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B5C6973-4229-48D8-82FC-4053FA6D2F9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D10F31FC-367A-4A02-9105-D1CC2109A5A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D10F31FC-367A-4A02-9105-D1CC2109A5A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D10F31FC-367A-4A02-9105-D1CC2109A5A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D10F31FC-367A-4A02-9105-D1CC2109A5A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D6B398B-3086-41BD-A941-8A49FAF855F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D6B398B-3086-41BD-A941-8A49FAF855F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D6B398B-3086-41BD-A941-8A49FAF855F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D6B398B-3086-41BD-A941-8A49FAF855F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FEFBFDA-A2FD-4347-A524-3A2B4B7CDE1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FEFBFDA-A2FD-4347-A524-3A2B4B7CDE1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FEFBFDA-A2FD-4347-A524-3A2B4B7CDE1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FEFBFDA-A2FD-4347-A524-3A2B4B7CDE1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,6 +168,9 @@ Global
 		{478E208D-3876-44F4-9BB5-5E5AE6C6AD5B} = {26858018-4ED5-462E-95B0-5A2DA42A0112}
 		{2F6B7963-623D-4D58-B7B6-4704DC3805FD} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{6DD69DD0-F48E-42F8-81C4-113D37D126D9} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{D10F31FC-367A-4A02-9105-D1CC2109A5A8} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{5D6B398B-3086-41BD-A941-8A49FAF855F2} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{0FEFBFDA-A2FD-4347-A524-3A2B4B7CDE1B} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {27FF35A7-BBB6-414D-87FC-32255A9F675F}

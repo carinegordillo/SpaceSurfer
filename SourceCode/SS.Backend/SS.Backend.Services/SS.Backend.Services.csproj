@@ -6,9 +6,18 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+	<ItemGroup>
+		<PackageReference Include="MailKit" Version="4.4.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.16" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
+		<PackageReference Include="MimeKit" Version="4.4.0" />
+	</ItemGroup>
+	
   <ItemGroup>
     <ProjectReference Include="..\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj" />
     <ProjectReference Include="..\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
+    <!-- <ProjectReference Include="..\SS.Backend.Services\SS.Backend.Services.csproj" /> -->
   </ItemGroup>
 
 </Project>
