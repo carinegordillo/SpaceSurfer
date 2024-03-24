@@ -41,7 +41,6 @@ namespace SS.Backend.Security
                 .Build();
             result = await sqldao.ReadSqlResult(getHash);
             string user_hash = (string)result.ValuesRead.Rows[0]["hashedUsername"];
-            Console.WriteLine(user_hash);
 
             try
             {
@@ -429,17 +428,25 @@ namespace SS.Backend.Security
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-        
+
         public List<string> GetRolesFromToken(string accessToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.ReadJwtToken(accessToken);
 
-            string subject = token.Subject;
-            string expirationTime = token.ValidTo.ToString("yyyy-MM-ddTHH:mm:ssZ");
-            string? roleClaim = token.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value;
+            var roleClaim = token.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value;
+            return roleClaim != null ? new List<string> { roleClaim } : new List<string>();
+            Console.WriteLine(roleClaim);
+        }
 
-            return new List<string> { subject, expirationTime, roleClaim ?? "Role claim not found" };
+        public string GetExpTime(string accessToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.ReadJwtToken(accessToken);
+
+            string expirationTime = token.ValidTo.ToString("yyyy-MM-ddTHH:mm:ssZ");
+            return expirationTime;
+            Console.WriteLine(expirationTime);
         }
 
     }

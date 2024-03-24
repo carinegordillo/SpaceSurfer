@@ -29,11 +29,20 @@ function authenticateUser() {
             localStorage.setItem('accessToken', accessToken);
             document.getElementById("enterOTPSection").style.display = "none";
             document.getElementById("successResult").style.display = "none";
-            document.getElementById("homepageGen").style.display = "block";
-            authorize();
 
-            //var accessTokenContainer = document.getElementById("accessTokenContainer");
-            //accessTokenContainer.innerHTML = "<p>Access Token: " + accessToken + "</p>";
+            getRole(function (roles) {
+                var isManager = roles.some(function (role) {
+                    return role == "2" || role == "3";
+                });
+
+                if (isManager) {
+                    document.getElementById("homepageManager").style.display = "block";
+                } else {
+                    document.getElementById("homepageGen").style.display = "block";
+                }
+            });
+
+            document.getElementById("homepageGen").style.display = "block";
         },
         error: function (xhr, status, error) {
             document.getElementById("enterOTPSection").style.display = "none";
@@ -42,13 +51,14 @@ function authenticateUser() {
         }
     });
 }
+
 function logout() {
-    // Remove token from localStorage
     localStorage.removeItem('accessToken');
-    document.getElementById("homepage").style.display = "none";
+    document.getElementById("homepageGen").style.display = "none";
+    document.getElementById("homepageManager").style.display = "none";
     document.getElementById("sendOTPSection").style.display = "block";
 }
-function authorize() {
+function getRole(callback) {
     var token = localStorage['accessToken'];
 
     if (!token) {
@@ -64,8 +74,34 @@ function authorize() {
         contentType: 'application/json',
         data: JSON.stringify(token), // Ensure token is properly serialized
         success: function (response) {
+            var role = response.role;
+            callback(role);
+        },
+        error: function (xhr, status, error) {
             var accessTokenContainer = document.getElementById("accessTokenContainer");
-            accessTokenContainer.innerHTML = "<p>Token Info: " + response + "</p>";
+            accessTokenContainer.innerHTML = "<p>Error retrieving token info</p>";
+        }
+    });
+}
+
+function getExpirationTime(callback) {
+    var token = localStorage['accessToken'];
+
+    if (!token) {
+        // Handle case where token is not found in localStorage
+        var accessTokenContainer = document.getElementById("accessTokenContainer");
+        accessTokenContainer.innerHTML = "<p>No access token found</p>";
+        return;
+    }
+
+    $.ajax({
+        url: 'http://localhost:5270/api/auth/decodeToken',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(token), // Ensure token is properly serialized
+        success: function (response) {
+            var time = response.exp_time;
+            callback(time);
         },
         error: function (xhr, status, error) {
             var accessTokenContainer = document.getElementById("accessTokenContainer");
