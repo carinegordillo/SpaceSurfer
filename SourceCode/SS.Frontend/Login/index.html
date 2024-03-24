@@ -18,9 +18,9 @@
             </div>
         </div>
         <nav>
-            <a href="#">About</a>
-            <a href="#">Register</a>
-            <a href="#">Login</a>
+            <div class="nav-item" id="navAbout" onclick="window.location.href='../UnAuthnAbout/about.html'">About</div>
+            <div class="nav-item" id="navRegister" onclick="window.location.href='../Registration/index.html'">Register</div>
+            <div class="nav-item" id="navLogin" onclick="window.location.href='../Login/index.html'">Login</div>
         </nav>
     </header>
 
@@ -58,7 +58,7 @@
     <section id="homepageManager" class="homepage-container" style="display: none;">
         <h2>Welcome to SpaceSurfers!</h2>
         <div id="accessTokenContainer"></div>
-        <button type="button" onclick="">Space Manager</button>
+        <button type="button" onclick="window.location.href='../SpaceManager/index.html'">Space Manager</button>
         <button type="button" onclick="logout()">Logout</button>
     </section>
 

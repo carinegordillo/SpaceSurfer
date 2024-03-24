@@ -1,22 +1,5 @@
-function logout() {
-    // Remove token from localStorage
-    // localStorage.removeItem('accessToken');
-    window.localStorage.clear();
-    location.reload();
-    // window.location.href = '../UnAuthnAbout/about.html';
-}
 
 $(document).ready(function() {
-    var token = localStorage["accessToken"];
-    if(token == null){
-        window.location.href = '../UnAuthnAbout/about.html';
-    }
-    // if (!localStorage["accessToken"]) {
-    //     // If the token doesn't exist, redirect to the unauthenticated about page
-    //     window.location.href = '../UnAuthnAbout/about.html';
-    //     return; // Exit the function to prevent further execution
-    // }
-
     // Handle loading of requests
     $('#loadRequestsButton').click(function() {
         $.ajax({

@@ -37,6 +37,7 @@ function authenticateUser() {
 
                 if (isManager) {
                     document.getElementById("homepageManager").style.display = "block";
+                    document.getElementById("homepageGen").style.display = "none";
                 } else {
                     document.getElementById("homepageGen").style.display = "block";
                 }
@@ -109,3 +110,5 @@ function getExpirationTime(callback) {
         }
     });
 }
+
+
