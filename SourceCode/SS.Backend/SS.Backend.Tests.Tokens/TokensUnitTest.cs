@@ -29,8 +29,8 @@ public class UnitTest1
         SqlDAO dao = new SqlDAO(configService);
         SqlLogTarget target = new SqlLogTarget(dao);
         Logger log = new Logger(target);
-        string jwtSecret = "g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn";
-        SSAuthService auth = new SSAuthService(genotp, hasher, dao, log, jwtSecret);
+        //string jwtSecret = "g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn";
+        SSAuthService auth = new SSAuthService(genotp, hasher, dao, log);   //, jwtSecret
         AuthenticationRequest request = new AuthenticationRequest();
         SSPrincipal principal = new SSPrincipal();
         Stopwatch timer = new Stopwatch();
@@ -67,7 +67,7 @@ public class UnitTest1
         await dao.SqlRowsAffected(insertCommand2);
 
         request.UserIdentity = "test@email";
-        request.Proof = null;
+        request.Proof = null!;
 
         (string otp, result) = await auth.SendOTP_and_SaveToDB(request);
 
