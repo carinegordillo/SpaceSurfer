@@ -108,6 +108,32 @@ namespace SS.Backend.SpaceManager
 
                 
             }
+            if (floorInsertResponse.HasError == false)
+            {
+                LogEntry entry = new LogEntry()
+
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Info",
+                    username = hashedUsername,
+                    category = "Data Store",
+                    description = "Successful floor creation"
+                };
+                //await logger.SaveData(entry);
+            }
+            else
+            {
+                LogEntry entry = new LogEntry()
+
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = hashedUsername,
+                    category = "Data Store",
+                    description = "Error inserting floor info in data store."
+                };
+                // await logger.SaveData(entry);
+            }
             
             // Return response based on overall operation success or specific error handling
             return floorInsertResponse; 
