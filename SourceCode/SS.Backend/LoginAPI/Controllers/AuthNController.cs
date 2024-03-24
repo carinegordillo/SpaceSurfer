@@ -57,8 +57,9 @@ namespace AuthAPI.Controllers
         [HttpPost("decodeToken")]
         public async Task<IActionResult> decodeToken([FromBody] string accessToken)
         {
-            List<string> info = _authService.GetRolesFromToken(accessToken);
-            return Ok(info);
+            List<string> role = _authService.GetRolesFromToken(accessToken);
+            string exp_time = _authService.GetExpTime(accessToken);
+            return Ok( new { role, exp_time });
         }
     }
 }
