@@ -56,7 +56,32 @@ namespace SS.Backend.SpaceManager
 
             // Now call the GeneralModifier with the updated signature
             response = await _spaceManagerDao.GeneralModifier(whereClauses, "floorPlanImage", newFloorPlanImage, "dbo.companyFloor");
+            if (response.HasError == false)
+            {
+                LogEntry entry = new LogEntry()
 
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Info",
+                    username = hashedUsername,
+                    category = "Data Store",
+                    description = "Successful floor image modification"
+                };
+                //await logger.SaveData(entry);
+            }
+            else
+            {
+                LogEntry entry = new LogEntry()
+
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = hashedUsername,
+                    category = "Data Store",
+                    description = "Error modifying floor image in data store."
+                };
+                // await logger.SaveData(entry);
+            }
             return response;
         }
 
@@ -100,7 +125,32 @@ namespace SS.Backend.SpaceManager
 
             // Now call the GeneralModifier with the updated signature
             response = await _spaceManagerDao.GeneralModifier(whereClauses, "timeLimit", newTimeLimit, "dbo.companyFloorSpaces");
+            if (response.HasError == false)
+            {
+                LogEntry entry = new LogEntry()
 
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Info",
+                    username = hashedUsername,
+                    category = "Data Store",
+                    description = "Successful time limit modifcation"
+                };
+                //await logger.SaveData(entry);
+            }
+            else
+            {
+                LogEntry entry = new LogEntry()
+
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = hashedUsername,
+                    category = "Data Store",
+                    description = "Error modifying time limit in data store."
+                };
+                // await logger.SaveData(entry);
+            }
             return response;
         }
 
@@ -141,7 +191,32 @@ namespace SS.Backend.SpaceManager
             };
 
             response = await _spaceManagerDao.DeleteField(conditions, "dbo.companyFloorSpaces");
+            if (response.HasError == false)
+            {
+                LogEntry entry = new LogEntry()
 
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Info",
+                    username = hashedUsername,
+                    category = "Data Store",
+                    description = "Successful space deletion"
+                };
+                //await logger.SaveData(entry);
+            }
+            else
+            {
+                LogEntry entry = new LogEntry()
+
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = hashedUsername,
+                    category = "Data Store",
+                    description = "Error deleting space in data store."
+                };
+                // await logger.SaveData(entry);
+            }
             return response;
         }
 
@@ -166,7 +241,7 @@ namespace SS.Backend.SpaceManager
                 response.ErrorMessage = "companyID is not valid.";
                 return response;
             }
-            response = await (_spaceManagerDao.readTableWhere("companyID", companyID, "dbo.companyFloor"));
+            response = await _spaceManagerDao.readTableWhere("companyID", companyID, "dbo.companyFloor");
 
             return response;
         }
@@ -219,6 +294,31 @@ namespace SS.Backend.SpaceManager
 
             // Step 3: Delete the floor entry itself
             var deleteFloorResponse = await _spaceManagerDao.DeleteField(new Dictionary<string, object> { { "floorPlanID", floorPlanID }, { "companyID", companyID } }, "dbo.companyFloor");
+            if (deleteFloorResponse.HasError == false)
+            {
+                LogEntry entry = new LogEntry()
+
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Info",
+                    username = hashedUsername,
+                    category = "Data Store",
+                    description = "Successful floor deletion"
+                };
+            }
+            else
+            {
+                LogEntry entry = new LogEntry()
+
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = hashedUsername,
+                    category = "Data Store",
+                    description = "Error deleting floor in data store."
+                };
+                // await logger.SaveData(entry);
+            }
             return deleteFloorResponse;
         }
 

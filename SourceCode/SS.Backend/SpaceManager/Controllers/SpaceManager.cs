@@ -24,26 +24,6 @@ public class DemoController : ControllerBase
         _authService = authService;
     }
 
-
-
-    // [HttpPost]
-    // [Route("postSpace")]
-    // // public async Task<ActionResult<List<UserInfo>>> PostCreateAccount([FromBody] UserInfo userInfo){
-    // public async Task<IActionResult> PostCreateSpace([FromBody] CompanyFloor companyFloor, string accessToken){
-    //     // string accessToken = "123";
-    //     // List<string> info = _authService.GetRolesFromToken(accessToken);
-      
-    //     string userHash = _authService.GetSubjectFromToken(accessToken);
-        
-    //     // string dummyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
-        
-    //     var response = await _spaceCreation.CreateSpace(userHash, companyFloor);
-    //     if (response.HasError)
-    //     {
-    //         return BadRequest(response.ErrorMessage);
-    //     }
-    //     return Ok(new { message = "SPACE created successfully!" + response});
-    //     // return Ok(response);
     // }  
     [HttpPost]
     [Route("postSpace")]
