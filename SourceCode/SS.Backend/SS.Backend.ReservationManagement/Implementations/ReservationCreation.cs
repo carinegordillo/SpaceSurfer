@@ -68,9 +68,6 @@ namespace SS.Backend.ReservationManagement{
 
             var commandBuilder = new CustomSqlCommandBuilder();
 
-            Console.WriteLine("inside CreateReservationWithManualID with tableName: " + tableName+"and userReservationsModel: "+userReservationsModel.ReservationID);
-
-
             var parameters = new Dictionary<string, object>
                         {
                             { "reservationID", userReservationsModel.ReservationID},
@@ -92,17 +89,16 @@ namespace SS.Backend.ReservationManagement{
             response = await _sqldao.SqlRowsAffected(InsertRequestsCommand);
 
             if (response.HasError == false){
-                response.ErrorMessage += "- CreateReservationWithManualID - command successful - ";
+                response.HasError = false;
+    
             }
             else{
                 response.HasError = true;
-                response.ErrorMessage += $"- CreateReservationWithManualID - command : {InsertRequestsCommand.CommandText} not successful - ";
+                response.ErrorMessage = $"- CreateReservationWithManualID - command : {InsertRequestsCommand.CommandText} not successful - ";
                 
 
             }
 
-            Console.WriteLine(response.ErrorMessage);
-            Console.WriteLine("in methos " + response.HasError);
             return response;
 
 

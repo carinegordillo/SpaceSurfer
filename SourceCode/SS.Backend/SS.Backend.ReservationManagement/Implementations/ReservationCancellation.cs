@@ -17,6 +17,18 @@ public class ReservationCancellation
 
         public async Task<Response> checkReservationStatus(string status)
         {
+            // Response reservationUpdated = new Response();
+            // IReservationStatusUpdater _reservationStatusUpdater = new ReservationStatusUpdater(_sqldao);
+
+            // try{
+            //     reservationUpdated = await _reservationStatusUpdater.updateReservtionStatus("dbo.ReservationS");
+            // }
+
+            // catch (Exception ex)
+            // {
+            //     Console.WriteLine($"Error updating reservation status: {ex.Message}");   // log here 
+            // }
+
             if (status == "Cancelled")
             {
                 return new Response { HasError =true, ErrorMessage = "Reservation has already been cancelled" };
@@ -69,8 +81,5 @@ public class ReservationCancellation
             }
             return response;
         }
-
-
-
-}
+    }
 }
