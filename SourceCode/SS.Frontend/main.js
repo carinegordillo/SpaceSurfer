@@ -19,7 +19,7 @@
 
     root.myApp = root.myApp || {};
     async function init() {
-        window.location = "Login/index.html"
+        window.location = "UnAuthnAbout/index.html"
     }
 
     init();

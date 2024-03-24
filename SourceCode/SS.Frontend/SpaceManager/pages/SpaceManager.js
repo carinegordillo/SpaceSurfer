@@ -1,3 +1,9 @@
+function logout() {
+    // Remove token from localStorage
+    localStorage.removeItem('accessToken');
+    window.location.href = 'UnAuthnAbout/about.html';
+}
+
 document.getElementById('replaceImage').addEventListener('change', function(event) {
     var fileModify = event.target.files[0];
 
@@ -132,6 +138,7 @@ function collectSpacesAndTimeLimitsToModify() {
 
     return spacesDict;
 }
+
 
 
 var acc = document.getElementsByClassName("accordion");
