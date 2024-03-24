@@ -29,10 +29,11 @@ function authenticateUser() {
             localStorage.setItem('accessToken', accessToken);
             document.getElementById("enterOTPSection").style.display = "none";
             document.getElementById("successResult").style.display = "none";
-            document.getElementById("homepage").style.display = "block";
+            document.getElementById("homepageGen").style.display = "block";
+            authorize();
 
-            var accessTokenContainer = document.getElementById("accessTokenContainer");
-            accessTokenContainer.innerHTML = "<p>Access Token: " + accessToken + "</p>";
+            //var accessTokenContainer = document.getElementById("accessTokenContainer");
+            //accessTokenContainer.innerHTML = "<p>Access Token: " + accessToken + "</p>";
         },
         error: function (xhr, status, error) {
             document.getElementById("enterOTPSection").style.display = "none";
@@ -45,5 +46,30 @@ function logout() {
     // Remove token from localStorage
     localStorage.removeItem('accessToken');
     document.getElementById("homepage").style.display = "none";
-    document.getElementByID("sendOTPSection").style.display = "block";
+    document.getElementById("sendOTPSection").style.display = "block";
+}
+function authorize() {
+    var token = localStorage['accessToken'];
+
+    if (!token) {
+        // Handle case where token is not found in localStorage
+        var accessTokenContainer = document.getElementById("accessTokenContainer");
+        accessTokenContainer.innerHTML = "<p>No access token found</p>";
+        return;
+    }
+
+    $.ajax({
+        url: 'http://localhost:5270/api/auth/decodeToken',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(token), // Ensure token is properly serialized
+        success: function (response) {
+            var accessTokenContainer = document.getElementById("accessTokenContainer");
+            accessTokenContainer.innerHTML = "<p>Token Info: " + response + "</p>";
+        },
+        error: function (xhr, status, error) {
+            var accessTokenContainer = document.getElementById("accessTokenContainer");
+            accessTokenContainer.innerHTML = "<p>Error retrieving token info</p>";
+        }
+    });
 }
