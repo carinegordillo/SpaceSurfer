@@ -54,7 +54,7 @@ namespace SS.Backend.Services.DeletingService
                 //};
 
 
-                if (result.ValuesRead != null || result.ValuesRead.Rows.Count != null)
+                if (result.ValuesRead != null)
                 {
 
                     // Delete Query Command built [DELETE FROM "Users" WHERE Username = @username]

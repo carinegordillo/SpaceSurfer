@@ -34,13 +34,21 @@ namespace SS.Backend.Security
             Response result = new Response();
             string user = authRequest.UserIdentity;
 
+            var getHash = builder
+                .BeginSelectAll()
+                .From("userHash")
+                .Where($"username = '{user}'")
+                .Build();
+            result = await sqldao.ReadSqlResult(getHash);
+            string user_hash = (string)result.ValuesRead.Rows[0]["hashedUsername"];
+
             try
             {
                 // check if user is registered, ie if user has a role
                 var selectCommand = builder
                     .BeginSelectAll()
                     .From("userProfile")
-                    .Where($"hashedUsername = '{user}'")
+                    .Where($"hashedUsername = '{user_hash}'")
                     .Build();
                 result = await sqldao.ReadSqlResult(selectCommand);
                 if (result.ValuesRead == null || result.ValuesRead.Rows.Count == 0)
@@ -51,7 +59,7 @@ namespace SS.Backend.Security
                     {
                         timestamp = DateTime.UtcNow,
                         level = "Error",
-                        username = user,
+                        username = user_hash,
                         category = "Data Store",
                         description = "Unregistered user tried to authenticate."
                     };
@@ -71,7 +79,7 @@ namespace SS.Backend.Security
                 var otpRead = builder
                     .BeginSelectAll()
                     .From("OTP")
-                    .Where($"Username = '{user}'")
+                    .Where($"Username = '{user_hash}'")
                     .Build();
                 result = await sqldao.ReadSqlResult(otpRead);
                 if (result.ValuesRead == null || result.ValuesRead.Rows.Count == 0)
@@ -82,7 +90,7 @@ namespace SS.Backend.Security
                         { "OTP", hashedOTP },
                         { "Salt", salt },
                         { "Timestamp", DateTime.UtcNow },
-                        { "Username", user }
+                        { "Username", user_hash }
                     };
                     var insertCommand = builder
                         .BeginInsert("OTP")
@@ -97,7 +105,7 @@ namespace SS.Backend.Security
                     {
                         timestamp = DateTime.UtcNow,
                         level = "Info",
-                        username = user,
+                        username = user_hash,
                         category = "Data Store",
                         description = "Successfully sent OTP to manager."
                     };
@@ -112,7 +120,7 @@ namespace SS.Backend.Security
                         { "OTP", hashedOTP },
                         { "Salt", salt },
                         { "Timestamp", DateTime.UtcNow },
-                        { "Username", user }
+                        { "Username", user_hash }
                     };
                     var updateCommand = builder
                         .BeginUpdate("OTP")
@@ -129,7 +137,7 @@ namespace SS.Backend.Security
                     {
                         timestamp = DateTime.UtcNow,
                         level = "Info",
-                        username = user,
+                        username = user_hash,
                         category = "Data Store",
                         description = "Successfully sent OTP to manager."
                     };
@@ -173,8 +181,16 @@ namespace SS.Backend.Security
             }
             #endregion
 
-            string hashedUsername = authRequest.UserIdentity;
+            string user = authRequest.UserIdentity;
             string proof = authRequest.Proof;
+
+            var getHash = builder
+                .BeginSelectAll()
+                .From("userHash")
+                .Where($"username = '{user}'")
+                .Build();
+            result = await sqldao.ReadSqlResult(getHash);
+            string user_hash = (string)result.ValuesRead.Rows[0]["hashedUsername"];
 
             try
             {
@@ -182,7 +198,7 @@ namespace SS.Backend.Security
                 var selectCommand = builder
                     .BeginSelectAll()
                     .From("OTP")
-                    .Where($"Username = '{hashedUsername}'")
+                    .Where($"Username = '{user_hash}'")
                     .Build();
                 result = await sqldao.ReadSqlResult(selectCommand);
                 string dbOTP = (string)result.ValuesRead.Rows[0]["OTP"];
@@ -202,7 +218,7 @@ namespace SS.Backend.Security
                         {
                             timestamp = DateTime.UtcNow,
                             level = "Error",
-                            username = hashedUsername,
+                            username = user_hash,
                             category = "Data Store",
                             description = "User tried to authenticate with an expired OTP."
                         };
@@ -216,7 +232,7 @@ namespace SS.Backend.Security
                         var readRoles = builder
                             .BeginSelectAll()
                             .From("userProfile")
-                            .Where($"hashedUsername = '{hashedUsername}'")
+                            .Where($"hashedUsername = '{user_hash}'")
                             .Build();
                         result = await sqldao.ReadSqlResult(readRoles);
                         if (result.ValuesRead.Rows.Count > 0)
@@ -225,7 +241,7 @@ namespace SS.Backend.Security
 
                             // populate the principal
                             SSPrincipal principal = new SSPrincipal();
-                            principal.UserIdentity = hashedUsername;
+                            principal.UserIdentity = user_hash;
                             principal.Claims.Add("Role", role);
 
                             result.HasError = false;
@@ -234,7 +250,7 @@ namespace SS.Backend.Security
                             {
                                 timestamp = DateTime.UtcNow,
                                 level = "Info",
-                                username = hashedUsername,
+                                username = user_hash,
                                 category = "Data Store",
                                 description = "Successful authentication."
                             };
@@ -250,7 +266,7 @@ namespace SS.Backend.Security
                             {
                                 timestamp = DateTime.UtcNow,
                                 level = "Error",
-                                username = hashedUsername,
+                                username = user_hash,
                                 category = "Data Store",
                                 description = "Failure to authenticate."
                             };
@@ -269,7 +285,7 @@ namespace SS.Backend.Security
                     {
                         timestamp = DateTime.UtcNow,
                         level = "Error",
-                        username = hashedUsername,
+                        username = user_hash,
                         category = "Data Store",
                         description = "Failure to authenticate."
                     };
@@ -285,7 +301,7 @@ namespace SS.Backend.Security
                 {
                     timestamp = DateTime.UtcNow,
                     level = "Error",
-                    username = hashedUsername,
+                    username = user_hash,
                     category = "Data Store",
                     description = "Failure to authenticate."
                 };
@@ -382,8 +398,11 @@ namespace SS.Backend.Security
         }
 
 
-        public string GenerateAccessToken(string username, IDictionary<string, string> roles)
+        public async Task<string> GenerateAccessToken(string username, IDictionary<string, string> roles)
         {
+            var builder = new CustomSqlCommandBuilder();
+            Response result = new Response();
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes("g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn");
 
@@ -409,17 +428,32 @@ namespace SS.Backend.Security
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-        
+
+        public string GetSubjectFromToken(string accessToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.ReadJwtToken(accessToken);
+
+            var subject = token.Subject;
+            return subject;
+        }
+
         public List<string> GetRolesFromToken(string accessToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.ReadJwtToken(accessToken);
 
-            string subject = token.Subject;
-            string expirationTime = token.ValidTo.ToString("yyyy-MM-ddTHH:mm:ssZ");
-            string? roleClaim = token.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value;
+            var roleClaim = token.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value;
+            return roleClaim != null ? new List<string> { roleClaim } : new List<string>();
+        }
 
-            return new List<string> { subject, expirationTime, roleClaim ?? "Role claim not found" };
+        public string GetExpTimeFromToken(string accessToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.ReadJwtToken(accessToken);
+
+            string expirationTime = token.ValidTo.ToString("yyyy-MM-ddTHH:mm:ssZ");
+            return expirationTime;
         }
 
     }

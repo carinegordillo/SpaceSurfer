@@ -12,7 +12,9 @@ namespace SS.Backend.Services.DeletingService
         // Initializing temp credential
         Credential temp = Credential.CreateSAUser();
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task<Response> RetrieveTable(string user)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             // Opens connection to Data Accss
             // ISqlDAO sqlDAO = new SqlDAO(temp);
@@ -24,7 +26,9 @@ namespace SS.Backend.Services.DeletingService
             //var tableNames = commandBuild.BeginSelect().SelectOne("Username").From("dbo.userAccount ").Where("Username = '@user';").Build();
 
             //return await sqlDAO.ReadSqlResult(tableNames);
+#pragma warning disable CS8603 // Possible null reference return.
             return null;
+#pragma warning restore CS8603 // Possible null reference return.
         }
     }
 }
