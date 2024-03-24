@@ -49,7 +49,7 @@ namespace AuthAPI.Controllers
             }
 
             var rolesDictionary = principal.Claims;
-            var token = _authService.GenerateAccessToken(principal.UserIdentity, rolesDictionary);
+            var token = await _authService.GenerateAccessToken(principal.UserIdentity, rolesDictionary);
 
             return Ok(token);
         }
@@ -58,7 +58,6 @@ namespace AuthAPI.Controllers
         public async Task<IActionResult> decodeToken([FromBody] string accessToken)
         {
             List<string> info = _authService.GetRolesFromToken(accessToken);
-
             return Ok(info);
         }
     }

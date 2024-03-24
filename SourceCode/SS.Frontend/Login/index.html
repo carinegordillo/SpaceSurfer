@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270;">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="scripts.js"></script>
@@ -48,6 +48,20 @@
     <section id="failResult" class="form-container" style="display: none;">
         <label style="color: #e33434; font-size: 18px;">Incorrect verification code. Please double-check and try again.</label>
     </section>
+
+    <section id="homepageGen" class="homepage-container" style="display: none;">
+        <h2>Welcome to SpaceSurfers!</h2>
+        <div id="accessTokenContainer"></div>
+        <button type="button" onclick="logout()">Logout</button>
+    </section>
+
+    <section id="homepageManager" class="homepage-container" style="display: none;">
+        <h2>Welcome to SpaceSurfers!</h2>
+        <div id="accessTokenContainer"></div>
+        <!--<button type="button" onclick="authorize()">Space Manager</button>-->
+        <button type="button" onclick="logout()">Logout</button>
+    </section>
+
 
     <footer>
         <p>Designed and Developed by the PixelPals Team</p>
