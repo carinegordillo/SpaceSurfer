@@ -1,10 +1,37 @@
 using SS.Backend.SpaceManager;
 using SS.Backend.DataAccess;
+using SS.Backend.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
+using SS.Backend.Services.LoggingService;
+using SS.Backend.SharedNamespace;
+using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
+var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+ .AddJwtBearer(options =>
+ {
+     options.TokenValidationParameters = new TokenValidationParameters
+     {
+         ValidateIssuer = true,
+         ValidateAudience = true,
+         ValidateLifetime = true,
+         ValidateIssuerSigningKey = true,
+         ValidIssuer = jwtIssuer,
+         ValidAudience = jwtIssuer,
+         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+     };
+ });
+
+builder.Services.AddAuthorization();
 
 
 
@@ -21,6 +48,24 @@ builder.Services.AddTransient<ISpaceCreation, SpaceCreation>();
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
 builder.Services.AddTransient<ISpaceManagerDao, SpaceManagerDao>();
 builder.Services.AddTransient<ISpaceModification, SpaceModification>();
+builder.Services.AddTransient<ConfigService>(provider =>
+    new ConfigService(configFilePath));
+builder.Services.AddTransient<SqlDAO>();
+builder.Services.AddTransient<ISqlDAO, SqlDAO>();
+builder.Services.AddTransient<GenOTP>();
+builder.Services.AddTransient<Hashing>();
+builder.Services.AddTransient<Response>();
+builder.Services.AddTransient<LogEntry>();
+builder.Services.AddTransient<ILogTarget, SqlLogTarget>();
+builder.Services.AddTransient<Logger>();
+builder.Services.AddTransient<SSAuthService>(provider =>
+    new SSAuthService(
+        provider.GetRequiredService<GenOTP>(),
+        provider.GetRequiredService<Hashing>(),
+        provider.GetRequiredService<SqlDAO>(),
+        provider.GetRequiredService<Logger>()
+    )
+);
 
 
 var app = builder.Build();

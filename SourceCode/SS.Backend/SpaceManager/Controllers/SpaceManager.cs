@@ -5,6 +5,7 @@ using SS.Backend.SpaceManager;
 using SS.Backend.SharedNamespace;
 using SS.Backend.Security;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 namespace demoAPI.Controllers;
 
@@ -24,30 +25,63 @@ public class DemoController : ControllerBase
     }
 
 
+
+    // [HttpPost]
+    // [Route("postSpace")]
+    // // public async Task<ActionResult<List<UserInfo>>> PostCreateAccount([FromBody] UserInfo userInfo){
+    // public async Task<IActionResult> PostCreateSpace([FromBody] CompanyFloor companyFloor, string accessToken){
+    //     // string accessToken = "123";
+    //     // List<string> info = _authService.GetRolesFromToken(accessToken);
+      
+    //     string userHash = _authService.GetSubjectFromToken(accessToken);
+        
+    //     // string dummyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
+        
+    //     var response = await _spaceCreation.CreateSpace(userHash, companyFloor);
+    //     if (response.HasError)
+    //     {
+    //         return BadRequest(response.ErrorMessage);
+    //     }
+    //     return Ok(new { message = "SPACE created successfully!" + response});
+    //     // return Ok(response);
+    // }  
     [HttpPost]
     [Route("postSpace")]
-    // public async Task<ActionResult<List<UserInfo>>> PostCreateAccount([FromBody] UserInfo userInfo){
     public async Task<IActionResult> PostCreateSpace([FromBody] CompanyFloor companyFloor){
-        string accessToken = "123";
-        List<string> info = _authService.GetRolesFromToken(accessToken);
+        // Extract the bearer token from the Authorization header
+        var authorizationHeader = HttpContext.Request.Headers["Authorization"].ToString();
+        if(string.IsNullOrWhiteSpace(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+        {
+            return Unauthorized("Authorization header is missing or not valid.");
+        }
+
+        // Remove the 'Bearer ' prefix to get the actual token
+        var accessToken = authorizationHeader.Substring("Bearer ".Length).Trim();
+
+        // Now you can use the token as before
+        string userHash = _authService.GetSubjectFromToken(accessToken);
         
-        string dummyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
-        
-        var response = await _spaceCreation.CreateSpace(dummyHash, companyFloor);
+        var response = await _spaceCreation.CreateSpace(userHash, companyFloor);
         if (response.HasError)
         {
             return BadRequest(response.ErrorMessage);
         }
         return Ok(new { message = "SPACE created successfully!" + response});
-        // return Ok(response);
-    }  
+    }
 
     [HttpPost]
     [Route("modifyTimeLimits")]
     public async Task<IActionResult> ModifyTimeLimits([FromBody] Dictionary<string, int> spaceTimeLimits)
     {
-        // Assuming dummyCompanyID is fetched or defined elsewhere
-        string dummyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
+    
+        var authorizationHeader = HttpContext.Request.Headers["Authorization"].ToString();
+        if(string.IsNullOrWhiteSpace(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+        {
+            return Unauthorized("Authorization header is missing or not valid.");
+        }
+        var accessToken = authorizationHeader.Substring("Bearer ".Length).Trim();
+        string userHash = _authService.GetSubjectFromToken(accessToken);
+
         List<string> messages = new List<string>();
 
         foreach (var entry in spaceTimeLimits)
@@ -55,7 +89,7 @@ public class DemoController : ControllerBase
             var spaceID = entry.Key;
             var newTimeLimit = entry.Value;
             
-            var response = await _spaceModification.ModifyTimeLimit(dummyHash, spaceID, newTimeLimit);
+            var response = await _spaceModification.ModifyTimeLimit(userHash, spaceID, newTimeLimit);
             if (response.HasError)
             {
                 return BadRequest($"Error modifying time limit for space ID {spaceID}: {response.ErrorMessage}");
@@ -80,15 +114,24 @@ public class DemoController : ControllerBase
     [Route("modifyFloorPlan")]
     public async Task<IActionResult> ModifyFloorImage([FromBody] FloorPlanUpdateRequest request)
     {
-        // Assuming dummyCompanyID is fetched or defined elsewhere
-        string dummyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
+        // Extract the bearer token from the Authorization header
+        var authorizationHeader = HttpContext.Request.Headers["Authorization"].ToString();
+        if(string.IsNullOrWhiteSpace(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+        {
+            return Unauthorized("Authorization header is missing or not valid.");
+        }
         
-        var response = await _spaceModification.ModifyFloorImage(dummyHash, request.FloorPlanName, request.NewFloorPlanImage);
+        // Remove the 'Bearer ' prefix to get the actual token
+        var accessToken = authorizationHeader.Substring("Bearer ".Length).Trim();
+        // Extract user hash or other relevant data from the token
+        string userHash = _authService.GetSubjectFromToken(accessToken);
+        
+        // Proceed with modifying the floor plan using the extracted user hash
+        var response = await _spaceModification.ModifyFloorImage(userHash, request.FloorPlanName, request.NewFloorPlanImage);
         if (response.HasError)
         {
             return BadRequest($"Error modifying floor plan image for floor plan {request.FloorPlanName}: {response.ErrorMessage}");
         }
-        
         return Ok(new { message = "Floor Plan replaced successfully!" + response});
     }
     //delete space 
@@ -103,9 +146,18 @@ public class DemoController : ControllerBase
     public async Task<IActionResult> DeleteSpaceID([FromBody] SpaceIdModel model)
     {
         // Assuming dummyCompanyID is fetched or defined elsewhere
-        string dummyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
+        var authorizationHeader = HttpContext.Request.Headers["Authorization"].ToString();
+        if(string.IsNullOrWhiteSpace(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+        {
+            return Unauthorized("Authorization header is missing or not valid.");
+        }
         
-        var response = await _spaceModification.DeleteSpace(dummyHash, model.SpaceID);
+        // Remove the 'Bearer ' prefix to get the actual token
+        var accessToken = authorizationHeader.Substring("Bearer ".Length).Trim();
+        // Extract user hash or other relevant data from the token
+        string userHash = _authService.GetSubjectFromToken(accessToken);
+        
+        var response = await _spaceModification.DeleteSpace(userHash, model.SpaceID);
         if (response.HasError)
         {
             return BadRequest($"Error Deleting Space for spaceID {model.SpaceID}: {response.ErrorMessage}");
@@ -123,10 +175,18 @@ public class DemoController : ControllerBase
     [Route("deleteFloor")]
     public async Task<IActionResult> DeleteFloor([FromBody] FloorPlanModel model)
     {
-        // Assuming dummyCompanyID is fetched or defined elsewhere
-        string dummyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
+        var authorizationHeader = HttpContext.Request.Headers["Authorization"].ToString();
+        if(string.IsNullOrWhiteSpace(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+        {
+            return Unauthorized("Authorization header is missing or not valid.");
+        }
         
-        var response = await _spaceModification.DeleteFloor(dummyHash, model.FloorPlanName);
+        // Remove the 'Bearer ' prefix to get the actual token
+        var accessToken = authorizationHeader.Substring("Bearer ".Length).Trim();
+        // Extract user hash or other relevant data from the token
+        string userHash = _authService.GetSubjectFromToken(accessToken);
+        
+        var response = await _spaceModification.DeleteFloor(userHash, model.FloorPlanName);
         if (response.HasError)
         {
             return BadRequest($"Error Deleting Space for spaceID {model.FloorPlanName}: {response.ErrorMessage}");

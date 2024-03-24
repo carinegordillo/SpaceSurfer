@@ -1,7 +1,8 @@
+
 function logout() {
     // Remove token from localStorage
     localStorage.removeItem('accessToken');
-    window.location.href = 'UnAuthnAbout/about.html';
+    window.location.href = '../UnAuthnAbout/about.html';
 }
 
 document.getElementById('replaceImage').addEventListener('change', function(event) {
@@ -212,6 +213,9 @@ $(document).ready(function() {
             url: 'http://localhost:8081/api/SpaceManager/postSpace',
             type: 'POST',
             contentType: 'application/json',
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + localStorage["accessToken"]);
+            },
             data: JSON.stringify(companyFloor),
             success: function(response) {
                 alert('Space created successfully!');
@@ -229,14 +233,17 @@ $(document).ready(function() {
 
     $('#modifySpaceForm').submit(function(e) {
         e.preventDefault();
-
+    
         var spacesToModify = collectSpacesAndTimeLimitsToModify();
         console.log("Submitting with data:", spacesToModify); // Debug output
-
+    
         $.ajax({
             url: 'http://localhost:8081/api/SpaceManager/modifyTimeLimits',
             type: 'POST',
             contentType: 'application/json',
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + localStorage["accessToken"]);
+            },
             data: JSON.stringify(spacesToModify),
             success: function(response) {
                 console.log("Response from server:", response); // Debug output
@@ -253,17 +260,19 @@ $(document).ready(function() {
     $('#modifyImage').click(function(e) {
         e.preventDefault();
         console.log('Modify image button clicked');
-
-       
+    
         var newFloor = {
             FloorPlanName: $('#modifyFloorPlanName').val(),
             NewFloorPlanImage: $('#modifyImageBase64').val()
         };
-
+    
         $.ajax({
             url: 'http://localhost:8081/api/SpaceManager/modifyFloorPlan',
             type: 'POST',
             contentType: 'application/json',
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + localStorage["accessToken"]);
+            },
             data: JSON.stringify(newFloor),
             success: function(response) {
                 console.log("Response from server:", response); // Debug output
@@ -276,20 +285,21 @@ $(document).ready(function() {
             }
         });
     });
+
     $('#deleteSpace').click(function(e) {
         e.preventDefault();
         console.log('Delete button clicked');
         var spaceID = $(this).closest('.spaceRowModify').find('.modifySpaceID').val();
         console.log("Space ID to delete:", spaceID);
-        
-        // Log the spaceID to the console for debugging
-        console.log("Space ID to delete:", spaceID);
-
+    
         $.ajax({
             url: 'http://localhost:8081/api/SpaceManager/deleteSpace',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ spaceID: spaceID}),
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("Authorization", "Bearer " + localStorage["accessToken"]);
+            },
+            data: JSON.stringify({ spaceID: spaceID }),
             success: function(response) {
                 console.log("Response from server:", response); // Debug output
                 alert('Deleted Space successfully!');
@@ -306,14 +316,17 @@ $(document).ready(function() {
         e.preventDefault();
         console.log('Delete Floor button clicked');
         var FloorPlanName = $('#modifyFloorPlanName').val();
-        console.log("Floor PLan to delete to delete:", FloorPlanName);
-        
-
+        console.log("Floor Plan to delete:", FloorPlanName);
+    
         $.ajax({
             url: 'http://localhost:8081/api/SpaceManager/deleteFloor',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ FloorPlanName: FloorPlanName}),
+            beforeSend: function(xhr) {
+                // Include the JWT token in the request header
+                xhr.setRequestHeader("Authorization", "Bearer " + localStorage["accessToken"]);
+            },
+            data: JSON.stringify({ FloorPlanName: FloorPlanName }),
             success: function(response) {
                 console.log("Response from server:", response); // Debug output
                 alert('Deleted Floor successfully!');

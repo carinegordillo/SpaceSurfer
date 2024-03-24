@@ -19,7 +19,16 @@
 
     root.myApp = root.myApp || {};
     async function init() {
-        window.location = "UnAuthnAbout/index.html"
+        window.location = "UnAuthnAbout/about.html"
+        if (localStorage.length != 0) {
+            token = localStorage["accessToken"]
+        }
+
+        if (!token) {
+            window.location = "HomePage/index.html"
+        } else {
+            window.location = "SpaceManager/index.html"
+        }
     }
 
     init();
