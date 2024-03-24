@@ -271,7 +271,7 @@ $(document).ready(function() {
     });
     $('#deleteSpace').click(function(e) {
         e.preventDefault();
-        console.log('Modify image button clicked');
+        console.log('Delete button clicked');
         var spaceID = $(this).closest('.spaceRowModify').find('.modifySpaceID').val();
         console.log("Space ID to delete:", spaceID);
         

@@ -3,6 +3,8 @@ using System.Data;
 // using SS.Backend.Services;
 using SS.Backend.SpaceManager;
 using SS.Backend.SharedNamespace;
+using SS.Backend.Security;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace demoAPI.Controllers;
 
@@ -13,57 +15,21 @@ public class DemoController : ControllerBase
 
     private readonly ISpaceCreation _spaceCreation;
     private readonly ISpaceModification _spaceModification;
-    public DemoController (ISpaceCreation SpaceCreation, ISpaceModification spaceModification){
+    private readonly SSAuthService _authService;
+
+    public DemoController (ISpaceCreation SpaceCreation, ISpaceModification spaceModification, SSAuthService authService){
         _spaceCreation = SpaceCreation;
         _spaceModification = spaceModification;
+        _authService = authService;
     }
-    
-    // [Route("createSpace")]
-    // [HttpGet]
-    // public async Task<ActionResult<List<UserInfo>>> GetAllRequests(){
 
-    //     var response = await _spaceCreation.ReadUserTable("dbo.companyFloor");
-    //     List<CompanyFloor> spaceList = new List<CompanyFloor>();
-
-    //     try{
-
-    //         if (response.HasError)
-    //         {
-    //             Console.WriteLine(response.ErrorMessage);
-    //             return StatusCode(500, response.ErrorMessage);
-    //         }
-            
-    //             if (response.ValuesRead != null)
-    //             {
-    //                 foreach (DataRow row in response.ValuesRead.Rows)
-    //                 {
-    //                     spaceList.Add(new CompanyFloor
-    //                     {
-    //                         FloorPlanName = row["floorPlanName"].ToString(),
-    //                         FloorPlanImage = row["floorPlanImage"], 
-    //                         FloorSpaces = row["FloorSpaces"]
-    //                     });
-    //                 }
-    //             }
-
-    //             return Ok(spaceList);
-
-    //         foreach (var spaceInfo in spaceList){
-    //             Console.WriteLine($"Name: {spaceInfo.FloorPlanName}, Spaces: {spaceInfo.FloorSpaces}");
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         return StatusCode(500, $"An error occurred: {ex.Message}");
-    //     }
-
-    //     return Ok(spaceList);
-    // }
 
     [HttpPost]
     [Route("postSpace")]
     // public async Task<ActionResult<List<UserInfo>>> PostCreateAccount([FromBody] UserInfo userInfo){
     public async Task<IActionResult> PostCreateSpace([FromBody] CompanyFloor companyFloor){
+        string accessToken = "123";
+        List<string> info = _authService.GetRolesFromToken(accessToken);
         
         string dummyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
         
