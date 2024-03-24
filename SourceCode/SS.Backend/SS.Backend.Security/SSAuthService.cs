@@ -429,6 +429,15 @@ namespace SS.Backend.Security
             return tokenHandler.WriteToken(token);
         }
 
+        public string GetSubjectFromToken(string accessToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.ReadJwtToken(accessToken);
+
+            var subject = token.Subject;
+            return subject;
+        }
+
         public List<string> GetRolesFromToken(string accessToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -436,17 +445,15 @@ namespace SS.Backend.Security
 
             var roleClaim = token.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value;
             return roleClaim != null ? new List<string> { roleClaim } : new List<string>();
-            Console.WriteLine(roleClaim);
         }
 
-        public string GetExpTime(string accessToken)
+        public string GetExpTimeFromToken(string accessToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.ReadJwtToken(accessToken);
 
             string expirationTime = token.ValidTo.ToString("yyyy-MM-ddTHH:mm:ssZ");
             return expirationTime;
-            Console.WriteLine(expirationTime);
         }
 
     }
