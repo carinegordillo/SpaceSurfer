@@ -59,7 +59,8 @@ namespace AuthAPI.Controllers
         {
             List<string> role = _authService.GetRolesFromToken(accessToken);
             string exp_time = _authService.GetExpTime(accessToken);
-            return Ok( new { role, exp_time });
+            string subject = _authService.GetSubjectFromToken(accessToken);
+            return Ok( new { role, exp_time, subject });
         }
     }
 }
