@@ -72,6 +72,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configs", "Configs", "{3733
 		config.local.txt = config.local.txt
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthAPI", "..\..\..\..\source\repos\SS.Backend\AuthAPI\AuthAPI.csproj", "{326DF8E1-2CBB-41AD-8DA1-0E57C4600DF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -150,6 +152,10 @@ Global
 		{0FEFBFDA-A2FD-4347-A524-3A2B4B7CDE1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FEFBFDA-A2FD-4347-A524-3A2B4B7CDE1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FEFBFDA-A2FD-4347-A524-3A2B4B7CDE1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{326DF8E1-2CBB-41AD-8DA1-0E57C4600DF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{326DF8E1-2CBB-41AD-8DA1-0E57C4600DF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{326DF8E1-2CBB-41AD-8DA1-0E57C4600DF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{326DF8E1-2CBB-41AD-8DA1-0E57C4600DF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -171,6 +177,7 @@ Global
 		{D10F31FC-367A-4A02-9105-D1CC2109A5A8} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{5D6B398B-3086-41BD-A941-8A49FAF855F2} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{0FEFBFDA-A2FD-4347-A524-3A2B4B7CDE1B} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{326DF8E1-2CBB-41AD-8DA1-0E57C4600DF6} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {27FF35A7-BBB6-414D-87FC-32255A9F675F}
