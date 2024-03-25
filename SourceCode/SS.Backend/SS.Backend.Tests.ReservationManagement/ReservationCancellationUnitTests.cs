@@ -14,7 +14,6 @@ namespace SS.Backend.Tests.ReservationManagement{
     {
         private SqlDAO _sqlDao;
         private ConfigService _configService;
-        private SqlCommand _command;
         private ReservationCreation  _reservationcreationService;
         private ReservationCancellation _reservationCancellationService;
 
