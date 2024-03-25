@@ -9,7 +9,10 @@ namespace SS.Backend.Tests.Logging
     [TestClass]
     public class LoggingUnitTest
     {
-        private SqlDAO? dao;
+#pragma warning disable CS0649 // Field 'fieldName' is never assigned to, and will always have its default value null
+        private readonly SqlDAO? dao;
+#pragma warning restore CS0649 // Restore warning after specific field
+
 
         [TestInitialize]
         public void TestInitialize()
@@ -57,7 +60,9 @@ namespace SS.Backend.Tests.Logging
                 description = "Testing logging info level..."
             };
             Stopwatch timer = new Stopwatch();
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -85,7 +90,9 @@ namespace SS.Backend.Tests.Logging
                 description = "Testing logging debug level..."
             };
             Stopwatch timer = new Stopwatch();
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -113,7 +120,9 @@ namespace SS.Backend.Tests.Logging
                 description = "Testing logging warning level..."
             };
             Stopwatch timer = new Stopwatch();
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -141,7 +150,9 @@ namespace SS.Backend.Tests.Logging
                 description = "Testing logging error level..."
             };
             Stopwatch timer = new Stopwatch();
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -168,7 +179,9 @@ namespace SS.Backend.Tests.Logging
                 category = "View",
                 description = "Testing logging an invalid level..."
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -192,7 +205,9 @@ namespace SS.Backend.Tests.Logging
                 category = "View",
                 description = "Testing logging an invalid level..."
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -216,7 +231,9 @@ namespace SS.Backend.Tests.Logging
                 category = "View",
                 description = "Testing logging an invalid level..."
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -240,7 +257,9 @@ namespace SS.Backend.Tests.Logging
                 category = "View",
                 description = "Testing logging an invalid level..."
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -265,7 +284,9 @@ namespace SS.Backend.Tests.Logging
                 description = "Testing logging view category..."
             };
             Stopwatch timer = new Stopwatch();
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -292,7 +313,9 @@ namespace SS.Backend.Tests.Logging
                 description = "Testing business category..."
             };
             Stopwatch timer = new Stopwatch();
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -319,7 +342,9 @@ namespace SS.Backend.Tests.Logging
                 description = "Testing logging server category..."
             };
             Stopwatch timer = new Stopwatch();
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -346,7 +371,9 @@ namespace SS.Backend.Tests.Logging
                 description = "Testing logging data category..."
             };
             Stopwatch timer = new Stopwatch();
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -373,7 +400,9 @@ namespace SS.Backend.Tests.Logging
                 description = "Testing logging data store category..."
             };
             Stopwatch timer = new Stopwatch();
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -399,7 +428,9 @@ namespace SS.Backend.Tests.Logging
                 category = "Invalid",
                 description = "Testing logging invalid category..."
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -423,7 +454,9 @@ namespace SS.Backend.Tests.Logging
                 category = "NULL",
                 description = "Testing logging invalid category..."
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -447,7 +480,9 @@ namespace SS.Backend.Tests.Logging
                 category = "",
                 description = "Testing logging invalid category..."
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -471,7 +506,9 @@ namespace SS.Backend.Tests.Logging
                 category = "        ",
                 description = "Testing logging invalid category..."
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -495,7 +532,9 @@ namespace SS.Backend.Tests.Logging
                 category = "View",
                 description = "Test description"
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -519,7 +558,9 @@ namespace SS.Backend.Tests.Logging
                 category = "View",
                 description = "Test description"
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -543,7 +584,9 @@ namespace SS.Backend.Tests.Logging
                 category = "View",
                 description = "Test description"
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -568,7 +611,9 @@ namespace SS.Backend.Tests.Logging
                 description = "Testing description with valid length..."
             };
             Stopwatch timer = new Stopwatch();
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -620,7 +665,9 @@ namespace SS.Backend.Tests.Logging
                 "connectivity, fostering a thoughtful relationship with technology is essential for navigating the " +
                 "complex landscape it presents."
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -644,7 +691,9 @@ namespace SS.Backend.Tests.Logging
                 category = "View",
                 description = "NULL"
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -668,7 +717,9 @@ namespace SS.Backend.Tests.Logging
                 category = "View",
                 description = ""
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
@@ -692,7 +743,9 @@ namespace SS.Backend.Tests.Logging
                 category = "View",
                 description = "           "
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var logTarget = new SqlLogTarget(dao);
+#pragma warning restore CS8604 // Possible null reference argument.
             var logger = new Logger(logTarget);
 
             // Act
