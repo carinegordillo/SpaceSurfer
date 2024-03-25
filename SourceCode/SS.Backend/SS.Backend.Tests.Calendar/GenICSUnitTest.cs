@@ -30,13 +30,13 @@ namespace SS.Backend.Tests.Calendar
             Assert.IsTrue(File.Exists(tempFilePath), "The ICS file was not created.");
 
             string fileContents = File.ReadAllText(tempFilePath);
+            
             Console.WriteLine("Contents of the ICS file:");
             Console.WriteLine(fileContents);
-
-            // Additional assertions can go here...
+            Console.WriteLine($"ICS file created at {Path.GetFullPath(reservationInfo.filePath)}");
 
             // Cleanup
-            File.Delete(tempFilePath);
+            //File.Delete(tempFilePath);
         }
     }
 }
