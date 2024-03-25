@@ -31,7 +31,7 @@ namespace SS.Backend.Security
         public async Task<(string otp, Response res)> SendOTP_and_SaveToDB(AuthenticationRequest authRequest)
         {
             var builder = new CustomSqlCommandBuilder();
-            Response result = new Response();
+            Response result = new();
             string user = authRequest.UserIdentity;
 
             var getHash = builder
@@ -40,7 +40,9 @@ namespace SS.Backend.Security
                 .Where($"username = '{user}'")
                 .Build();
             result = await sqldao.ReadSqlResult(getHash);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             string user_hash = (string)result.ValuesRead.Rows[0]["hashedUsername"];
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             try
             {
@@ -65,7 +67,9 @@ namespace SS.Backend.Security
                     };
                     await log.SaveData(entry);
 
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
                     return (null, result);
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
                 }
 
                 // generate the otp and salt
@@ -150,7 +154,9 @@ namespace SS.Backend.Security
             {
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
                 return (null, result);
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
             }
         }
 
@@ -162,7 +168,7 @@ namespace SS.Backend.Security
         public async Task<(SSPrincipal principal, Response res)> Authenticate(AuthenticationRequest authRequest)
         {
             var builder = new CustomSqlCommandBuilder();
-            Response result = new Response();
+            Response result = new();
 
             #region Validate arguments
             if (authRequest is null)
@@ -190,7 +196,9 @@ namespace SS.Backend.Security
                 .Where($"username = '{user}'")
                 .Build();
             result = await sqldao.ReadSqlResult(getHash);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             string user_hash = (string)result.ValuesRead.Rows[0]["hashedUsername"];
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             try
             {
@@ -201,7 +209,9 @@ namespace SS.Backend.Security
                     .Where($"Username = '{user_hash}'")
                     .Build();
                 result = await sqldao.ReadSqlResult(selectCommand);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 string dbOTP = (string)result.ValuesRead.Rows[0]["OTP"];
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 string dbSalt = (string)result.ValuesRead.Rows[0]["Salt"];
                 DateTime timestamp = (DateTime)result.ValuesRead.Rows[0]["Timestamp"];
                 TimeSpan timeElapsed = DateTime.UtcNow - timestamp;
@@ -224,7 +234,9 @@ namespace SS.Backend.Security
                         };
                         await log.SaveData(entry);
 
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
                         return (null, result);
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
                     }
                     else
                     {
@@ -235,14 +247,21 @@ namespace SS.Backend.Security
                             .Where($"hashedUsername = '{user_hash}'")
                             .Build();
                         result = await sqldao.ReadSqlResult(readRoles);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                         if (result.ValuesRead.Rows.Count > 0)
                         {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                             string role = result.ValuesRead.Rows[0]["appRole"].ToString();
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
                             // populate the principal
-                            SSPrincipal principal = new SSPrincipal();
+                            SSPrincipal principal = new();
                             principal.UserIdentity = user_hash;
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8604 // Possible null reference argument.
                             principal.Claims.Add("Role", role);
+#pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
                             result.HasError = false;
 
@@ -272,8 +291,11 @@ namespace SS.Backend.Security
                             };
                             await log.SaveData(entry);
 
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
                             return (null, result);
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
                         }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     }
 
                 }
@@ -291,7 +313,9 @@ namespace SS.Backend.Security
                     };
                     await log.SaveData(entry);
 
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
                     return (null, result);
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
                 }
             }
             catch (Exception ex)
@@ -307,7 +331,9 @@ namespace SS.Backend.Security
                 };
                 await log.SaveData(entry);
 
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
                 return (null, result);
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
             }
 
         }
@@ -318,7 +344,9 @@ namespace SS.Backend.Security
         /// <param name="currentPrincipal">The current principal of the user</param>
         /// <param name="requiredClaims">The required claims to check that the user has</param>
         /// <returns>A boolean denoting if the user is authorized</returns>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task<bool> IsAuthorize(SSPrincipal currentPrincipal, IDictionary<string, string> requiredClaims)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             if (currentPrincipal?.Claims == null)
             {
@@ -376,7 +404,7 @@ namespace SS.Backend.Security
 
         }
 
-        public SSPrincipal MapToSSPrincipal(ClaimsPrincipal claimsPrincipal)
+        public SSPrincipal? MapToSSPrincipal(ClaimsPrincipal claimsPrincipal)
         {
             if (claimsPrincipal == null)
             {
@@ -398,19 +426,21 @@ namespace SS.Backend.Security
         }
 
 
-        public async Task<string> GenerateAccessToken(string username, IDictionary<string, string> roles)
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+        public static async Task<string> GenerateAccessToken(string username, IDictionary<string, string> roles)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             var builder = new CustomSqlCommandBuilder();
-            Response result = new Response();
+            Response result = new();
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes("g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn");
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, username),
-                new Claim(JwtRegisteredClaimNames.Iss, "https://spacesurfers.auth.com/"),
-                new Claim(JwtRegisteredClaimNames.Aud, "spacesurfers"),
+                new(JwtRegisteredClaimNames.Sub, username),
+                new(JwtRegisteredClaimNames.Iss, "https://spacesurfers.auth.com/"),
+                new(JwtRegisteredClaimNames.Aud, "spacesurfers"),
             };
 
             foreach (var role in roles)
