@@ -47,6 +47,11 @@ namespace SS.Backend.SpaceManager
                 return checkResponse;
             }
 
+            if(newFloorPlanImage == null){
+                response.ErrorMessage = "Must insert new floor plan to modify";
+                return response;
+            }
+
             // Prepare the whereClauses dictionary
             var whereClauses = new Dictionary<string, object>
             {
@@ -114,6 +119,11 @@ namespace SS.Backend.SpaceManager
             {
                 // Abort operation if there are existing reservations
                 return checkResponse;
+            }
+
+            if(newTimeLimit< 0){
+                response.ErrorMessage = "New Time Limit Cannot be Negative";
+                return response;
             }
 
             // Prepare the whereClauses dictionary to include both conditions
