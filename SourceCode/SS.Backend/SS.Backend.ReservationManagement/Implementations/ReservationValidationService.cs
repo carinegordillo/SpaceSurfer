@@ -16,7 +16,7 @@ namespace SS.Backend.ReservationManagement{
     public class ReservationValidationService : IReservationValidationService
     {
 
-        public async Task<bool> HasConflictingReservations(Response result){
+        public bool HasConflictingReservations(Response result){
             
 
             if (result.ValuesRead != null && result.ValuesRead.Rows.Count > 0 )
@@ -24,18 +24,15 @@ namespace SS.Backend.ReservationManagement{
                 //conflicts
                 return true;
             }
-            else
-            {
-                return false;
-            }
+           
     
-            return true;
+            return false;
         }
         
 
 
         /** check if the reservtaion is within company hours**/
-        public async Task<bool> IsWithinHours(Response result, TimeSpan proposedStart, TimeSpan proposedEnd){
+        public bool IsWithinHours(Response result, TimeSpan proposedStart, TimeSpan proposedEnd){
             
 
                     
@@ -47,16 +44,12 @@ namespace SS.Backend.ReservationManagement{
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
                     
                 
             return false;
         }
 
-        public async Task<bool> IsValidDuration(UserReservationsModel userReservationsModel, Response result){
+        public bool IsValidDuration(UserReservationsModel userReservationsModel, Response result){
         
 
             var userReservationDuration = userReservationsModel.ReservationEndTime - userReservationsModel.ReservationStartTime;
@@ -71,17 +64,19 @@ namespace SS.Backend.ReservationManagement{
                     
                     return false;
                 }
+
                 else
                 {
                     return true;
                 }
+                
                 
             }
                 
             return false;
         }
 
-        public async Task<bool> ValidMinimumDuration(UserReservationsModel userReservationsModel){
+        public  bool ValidMinimumDuration(UserReservationsModel userReservationsModel){
         
 
             var userReservationDuration = userReservationsModel.ReservationEndTime - userReservationsModel.ReservationStartTime;
@@ -92,15 +87,12 @@ namespace SS.Backend.ReservationManagement{
                     
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            
                 
             return false;
         }
 
-        public async Task<bool>  IsValidReservationLeadTime(UserReservationsModel userReservationsModel, int maxLeadTime, TimeUnit unitOfTime){
+        public bool  IsValidReservationLeadTime(UserReservationsModel userReservationsModel, int maxLeadTime, TimeUnit unitOfTime){
             var currentDateTime = DateTime.UtcNow; 
             var maxLeadDateTime = currentDateTime;
 
@@ -127,10 +119,7 @@ namespace SS.Backend.ReservationManagement{
                 return true;
                 
             }
-            else
-            {
-                return false;
-            }
+            
             
             return false;
 

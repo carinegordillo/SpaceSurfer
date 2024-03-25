@@ -15,7 +15,7 @@ public class ReservationCancellation
             _sqldao = sqldao;
         }
 
-        public async Task<Response> checkReservationStatus(string status)
+        public Response checkReservationStatus(string status)
         {
             // Response reservationUpdated = new Response();
             // IReservationStatusUpdater _reservationStatusUpdater = new ReservationStatusUpdater(_sqldao);
