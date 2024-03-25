@@ -22,92 +22,92 @@ namespace SS.Backend.SpaceManager
         public async Task<Response> CreateSpace(string hashedUsername, CompanyFloor? companyFloor)
         {
             Response response = new Response();
+           // Attempt to retrieve the company ID using the hashed username
             var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
 
+            // Validate the response for errors or empty data
             if (companyIDResponse.HasError || companyIDResponse.ValuesRead == null || companyIDResponse.ValuesRead.Rows.Count == 0)
             {
                 response.ErrorMessage = "Invalid hashedUsername or companyID not found.";
                 return response;
             }
 
-            // Assuming we have only one row per hashedUsername
+            // Extract company ID from the response
             DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
             int companyID = Convert.ToInt32(companyIDRow["companyID"]);
-            Console.WriteLine($"Debug: CompanyID is {companyID}");
-            // Response response = new Response();
-                
+
+            // Validate the company ID
             if (companyID <= 0)
             {
                 response.ErrorMessage = "companyID is not valid.";
                 return response;
             }
-            // Temporary business rules
+
+            // Validate the provided company floor data
             if (companyFloor is null || companyFloor.FloorPlanName == null || companyFloor.FloorPlanImage == null || companyFloor.FloorSpaces == null)
             {
                 response.ErrorMessage = "CompanyFloor cannot be null.";
-                return response; // Or handle the null case appropriately
+                return response;
             }
-            // Insert companyFloor entry
+
+            // Prepare parameters for inserting the company floor
             var companyFloorParameters = new Dictionary<string, object>
             {
-                // Assuming companyID is already available
                 {"companyID", companyID},
-                {"floorPlanName", companyFloor.FloorPlanName ?? "Name is Null"},
-                {"floorPlanImage", companyFloor.FloorPlanImage ?? new byte[0]}
+                {"floorPlanName", companyFloor.FloorPlanName},
+                {"floorPlanImage", companyFloor.FloorPlanImage}
             };
 
+            // Package data for database insertion
             var floorTableData = new Dictionary<string, Dictionary<string, object>>
             {
                 { "companyFloor", companyFloorParameters }
             };
 
-            // Insert the company floor first
+            // Insert the company floor into the database
             var floorInsertResponse = await _spaceManagerDao.InsertIntoMultipleTables(floorTableData);
+
+            // Check for insertion errors
             if (floorInsertResponse.HasError)
             {
-                return floorInsertResponse; // Return or handle error
+                return floorInsertResponse;
             }
-            // int companyID = Convert.ToInt32(companyFloorParameters["companyID"]);
-            if (companyFloor.FloorPlanName != null)
+
+            // Retrieve the company floor ID for further operations
+            Response tableResponse = await _spaceManagerDao.GetCompanyFloorIDByName(companyFloor.FloorPlanName, companyID);
+
+            // Validate the response and proceed with space insertion
+            if(tableResponse.ValuesRead != null)
             {
-                // Response tableResponse = new Response();
-                Response tableResponse = await _spaceManagerDao.GetCompanyFloorIDByName(companyFloor.FloorPlanName, companyID);
-                // DataTable? floorPlanID = await GetCompanyFloorIDByName(companyFloor.FloorPlanName);
-                if(tableResponse.ValuesRead != null)
+                foreach (DataRow row in tableResponse.ValuesRead.Rows)
                 {
-                    foreach (DataRow row in tableResponse.ValuesRead.Rows)
+                    int floorPlanID = Convert.ToInt32(row["floorPlanID"]);
+                    if (floorPlanID > 0)
                     {
-                        int floorPlanID = Convert.ToInt32(row["floorPlanID"]);
-                        Console.WriteLine($"Debug: Floor Plan ID  is {floorPlanID}"); 
-                        if (floorPlanID > 0){
-                            // Use the ListSpace method to prepare data for each space
-                            var spaceList = ListSpace(companyFloor);
+                        // Prepare data for each space associated with the floor
+                        var spaceList = ListSpace(companyFloor);
 
-                            // Insert each space entry related to the companyFloor
-                            foreach (var spaceDict in spaceList)
+                        // Insert each space entry
+                        foreach (var spaceDict in spaceList)
+                        {
+                            spaceDict.Add("floorPlanID", floorPlanID);
+                            spaceDict.Add("companyID", companyID);
+
+                            var spaceTableData = new Dictionary<string, Dictionary<string, object>>
                             {
-                                // Add floorPlanID to each dictionary since it's now available
-                                spaceDict.Add("floorPlanID", floorPlanID);
-                                spaceDict.Add("companyID", companyID);
+                                { "companyFloorSpaces", spaceDict }
+                            };
 
-                                var spaceTableData = new Dictionary<string, Dictionary<string, object>>
-                                {
-                                    { "companyFloorSpaces", spaceDict }
-                                };
-
-                                var spaceInsertResponse = await _spaceManagerDao.InsertIntoMultipleTables(spaceTableData);
-                                if (spaceInsertResponse.HasError)
-                                {
-                                    return spaceInsertResponse;
-                                }
+                            var spaceInsertResponse = await _spaceManagerDao.InsertIntoMultipleTables(spaceTableData);
+                            if (spaceInsertResponse.HasError)
+                            {
+                                return spaceInsertResponse;
                             }
-                        }   
+                        }
                     }
-                    
                 }
-
-                
             }
+
             if (floorInsertResponse.HasError == false)
             {
                 LogEntry entry = new LogEntry()
@@ -138,7 +138,8 @@ namespace SS.Backend.SpaceManager
             // Return response based on overall operation success or specific error handling
             return floorInsertResponse; 
         }
-
+        
+        // Helper method to prepare space data from the provided CompanyFloor object
         public List<Dictionary<string, object>> ListSpace(CompanyFloor? companyFloor)
         {
             var listOfDicts = new List<Dictionary<string, object>>();

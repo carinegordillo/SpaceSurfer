@@ -67,7 +67,7 @@ namespace SS.Backend.Tests.SpacemodificationTest
             timer.Start();
             var newFloorPlanImage = new byte[] { 0x01, 0x02, 0x03, 0x09 };
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceModification.ModifyFloorImage("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "new flooroa", newFloorPlanImage);
+            var response = await _spaceModification.ModifyFloorImage("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "Demo Code", newFloorPlanImage);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
             Assert.IsFalse(response.HasError, response.ErrorMessage);
@@ -81,7 +81,7 @@ namespace SS.Backend.Tests.SpacemodificationTest
             Stopwatch timer = new Stopwatch();
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceModification.ModifyTimeLimit("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "A4a", 3);
+            var response = await _spaceModification.ModifyTimeLimit("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "code1", 2);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
             Assert.IsFalse(response.HasError, response.ErrorMessage);
@@ -96,28 +96,13 @@ namespace SS.Backend.Tests.SpacemodificationTest
             Stopwatch timer = new Stopwatch();
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceModification.DeleteSpace("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "A4a");
+            var response = await _spaceModification.DeleteSpace("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "demo1");
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
             Assert.IsFalse(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
             await CleanupTestData().ConfigureAwait(false);
         }
-
-        [TestMethod]
-        public async Task DeleteFloor_Success()
-        {
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceModification.DeleteFloor("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "Testing Floor");
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-            timer.Stop();
-            Assert.IsFalse(response.HasError, response.ErrorMessage);
-            Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            await CleanupTestData().ConfigureAwait(false);
-        }
-
         [TestMethod]
         public async Task getCompanyFloor_Success()
         {
@@ -131,6 +116,22 @@ namespace SS.Backend.Tests.SpacemodificationTest
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
             await CleanupTestData().ConfigureAwait(false);
         }
+
+        [TestMethod]
+        public async Task DeleteFloor_Success()
+        {
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var response = await _spaceModification.DeleteFloor("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "Demo Code");
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            timer.Stop();
+            Assert.IsFalse(response.HasError, response.ErrorMessage);
+            Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
+            await CleanupTestData().ConfigureAwait(false);
+        }
+
+        
 
 
 

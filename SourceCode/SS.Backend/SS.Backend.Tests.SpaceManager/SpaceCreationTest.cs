@@ -68,9 +68,9 @@ namespace SS.Backend.Tests.SpaceCreationTest
             string validCompanyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
             var validFloorInfo = new CompanyFloor
             {
-                FloorPlanName = "New Floor Plan",
+                FloorPlanName = "Demo Code",
                 FloorPlanImage = new byte[] { 0x01, 0x02, 0x03, 0x04 },
-                FloorSpaces = new Dictionary<string, int> { { "Okay", 2 }, { "Oh", 3 }, {"No", 3} },
+                FloorSpaces = new Dictionary<string, int> { { "code1", 2 }, { "demo1", 3 }, {"review1", 3} },
             };
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
