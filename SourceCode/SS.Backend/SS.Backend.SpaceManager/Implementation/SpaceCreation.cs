@@ -72,36 +72,39 @@ namespace SS.Backend.SpaceManager
             {
                 return floorInsertResponse;
             }
-
-            // Retrieve the company floor ID for further operations
-            Response tableResponse = await _spaceManagerDao.GetCompanyFloorIDByName(companyFloor.FloorPlanName, companyID);
-
-            // Validate the response and proceed with space insertion
-            if(tableResponse.ValuesRead != null)
+            if (companyFloor.FloorPlanName != null)
             {
-                foreach (DataRow row in tableResponse.ValuesRead.Rows)
+
+                // Retrieve the company floor ID for further operations
+                Response tableResponse = await _spaceManagerDao.GetCompanyFloorIDByName(companyFloor.FloorPlanName, companyID);
+
+                // Validate the response and proceed with space insertion
+                if(tableResponse.ValuesRead != null)
                 {
-                    int floorPlanID = Convert.ToInt32(row["floorPlanID"]);
-                    if (floorPlanID > 0)
+                    foreach (DataRow row in tableResponse.ValuesRead.Rows)
                     {
-                        // Prepare data for each space associated with the floor
-                        var spaceList = ListSpace(companyFloor);
-
-                        // Insert each space entry
-                        foreach (var spaceDict in spaceList)
+                        int floorPlanID = Convert.ToInt32(row["floorPlanID"]);
+                        if (floorPlanID > 0)
                         {
-                            spaceDict.Add("floorPlanID", floorPlanID);
-                            spaceDict.Add("companyID", companyID);
+                            // Prepare data for each space associated with the floor
+                            var spaceList = ListSpace(companyFloor);
 
-                            var spaceTableData = new Dictionary<string, Dictionary<string, object>>
+                            // Insert each space entry
+                            foreach (var spaceDict in spaceList)
                             {
-                                { "companyFloorSpaces", spaceDict }
-                            };
+                                spaceDict.Add("floorPlanID", floorPlanID);
+                                spaceDict.Add("companyID", companyID);
 
-                            var spaceInsertResponse = await _spaceManagerDao.InsertIntoMultipleTables(spaceTableData);
-                            if (spaceInsertResponse.HasError)
-                            {
-                                return spaceInsertResponse;
+                                var spaceTableData = new Dictionary<string, Dictionary<string, object>>
+                                {
+                                    { "companyFloorSpaces", spaceDict }
+                                };
+
+                                var spaceInsertResponse = await _spaceManagerDao.InsertIntoMultipleTables(spaceTableData);
+                                if (spaceInsertResponse.HasError)
+                                {
+                                    return spaceInsertResponse;
+                                }
                             }
                         }
                     }
@@ -138,7 +141,7 @@ namespace SS.Backend.SpaceManager
             // Return response based on overall operation success or specific error handling
             return floorInsertResponse; 
         }
-        
+
         // Helper method to prepare space data from the provided CompanyFloor object
         public List<Dictionary<string, object>> ListSpace(CompanyFloor? companyFloor)
         {
