@@ -3,7 +3,7 @@ function logout() {
     window.location.href = '../UnAuthnAbout/about.html';
 }
 
-document.getElementById('replaceImage').addEventListener('click', function(event) {
+document.getElementById('replaceImage').addEventListener('change', function(event) {
     var fileModify = event.target.files[0];
     if (!fileModify) {
         alert('No file selected.');
@@ -27,7 +27,7 @@ document.getElementById('replaceImage').addEventListener('click', function(event
     reader.readAsDataURL(fileModify);
 });
 
-document.getElementById('imageUpload').addEventListener('click', handleImageUpload);
+document.getElementById('imageUpload').addEventListener('change', handleImageUpload);
 
 function handleImageUpload(event) {
     var file = event.target.files[0];
