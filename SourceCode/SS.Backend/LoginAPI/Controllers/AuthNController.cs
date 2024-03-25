@@ -49,13 +49,13 @@ namespace AuthAPI.Controllers
             }
 
             var rolesDictionary = principal.Claims;
-            var token = await _authService.GenerateAccessToken(principal.UserIdentity, rolesDictionary);
+            var token = await SSAuthService.GenerateAccessToken(principal.UserIdentity, rolesDictionary);
 
             return Ok(token);
         }
 
         [HttpPost("decodeToken")]
-        public async Task<IActionResult> decodeToken([FromBody] string accessToken)
+        public IActionResult decodeToken([FromBody] string accessToken)
         {
             List<string> role = _authService.GetRolesFromToken(accessToken);
             string exp_time = _authService.GetExpTimeFromToken(accessToken);
