@@ -22,7 +22,7 @@
 //         Minutes
 //     }
 
-//     public class ReservationCreation : IReservationCreation
+//     public class ReservationModification 
 //     {
 //         private ISqlDAO _sqldao;
 
