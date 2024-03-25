@@ -8,7 +8,7 @@ namespace SS.Backend.Services.CalendarService
 {
     public class CalendarCreator : ICalendarCreator
     {
-        public async Task CreateCalendar(ReservationInfo reservationInfo)
+        public void CreateCalendar(ReservationInfo reservationInfo)
         {
             StringBuilder str = new StringBuilder();
 
