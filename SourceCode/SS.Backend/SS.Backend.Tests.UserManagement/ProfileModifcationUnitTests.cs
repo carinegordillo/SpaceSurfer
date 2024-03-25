@@ -14,7 +14,6 @@ public class ProfileModifierUnitTests
     private IUserManagementDao _userManagementDao; 
     private SqlDAO _sqlDao;
     private ConfigService _configService;
-    private SqlCommand _command;
 
     [TestInitialize]
     public void Setup()

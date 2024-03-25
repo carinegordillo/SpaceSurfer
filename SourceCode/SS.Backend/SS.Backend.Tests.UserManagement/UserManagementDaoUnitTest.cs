@@ -13,7 +13,7 @@ namespace SS.Backend.Tests.UserManagement;
         private UserManagementDao _userManagementDao;
         private SqlDAO _sqlDao;
         private ConfigService _configService;
-        private SqlCommand _command;
+
 
         
         
@@ -168,7 +168,7 @@ namespace SS.Backend.Tests.UserManagement;
             
             // Create a SQL command object
             SqlCommand sqlCommand = new SqlCommand(commandText);
-            _sqlDao.SqlRowsAffected(sqlCommand);
+             _sqlDao.SqlRowsAffected(sqlCommand);
         }
 }
 

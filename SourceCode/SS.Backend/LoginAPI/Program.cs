@@ -68,11 +68,11 @@ if (app.Environment.IsDevelopment())
 }
 
 // Content Security Policy (CSP) middleware
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Add(HeaderNames.ContentSecurityPolicy, "default-src 'self'; script-src 'self' 'unsafe-inline';");
-    await next();
-});
+// app.Use(async (context, next) =>
+// {
+//     context.Response.Headers.Add(HeaderNames.ContentSecurityPolicy, "default-src 'self'; script-src 'self' 'unsafe-inline';");
+//     await next();
+// });
 
 app.Use(async (context, next) =>
 {

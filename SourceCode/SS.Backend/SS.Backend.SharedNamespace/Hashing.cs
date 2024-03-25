@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace SS.Backend.SharedNamespace
@@ -28,7 +29,8 @@ namespace SS.Backend.SharedNamespace
             byte[] dataBytes = Encoding.UTF8.GetBytes(data);
             byte[] saltBytes = Convert.FromBase64String(salt);
 
-            using (var keyDerivation = new Rfc2898DeriveBytes(dataBytes, saltBytes, 10000))
+            // Use recommended constructor with specified hash algorithm and iteration count
+            using (var keyDerivation = new Rfc2898DeriveBytes(dataBytes, saltBytes, 10000, HashAlgorithmName.SHA256))
             {
                 byte[] key = keyDerivation.GetBytes(32);
 
@@ -39,6 +41,5 @@ namespace SS.Backend.SharedNamespace
                 }
             }
         }
-
     }
 }
