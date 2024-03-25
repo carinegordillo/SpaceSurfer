@@ -42,7 +42,7 @@ namespace SS.Backend.SpaceManager
                 return response;
             }
             // Temporary business rules
-            if (companyFloor is null || companyFloor.FloorPlanName == null)
+            if (companyFloor is null || companyFloor.FloorPlanName == null || companyFloor.FloorPlanImage == null || companyFloor.FloorSpaces == null)
             {
                 response.ErrorMessage = "CompanyFloor cannot be null.";
                 return response; // Or handle the null case appropriately
