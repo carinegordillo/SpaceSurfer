@@ -1,10 +1,16 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using SS.Backend.DataAccess;
 using SS.Backend.Security;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
+using System;
+using System.IO;
+using System.Linq;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,21 +22,23 @@ builder.Services.AddControllers();
 
 var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
 var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
+byte[] keyBytes = jwtKey != null ? Encoding.UTF8.GetBytes(jwtKey) : throw new ArgumentNullException(nameof(jwtKey));
+var issuerSigningKey = new SymmetricSecurityKey(keyBytes);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
- .AddJwtBearer(options =>
- {
-     options.TokenValidationParameters = new TokenValidationParameters
-     {
-         ValidateIssuer = true,
-         ValidateAudience = true,
-         ValidateLifetime = true,
-         ValidateIssuerSigningKey = true,
-         ValidIssuer = jwtIssuer,
-         ValidAudience = jwtIssuer,
-         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-     };
- });
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtIssuer,
+            IssuerSigningKey = issuerSigningKey
+        };
+    });
 
 builder.Services.AddAuthorization();
 
@@ -68,11 +76,11 @@ if (app.Environment.IsDevelopment())
 }
 
 // Content Security Policy (CSP) middleware
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Add(HeaderNames.ContentSecurityPolicy, "default-src 'self'; script-src 'self' 'unsafe-inline';");
-    await next();
-});
+//app.Use(async (context, next) =>
+//{
+//    context.Response.Headers.Add(HeaderNames.ContentSecurityPolicy, "default-src 'self'; script-src 'self' 'unsafe-inline';");
+//    await next();
+//});
 
 app.Use(async (context, next) =>
 {

@@ -1,6 +1,9 @@
 using Microsoft.Data.SqlClient;
 using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
+using System;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SS.Backend.Tests.DataAccess
 {
@@ -17,15 +20,13 @@ namespace SS.Backend.Tests.DataAccess
             string configFilePath = "/Users/sarahsantos/SpaceSurfer/SourceCode/SS.Backend/Configs/config.local.txt";
             ConfigService configService = new ConfigService(configFilePath);
             dao = new SqlDAO(configService);
-
-
         }
 
         private async Task CleanupTestData()
         {
             var SAUser = Credential.CreateSAUser();
             var connectionString = string.Format(@"Data Source=localhost; Initial Catalog=SSDatabase; User Id=sa; Password=dockerStrongPwd123; TrustServerCertificate=True;");
-                  
+
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -50,47 +51,47 @@ namespace SS.Backend.Tests.DataAccess
         [TestMethod]
         public async Task DataAccess_SuccessfulConnection_Pass()
         {
+            // Assert that dao is not null before proceeding
+            Assert.IsNotNull(dao);
 
             // Arrange
             string sql = "INSERT INTO dbo.Logs VALUES (SYSUTCDATETIME(), 'Info', 'test@email', 'View', 'test desc');";
             var command = new SqlCommand(sql);
 
             // Act
-            var result = await dao.SqlRowsAffected(command);
+            var result = await dao!.SqlRowsAffected(command); // Using ! to assert non-null
 
             // Assert
             Assert.IsFalse(result.HasError);
             Assert.IsTrue(result.RowsAffected > 0);
-
 
             // Cleanup
             await CleanupTestData();
         }
 
-    
-
-
         [TestMethod]
         public async Task DataAccess_Create_CreateValidRecord_Pass()
         {
+            // Assert that dao is not null before proceeding
+            Assert.IsNotNull(dao);
 
             // Arrange
             string sql = "INSERT INTO dbo.Logs VALUES (SYSUTCDATETIME(), 'Info', 'test@email', 'View', 'test desc');";
             var command = new SqlCommand(sql);
 
             // Act
-            var result = await dao.SqlRowsAffected(command);
+            var result = await dao!.SqlRowsAffected(command); // Using ! to assert non-null
 
             // Assert
             Assert.IsTrue(result.RowsAffected > 0);
             Assert.IsFalse(result.HasError);
-
 
             // Cleanup
             await CleanupTestData();
         }
     }
 }
+
 /*
         [TestMethod]
         public async Task DataAccess_Create_HasNullInput_Pass()

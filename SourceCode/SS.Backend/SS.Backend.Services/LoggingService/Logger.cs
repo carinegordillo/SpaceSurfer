@@ -10,7 +10,7 @@ namespace SS.Backend.Services.LoggingService
             _logTarget = logTarget;
         }
 
-        public bool CheckNullWhiteSpace(string str)
+        public bool CheckNullWhiteSpace(string? str)
         {
             return !string.IsNullOrWhiteSpace(str);
         }
@@ -28,12 +28,12 @@ namespace SS.Backend.Services.LoggingService
                 allValid++;
             }
             else { errorMsg += "Invalid category."; }
-            if (log.getDescriptionLength <= 2000 && log.description != "" && CheckNullWhiteSpace(log.description) == true && log.description != "NULL" && log.description != "null")
+            if (log.getDescriptionLength <= 2000 && !string.IsNullOrWhiteSpace(log.description) && log.description != "NULL" && log.description != "null")
             {
                 allValid++;
             }
             else { errorMsg += "Invalid description."; }
-            if (CheckNullWhiteSpace(log.username) == true && log.username != "NULL" && log.username != "null")
+            if (!string.IsNullOrWhiteSpace(log.username) && log.username != "NULL" && log.username != "null")
             {
                 allValid++;
             }
@@ -44,6 +44,7 @@ namespace SS.Backend.Services.LoggingService
             }
             return errorMsg;
         }
+
         public async Task<Response> SaveData(LogEntry log)
         {
             Response result = new Response();
@@ -59,5 +60,6 @@ namespace SS.Backend.Services.LoggingService
             }
             return result;
         }
+
     }
 }

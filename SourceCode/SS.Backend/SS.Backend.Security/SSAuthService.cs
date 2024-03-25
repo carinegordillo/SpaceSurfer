@@ -40,7 +40,7 @@ namespace SS.Backend.Security
                 .Where($"username = '{user}'")
                 .Build();
             result = await sqldao.ReadSqlResult(getHash);
-            string user_hash = (string)result.ValuesRead.Rows[0]["hashedUsername"];
+            string user_hash = (string)result.ValuesRead?.Rows[0]?["hashedUsername"];
 
             try
             {
@@ -190,7 +190,7 @@ namespace SS.Backend.Security
                 .Where($"username = '{user}'")
                 .Build();
             result = await sqldao.ReadSqlResult(getHash);
-            string user_hash = (string)result.ValuesRead.Rows[0]["hashedUsername"];
+            string user_hash = (string)result.ValuesRead?.Rows[0]?["hashedUsername"];
 
             try
             {
@@ -201,9 +201,9 @@ namespace SS.Backend.Security
                     .Where($"Username = '{user_hash}'")
                     .Build();
                 result = await sqldao.ReadSqlResult(selectCommand);
-                string dbOTP = (string)result.ValuesRead.Rows[0]["OTP"];
-                string dbSalt = (string)result.ValuesRead.Rows[0]["Salt"];
-                DateTime timestamp = (DateTime)result.ValuesRead.Rows[0]["Timestamp"];
+                string dbOTP = (string)result.ValuesRead?.Rows[0]?["OTP"];
+                string dbSalt = (string)result.ValuesRead?.Rows[0]?["Salt"];
+                DateTime timestamp = (DateTime)result.ValuesRead?.Rows[0]?["Timestamp"];
                 TimeSpan timeElapsed = DateTime.UtcNow - timestamp;
 
                 // compare the otp stored in DB with user inputted otp
@@ -237,7 +237,7 @@ namespace SS.Backend.Security
                         result = await sqldao.ReadSqlResult(readRoles);
                         if (result.ValuesRead.Rows.Count > 0)
                         {
-                            string role = result.ValuesRead.Rows[0]["appRole"].ToString();
+                            string role = result.ValuesRead?.Rows[0]?["appRole"].ToString();
 
                             // populate the principal
                             SSPrincipal principal = new SSPrincipal();
@@ -421,7 +421,8 @@ namespace SS.Backend.Security
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddHours(1),
+                //Expires = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.UtcNow.AddSeconds(30),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
@@ -454,6 +455,20 @@ namespace SS.Backend.Security
 
             string expirationTime = token.ValidTo.ToString("yyyy-MM-ddTHH:mm:ssZ");
             return expirationTime;
+        }
+
+        public async Task<(string newToken, Response res)> RefreshToken(string username, IDictionary<string, string> roles)
+        {
+            try
+            {
+                string newToken = await GenerateAccessToken(username, roles);
+
+                return (newToken, new Response { HasError = false });
+            }
+            catch (Exception ex)
+            {
+                return (null, new Response { HasError = true, ErrorMessage = ex.Message });
+            }
         }
 
     }

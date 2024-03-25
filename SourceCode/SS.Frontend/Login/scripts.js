@@ -63,7 +63,6 @@ function getRole(callback) {
     var token = localStorage['accessToken'];
 
     if (!token) {
-        // Handle case where token is not found in localStorage
         var accessTokenContainer = document.getElementById("accessTokenContainer");
         accessTokenContainer.innerHTML = "<p>No access token found</p>";
         return;
@@ -73,7 +72,7 @@ function getRole(callback) {
         url: 'http://localhost:5270/api/auth/decodeToken',
         type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify(token), // Ensure token is properly serialized
+        data: JSON.stringify(token),
         success: function (response) {
             var role = response.role;
             callback(role);
@@ -89,7 +88,6 @@ function getExpirationTime(callback) {
     var token = localStorage['accessToken'];
 
     if (!token) {
-        // Handle case where token is not found in localStorage
         var accessTokenContainer = document.getElementById("accessTokenContainer");
         accessTokenContainer.innerHTML = "<p>No access token found</p>";
         return;
@@ -99,7 +97,7 @@ function getExpirationTime(callback) {
         url: 'http://localhost:5270/api/auth/decodeToken',
         type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify(token), // Ensure token is properly serialized
+        data: JSON.stringify(token),
         success: function (response) {
             var time = response.exp_time;
             callback(time);
