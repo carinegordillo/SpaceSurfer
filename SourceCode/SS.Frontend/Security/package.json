@@ -14,7 +14,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "lite-server": "^2.6.1"
+    "browser-sync": "^3.0.2",
+    "lite-server": "^2.6.1",
+    "resp-modifier": "^6.0.2"
   },
   "keywords": [],
   "author": "",
