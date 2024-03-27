@@ -14,19 +14,19 @@ space
 namespace SS.Backend.ReservationManagement{
 
 
-    public class ReservationCreation : IReservationCreation
+    public class ReservationCreatorService : IReservationCreatorService
     {
         private ISqlDAO _sqldao;
 
-        private ReservationValidationService _reservationValidationService;
+        private IReservationValidationService _reservationValidationService;
 
-        public ReservationCreation(ISqlDAO sqldao, ReservationValidationService reservationValidationService)
+        public ReservationCreatorService(ISqlDAO sqldao, IReservationValidationService reservationValidationService)
         {
             _sqldao = sqldao;
             _reservationValidationService = reservationValidationService;
         }
 
-        public async Task<Response> CreateReservationWithAutoID(string tableName, UserReservationsModel userReservationsModel){
+        public async Task<Response> CreateReservationWithAutoIDAsync(string tableName, UserReservationsModel userReservationsModel){
             Response response = new Response();
 
             var commandBuilder = new CustomSqlCommandBuilder();
@@ -52,10 +52,10 @@ namespace SS.Backend.ReservationManagement{
             response = await _sqldao.SqlRowsAffected(InsertRequestsCommand);
 
             if (response.HasError == false){
-                response.ErrorMessage += "- CreateReservationWithAutoID - command successful - ";
+                response.ErrorMessage += "- CreateReservationWithAutoIDAsync - command successful - ";
             }
             else{
-                    response.ErrorMessage += $"- CreateReservationWithAutoID - command : {InsertRequestsCommand.CommandText} not successful - ";
+                    response.ErrorMessage += $"- CreateReservationWithAutoIDAsync - command : {InsertRequestsCommand.CommandText} not successful - ";
 
             }
             return response;
@@ -63,7 +63,7 @@ namespace SS.Backend.ReservationManagement{
 
         }
 
-        public async Task<Response> CreateReservationWithManualID(string tableName, UserReservationsModel userReservationsModel){
+        public async Task<Response> CreateReservationWithManualIDAsync(string tableName, UserReservationsModel userReservationsModel){
             Response response = new Response();
 
             var commandBuilder = new CustomSqlCommandBuilder();
@@ -94,7 +94,7 @@ namespace SS.Backend.ReservationManagement{
             }
             else{
                 response.HasError = true;
-                response.ErrorMessage = $"- CreateReservationWithManualID - command : {InsertRequestsCommand.CommandText} not successful - ";
+                response.ErrorMessage = $"- CreateReservationWithManualIDAsync - command : {InsertRequestsCommand.CommandText} not successful - ";
                 
 
             }
@@ -107,7 +107,7 @@ namespace SS.Backend.ReservationManagement{
 
 
 
-        public async Task<Response> CheckConflictingReservations(int floorPlanID, string spaceID, TimeSpan proposedStart, TimeSpan proposedEnd){
+        public async Task<Response> CheckConflictingReservationsAsync(int floorPlanID, string spaceID, TimeSpan proposedStart, TimeSpan proposedEnd){
             
             Response result = new Response();
 
@@ -156,7 +156,7 @@ namespace SS.Backend.ReservationManagement{
 
 
         /** check if the reservtaion is within company hours**/
-        public async Task<Response> ValidateWithinHours(int companyID, TimeSpan proposedStart, TimeSpan proposedEnd){
+        public async Task<Response> ValidateWithinHoursAsync(int companyID, TimeSpan proposedStart, TimeSpan proposedEnd){
             Response result = new Response();
 
             string query = @"
@@ -208,7 +208,7 @@ namespace SS.Backend.ReservationManagement{
             return result;
         }
 
-        public async Task<Response> ValidateReservationDuration(UserReservationsModel userReservationsModel){
+        public async Task<Response> ValidateReservationDurationAsync(UserReservationsModel userReservationsModel){
             Response result = new Response();
 
              string query = @"
@@ -256,7 +256,7 @@ namespace SS.Backend.ReservationManagement{
             return result;
         }
 
-        public Response validateReservationLeadTime(UserReservationsModel userReservationsModel, int maxLeadTime, TimeUnit unitOfTime){
+        public Response ValidateReservationLeadTime(UserReservationsModel userReservationsModel, int maxLeadTime, TimeUnit unitOfTime){
             
 
             Response result = new Response();
@@ -278,10 +278,6 @@ namespace SS.Backend.ReservationManagement{
         }
 
         
-
-        // public ConfirmReservation(){ sata
-
-        // }
 
     }
 }

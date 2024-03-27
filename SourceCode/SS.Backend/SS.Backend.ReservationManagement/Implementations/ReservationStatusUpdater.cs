@@ -15,7 +15,7 @@ public class ReservationStatusUpdater : IReservationStatusUpdater
             _sqldao = sqldao;
         }
 
-        public async Task<Response> updateReservtionStatuses(string tableName)
+        public async Task<Response> UpdateReservtionStatuses(string tableName)
         {
             Console.WriteLine(tableName);
             Response response = new Response();
