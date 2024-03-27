@@ -56,6 +56,7 @@ namespace AuthAPI.Controllers
                 rolesDictionary ??= new Dictionary<string, string>();
 
                 var token = await _authService.GenerateAccessToken(principal.UserIdentity, rolesDictionary);
+                var hashedToken = await _ authService.HashToken(token);
 
                 return Ok(token);
             }

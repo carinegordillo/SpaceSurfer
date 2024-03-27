@@ -1,5 +1,5 @@
 function checkTokenExpiration() {
-    var accessToken = localStorage.getItem('accessToken');
+    var accessToken = sessionStorage.getItem('accessToken');
     if (!accessToken) {
         console.error('Access token not found.');
         window.location.href = 'UnAuthnAbout/about.html';
@@ -12,7 +12,7 @@ function checkTokenExpiration() {
         var currentTime = Math.floor(Date.now() / 1000);
         if (decodedToken.exp < currentTime) {
             console.log('Token has expired.');
-            localStorage.removeItem('accessToken');
+            sessionStorage.removeItem('accessToken');
             window.location.href = 'UnAuthnAbout/about.html';
         }
     } catch (error) {
@@ -29,7 +29,7 @@ function parseJwt(token) {
     return JSON.parse(jsonPayload);
 }
 async function refreshToken() {
-    var accessToken = localStorage.getItem('accessToken');
+    var accessToken = sessionStorage.getItem('accessToken');
     if (!accessToken) {
         console.error('Access token not found.');
         window.location.href = 'UnAuthnAbout/about.html';
@@ -56,8 +56,8 @@ async function refreshToken() {
 
         var newToken = await newTokenResponse.text();
 
-        localStorage.removeItem('accessToken');
-        localStorage.setItem('accessToken', newToken);
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.setItem('accessToken', newToken);
     } catch (error) {
         console.error('Error:', error);
     }
@@ -65,7 +65,7 @@ async function refreshToken() {
 
 
 function logout() {
-    localStorage.removeItem('accessToken');
+    sessionStorage.removeItem('accessToken');
     window.location.href = '../UnAuthnAbout/about.html';
 }
 
@@ -232,7 +232,7 @@ document.querySelectorAll('.accordion').forEach(function(button) {
 
 document.addEventListener('DOMContentLoaded', async function () {
     checkTokenExpiration();
-    if (!localStorage.getItem('accessToken')) {
+    if (!sessionStorage.getItem('accessToken')) {
         // Redirect if accessToken not found
         window.location.href = '../UnAuthnAbout/about.html';
         return; 
@@ -303,7 +303,7 @@ async function sendData(url, data, tokenKey) {
     await refreshToken;
     try {
         checkTokenExpiration();
-        const token = localStorage.getItem(tokenKey);
+        const token = sessionStorage.getItem(tokenKey);
         const response = await fetch(url, {
             method: 'POST',
             headers: {

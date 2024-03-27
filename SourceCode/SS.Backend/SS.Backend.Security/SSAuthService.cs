@@ -471,5 +471,26 @@ namespace SS.Backend.Security
             }
         }
 
+        public async Task<string> HashToken(string token)
+        {
+            Response result = new Response();
+
+            try
+            {
+                var getCmd = builder
+                    .BeginSelectAll()
+                    .From("TokenSalt")
+                    .Build();
+                result = await sqldao.ReadSqlResult(getCmd);
+                string tokenSalt = (string)result.ValuesRead?.Rows[0]?["Salt"];
+                string tokenHash = hasher.HashData(token, tokenSalt);
+                return tokenHash;
+            }
+            catch (Exception ex)
+            {
+                return (null, new Response { HasError = true, ErrorMessage = ex.Message });
+            }
+        }
+
     }
 }

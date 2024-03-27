@@ -26,7 +26,7 @@ function authenticateUser() {
         data: JSON.stringify({ userIdentity: userIdentity, proof: otp }),
         success: function (response) {
             var accessToken = response;
-            localStorage.setItem('accessToken', accessToken);
+            sessionStorage.setItem('accessToken', accessToken);
             document.getElementById("enterOTPSection").style.display = "none";
             document.getElementById("successResult").style.display = "none";
 
@@ -54,13 +54,13 @@ function authenticateUser() {
 }
 
 function logout() {
-    localStorage.removeItem('accessToken');
+    sessionStorage.removeItem('accessToken');
     document.getElementById("homepageGen").style.display = "none";
     document.getElementById("homepageManager").style.display = "none";
     document.getElementById("sendOTPSection").style.display = "block";
 }
 function getRole(callback) {
-    var token = localStorage['accessToken'];
+    var token = sessionStorage['accessToken'];
 
     if (!token) {
         var accessTokenContainer = document.getElementById("accessTokenContainer");
@@ -85,7 +85,7 @@ function getRole(callback) {
 }
 
 function getExpirationTime(callback) {
-    var token = localStorage['accessToken'];
+    var token = sessionStorage['accessToken'];
 
     if (!token) {
         var accessTokenContainer = document.getElementById("accessTokenContainer");
