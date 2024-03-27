@@ -21,7 +21,7 @@ namespace SS.Backend.ReservationManagement{
 
             if (result.ValuesRead != null && result.ValuesRead.Rows.Count > 0 )
             {
-                //conflicts
+                
                 return true;
             }
            
@@ -76,7 +76,7 @@ namespace SS.Backend.ReservationManagement{
             return false;
         }
 
-        public  bool ValidMinimumDuration(UserReservationsModel userReservationsModel){
+        public  bool IsValidMinimumDuration(UserReservationsModel userReservationsModel){
         
 
             var userReservationDuration = userReservationsModel.ReservationEndTime - userReservationsModel.ReservationStartTime;

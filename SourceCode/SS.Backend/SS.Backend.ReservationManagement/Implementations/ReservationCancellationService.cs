@@ -6,49 +6,38 @@ using System.Data;
 
 namespace SS.Backend.ReservationManagement{
 
-public class ReservationCancellation
+public class ReservationCancellationService : IReservationCancellationService
 {
     private ISqlDAO _sqldao;
 
-        public ReservationCancellation(ISqlDAO sqldao)
+        public ReservationCancellationService(ISqlDAO sqldao)
         {
             _sqldao = sqldao;
         }
 
-        public Response checkReservationStatus(string status)
+        public Response checkReservationStatus(UserReservationsModel reservation)
         {
-            // Response reservationUpdated = new Response();
-            // IReservationStatusUpdater _reservationStatusUpdater = new ReservationStatusUpdater(_sqldao);
-
-            // try{
-            //     reservationUpdated = await _reservationStatusUpdater.updateReservtionStatus("dbo.ReservationS");
-            // }
-
-            // catch (Exception ex)
-            // {
-            //     Console.WriteLine($"Error updating reservation status: {ex.Message}");   // log here 
-            // }
-
-            if (status == "Cancelled")
+            // Directly compare with enum values
+            if (reservation.Status == ReservationStatus.Cancelled)
             {
-                return new Response { HasError =true, ErrorMessage = "Reservation has already been cancelled" };
+                return new Response { HasError = true, ErrorMessage = "Reservation has already been cancelled" };
             }
-            else if  (status == "Active")
+            else if (reservation.Status == ReservationStatus.Active)
             {
                 return new Response { HasError = false, ErrorMessage = "Reservation is active" };
             }
-            else if (status == "Passed")
+            else if (reservation.Status == ReservationStatus.Passed)
             {
-                return new Response { HasError = false, ErrorMessage = "Cannot cancel a reservtaion that has passed" };
+                return new Response { HasError = false, ErrorMessage = "Reservation date has passed" };
             }
             else
             {
-                return new Response { HasError = false, ErrorMessage = "Invalid Status" };
+                return new Response { HasError = true, ErrorMessage = "Invalid Status" };
             }
-        
         }
 
-        public async Task<Response> CancelReservation(string tableName, int reservationID)
+
+        public async Task<Response> CancelReservationAsync(string tableName, int reservationID)
         {
             Response response = new Response();
 
@@ -70,12 +59,12 @@ public class ReservationCancellation
 
             if (response.HasError == false)
             {
-                response.ErrorMessage += "- CancelReservation - command successful -";
+                response.ErrorMessage += "- CancelReservationAsync - command successful -";
                 response.HasError = false;
             }
             else
             {
-                response.ErrorMessage += $"- CancelReservation - command : {updateCommand.CommandText} not successful -";
+                response.ErrorMessage += $"- CancelReservationAsync - command : {updateCommand.CommandText} not successful -";
                 response.HasError = true;
 
             }

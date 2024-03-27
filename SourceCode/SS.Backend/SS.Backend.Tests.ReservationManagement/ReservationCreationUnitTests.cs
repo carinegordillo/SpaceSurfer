@@ -10,11 +10,11 @@ using Microsoft.Data.SqlClient;
 namespace SS.Backend.Tests.ReservationManagement{
 
     [TestClass]
-    public class ReservationCreationUnitTests
+    public class ReservationCreatorServiceUnitTests
     {
         private SqlDAO _sqlDao;
         private ConfigService _configService;
-        private ReservationCreation  _reservationcreationService;
+        private ReservationCreatorService  _ReservationCreatorServiceService;
 
         private ReservationValidationService _reservationValidationService;
 
@@ -34,7 +34,7 @@ namespace SS.Backend.Tests.ReservationManagement{
 
             _reservationValidationService = new ReservationValidationService();
 
-            _reservationcreationService = new ReservationCreation(_sqlDao, _reservationValidationService);
+            _ReservationCreatorServiceService = new ReservationCreatorService(_sqlDao, _reservationValidationService);
 
 
         }
@@ -52,14 +52,14 @@ namespace SS.Backend.Tests.ReservationManagement{
                 FloorPlanID = 1,
                 SpaceID = "Space101",
                 ReservationDate = DateTime.Parse("2022-01-01"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), // 1:00 PM as TimeSpan
-                ReservationEndTime = TimeSpan.Parse("15:00"), // 2:00 PM as TimeSpan
+                ReservationStartTime = TimeSpan.Parse("13:00"), 
+                ReservationEndTime = TimeSpan.Parse("15:00"), 
                 Status = ReservationStatus.Active
             };
 
 
             // Act
-            var response = await _reservationcreationService.CreateReservationWithAutoID(tableName,userReservationsModel);
+            var response = await _ReservationCreatorServiceService.CreateReservationWithAutoIDAsync(tableName,userReservationsModel);
             Console.WriteLine(response.ErrorMessage);
             
             // Assert
@@ -67,7 +67,7 @@ namespace SS.Backend.Tests.ReservationManagement{
         }
 
         [TestMethod]
-        public async Task CheckConflictingReservationsTest()
+        public async Task CheckConflictingReservationsAsyncTest()
         {
             Response response = new Response();
 
@@ -78,13 +78,13 @@ namespace SS.Backend.Tests.ReservationManagement{
                 FloorPlanID = 3,
                 SpaceID = "SPACE302",
                 ReservationDate = DateTime.Parse("2023-01-01"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), // 1:00 PM as TimeSpan
-                ReservationEndTime = TimeSpan.Parse("15:00"), // 2:00 PM as TimeSpan
+                ReservationStartTime = TimeSpan.Parse("13:00"), 
+                ReservationEndTime = TimeSpan.Parse("15:00"), 
                 Status = ReservationStatus.Active
             };
 
             // Act 1: Create the first reservation
-            response = await _reservationcreationService.CreateReservationWithAutoID(tableName, reservation1);
+            response = await _ReservationCreatorServiceService.CreateReservationWithAutoIDAsync(tableName, reservation1);
             Console.WriteLine(response.ErrorMessage);
             Assert.IsFalse(response.HasError);
 
@@ -95,13 +95,13 @@ namespace SS.Backend.Tests.ReservationManagement{
                 FloorPlanID = 3,
                 SpaceID = "Space302",
                 ReservationDate = DateTime.Parse("2023-01-01"),
-                ReservationStartTime = TimeSpan.Parse("14:00"), // 1:00 PM as TimeSpan
-                ReservationEndTime = TimeSpan.Parse("16:00"), // 2:00 PM as TimeSpan 
+                ReservationStartTime = TimeSpan.Parse("14:00"), 
+                ReservationEndTime = TimeSpan.Parse("16:00"),
                 Status = ReservationStatus.Active
             };
 
             // Act 2 Check for conflicts before creating the second reservation
-            response = await _reservationcreationService.CheckConflictingReservations(reservation2.FloorPlanID, reservation2.SpaceID, reservation2.ReservationStartTime, reservation2.ReservationEndTime);
+            response = await _ReservationCreatorServiceService.CheckConflictingReservationsAsync(reservation2.FloorPlanID, reservation2.SpaceID, reservation2.ReservationStartTime, reservation2.ReservationEndTime);
             Console.WriteLine(response.ErrorMessage);
             
             // Assert Expect a conflict
@@ -109,7 +109,7 @@ namespace SS.Backend.Tests.ReservationManagement{
         }
 
         [TestMethod]
-        public async Task CheckConflictingReservationsTestNoConflict()
+        public async Task CheckConflictingReservationsAsyncTestNoConflict()
         {
             Response response = new Response();
 
@@ -120,13 +120,13 @@ namespace SS.Backend.Tests.ReservationManagement{
                 FloorPlanID = 3,
                 SpaceID = "SPACE302",
                 ReservationDate = DateTime.Parse("2025-03-01"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), // 1:00 PM as TimeSpan
-                ReservationEndTime = TimeSpan.Parse("14:00"), // 2:00 PM as TimeSpan
+                ReservationStartTime = TimeSpan.Parse("13:00"), 
+                ReservationEndTime = TimeSpan.Parse("14:00"), 
                 Status = ReservationStatus.Active
             };
 
             // Act 1: Create the first reservation
-            response = await _reservationcreationService.CreateReservationWithAutoID(tableName, reservation1);
+            response = await _ReservationCreatorServiceService.CreateReservationWithAutoIDAsync(tableName, reservation1);
             Console.WriteLine(response.ErrorMessage);
             Assert.IsFalse(response.HasError);
 
@@ -143,7 +143,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             };
 
             // Act 2 Check for conflicts before creating the second reservation
-            response = await _reservationcreationService.CheckConflictingReservations(reservation2.FloorPlanID, reservation2.SpaceID, reservation2.ReservationStartTime, reservation2.ReservationEndTime);
+            response = await _ReservationCreatorServiceService.CheckConflictingReservationsAsync(reservation2.FloorPlanID, reservation2.SpaceID, reservation2.ReservationStartTime, reservation2.ReservationEndTime);
             Console.WriteLine(response.ErrorMessage);
             
             // Assert Expect a conflict
@@ -167,7 +167,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             };
 
             // Act 1: Create the first reservation
-            response = await _reservationcreationService.ValidateWithinHours(reservation1.CompanyID, reservation1.ReservationStartTime, reservation1.ReservationEndTime);
+            response = await _ReservationCreatorServiceService.ValidateWithinHoursAsync(reservation1.CompanyID, reservation1.ReservationStartTime, reservation1.ReservationEndTime);
             Console.WriteLine(response.ErrorMessage);
             Assert.IsTrue(response.HasError);
         }
@@ -189,13 +189,13 @@ namespace SS.Backend.Tests.ReservationManagement{
             };
 
             // Act 1: Create the first reservation
-            response = await _reservationcreationService.ValidateWithinHours(reservation1.CompanyID, reservation1.ReservationStartTime, reservation1.ReservationEndTime);
+            response = await _ReservationCreatorServiceService.ValidateWithinHoursAsync(reservation1.CompanyID, reservation1.ReservationStartTime, reservation1.ReservationEndTime);
             Console.WriteLine(response.ErrorMessage);
             Assert.IsFalse(response.HasError);
         }
 
         [TestMethod]
-        public async Task ValidateReservationDuration_Test_Pass()
+        public async Task ValidateReservationDurationAsync_Test_Pass()
         {
             // Arrange
             UserReservationsModel userReservationsModel = new UserReservationsModel
@@ -204,13 +204,13 @@ namespace SS.Backend.Tests.ReservationManagement{
                 FloorPlanID = 2,
                 SpaceID = "SPACE202",
                 ReservationDate = DateTime.Parse("2026-01-01"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), // 1:00 PM as TimeSpan
-                ReservationEndTime = TimeSpan.Parse("14:00"), // 2:00 PM as TimeSpan
+                ReservationStartTime = TimeSpan.Parse("13:00"), 
+                ReservationEndTime = TimeSpan.Parse("14:00"), 
                 Status = ReservationStatus.Active
             };
 
             // Act
-            var response = await _reservationcreationService.ValidateReservationDuration(userReservationsModel);
+            var response = await _ReservationCreatorServiceService.ValidateReservationDurationAsync(userReservationsModel);
 
             // Assert
             Console.WriteLine(response.ErrorMessage);
@@ -218,7 +218,7 @@ namespace SS.Backend.Tests.ReservationManagement{
         }
 
         [TestMethod]
-        public async Task ValidateReservationDuration_Test_Fail()
+        public async Task ValidateReservationDurationAsync_Test_Fail()
         {
             // Arrange
             UserReservationsModel userReservationsModel = new UserReservationsModel
@@ -232,7 +232,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             };
 
             // Act
-            var response = await _reservationcreationService.ValidateReservationDuration(userReservationsModel);
+            var response = await _ReservationCreatorServiceService.ValidateReservationDurationAsync(userReservationsModel);
 
             // Assert
             Console.WriteLine(response.ErrorMessage);
@@ -256,7 +256,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             TimeUnit unitOfTime = TimeUnit.Days;
 
             // Act
-            var response =  _reservationcreationService.validateReservationLeadTime(userReservationsModel, maxLeadTime, unitOfTime);
+            var response =  _ReservationCreatorServiceService.ValidateReservationLeadTime(userReservationsModel, maxLeadTime, unitOfTime);
 
             // Assert
             Console.WriteLine(response.ErrorMessage);
@@ -280,15 +280,12 @@ namespace SS.Backend.Tests.ReservationManagement{
             TimeUnit unitOfTime = TimeUnit.Days;
 
             // Act
-            var response =  _reservationcreationService.validateReservationLeadTime(userReservationModel, maxLeadTime, unitOfTime);
+            var response =  _ReservationCreatorServiceService.ValidateReservationLeadTime(userReservationModel, maxLeadTime, unitOfTime);
 
             // Assert
             Console.WriteLine(response.ErrorMessage);
             Assert.IsTrue(response.HasError);
         }
-
-
-
 
     }
        
