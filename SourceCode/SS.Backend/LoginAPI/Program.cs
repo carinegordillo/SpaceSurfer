@@ -17,6 +17,7 @@ builder.Services.AddControllers();
 var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
 var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
 
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
  .AddJwtBearer(options =>
  {
@@ -32,7 +33,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
      };
  });
 
-builder.Services.AddAuthorization();
+//builder.Services.AddAuthorization();
+
 
 var baseDirectory = AppContext.BaseDirectory;
 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
@@ -101,9 +103,12 @@ app.Use(async (context, next) =>
 
 app.UseStaticFiles();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
-app.UseAuthorization();
+//app.UseAuthorization();
+
+//app.UseMiddleware<AuthenticationMiddleware>();
+app.UseMiddleware<AuthorizationMiddleware>();
 
 app.MapControllers();
 

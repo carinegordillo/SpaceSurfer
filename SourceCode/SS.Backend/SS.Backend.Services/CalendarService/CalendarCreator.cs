@@ -34,6 +34,10 @@ namespace SS.Backend.Services.CalendarService
             }
         }
 
+        void ICalendarCreator.CreateCalendar(ReservationInfo reservationInfo)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

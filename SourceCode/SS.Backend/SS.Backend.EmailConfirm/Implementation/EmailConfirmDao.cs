@@ -23,11 +23,14 @@ namespace SS.Backend.EmailConfirm
                 {"ReservationID", ReservationID}
             };
 
-            var cmd = builder.BeginSelectAll()
-                            .From("Reservations")
-                            .Where("reservationID = @ReservationID")
+            var cmd = builder.BeginSelect()
+                            .SelectColumns("r.*", "cp.address AS CompanyAddress")
+                            .From("Reservations AS r")
+                            .Join("companyProfile AS cp", "r.companyID", "cp.companyID")
+                            .WhereMuliple("reservationID = @ReservationID")
                             .AddParameters(parameters)
                             .Build();
+
 
             response = await _sqlDao.ReadSqlResult(cmd);
 
@@ -80,7 +83,6 @@ namespace SS.Backend.EmailConfirm
 
             var parameters = new Dictionary<string, object>
             {
-                {"ConfirmStatus", 'Yes'}
                 {"ReservationID", ReservationID}
             };
 

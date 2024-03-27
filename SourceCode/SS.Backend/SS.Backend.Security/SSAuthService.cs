@@ -486,5 +486,45 @@ namespace SS.Backend.Security
             return expirationTime;
         }
 
+        public SSPrincipal ValidateToken(string accessToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes("g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn");
+            var signingKey = new SymmetricSecurityKey(key);
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = signingKey,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            try
+            {
+                SecurityToken validatedToken;
+                var principal = tokenHandler.ValidateToken(accessToken, validationParameters, out validatedToken);
+
+                var jwtToken = validatedToken as JwtSecurityToken;
+                if (jwtToken == null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    throw new SecurityTokenException("Invalid token");
+                }
+
+                // Use the existing method to map ClaimsPrincipal to SSPrincipal
+                var ssPrincipal = MapToSSPrincipal(principal);
+
+#pragma warning disable CS8603 // Possible null reference return.
+                return ssPrincipal;
+#pragma warning restore CS8603 // Possible null reference return.
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception if needed
+                throw new SecurityTokenException("Token validation failed", ex);
+            }
+        }
+
+
     }
 }
