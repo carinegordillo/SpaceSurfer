@@ -109,36 +109,37 @@ namespace SS.Backend.ReservationManagement{
             
             Response result = new Response();
 
-            string query = @"
-                SELECT reservationID
-                FROM dbo.NewAutoIDReservations 
-                WHERE floorPlanID = @floorPlanID AND spaceID = @spaceID AND status = 'Active'
-                AND (reservationStartTime < @reservationEndTime AND reservationEndTime > @reservationStartTime)";
+            Dictionary<string, object> reservationParameters = new Dictionary<string, object>
+            {
+                { "companyID", userReservationsModel.CompanyID },
+                {"floorPlanID", userReservationsModel.FloorPlanID },
+                { "spaceID", userReservationsModel.SpaceID },
+                { "proposedStartDateTime", userReservationsModel.ReservationStartTime },
+                { "proposedEndDateTime", userReservationsModel.ReservationEndTime }
+            };
 
-  
-            SqlCommand command = new SqlCommand(query);
-            command.Parameters.AddWithValue("@floorPlanID", userReservationsModel.FloorPlanID);
-            command.Parameters.AddWithValue("@spaceID", userReservationsModel.SpaceID);
-            command.Parameters.AddWithValue("@reservationStartTime", userReservationsModel.ReservationStartTime);
-            command.Parameters.AddWithValue("@reservationEndTime", userReservationsModel.ReservationEndTime);
-
+            CustomSqlCommandBuilder commandBuilder = new CustomSqlCommandBuilder();
+            SqlCommand command = commandBuilder.BeginStoredProcedure("CheckConflictingReservations")
+                                        .AddParameters(reservationParameters)
+                                        .Build();
             try
             {
-                // Assuming _sqldao.ReadSqlResult executes the command and returns a DataTable
+    
                 result = await _sqldao.ReadSqlResult(command);
+
 
                 bool isValid =  _reservationValidationService.HasConflictingReservations(result);
 
                 if (isValid == true)
                 {
-                    // Conflicts exist
-                    result.ErrorMessage = "Conflict with existing reservation.";
+                    
+                    result.ErrorMessage += "Conflict with existing reservation.";
                     result.HasError = true; 
                 }
                 else
-                {
-                    // No conflicts
-                    result.ErrorMessage = "No conflicting reservations.";
+                { Console.WriteLine(command.CommandText); 
+                    
+                    result.ErrorMessage += $"No conflicting reservations: { command.CommandText}";
                     result.HasError = false;
                 }
             }

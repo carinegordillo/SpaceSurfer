@@ -18,7 +18,10 @@ namespace SS.Backend.Tests.ReservationManagement{
 
         private ReservationValidationService _reservationValidationService;
 
-        string tableName = "dbo.NewAutoIDReservations";
+        string AUTO_ID_TABLE = "dbo.NewAutoIDReservations";
+
+
+
 
         
         
@@ -56,7 +59,7 @@ namespace SS.Backend.Tests.ReservationManagement{
                 Status = ReservationStatus.Active
             };
             // Act
-            var response = await _ReservationCreatorServiceService.CreateReservationWithAutoIDAsync(tableName,userReservationsModel);
+            var response = await _ReservationCreatorServiceService.CreateReservationWithAutoIDAsync(AUTO_ID_TABLE,userReservationsModel);
             Console.WriteLine(response.ErrorMessage);
             
             // Assert
@@ -64,11 +67,11 @@ namespace SS.Backend.Tests.ReservationManagement{
         }
 
         [TestMethod]
-        public async Task CheckConflictingReservationsAsyncTest()
+        public async Task CheckConflictingReservationsAsyncTestConflict()
         {
             Response response = new Response();
 
-            // First reservation
+
             UserReservationsModel reservation1 = new UserReservationsModel
             {
                 CompanyID = 2,
@@ -80,11 +83,11 @@ namespace SS.Backend.Tests.ReservationManagement{
             };
 
             // Act 1: Create the first reservation
-            response = await _ReservationCreatorServiceService.CreateReservationWithAutoIDAsync(tableName, reservation1);
+            response = await _ReservationCreatorServiceService.CreateReservationWithAutoIDAsync(AUTO_ID_TABLE, reservation1);
             Console.WriteLine(response.ErrorMessage);
             Assert.IsFalse(response.HasError);
 
-            // Second reservation which overlaps the first one
+            
             UserReservationsModel reservation2 = new UserReservationsModel
             {
                 CompanyID = 2,
@@ -95,13 +98,12 @@ namespace SS.Backend.Tests.ReservationManagement{
                 Status = ReservationStatus.Active
             };
 
-            // Act 2 Check for conflicts before creating the second reservation
             response = await _ReservationCreatorServiceService.CheckConflictingReservationsAsync(reservation2);
             Console.WriteLine(response.ErrorMessage);
-            
-            // Assert Expect a conflict
             Assert.IsTrue(response.HasError);
+
         }
+
 
         [TestMethod]
         public async Task CheckConflictingReservationsAsyncTestNoConflict()
@@ -120,7 +122,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             };
 
             // Act 1: Create the first reservation
-            response = await _ReservationCreatorServiceService.CreateReservationWithAutoIDAsync(tableName, reservation1);
+            response = await _ReservationCreatorServiceService.CreateReservationWithAutoIDAsync(AUTO_ID_TABLE, reservation1);
             Console.WriteLine(response.ErrorMessage);
             Assert.IsFalse(response.HasError);
 

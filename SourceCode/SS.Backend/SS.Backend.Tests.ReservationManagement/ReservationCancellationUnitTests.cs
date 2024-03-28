@@ -21,7 +21,7 @@ namespace SS.Backend.Tests.ReservationManagement{
 
         //using dbo.TestReservtaions becaus it allows manual id insertion
 
-        string tableName = "dbo.NewManualIDReservations";
+        string MANUAL_ID_TABLE = "dbo.NewManualIDReservations";
 
         
         
@@ -63,13 +63,13 @@ namespace SS.Backend.Tests.ReservationManagement{
             };
             
             
-           reservtaionCreationResult = await _ReservationCreatorServiceService.CreateReservationWithManualIDAsync(tableName,reservationToBeCancelled);
+           reservtaionCreationResult = await _ReservationCreatorServiceService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE,reservationToBeCancelled);
            Console.WriteLine(reservtaionCreationResult.ErrorMessage);
 
             Assert.IsFalse(reservtaionCreationResult.HasError);
 
             // cancel reservtion
-            reservtaionCancellationResult = await _ReservationCancellationServiceService.CancelReservationAsync(tableName, reservationToBeCancelled.ReservationID.Value);
+            reservtaionCancellationResult = await _ReservationCancellationServiceService.CancelReservationAsync(MANUAL_ID_TABLE, reservationToBeCancelled.ReservationID.Value);
             Assert.IsFalse(reservtaionCancellationResult.HasError);
             Assert.IsTrue(reservtaionCancellationResult.RowsAffected > 0);
             
@@ -94,7 +94,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             };
 
             // cancel reservtion
-            reservtaionCancellationResult = await _ReservationCancellationServiceService.CancelReservationAsync(tableName, reservationToBeCancelled.ReservationID.Value);
+            reservtaionCancellationResult = await _ReservationCancellationServiceService.CancelReservationAsync(MANUAL_ID_TABLE, reservationToBeCancelled.ReservationID.Value);
             Assert.IsTrue(reservtaionCancellationResult.HasError);
             Assert.IsTrue(reservtaionCancellationResult.RowsAffected == 0);
             
@@ -117,7 +117,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             };
 
         // Act 1: Create the first reservation
-        reservation1Response = await _ReservationCreatorServiceService.CreateReservationWithManualIDAsync(tableName, reservation1);
+        reservation1Response = await _ReservationCreatorServiceService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE, reservation1);
         Console.WriteLine(reservation1Response.ErrorMessage);
         Assert.IsFalse(reservation1Response.HasError);
 
@@ -132,13 +132,13 @@ namespace SS.Backend.Tests.ReservationManagement{
             Status = ReservationStatus.Active
         };
 
-        var reservation2Response = await _ReservationCreatorServiceService.CreateReservationWithManualIDAsync(tableName, reservation2);
+        var reservation2Response = await _ReservationCreatorServiceService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE, reservation2);
 
         Assert.IsFalse(reservation2Response.HasError);
 
         // Update reservation statuses
         ReservationStatusUpdater reservationStatusUpdater = new ReservationStatusUpdater(_sqlDao);
-        var response = await reservationStatusUpdater.UpdateReservtionStatuses(tableName);
+        var response = await reservationStatusUpdater.UpdateReservtionStatuses(MANUAL_ID_TABLE);
         Console.WriteLine(response.ErrorMessage);
         Assert.IsFalse(response.HasError); 
     }
@@ -154,8 +154,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 CompanyID = 2,
                 FloorPlanID = 3,
                 SpaceID = "SPACE302",
-                ReservationStartTime = new DateTime(2024, 02, 23, 11, 00, 00), // Jan 1, 2022, 1:00 PM
-                ReservationEndTime = new DateTime(2024, 02, 23, 12, 00, 00), // Jan 1, 2022, 3:00 PM
+                ReservationStartTime = new DateTime(2024, 02, 23, 11, 00, 00),
+                ReservationEndTime = new DateTime(2024, 02, 23, 12, 00, 00), 
                 Status = ReservationStatus.Active
             };
 
@@ -215,7 +215,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             var testReservtaionIds = new List<int> { 112, 578, 927, 6765, 90};
             var commandBuilder = new CustomSqlCommandBuilder();
 
-            var deleteCommand = commandBuilder.BeginDelete(tableName)
+            var deleteCommand = commandBuilder.BeginDelete(MANUAL_ID_TABLE)
                                             .Where($"reservationID IN ({string.Join(",", testReservtaionIds)})")
                                             .Build();
                                             
