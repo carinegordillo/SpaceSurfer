@@ -14,10 +14,12 @@ namespace SS.Backend.Tests.ReservationManagement{
     {
         private SqlDAO _sqlDao;
         private ConfigService _configService;
-        private ReservationCreatorService  _ReservationCreatorServiceService;
-        private ReservationCancellationService _ReservationCancellationServiceService;
+        private ReservationCreatorService  _reservationCreatorService;
+        private ReservationCancellationService _reservationCancellationService;
 
         private ReservationValidationService _reservationValidationService;
+
+        private ReservationManagementRepository _reservationManagementRepository;
 
         //using dbo.TestReservtaions becaus it allows manual id insertion
 
@@ -35,10 +37,13 @@ namespace SS.Backend.Tests.ReservationManagement{
             _configService = new ConfigService(configFilePath);
             _sqlDao = new SqlDAO(_configService);
 
-            _reservationValidationService = new ReservationValidationService();
+            _reservationManagementRepository = new ReservationManagementRepository(_sqlDao);
 
-            _ReservationCreatorServiceService = new ReservationCreatorService(_sqlDao, _reservationValidationService);
-            _ReservationCancellationServiceService = new ReservationCancellationService(_sqlDao);
+            _reservationValidationService = new ReservationValidationService(_reservationManagementRepository);
+
+            _reservationCreatorService = new ReservationCreatorService(_reservationManagementRepository, _reservationValidationService);
+
+            _reservationCancellationService = new ReservationCancellationService(_reservationManagementRepository);
 
 
         }
@@ -49,7 +54,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             // Arrange
 
             Response reservtaionCreationResult = new Response();
-            Response reservtaionCancellationResult = new Response();
+            Response reservationCancellationResult = new Response();
 
             UserReservationsModel reservationToBeCancelled = new UserReservationsModel
             {
@@ -63,15 +68,14 @@ namespace SS.Backend.Tests.ReservationManagement{
             };
             
             
-           reservtaionCreationResult = await _ReservationCreatorServiceService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE,reservationToBeCancelled);
-           Console.WriteLine(reservtaionCreationResult.ErrorMessage);
-
+            reservtaionCreationResult = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE,reservationToBeCancelled);
             Assert.IsFalse(reservtaionCreationResult.HasError);
 
             // cancel reservtion
-            reservtaionCancellationResult = await _ReservationCancellationServiceService.CancelReservationAsync(MANUAL_ID_TABLE, reservationToBeCancelled.ReservationID.Value);
-            Assert.IsFalse(reservtaionCancellationResult.HasError);
-            Assert.IsTrue(reservtaionCancellationResult.RowsAffected > 0);
+            reservationCancellationResult = await _reservationCancellationService.CancelReservationAsync(MANUAL_ID_TABLE, reservationToBeCancelled.ReservationID.Value);
+            Console.WriteLine(reservationCancellationResult.ErrorMessage);
+            Assert.IsFalse(reservationCancellationResult.HasError);
+            Assert.IsTrue(reservationCancellationResult.RowsAffected > 0);
             
         }
 
@@ -94,7 +98,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             };
 
             // cancel reservtion
-            reservtaionCancellationResult = await _ReservationCancellationServiceService.CancelReservationAsync(MANUAL_ID_TABLE, reservationToBeCancelled.ReservationID.Value);
+            reservtaionCancellationResult = await _reservationCancellationService.CancelReservationAsync(MANUAL_ID_TABLE, reservationToBeCancelled.ReservationID.Value);
             Assert.IsTrue(reservtaionCancellationResult.HasError);
             Assert.IsTrue(reservtaionCancellationResult.RowsAffected == 0);
             
@@ -117,7 +121,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             };
 
         // Act 1: Create the first reservation
-        reservation1Response = await _ReservationCreatorServiceService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE, reservation1);
+        reservation1Response = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE, reservation1);
         Console.WriteLine(reservation1Response.ErrorMessage);
         Assert.IsFalse(reservation1Response.HasError);
 
@@ -132,12 +136,12 @@ namespace SS.Backend.Tests.ReservationManagement{
             Status = ReservationStatus.Active
         };
 
-        var reservation2Response = await _ReservationCreatorServiceService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE, reservation2);
+        var reservation2Response = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE, reservation2);
 
         Assert.IsFalse(reservation2Response.HasError);
 
         // Update reservation statuses
-        ReservationStatusUpdater reservationStatusUpdater = new ReservationStatusUpdater(_sqlDao);
+        ReservationStatusUpdater reservationStatusUpdater = new ReservationStatusUpdater(_reservationManagementRepository);
         var response = await reservationStatusUpdater.UpdateReservtionStatuses(MANUAL_ID_TABLE);
         Console.WriteLine(response.ErrorMessage);
         Assert.IsFalse(response.HasError); 
@@ -159,7 +163,7 @@ namespace SS.Backend.Tests.ReservationManagement{
                 Status = ReservationStatus.Active
             };
 
-            reservationCheckerResult = _ReservationCancellationServiceService.checkReservationStatus(activeReservation);
+            reservationCheckerResult = _reservationCancellationService.checkReservationStatus(activeReservation);
             Assert.IsFalse(reservationCheckerResult.HasError);
             Assert.AreEqual("Reservation is active", reservationCheckerResult.ErrorMessage);
         }
@@ -180,7 +184,7 @@ namespace SS.Backend.Tests.ReservationManagement{
                 Status = ReservationStatus.Cancelled
             };
 
-            reservationCheckerResult = _ReservationCancellationServiceService.checkReservationStatus(cancelledReservation);
+            reservationCheckerResult = _reservationCancellationService.checkReservationStatus(cancelledReservation);
             Assert.IsTrue(reservationCheckerResult.HasError);
             Assert.AreEqual("Reservation has already been cancelled", reservationCheckerResult.ErrorMessage);
             
@@ -202,7 +206,7 @@ namespace SS.Backend.Tests.ReservationManagement{
                 Status = ReservationStatus.Passed
             };
 
-            reservationCheckerResult = _ReservationCancellationServiceService.checkReservationStatus(passedReservation);
+            reservationCheckerResult = _reservationCancellationService.checkReservationStatus(passedReservation);
             Assert.IsFalse(reservationCheckerResult.HasError);
             Assert.AreEqual("Reservation date has passed", reservationCheckerResult.ErrorMessage);
             
@@ -212,7 +216,7 @@ namespace SS.Backend.Tests.ReservationManagement{
         public void Cleanup()
         {
 
-            var testReservtaionIds = new List<int> { 112, 578, 927, 6765, 90};
+            var testReservtaionIds = new List<int> { 112, 927, 6765};
             var commandBuilder = new CustomSqlCommandBuilder();
 
             var deleteCommand = commandBuilder.BeginDelete(MANUAL_ID_TABLE)

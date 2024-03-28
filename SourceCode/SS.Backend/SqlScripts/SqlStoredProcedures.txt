@@ -1,3 +1,4 @@
+-------------------------------------------------
 CREATE PROCEDURE CheckConflictingReservations
     @companyID INT,
     @floorPlanID INT,
@@ -20,3 +21,14 @@ BEGIN
     AND (@reservationIdToExclude IS NULL OR reservationID != @reservationIdToExclude);
 END;
 GO
+-------------------------------------------------
+CREATE PROCEDURE UpdateReservationStatus
+AS
+BEGIN
+    UPDATE dbo.NewAutoIDReservations
+    SET Status = 'Passed'
+    WHERE reservationEndTime < SYSDATETIME()
+    AND Status = 'Active'
+END
+GO
+-------------------------------------------------

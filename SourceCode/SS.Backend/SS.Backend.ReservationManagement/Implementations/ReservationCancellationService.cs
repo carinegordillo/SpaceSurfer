@@ -8,11 +8,12 @@ namespace SS.Backend.ReservationManagement{
 
 public class ReservationCancellationService : IReservationCancellationService
 {
-    private ISqlDAO _sqldao;
+        private IReservationManagementRepository _reservationManagementRepository;
 
-        public ReservationCancellationService(ISqlDAO sqldao)
+        public ReservationCancellationService(IReservationManagementRepository reservationManagementRepository)
         {
-            _sqldao = sqldao;
+            _reservationManagementRepository = reservationManagementRepository;
+            
         }
 
         public Response checkReservationStatus(UserReservationsModel reservation)
@@ -55,16 +56,18 @@ public class ReservationCancellationService : IReservationCancellationService
                                             .AddParameters(parameters)
                                             .Build();
 
-            response = await _sqldao.SqlRowsAffected(updateCommand);
+            response = await _reservationManagementRepository.ExecuteUpdateReservationTables(updateCommand);
+
+            
 
             if (response.HasError == false)
             {
-                response.ErrorMessage += "- CancelReservationAsync - command successful -";
+                response.ErrorMessage += $"- CancelReservationAsync - command successful {response.ErrorMessage} -";
                 response.HasError = false;
             }
             else
             {
-                response.ErrorMessage += $"- CancelReservationAsync - command : {updateCommand.CommandText} not successful -";
+                response.ErrorMessage += $"- CancelReservationAsync - command : {updateCommand.CommandText} not successful - {response.ErrorMessage} -";
                 response.HasError = true;
 
             }

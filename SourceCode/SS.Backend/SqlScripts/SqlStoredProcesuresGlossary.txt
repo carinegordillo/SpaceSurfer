@@ -1,4 +1,5 @@
 
+
 CheckConflictingReservations:
     This stored procedure checks if there are any conflicting reservations for a given floor plan, space, and time range.
     It returns the reservation IDs of the conflicting reservations.
