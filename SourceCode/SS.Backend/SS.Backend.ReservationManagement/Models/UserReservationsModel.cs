@@ -13,9 +13,8 @@ namespace SS.Backend.ReservationManagement
         public int CompanyID { get; set; }
         public int FloorPlanID { get; set; }
         public string SpaceID { get; set; }
-        public DateTime ReservationDate { get; set; }
-        public TimeSpan ReservationStartTime { get; set; }
-        public TimeSpan ReservationEndTime { get; set; }
+        public DateTime ReservationStartTime { get; set; }
+        public DateTime ReservationEndTime { get; set; }
         public ReservationStatus Status { get; set; }
     }
 }

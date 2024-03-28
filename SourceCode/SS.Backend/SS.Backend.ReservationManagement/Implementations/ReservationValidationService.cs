@@ -32,15 +32,16 @@ namespace SS.Backend.ReservationManagement{
 
 
         /** check if the reservtaion is within company hours**/
-        public bool IsWithinHours(Response result, TimeSpan proposedStart, TimeSpan proposedEnd){
+        public bool IsWithinHours(Response result, DateTime proposedStart, DateTime proposedEnd){
             
-
+                TimeSpan proposedStartTime = proposedStart.TimeOfDay;
+                TimeSpan proposedEndTime = proposedEnd.TimeOfDay;
                     
                 TimeSpan openingHours = (TimeSpan)(result.ValuesRead.Rows[0]["openingHours"]); 
                 TimeSpan closingHours = (TimeSpan)(result.ValuesRead.Rows[0]["closingHours"]);
                 
                 
-                if (proposedStart >= openingHours && proposedEnd <= closingHours)
+                if (proposedStartTime >= openingHours && proposedEndTime <= closingHours)
                 {
                     return true;
                 }
@@ -112,9 +113,8 @@ namespace SS.Backend.ReservationManagement{
                     throw new ArgumentException("Unsupported time unit");
             }
 
-            var reservationDateTime = userReservationsModel.ReservationDate.Date + userReservationsModel.ReservationStartTime;
 
-            if (reservationDateTime <= maxLeadDateTime)
+            if (userReservationsModel.ReservationEndTime <= maxLeadDateTime)
             {
                 return true;
                 
