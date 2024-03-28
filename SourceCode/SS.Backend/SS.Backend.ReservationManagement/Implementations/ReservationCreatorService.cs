@@ -37,7 +37,6 @@ namespace SS.Backend.ReservationManagement{
                             { "companyID", userReservationsModel.CompanyID },
                             { "floorPlanID", userReservationsModel.FloorPlanID},
                             { "spaceID", userReservationsModel.SpaceID },
-                            { "reservationDate", userReservationsModel.ReservationDate},
                             { "reservationStartTime", userReservationsModel.ReservationStartTime },
                             { "reservationEndTime", userReservationsModel.ReservationEndTime },
                             { "status", userReservationsModel.Status.ToString()},
@@ -74,7 +73,6 @@ namespace SS.Backend.ReservationManagement{
                             { "companyID", userReservationsModel.CompanyID },
                             { "floorPlanID", userReservationsModel.FloorPlanID},
                             { "spaceID", userReservationsModel.SpaceID },
-                            { "reservationDate", userReservationsModel.ReservationDate},
                             { "reservationStartTime", userReservationsModel.ReservationStartTime },
                             { "reservationEndTime", userReservationsModel.ReservationEndTime },
                             { "status", userReservationsModel.Status.ToString()},
@@ -107,22 +105,22 @@ namespace SS.Backend.ReservationManagement{
 
 
 
-        public async Task<Response> CheckConflictingReservationsAsync(int floorPlanID, string spaceID, TimeSpan proposedStart, TimeSpan proposedEnd){
+        public async Task<Response> CheckConflictingReservationsAsync(UserReservationsModel userReservationsModel){
             
             Response result = new Response();
 
             string query = @"
                 SELECT reservationID
-                FROM dbo.Reservations 
+                FROM dbo.NewAutoIDReservations 
                 WHERE floorPlanID = @floorPlanID AND spaceID = @spaceID AND status = 'Active'
-              AND (reservationStartTime < @reservationEndTime AND reservationEndTime > @reservationStartTime)";
+                AND (reservationStartTime < @reservationEndTime AND reservationEndTime > @reservationStartTime)";
 
   
             SqlCommand command = new SqlCommand(query);
-            command.Parameters.AddWithValue("@floorPlanID", floorPlanID);
-            command.Parameters.AddWithValue("@spaceID", spaceID);
-            command.Parameters.AddWithValue("@reservationStartTime", proposedStart);
-            command.Parameters.AddWithValue("@reservationEndTime", proposedEnd);
+            command.Parameters.AddWithValue("@floorPlanID", userReservationsModel.FloorPlanID);
+            command.Parameters.AddWithValue("@spaceID", userReservationsModel.SpaceID);
+            command.Parameters.AddWithValue("@reservationStartTime", userReservationsModel.ReservationStartTime);
+            command.Parameters.AddWithValue("@reservationEndTime", userReservationsModel.ReservationEndTime);
 
             try
             {
@@ -156,7 +154,7 @@ namespace SS.Backend.ReservationManagement{
 
 
         /** check if the reservtaion is within company hours**/
-        public async Task<Response> ValidateWithinHoursAsync(int companyID, TimeSpan proposedStart, TimeSpan proposedEnd){
+        public async Task<Response> ValidateWithinHoursAsync(int companyID, UserReservationsModel userReservationsModel){
             Response result = new Response();
 
             string query = @"
@@ -175,7 +173,7 @@ namespace SS.Backend.ReservationManagement{
                 if (result.ValuesRead.Rows.Count > 0)
                 {
                     
-                    bool isValid =  _reservationValidationService.IsWithinHours(result, proposedStart, proposedEnd);
+                    bool isValid =  _reservationValidationService.IsWithinHours(result, userReservationsModel.ReservationStartTime, userReservationsModel.ReservationEndTime);
                     
                     
                     if (isValid == true)

@@ -18,7 +18,7 @@ namespace SS.Backend.Tests.ReservationManagement{
 
         private ReservationValidationService _reservationValidationService;
 
-        string tableName = "dbo.Reservations";
+        string tableName = "dbo.NewAutoIDReservations";
 
         
         
@@ -51,13 +51,10 @@ namespace SS.Backend.Tests.ReservationManagement{
                 CompanyID = 1,
                 FloorPlanID = 1,
                 SpaceID = "Space101",
-                ReservationDate = DateTime.Parse("2022-01-01"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), 
-                ReservationEndTime = TimeSpan.Parse("15:00"), 
+                ReservationStartTime = new DateTime(2025, 01, 01, 13, 00, 00), // Jan 1, 2022, 1:00 PM
+                ReservationEndTime = new DateTime(2025, 01, 01, 15, 00, 00), // Jan 1, 2022, 3:00 PM
                 Status = ReservationStatus.Active
             };
-
-
             // Act
             var response = await _ReservationCreatorServiceService.CreateReservationWithAutoIDAsync(tableName,userReservationsModel);
             Console.WriteLine(response.ErrorMessage);
@@ -77,9 +74,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 CompanyID = 2,
                 FloorPlanID = 3,
                 SpaceID = "SPACE302",
-                ReservationDate = DateTime.Parse("2023-01-01"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), 
-                ReservationEndTime = TimeSpan.Parse("15:00"), 
+                ReservationStartTime = new DateTime(2023, 01, 01, 13, 00, 00), 
+                ReservationEndTime = new DateTime(2023, 01, 01, 15, 00, 00), 
                 Status = ReservationStatus.Active
             };
 
@@ -94,14 +90,13 @@ namespace SS.Backend.Tests.ReservationManagement{
                 CompanyID = 2,
                 FloorPlanID = 3,
                 SpaceID = "Space302",
-                ReservationDate = DateTime.Parse("2023-01-01"),
-                ReservationStartTime = TimeSpan.Parse("14:00"), 
-                ReservationEndTime = TimeSpan.Parse("16:00"),
+                ReservationStartTime = new DateTime(2023, 01, 01, 14, 00, 00), 
+                ReservationEndTime = new DateTime(2023, 01, 01, 16, 00, 00), 
                 Status = ReservationStatus.Active
             };
 
             // Act 2 Check for conflicts before creating the second reservation
-            response = await _ReservationCreatorServiceService.CheckConflictingReservationsAsync(reservation2.FloorPlanID, reservation2.SpaceID, reservation2.ReservationStartTime, reservation2.ReservationEndTime);
+            response = await _ReservationCreatorServiceService.CheckConflictingReservationsAsync(reservation2);
             Console.WriteLine(response.ErrorMessage);
             
             // Assert Expect a conflict
@@ -119,9 +114,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 CompanyID = 2,
                 FloorPlanID = 3,
                 SpaceID = "SPACE302",
-                ReservationDate = DateTime.Parse("2025-03-01"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), 
-                ReservationEndTime = TimeSpan.Parse("14:00"), 
+                ReservationStartTime = new DateTime(2025, 03, 01, 13, 00, 00), // Jan 1, 2022, 1:00 PM
+                ReservationEndTime = new DateTime(2025, 03, 01, 14, 00, 00), // Jan 1, 2022, 3:00 PM
                 Status = ReservationStatus.Active
             };
 
@@ -136,14 +130,13 @@ namespace SS.Backend.Tests.ReservationManagement{
                 CompanyID = 2,
                 FloorPlanID = 3,
                 SpaceID = "Space302",
-                ReservationDate = DateTime.Parse("2025-03-01"),
-                ReservationStartTime = TimeSpan.Parse("16:00"), // 1:00 PM as TimeSpan
-                ReservationEndTime = TimeSpan.Parse("18:00"), // 2:00 PM as TimeSpan
+                ReservationStartTime = new DateTime(2025, 03, 01, 16, 00, 00), 
+                ReservationEndTime = new DateTime(2025, 03, 01, 18, 00, 00), 
                 Status = ReservationStatus.Active
             };
 
             // Act 2 Check for conflicts before creating the second reservation
-            response = await _ReservationCreatorServiceService.CheckConflictingReservationsAsync(reservation2.FloorPlanID, reservation2.SpaceID, reservation2.ReservationStartTime, reservation2.ReservationEndTime);
+            response = await _ReservationCreatorServiceService.CheckConflictingReservationsAsync(reservation2);
             Console.WriteLine(response.ErrorMessage);
             
             // Assert Expect a conflict
@@ -160,14 +153,13 @@ namespace SS.Backend.Tests.ReservationManagement{
                 CompanyID = 1,
                 FloorPlanID = 2,
                 SpaceID = "SPACE202",
-                ReservationDate = DateTime.Parse("2023-01-01"),
-                ReservationStartTime = TimeSpan.Parse("07:00"), // 1:00 PM as TimeSpan
-                ReservationEndTime = TimeSpan.Parse("08:00"), // 2:00 PM as TimeSpan
+                ReservationStartTime = new DateTime(2023, 01, 01, 07, 00, 00), // Jan 1, 2022, 1:00 PM
+                ReservationEndTime = new DateTime(2023, 01, 01, 08, 00, 00), // Jan 1, 2022, 3:00 PM
                 Status = ReservationStatus.Active
             };
 
             // Act 1: Create the first reservation
-            response = await _ReservationCreatorServiceService.ValidateWithinHoursAsync(reservation1.CompanyID, reservation1.ReservationStartTime, reservation1.ReservationEndTime);
+            response = await _ReservationCreatorServiceService.ValidateWithinHoursAsync(reservation1.CompanyID, reservation1);
             Console.WriteLine(response.ErrorMessage);
             Assert.IsTrue(response.HasError);
         }
@@ -182,14 +174,13 @@ namespace SS.Backend.Tests.ReservationManagement{
                 CompanyID = 1,
                 FloorPlanID = 2,
                 SpaceID = "SPACE202",
-                ReservationDate = DateTime.Parse("2023-01-01"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), // 1:00 PM as TimeSpan
-                ReservationEndTime = TimeSpan.Parse("14:00"), // 2:00 PM as TimeSpan
+                ReservationStartTime = new DateTime(2023, 01, 01, 13, 00, 00), // Jan 1, 2022, 1:00 PM
+                ReservationEndTime = new DateTime(2023, 01, 01, 14, 00, 00), // Jan 1, 2022, 3:00 PM
                 Status = ReservationStatus.Active
             };
 
             // Act 1: Create the first reservation
-            response = await _ReservationCreatorServiceService.ValidateWithinHoursAsync(reservation1.CompanyID, reservation1.ReservationStartTime, reservation1.ReservationEndTime);
+            response = await _ReservationCreatorServiceService.ValidateWithinHoursAsync(reservation1.CompanyID, reservation1);
             Console.WriteLine(response.ErrorMessage);
             Assert.IsFalse(response.HasError);
         }
@@ -203,9 +194,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 CompanyID = 1,
                 FloorPlanID = 2,
                 SpaceID = "SPACE202",
-                ReservationDate = DateTime.Parse("2026-01-01"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), 
-                ReservationEndTime = TimeSpan.Parse("14:00"), 
+                ReservationStartTime = new DateTime(2026, 01, 01, 07, 00, 00), 
+                ReservationEndTime = new DateTime(2026, 01, 01, 08, 00, 00), 
                 Status = ReservationStatus.Active
             };
 
@@ -226,9 +216,9 @@ namespace SS.Backend.Tests.ReservationManagement{
                 CompanyID = 1,
                 FloorPlanID = 2,
                 SpaceID = "SPACE202",
-                ReservationDate = DateTime.Parse("2026-01-01"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), 
-                ReservationEndTime = TimeSpan.Parse("18:00"), 
+                ReservationStartTime = new DateTime(2026, 01, 01, 13, 00, 00), 
+                ReservationEndTime = new DateTime(2026, 01, 01, 18, 00, 00), 
+                Status = ReservationStatus.Active
             };
 
             // Act
@@ -248,9 +238,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 CompanyID = 1,
                 FloorPlanID = 2,
                 SpaceID = "SPACE202",
-                ReservationDate = DateTime.Parse("2024-03-23"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), 
-                ReservationEndTime = TimeSpan.Parse("18:00"), 
+                ReservationStartTime = new DateTime(2024, 03, 23, 13, 00, 00), 
+                ReservationEndTime = new DateTime(2024, 03, 23, 18, 00, 00), 
             };
             int maxLeadTime = 5;
             TimeUnit unitOfTime = TimeUnit.Days;
@@ -272,9 +261,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 CompanyID = 1,
                 FloorPlanID = 2,
                 SpaceID = "SPACE202",
-                ReservationDate = DateTime.Parse("2024-04-16"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), 
-                ReservationEndTime = TimeSpan.Parse("18:00"), 
+                ReservationStartTime = new DateTime(2024, 07, 01, 13, 00, 00), 
+                ReservationEndTime = new DateTime(2024, 07, 01, 18, 00, 00), 
             };
             int maxLeadTime = 5;
             TimeUnit unitOfTime = TimeUnit.Days;

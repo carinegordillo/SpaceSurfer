@@ -20,16 +20,9 @@ public class ReservationStatusUpdater : IReservationStatusUpdater
             Console.WriteLine(tableName);
             Response response = new Response();
             var sql = $@"UPDATE {tableName}
-            SET Status = 'Passed'
-            WHERE DATETIMEFROMPARTS(
-                    YEAR(reservationDate), 
-                    MONTH(reservationDate), 
-                    DAY(reservationDate), 
-                    DATEPART(HOUR, reservationEndTime), 
-                    DATEPART(MINUTE, reservationEndTime), 
-                    DATEPART(SECOND, reservationEndTime), 
-                    0) < SYSDATETIME()
-            AND Status = 'Active'";
+                 SET Status = 'Passed'
+                 WHERE reservationEndTime < SYSDATETIME()
+                 AND Status = 'Active'";
 
             SqlCommand command = new SqlCommand(sql);
 
