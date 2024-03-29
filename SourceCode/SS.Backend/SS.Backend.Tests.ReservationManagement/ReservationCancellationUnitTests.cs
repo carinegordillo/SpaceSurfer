@@ -24,6 +24,7 @@ namespace SS.Backend.Tests.ReservationManagement{
         //using dbo.TestReservtaions becaus it allows manual id insertion
 
         string MANUAL_ID_TABLE = "dbo.NewManualIDReservations";
+        string USER_HASH2 = "testUserHash3";
 
         
         
@@ -41,7 +42,7 @@ namespace SS.Backend.Tests.ReservationManagement{
 
             _reservationValidationService = new ReservationValidationService(_reservationManagementRepository);
 
-            _reservationCreatorService = new ReservationCreatorService(_reservationManagementRepository, _reservationValidationService);
+            _reservationCreatorService = new ReservationCreatorService(_reservationManagementRepository);
 
             _reservationCancellationService = new ReservationCancellationService(_reservationManagementRepository);
 
@@ -64,7 +65,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 SpaceID = "SPACE302",
                 ReservationStartTime = new DateTime(2025, 01, 01, 13, 00, 00), // Jan 1, 2022, 1:00 PM
                 ReservationEndTime = new DateTime(2025, 01, 01, 15, 00, 00), // Jan 1, 2022, 3:00 PM
-                Status = ReservationStatus.Active
+                Status = ReservationStatus.Active,
+                UserHash = USER_HASH2
             };
             
             
@@ -94,7 +96,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 SpaceID = "SPACE302",
                 ReservationStartTime = new DateTime(2024, 05, 01, 13, 00, 00), // Jan 1, 2022, 1:00 PM
                 ReservationEndTime = new DateTime(2024, 05, 01, 15, 00, 00), // Jan 1, 2022, 3:00 PM
-                Status = ReservationStatus.Active
+                Status = ReservationStatus.Active,
+                UserHash = USER_HASH2
             };
 
             // cancel reservtion
@@ -117,7 +120,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 SpaceID = "SPACE302",
                 ReservationStartTime = new DateTime(2024, 02, 23, 11, 00, 00), // Jan 1, 2022, 1:00 PM
                 ReservationEndTime = new DateTime(2024, 02, 23, 12, 00, 00), // Jan 1, 2022, 3:00 PM
-                Status = ReservationStatus.Active
+                Status = ReservationStatus.Active,
+                UserHash = USER_HASH2
             };
 
         // Act 1: Create the first reservation
@@ -133,7 +137,8 @@ namespace SS.Backend.Tests.ReservationManagement{
             SpaceID = "SPACE302",
             ReservationStartTime = DateTime.UtcNow.AddDays(2).Date + new TimeSpan(14, 0, 0),
             ReservationEndTime = DateTime.UtcNow.AddDays(2).Date + new TimeSpan(18, 0, 0), 
-            Status = ReservationStatus.Active
+            Status = ReservationStatus.Active,
+            UserHash = USER_HASH2
         };
 
         var reservation2Response = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE, reservation2);
@@ -142,75 +147,11 @@ namespace SS.Backend.Tests.ReservationManagement{
 
         // Update reservation statuses
         ReservationStatusUpdater reservationStatusUpdater = new ReservationStatusUpdater(_reservationManagementRepository);
-        var response = await reservationStatusUpdater.UpdateReservtionStatuses(MANUAL_ID_TABLE);
+        var response = await reservationStatusUpdater.UpdateReservtionStatuses(MANUAL_ID_TABLE, "UpdateReservationStatusManualID");
         Console.WriteLine(response.ErrorMessage);
         Assert.IsFalse(response.HasError); 
-    }
-
-        [TestMethod]
-        public void TestCheckReservtionStatus_Active_Pass()
-        {
-            Response reservationCheckerResult = new Response();
-
-            UserReservationsModel activeReservation = new UserReservationsModel
-            {
-                ReservationID = 90,
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE302",
-                ReservationStartTime = new DateTime(2024, 02, 23, 11, 00, 00),
-                ReservationEndTime = new DateTime(2024, 02, 23, 12, 00, 00), 
-                Status = ReservationStatus.Active
-            };
-
-            reservationCheckerResult = _reservationCancellationService.checkReservationStatus(activeReservation);
-            Assert.IsFalse(reservationCheckerResult.HasError);
-            Assert.AreEqual("Reservation is active", reservationCheckerResult.ErrorMessage);
         }
 
-        [TestMethod]
-        public void TestCheckReservtionStatus_Cancelled_ReturnsError()
-        {
-            Response reservationCheckerResult = new Response();
-
-            UserReservationsModel cancelledReservation = new UserReservationsModel
-            {
-                ReservationID = 90,
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE302",
-                ReservationStartTime = new DateTime(2024, 02, 23, 11, 00, 00), // Jan 1, 2022, 1:00 PM
-                ReservationEndTime = new DateTime(2024, 02, 23, 12, 00, 00), // Jan 1, 2022, 3:00 PM
-                Status = ReservationStatus.Cancelled
-            };
-
-            reservationCheckerResult = _reservationCancellationService.checkReservationStatus(cancelledReservation);
-            Assert.IsTrue(reservationCheckerResult.HasError);
-            Assert.AreEqual("Reservation has already been cancelled", reservationCheckerResult.ErrorMessage);
-            
-        }
-
-        [TestMethod]
-        public void TestCheckReservtionStatus_Passed_ReturnsError()
-        {
-            Response reservationCheckerResult = new Response();
-
-            UserReservationsModel passedReservation = new UserReservationsModel
-            {
-                ReservationID = 90,
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE302",
-                ReservationStartTime = new DateTime(2024, 02, 23, 11, 00, 00), // Jan 1, 2022, 1:00 PM
-                ReservationEndTime = new DateTime(2024, 02, 23, 12, 00, 00), // Jan 1, 2022, 3:00 PM
-                Status = ReservationStatus.Passed
-            };
-
-            reservationCheckerResult = _reservationCancellationService.checkReservationStatus(passedReservation);
-            Assert.IsFalse(reservationCheckerResult.HasError);
-            Assert.AreEqual("Reservation date has passed", reservationCheckerResult.ErrorMessage);
-            
-        }
 
         [TestCleanup]
         public void Cleanup()

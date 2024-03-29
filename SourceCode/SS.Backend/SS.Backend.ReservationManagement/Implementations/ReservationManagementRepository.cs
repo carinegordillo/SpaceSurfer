@@ -10,7 +10,7 @@ namespace SS.Backend.ReservationManagement
     {
         private ISqlDAO _sqldao;
 
-        private string TABLE_NAME = "dbo.NewAutoIDReservations";
+        //private string TABLE_NAME = "dbo.NewAutoIDReservations";
 
 
         public ReservationManagementRepository(ISqlDAO sqldao)
@@ -59,7 +59,7 @@ namespace SS.Backend.ReservationManagement
             catch (Exception ex)
             {
                 result.HasError = true;
-                Console.WriteLine($"Error in WriteReservationTables: {ex.Message}");
+                Console.WriteLine($"Error in ExecuteUpdateReservationTables: {ex.Message}");
                 result.ErrorMessage = ex.Message;
             }
             return result;
@@ -86,7 +86,7 @@ namespace SS.Backend.ReservationManagement
             return response;
         }
 
-        public async Task<Response> ReadReservationsTable(string whereClause, object whereClauseval)
+        public async Task<Response> ReadReservationsTable(string whereClause, object whereClauseval, string table)
         {
 
             Response response = new Response();
@@ -94,7 +94,7 @@ namespace SS.Backend.ReservationManagement
 
             ReadOnlyBuiltSqlCommands readOnlysqlCommands = new ReadOnlyBuiltSqlCommands(commandBuilder);
 
-            SqlCommand command = readOnlysqlCommands.GenericReadWhereSingular(whereClause, whereClauseval, TABLE_NAME);
+            SqlCommand command = readOnlysqlCommands.GenericReadWhereSingular(whereClause, whereClauseval, table);
             
             response = await _sqldao.ReadSqlResult(command);
 
@@ -106,6 +106,29 @@ namespace SS.Backend.ReservationManagement
 
             }
             return response;
+        }
+
+        public async Task<Response> ReadReservationsTableWithMutliple(string tableName, Dictionary<string, object> parameters){
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+
+            var command = commandBuilder.BeginSelectAll()
+                                        .From(tableName)
+                                        .WhereMultiple(parameters)
+                                        .AddParameters(parameters)
+                                        .Build();
+
+            response = await _sqldao.ReadSqlResult(command);
+            if (response.HasError == false){
+                response.ErrorMessage += "- ReadReservationsTableWithMutliple- command successful -";
+            }
+            else{
+                response.ErrorMessage += $"- ReadReservationsTableWithMutliple- {command.CommandText} -  command not successful -";
+
+            }
+
+            return response;
+            
         }
 
 

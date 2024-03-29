@@ -14,13 +14,14 @@ namespace SS.Backend.Tests.ReservationManagement{
     {
         private SqlDAO _sqlDao;
         private ConfigService _configService;
-        private ReservationCreatorService  _ReservationCreatorServiceService;
+        private ReservationCreatorService  _ReservationCreatorService;
 
         private ReservationManagementRepository _reservationManagementRepository;
 
         private ReservationValidationService _reservationValidationService;
 
         string AUTO_ID_TABLE = "dbo.NewAutoIDReservations";
+        string USER_HASH2 = "testUserHash2";
 
 
 
@@ -40,10 +41,10 @@ namespace SS.Backend.Tests.ReservationManagement{
             
 
             _reservationManagementRepository = new ReservationManagementRepository(_sqlDao);
-            
+
             _reservationValidationService = new ReservationValidationService(_reservationManagementRepository);
 
-            _ReservationCreatorServiceService = new ReservationCreatorService(_reservationManagementRepository, _reservationValidationService);
+            _ReservationCreatorService = new ReservationCreatorService(_reservationManagementRepository);
 
 
         }
@@ -62,15 +63,18 @@ namespace SS.Backend.Tests.ReservationManagement{
                 SpaceID = "Space101",
                 ReservationStartTime = new DateTime(2025, 01, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2025, 01, 01, 15, 00, 00), 
-                Status = ReservationStatus.Active
+                Status = ReservationStatus.Active,
+                UserHash = USER_HASH2
             };
             // Act
-            var response = await _ReservationCreatorServiceService.CreateReservationWithAutoIDAsync(AUTO_ID_TABLE,userReservationsModel);
+            var response = await _ReservationCreatorService.CreateReservationWithAutoIDAsync(AUTO_ID_TABLE,userReservationsModel);
             Console.WriteLine(response.ErrorMessage);
             
             // Assert
             Assert.IsFalse(response.HasError);
         }
+
+        ///comment here
 
     //     [TestMethod]
     //     public async Task CreateReseravtionNoConlficts_Fail()
