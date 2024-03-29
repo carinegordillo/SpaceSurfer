@@ -6,6 +6,9 @@ namespace SS.Backend.EmailConfirm
     {
         public Task<Response> GetReservationInfo(int reservationID);
         public Task<Response> GetConfirmInfo(int reservationID);
-        public Task<Response> InsertConfirmStatus(int reservationID);
+        public Task<Response> InsertConfirmationInfo(int reservationID, string otp)
+        public Task<Response> UpdateConfirmStatus(int reservationID);
+        public Tasks<Response> UpdateOtp(int reservationID, string otp);
+
     }
 }

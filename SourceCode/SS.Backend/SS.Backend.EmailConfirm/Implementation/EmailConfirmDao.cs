@@ -27,7 +27,7 @@ namespace SS.Backend.EmailConfirm
                             .SelectColumns("r.*", "cp.address AS CompanyAddress")
                             .From("Reservations AS r")
                             .Join("companyProfile AS cp", "r.companyID", "cp.companyID")
-                            .WhereMuliple("reservationID = @ReservationID")
+                            .WhereMuliple(parameters)
                             .AddParameters(parameters)
                             .Build();
 
@@ -76,19 +76,51 @@ namespace SS.Backend.EmailConfirm
             return response;
         }
 
-        public async Task<Response> InsertConfirmStatus(int ReservaitonID)
+        public async Task<Response> InsertConfirmationInfo(int ReservationID, string otp)
         {
             Response response = new Response();
             var builder = new CustomSqlCommandBuilder();
 
             var parameters = new Dictionary<string, object>
             {
-                {"ReservationID", ReservationID}
+                {"@ReservationID", ReservationID},
+                {"@ReservationOtp", otp},
+                {"@ConfirmStatus", "no"}
+            };
+
+            var cmd = builder.BeginInsert("ConfirmReservations")
+                            .Columns(new List<string> { "reservationID", "reservationOtp", "confirmStatus" })
+                            .Values(new List<string> { "@ReservationID", "@ReservationOtp", "@ConfirmStatus" })
+                            .AddParameters(parameters)
+                            .Build();
+
+            response = await _sqlDao.SqlRowsAffected(cmd);
+
+            if (!response.HasError)
+            {
+                response.ErrorMessage += " -- InsertConfirmationInfo Command: Successful";
+            }
+            else
+            {
+                response.ErrorMessage += $" -- InsertConfirmationInfo Command: {cmd.CommandText} Failed";
+            }
+            return response;
+        }
+
+        public async Task<Response> UpdateConfirmStatus(int ReservationID)
+        {
+            Response response = new Response();
+            var builder = new CustomSqlCommandBuilder();
+
+            var parameters = new Dictionary<string, object>
+            {
+                {"@ReservationID", ReservationID},
+                {"@ConfirmStatus", "Yes"} 
             };
 
             var cmd = builder.BeginUpdate("ConfirmReservations")
                             .Set(new Dictionary<string, object>
-                                {{"ConfirmStatus", 'Yes'}})
+                                {{"confirmStatus", "@ConfirmStatus"}})
                             .Where("reservationID = @ReservationID")
                             .AddParameters(parameters)
                             .Build();
@@ -97,14 +129,44 @@ namespace SS.Backend.EmailConfirm
 
             if (!response.HasError)
             {
-                response.ErrorMessage += " -- InsertConfirmStatus Command: Successful";
+                response.ErrorMessage += " -- UpdateConfirmStatus Command: Successful";
             }
             else
             {
-                response.ErrorMessage += $" -- InsertConfirmStatus Command: {cmd.CommandText} Failed";
+                response.ErrorMessage += $" -- UpdateConfirmStatus Command: {cmd.CommandText} Failed";
             }
             return response;
+        }
 
+        public async Task<Response> UpdateOtp(int ReservationID, int otp)
+        {
+            Response response = new Response();
+            var builder = new CustomSqlCommandBuilder();
+
+            var parameters = new Dictionary<string, object>
+            {
+                {"@ReservationID", ReservationID},
+                {"@ReservationOtp", otp}
+            };
+
+            var cmd = builder.BeginUpdate("ConfirmReservations")
+                            .Set(new Dictionary<string, object>
+                                {{"reservationOtp", "@ReservationOtp"}})
+                            .Where("reservationID = @ReservationID")
+                            .AddParameters(parameters)
+                            .Build();
+
+            response = await _sqlDao.SqlRowsAffected(cmd);
+
+            if (!response.HasError)
+            {
+                response.ErrorMessage += " -- UpdateOtp Command: Successful";
+            }
+            else
+            {
+                response.ErrorMessage += $" -- UpdateOtp Command: {cmd.CommandText} Failed";
+            }
+            return response;
         }
     }
 }
