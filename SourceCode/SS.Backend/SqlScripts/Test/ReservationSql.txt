@@ -1,0 +1,44 @@
+INSERT INTO [dbo].[userAccount] (username, birthDate)
+VALUES 
+('SingleReservationUser1', '1990-01-01'),
+('SingleReservationUser2', '1991-01-01'),
+('SingleReservationUser3', '1992-01-01');
+
+INSERT INTO [dbo].[userHash] ([hashedUsername], [username], [user_id])
+VALUES
+('testUserHash4', 'SingleReservationUser1', 1017),
+('testUserHash5', 'SingleReservationUser2', 1018),
+('testUserHash6', 'SingleReservationUser3', 1019);
+
+
+
+
+
+INSERT INTO [dbo].[companyProfile] (companyID, hashedUsername, companyName, address, openingHours, closingHours, daysOpen)
+VALUES
+(3, 'testHash1', 'Test Company 1', '123 Test Lane', '09:00:00', '17:00:00', 'MondayTuesdayWednesdayThursdayFriday'),
+(4, 'testHash2', 'Test Company 2', '456 Test Avenue', '15:00:00', '20:00:00', 'TuesdayWednesdayFridaySunday');
+
+
+INSERT INTO [dbo].[companyFloor] (companyID, floorPlanName)
+VALUES
+(3, 'First Floor'),
+(3, 'Second Floor');
+
+
+INSERT INTO [dbo].[companyFloor] (companyID, floorPlanName)
+VALUES
+(4, 'Main Floor'),
+(4, 'Top Floor');
+
+-- Insert floor spaces for Test Company 3
+INSERT INTO [dbo].[companyFloorSpaces] (spaceID, floorPlanID, companyID, timeLimit)
+VALUES
+('Space301', 5, 3, 120),
+('Space302', 6, 3, 60);
+
+-- Insert floor spaces for Test Company 4
+INSERT INTO [dbo].[companyFloorSpaces] (spaceID, floorPlanID, companyID, timeLimit)
+VALUES
+('Space401', 7, 4, 180),
+('Space402', 8, 4, 90);

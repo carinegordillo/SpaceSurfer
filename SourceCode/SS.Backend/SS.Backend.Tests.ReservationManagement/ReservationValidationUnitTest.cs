@@ -21,6 +21,7 @@ namespace SS.Backend.Tests.ReservationManagement{
 
         string AUTO_ID_TABLE = "dbo.NewAutoIDReservations";
         string USER_HASH1 = "testUserHash1";
+        string USER_HASH2 = "testUserHash3";
 
         
         [TestInitialize]
@@ -260,6 +261,74 @@ namespace SS.Backend.Tests.ReservationManagement{
             // Assert
             Console.WriteLine(response.ErrorMessage);
             Assert.IsTrue(response.HasError);
+        }
+
+        [TestMethod]
+        public void TestCheckReservtionStatus_Active_Pass()
+        {
+            Response reservationCheckerResult = new Response();
+
+            UserReservationsModel activeReservation = new UserReservationsModel
+            {
+                ReservationID = 90,
+                CompanyID = 2,
+                FloorPlanID = 3,
+                SpaceID = "SPACE302",
+                ReservationStartTime = new DateTime(2024, 02, 23, 11, 00, 00),
+                ReservationEndTime = new DateTime(2024, 02, 23, 12, 00, 00), 
+                Status = ReservationStatus.Active,
+                UserHash = USER_HASH2
+            };
+
+            reservationCheckerResult = _reservationValidationService.checkReservationStatus(activeReservation);
+            Assert.IsFalse(reservationCheckerResult.HasError);
+            Assert.AreEqual("Reservation is active", reservationCheckerResult.ErrorMessage);
+        }
+
+        [TestMethod]
+        public void TestCheckReservtionStatus_Cancelled_ReturnsError()
+        {
+            Response reservationCheckerResult = new Response();
+
+            UserReservationsModel cancelledReservation = new UserReservationsModel
+            {
+                ReservationID = 90,
+                CompanyID = 2,
+                FloorPlanID = 3,
+                SpaceID = "SPACE302",
+                ReservationStartTime = new DateTime(2024, 02, 23, 11, 00, 00), 
+                ReservationEndTime = new DateTime(2024, 02, 23, 12, 00, 00), 
+                Status = ReservationStatus.Cancelled,
+                UserHash = USER_HASH2
+            };
+
+            reservationCheckerResult = _reservationValidationService.checkReservationStatus(cancelledReservation);
+            Assert.IsTrue(reservationCheckerResult.HasError);
+            Assert.AreEqual("Reservation has already been cancelled", reservationCheckerResult.ErrorMessage);
+            
+        }
+
+        [TestMethod]
+        public void TestCheckReservtionStatus_Passed_ReturnsError()
+        {
+            Response reservationCheckerResult = new Response();
+
+            UserReservationsModel passedReservation = new UserReservationsModel
+            {
+                ReservationID = 90,
+                CompanyID = 2,
+                FloorPlanID = 3,
+                SpaceID = "SPACE302",
+                ReservationStartTime = new DateTime(2024, 02, 23, 11, 00, 00), 
+                ReservationEndTime = new DateTime(2024, 02, 23, 12, 00, 00), 
+                Status = ReservationStatus.Passed,
+                UserHash = USER_HASH2
+            };
+
+            reservationCheckerResult = _reservationValidationService.checkReservationStatus(passedReservation);
+            Assert.IsFalse(reservationCheckerResult.HasError);
+            Assert.AreEqual("Reservation date has passed", reservationCheckerResult.ErrorMessage);
+            
         }
 
     }

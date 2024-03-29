@@ -62,7 +62,7 @@ namespace SS.Backend.Tests.ReservationManagers{
                 UserHash = userHash1
             };
 
-            var response = await _reservationCreationManager.CreateSpaceSurferSpaceReservationAsync(TABLE_NAME, userReservationsModel);
+            var response = await _reservationCreationManager.CreateSpaceSurferSpaceReservationAsync(userReservationsModel, TABLE_NAME);
 
             Console.WriteLine(response.ErrorMessage);
 
@@ -86,8 +86,9 @@ namespace SS.Backend.Tests.ReservationManagers{
                 ReservationEndTime = reservationEnd,
                 UserHash = userHash1
             };
+            
 
-            var response = await _reservationCreationManager.CreateSpaceSurferSpaceReservationAsync(TABLE_NAME, userReservationsModel);
+            var response = await _reservationCreationManager.CreateSpaceSurferSpaceReservationAsync(userReservationsModel, TABLE_NAME);
 
             Assert.IsTrue(response.HasError, "Expected no error in reservation creation.");
             Assert.IsTrue(response.ErrorMessage.Contains("Reservation did not pass validation checks"));

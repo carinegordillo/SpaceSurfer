@@ -16,26 +16,6 @@ public class ReservationCancellationService : IReservationCancellationService
             
         }
 
-        public Response checkReservationStatus(UserReservationsModel reservation)
-        {
-            // Directly compare with enum values
-            if (reservation.Status == ReservationStatus.Cancelled)
-            {
-                return new Response { HasError = true, ErrorMessage = "Reservation has already been cancelled" };
-            }
-            else if (reservation.Status == ReservationStatus.Active)
-            {
-                return new Response { HasError = false, ErrorMessage = "Reservation is active" };
-            }
-            else if (reservation.Status == ReservationStatus.Passed)
-            {
-                return new Response { HasError = false, ErrorMessage = "Reservation date has passed" };
-            }
-            else
-            {
-                return new Response { HasError = true, ErrorMessage = "Invalid Status" };
-            }
-        }
 
 
         public async Task<Response> CancelReservationAsync(string tableName, int reservationID)

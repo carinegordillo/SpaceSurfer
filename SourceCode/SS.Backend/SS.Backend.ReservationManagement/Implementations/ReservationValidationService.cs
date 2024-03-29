@@ -253,6 +253,26 @@ namespace SS.Backend.ReservationManagement{
 
         }
 
+        public Response checkReservationStatus(UserReservationsModel reservation)
+        {
+            if (reservation.Status == ReservationStatus.Cancelled)
+            {
+                return new Response { HasError = true, ErrorMessage = "Reservation has already been cancelled" };
+            }
+            else if (reservation.Status == ReservationStatus.Active)
+            {
+                return new Response { HasError = false, ErrorMessage = "Reservation is active" };
+            }
+            else if (reservation.Status == ReservationStatus.Passed)
+            {
+                return new Response { HasError = false, ErrorMessage = "Reservation date has passed" };
+            }
+            else
+            {
+                return new Response { HasError = true, ErrorMessage = "Invalid Status" };
+            }
+        }
+
         public bool IsValidReservationLeadTime(UserReservationsModel userReservationsModel, TimeSpan maxLeadTime)
         {
             var currentDateTime = DateTime.UtcNow;
@@ -297,6 +317,16 @@ namespace SS.Backend.ReservationManagement{
                 if (!IsValidReservationLeadTime(userReservationsModel, requirements.MaxAdvanceReservationTime))
                 {
                     failedValidations.Add($"ReservationLeadTime (more than {requirements.MaxAdvanceReservationTime.TotalDays} days in advance)");
+                }
+            }
+
+            if (validationFlags.HasFlag(ReservationValidationFlags.ReservationStatusIsActive))
+            {
+                var statusResponse = checkReservationStatus(userReservationsModel);
+                if (statusResponse.HasError)
+                {
+                    failedValidations.Add("ReservationStatusIsActive");
+                    response.ErrorMessage += statusResponse.ErrorMessage + " ";
                 }
             }
 

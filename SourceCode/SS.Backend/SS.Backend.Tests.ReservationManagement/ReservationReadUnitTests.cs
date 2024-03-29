@@ -104,6 +104,9 @@ namespace SS.Backend.Tests.ReservationManagement{
                 actualIds.Add((int)row["ReservationID"]); // Assuming "ReservationID" is the column name
             }
 
+            Console.WriteLine("Expected IDs: " + string.Join(",", expectedIds));
+            Console.WriteLine("Actual IDs: " + string.Join(",", actualIds));
+
             Assert.IsTrue(expectedIds.SetEquals(actualIds));
 
         }
@@ -189,16 +192,15 @@ namespace SS.Backend.Tests.ReservationManagement{
 
             reservationReadResult = await _reservationReadService.GetUserActiveReservations(MANUAL_ID_TABLE , "testUserHash5");
 
-            var expectedIds = new HashSet<int> { 7004, 7001 }; // IDs of the created reservations
+            var expectedIds = new HashSet<int> { 7004, 7001 }; 
             var actualIds = new HashSet<int>();
 
             foreach (DataRow row in reservationReadResult.ValuesRead.Rows)
             {
                 actualIds.Add((int)row["reservationID"]);
-                 // Assuming "ReservationID" is the column name
+                
             }
-            Console.WriteLine("Expected IDs: " + string.Join(",", expectedIds));
-            Console.WriteLine("Actual IDs: " + string.Join(",", actualIds));
+            
             Console.WriteLine(reservationReadResult.ErrorMessage);
 
             Assert.IsTrue(expectedIds.SetEquals(actualIds));

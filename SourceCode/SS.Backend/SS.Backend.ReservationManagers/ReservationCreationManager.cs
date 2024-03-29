@@ -6,7 +6,7 @@ namespace SS.Backend.ReservationManagers{
 
     public class ReservationCreationManager
     {
-        private readonly string SS_RESERVATIONS_TABLE = "dbo.testReservations";
+        private readonly string SS_RESERVATIONS_TABLE = "dbo.reservations";
         private readonly IReservationCreatorService _reservationCreatorService;
         private readonly IReservationValidationService _reservationValidationService;
 
@@ -21,10 +21,12 @@ namespace SS.Backend.ReservationManagers{
             
         }
 
-        public async Task<Response> CreateSpaceSurferSpaceReservationAsync(string tableName, UserReservationsModel userReservationsModel)
+        public async Task<Response> CreateSpaceSurferSpaceReservationAsync(UserReservationsModel userReservationsModel, string? tableNameOverride = null)
         {
             Response response = new Response();
             Response reservationCreationResponse = new Response();
+
+            string tableName = tableNameOverride ?? SS_RESERVATIONS_TABLE;
                 
             ReservationValidationFlags flags = ReservationValidationFlags.CheckBusinessHours | ReservationValidationFlags.MaxDurationPerSeat | ReservationValidationFlags.ReservationLeadTime | ReservationValidationFlags.NoConflictingReservations;
         
@@ -40,7 +42,7 @@ namespace SS.Backend.ReservationManagers{
             {
                 try
                 {
-                    reservationCreationResponse =  await _reservationCreatorService.CreateReservationWithAutoIDAsync(SS_RESERVATIONS_TABLE, userReservationsModel);
+                    reservationCreationResponse =  await _reservationCreatorService.CreateReservationWithAutoIDAsync(tableName, userReservationsModel);
                     if (reservationCreationResponse.HasError)
                     {
                         response.ErrorMessage = "CreateSpaceSurferSpaceReservationAsync, could not create Reservation.";
