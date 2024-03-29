@@ -240,7 +240,7 @@ namespace SS.Backend.Tests.ReservationManagement{
         }
 
         [TestMethod]
-        public async Task ValidateReservationLeadTime_Test_Pass()
+        public void ValidateReservationLeadTime_Test_Pass()
         {
             // Arrange
             UserReservationsModel userReservationsModel = new UserReservationsModel
@@ -256,7 +256,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             TimeUnit unitOfTime = TimeUnit.Days;
 
             // Act
-            var response = await _reservationcreationService.validateReservationLeadTime(userReservationsModel, maxLeadTime, unitOfTime);
+            var response =  _reservationcreationService.validateReservationLeadTime(userReservationsModel, maxLeadTime, unitOfTime);
 
             // Assert
             Console.WriteLine(response.ErrorMessage);
@@ -264,7 +264,7 @@ namespace SS.Backend.Tests.ReservationManagement{
         }
 
         [TestMethod]
-        public async Task ValidateReservationLeadTime_Test_Fail()
+        public void ValidateReservationLeadTime_Test_Fail()
         {
             // Arrange
             UserReservationsModel userReservationModel = new UserReservationsModel
@@ -280,7 +280,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             TimeUnit unitOfTime = TimeUnit.Days;
 
             // Act
-            var response = await _reservationcreationService.validateReservationLeadTime(userReservationModel, maxLeadTime, unitOfTime);
+            var response =  _reservationcreationService.validateReservationLeadTime(userReservationModel, maxLeadTime, unitOfTime);
 
             // Assert
             Console.WriteLine(response.ErrorMessage);

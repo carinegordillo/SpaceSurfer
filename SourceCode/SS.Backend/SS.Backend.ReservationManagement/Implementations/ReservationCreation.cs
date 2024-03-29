@@ -129,7 +129,7 @@ namespace SS.Backend.ReservationManagement{
                 // Assuming _sqldao.ReadSqlResult executes the command and returns a DataTable
                 result = await _sqldao.ReadSqlResult(command);
 
-                bool isValid = await _reservationValidationService.HasConflictingReservations(result);
+                bool isValid =  _reservationValidationService.HasConflictingReservations(result);
 
                 if (isValid == true)
                 {
@@ -175,7 +175,7 @@ namespace SS.Backend.ReservationManagement{
                 if (result.ValuesRead.Rows.Count > 0)
                 {
                     
-                    bool isValid = await _reservationValidationService.IsWithinHours(result, proposedStart, proposedEnd);
+                    bool isValid =  _reservationValidationService.IsWithinHours(result, proposedStart, proposedEnd);
                     
                     
                     if (isValid == true)
@@ -227,7 +227,7 @@ namespace SS.Backend.ReservationManagement{
                
                 if (result.ValuesRead.Rows.Count > 0)
                 {
-                    bool isValid = await _reservationValidationService.IsValidDuration(userReservationsModel, result);
+                    bool isValid =  _reservationValidationService.IsValidDuration(userReservationsModel, result);
                     
                     if (isValid == false)
                     {
@@ -256,12 +256,12 @@ namespace SS.Backend.ReservationManagement{
             return result;
         }
 
-        public async Task<Response> validateReservationLeadTime(UserReservationsModel userReservationsModel, int maxLeadTime, TimeUnit unitOfTime){
+        public Response validateReservationLeadTime(UserReservationsModel userReservationsModel, int maxLeadTime, TimeUnit unitOfTime){
             
 
             Response result = new Response();
             
-            var isValid = await _reservationValidationService.IsValidReservationLeadTime(userReservationsModel, maxLeadTime, unitOfTime);
+            var isValid =  _reservationValidationService.IsValidReservationLeadTime(userReservationsModel, maxLeadTime, unitOfTime);
 
             if (isValid == true)
             {

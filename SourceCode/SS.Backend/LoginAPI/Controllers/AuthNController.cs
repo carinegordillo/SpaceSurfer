@@ -68,6 +68,7 @@ namespace AuthAPI.Controllers
 
         [HttpPost("getRole")]
         public IActionResult GetRole([FromBody] Jwt token)
+
         {
             if (token != null)
             {

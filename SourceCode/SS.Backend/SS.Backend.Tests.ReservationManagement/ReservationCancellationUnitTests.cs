@@ -14,7 +14,6 @@ namespace SS.Backend.Tests.ReservationManagement{
     {
         private SqlDAO _sqlDao;
         private ConfigService _configService;
-        private SqlCommand _command;
         private ReservationCreation  _reservationcreationService;
         private ReservationCancellation _reservationCancellationService;
 
@@ -63,6 +62,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             };
             
            reservtaionCreationResult = await _reservationcreationService.CreateReservationWithManualID(tableName,reservationToBeCancelled);
+           Console.WriteLine(reservtaionCreationResult.ErrorMessage);
 
             Assert.IsFalse(reservtaionCreationResult.HasError);
 

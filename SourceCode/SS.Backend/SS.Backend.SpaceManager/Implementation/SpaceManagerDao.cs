@@ -18,22 +18,27 @@ namespace SS.Backend.SpaceManager
         public async Task<Response> GetCompanyIDByHashedUsername(string hashedUsername)
         {
             Response response = new Response();
+            // Use CustomSqlCommandBuilder to create SQL commands dynamically
             var commandBuilder = new CustomSqlCommandBuilder();
 
+            // Prepare SQL parameters for the query
             var parameters = new Dictionary<string, object>
             {
                 { "HashedUsername", hashedUsername }
             };
 
+            // Build the SELECT SQL command
             var selectCommand = commandBuilder.BeginSelect()
-                                            .SelectColumns("companyID")
-                                            .From("companyProfile")
-                                            .Where("hashedUsername = @HashedUsername")
-                                            .AddParameters(parameters)
+                                            .SelectColumns("companyID") // Specify columns to select
+                                            .From("companyProfile") // Specify the table
+                                            .Where("hashedUsername = @HashedUsername") // Condition
+                                            .AddParameters(parameters) // Add parameters
                                             .Build();
 
+            // Execute the SELECT command
             response = await _sqldao.ReadSqlResult(selectCommand);
 
+            // Log success or failure messages
             if (!response.HasError)
             {
                 response.ErrorMessage += "- GetCompanyIDByHashedUsername - command successful -";
@@ -46,26 +51,30 @@ namespace SS.Backend.SpaceManager
             return response;
         }
 
-
+        // Asynchronous method to insert data into multiple tables
         public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
         {   
+            // Use CustomSqlCommandBuilder to create SQL commands dynamically
             var builder = new CustomSqlCommandBuilder();
             Response tablesresponse = new Response();
 
-            // For each table
+            // Iterate through each table entry in the provided data
             foreach (var tableEntry in tableData)
             {
-                string tableName = tableEntry.Key;
-                Dictionary<string, object> parameters = tableEntry.Value;
+                string tableName = tableEntry.Key; // Table name
+                Dictionary<string, object> parameters = tableEntry.Value; // Parameters for the table
 
+                // Build the INSERT SQL command for each table
                 var insertCommand = builder.BeginInsert(tableName)
-                    .Columns(parameters.Keys)
-                    .Values(parameters.Keys)
-                    .AddParameters(parameters)
+                    .Columns(parameters.Keys) // Specify columns
+                    .Values(parameters.Keys) // Specify values (same as columns for parameterized queries)
+                    .AddParameters(parameters) // Add parameters
                     .Build();
 
+                // Execute the INSERT command
                 tablesresponse = await _sqldao.SqlRowsAffected(insertCommand);
 
+                // Check for errors and return if any
                 if (tablesresponse.HasError)
                 {
                     tablesresponse.ErrorMessage += $"{tableName}: error inserting data; ";
@@ -75,6 +84,7 @@ namespace SS.Backend.SpaceManager
             return tablesresponse;
         }
 
+        // Asynchronous method to retrieve a company floor ID using the floor plan name and company ID
         public async Task<Response> GetCompanyFloorIDByName(string floorPlanName, int companyID)
         {
             Response tablesresponse = new Response();

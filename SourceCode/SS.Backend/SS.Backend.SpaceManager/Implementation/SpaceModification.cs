@@ -47,6 +47,11 @@ namespace SS.Backend.SpaceManager
                 return checkResponse;
             }
 
+            if(newFloorPlanImage == null){
+                response.ErrorMessage = "Must insert new floor plan to modify";
+                return response;
+            }
+
             // Prepare the whereClauses dictionary
             var whereClauses = new Dictionary<string, object>
             {
@@ -114,6 +119,11 @@ namespace SS.Backend.SpaceManager
             {
                 // Abort operation if there are existing reservations
                 return checkResponse;
+            }
+
+            if(newTimeLimit< 0){
+                response.ErrorMessage = "New Time Limit Cannot be Negative";
+                return response;
             }
 
             // Prepare the whereClauses dictionary to include both conditions
@@ -277,7 +287,7 @@ namespace SS.Backend.SpaceManager
                 // Abort operation if there are existing reservations
                 return checkResponse;
             }
-            // Step 1: Retrieve the floorPlanID
+    
             var fetchFloorPlanIdResponse = await _spaceManagerDao.GetFloorPlanIdByNameAndCompanyId(floorPlanName, companyID);
             if(fetchFloorPlanIdResponse.HasError || fetchFloorPlanIdResponse.ValuesRead == null || fetchFloorPlanIdResponse.ValuesRead.Rows.Count == 0)
             {
@@ -285,14 +295,13 @@ namespace SS.Backend.SpaceManager
             }
             int floorPlanID = Convert.ToInt32(fetchFloorPlanIdResponse.ValuesRead.Rows[0]["floorPlanID"]);
 
-            // Step 2: Delete all spaces associated with the floorPlanID
+     
             var deleteSpacesResponse = await _spaceManagerDao.DeleteField(new Dictionary<string, object> { { "floorPlanID", floorPlanID } }, "dbo.companyFloorSpaces");
             if(deleteSpacesResponse.HasError)
             {
                 return deleteSpacesResponse; // Return error response from deleting spaces
             }
 
-            // Step 3: Delete the floor entry itself
             var deleteFloorResponse = await _spaceManagerDao.DeleteField(new Dictionary<string, object> { { "floorPlanID", floorPlanID }, { "companyID", companyID } }, "dbo.companyFloor");
             if (deleteFloorResponse.HasError == false)
             {
