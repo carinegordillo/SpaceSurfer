@@ -25,25 +25,34 @@ function authenticateUser() {
         contentType: 'application/json',
         data: JSON.stringify({ userIdentity: userIdentity, proof: otp }),
         success: function (response) {
-            var accessToken = response;
+            var accessToken = response.accessToken;
+            var idToken = response.idToken;
             sessionStorage.setItem('accessToken', accessToken);
+            sessionStorage.setItem('idToken', idToken);
             document.getElementById("enterOTPSection").style.display = "none";
             document.getElementById("successResult").style.display = "none";
 
-            getRole(function (roles) {
-                var isManager = roles.some(function (role) {
-                    return role == "2" || role == "3";
-                });
+            var accessToken = sessionStorage.getItem('accessToken');
 
-                if (isManager) {
-                    document.getElementById("homepageManager").style.display = "block";
-                    document.getElementById("homepageGen").style.display = "none";
-                } else {
-                    document.getElementById("homepageGen").style.display = "block";
+            $.ajax({
+                url: 'http://localhost:5270/api/auth/getRole',
+                type: 'POST',
+                contentType: 'application/json',
+                //data: JSON.stringify({token: accessToken}),
+                data: accessToken,
+                success: function (response) {
+                    if (response === "2" || response === "3") {
+                        document.getElementById("homepageManager").style.display = "block";
+                        document.getElementById("homepageGen").style.display = "none";
+                    }
+                    else {
+                        document.getElementById("homepageGen").style.display = "block";
+                     }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching role:', error);
                 }
             });
-
-            document.getElementById("homepageGen").style.display = "block";
         },
         error: function (xhr, status, error) {
             document.getElementById("enterOTPSection").style.display = "none";
@@ -55,58 +64,64 @@ function authenticateUser() {
 
 function logout() {
     sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('idToken');
     document.getElementById("homepageGen").style.display = "none";
     document.getElementById("homepageManager").style.display = "none";
     document.getElementById("sendOTPSection").style.display = "block";
 }
-function getRole(callback) {
-    var token = sessionStorage['accessToken'];
 
-    if (!token) {
-        var accessTokenContainer = document.getElementById("accessTokenContainer");
-        accessTokenContainer.innerHTML = "<p>No access token found</p>";
-        return;
-    }
+//function getClaim() {
+//    var token = sessionStorage['accessToken']
+    
+//}
+//function getRole(callback) {
+//    var token = sessionStorage['accessToken'];
 
-    $.ajax({
-        url: 'http://localhost:5270/api/auth/decodeToken',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(token),
-        success: function (response) {
-            var role = response.role;
-            callback(role);
-        },
-        error: function (xhr, status, error) {
-            var accessTokenContainer = document.getElementById("accessTokenContainer");
-            accessTokenContainer.innerHTML = "<p>Error retrieving token info</p>";
-        }
-    });
-}
+//    if (!token) {
+//        var accessTokenContainer = document.getElementById("accessTokenContainer");
+//        accessTokenContainer.innerHTML = "<p>No access token found</p>";
+//        return;
+//    }
 
-function getExpirationTime(callback) {
-    var token = sessionStorage['accessToken'];
+//    $.ajax({
+//        url: 'http://localhost:5270/api/auth/decodeToken',
+//        type: 'POST',
+//        contentType: 'application/json',
+//        data: JSON.stringify(token),
+//        success: function (response) {
+//            var role = response.role;
+//            callback(role);
+//        },
+//        error: function (xhr, status, error) {
+//            var accessTokenContainer = document.getElementById("accessTokenContainer");
+//            accessTokenContainer.innerHTML = "<p>Error retrieving token info</p>";
+//        }
+//    });
+//}
 
-    if (!token) {
-        var accessTokenContainer = document.getElementById("accessTokenContainer");
-        accessTokenContainer.innerHTML = "<p>No access token found</p>";
-        return;
-    }
+//function getExpirationTime(callback) {
+//    var token = sessionStorage['accessToken'];
 
-    $.ajax({
-        url: 'http://localhost:5270/api/auth/decodeToken',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(token),
-        success: function (response) {
-            var time = response.exp_time;
-            callback(time);
-        },
-        error: function (xhr, status, error) {
-            var accessTokenContainer = document.getElementById("accessTokenContainer");
-            accessTokenContainer.innerHTML = "<p>Error retrieving token info</p>";
-        }
-    });
-}
+//    if (!token) {
+//        var accessTokenContainer = document.getElementById("accessTokenContainer");
+//        accessTokenContainer.innerHTML = "<p>No access token found</p>";
+//        return;
+//    }
+
+//    $.ajax({
+//        url: 'http://localhost:5270/api/auth/decodeToken',
+//        type: 'POST',
+//        contentType: 'application/json',
+//        data: JSON.stringify(token),
+//        success: function (response) {
+//            var time = response.exp_time;
+//            callback(time);
+//        },
+//        error: function (xhr, status, error) {
+//            var accessTokenContainer = document.getElementById("accessTokenContainer");
+//            accessTokenContainer.innerHTML = "<p>Error retrieving token info</p>";
+//        }
+//    });
+//}
 
 

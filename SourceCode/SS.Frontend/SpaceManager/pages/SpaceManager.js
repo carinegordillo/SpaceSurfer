@@ -1,67 +1,66 @@
-function checkTokenExpiration() {
-    var accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Access token not found.');
-        window.location.href = 'UnAuthnAbout/about.html';
-        return;
-    }
+//function checkTokenExpiration() {
+//    var accessToken = sessionStorage.getItem('accessToken');
+//    if (!accessToken) {
+//        console.error('Access token not found.');
+//        window.location.href = 'UnAuthnAbout/about.html';
+//        return;
+//    }
 
-    try {
-        var decodedToken = parseJwt(accessToken);
+//    try {
+//        var decodedToken = parseJwt(accessToken);
 
-        var currentTime = Math.floor(Date.now() / 1000);
-        if (decodedToken.exp < currentTime) {
-            console.log('Token has expired.');
-            sessionStorage.removeItem('accessToken');
-            window.location.href = 'UnAuthnAbout/about.html';
-        }
-    } catch (error) {
-        console.error('Error decoding token:', error);
-    }
-}
+//        var currentTime = Math.floor(Date.now() / 1000);
+//        if (decodedToken.exp < currentTime) {
+//            console.log('Token has expired.');
+//            sessionStorage.removeItem('accessToken');
+//            window.location.href = 'UnAuthnAbout/about.html';
+//        }
+//    } catch (error) {
+//        console.error('Error decoding token:', error);
+//    }
+//}
+//function parseJwt(token) {
+//    var base64Url = token.split('.')[1];
+//    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+//    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+//        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+//    }).join(''));
+//    return JSON.parse(jsonPayload);
+//}
+//async function refreshToken() {
+//    var accessToken = sessionStorage.getItem('accessToken');
+//    if (!accessToken) {
+//        console.error('Access token not found.');
+//        window.location.href = 'UnAuthnAbout/about.html';
+//        return;
+//    }
 
-function parseJwt(token) {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    return JSON.parse(jsonPayload);
-}
-async function refreshToken() {
-    var accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Access token not found.');
-        window.location.href = 'UnAuthnAbout/about.html';
-        return;
-    }
+//    try {
+//        var decodedToken = parseJwt(accessToken);
+//        var { role, subject } = decodedToken;
 
-    try {
-        var decodedToken = parseJwt(accessToken);
-        var { role, subject } = decodedToken;
+//        var tokenData = { username: subject, roles: { 'Role': role } };
 
-        var tokenData = { username: subject, roles: { 'Role': role } };
+//        var newTokenResponse = await fetch('http://localhost:8081/api/auth/refreshToken', {
+//            method: 'POST',
+//            headers: {
+//                'Content-Type': 'application/json',
+//            },
+//            body: JSON.stringify(tokenData)
+//        });
 
-        var newTokenResponse = await fetch('http://localhost:8081/api/auth/refreshToken', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(tokenData)
-        });
+//        if (!newTokenResponse.ok) {
+//            throw new Error('Failed to refresh token');
+//        }
 
-        if (!newTokenResponse.ok) {
-            throw new Error('Failed to refresh token');
-        }
+//        var newToken = await newTokenResponse.text();
 
-        var newToken = await newTokenResponse.text();
-
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.setItem('accessToken', newToken);
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
+//        sessionStorage.removeItem('accessToken');
+//        sessionStorage.setItem('accessToken', newToken);
+//    } catch (error) {
+//        console.error('Error:', error);
+//    }
+//}
 
 
 function logout() {
@@ -70,7 +69,6 @@ function logout() {
 }
 
 document.getElementById('replaceImage').addEventListener('change', function (event) {
-    refreshToken();
 
     var fileModify = event.target.files[0];
     if (!fileModify) {
@@ -231,13 +229,11 @@ document.querySelectorAll('.accordion').forEach(function(button) {
 });
 
 document.addEventListener('DOMContentLoaded', async function () {
-    checkTokenExpiration();
     if (!sessionStorage.getItem('accessToken')) {
         // Redirect if accessToken not found
         window.location.href = '../UnAuthnAbout/about.html';
         return; 
     }
-    await refreshToken();
     document.getElementById('loadRequestsButton').addEventListener('click', function () {
 
         fetch('http://localhost:8081/api/SpaceManager/createSpace')
@@ -259,8 +255,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     document.getElementById('accountCreationForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        checkTokenExpiration();
-        await refreshToken();
         const companyFloor = {
             FloorPlanName: document.getElementById('floorPlanName').value,
             FloorPlanImage: document.getElementById('imageBase64').value,
@@ -271,8 +265,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     document.getElementById('modifySpaceForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        checkTokenExpiration();
-        await refreshToken();
         const spacesToModify = collectSpacesAndTimeLimitsToModify();
         sendData('http://localhost:8081/api/SpaceManager/modifyTimeLimits', spacesToModify, 'accessToken');
     });
@@ -299,10 +291,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 });
 
 async function sendData(url, data, tokenKey) {
-    checkTokenExpiration();
-    await refreshToken;
     try {
-        checkTokenExpiration();
         const token = sessionStorage.getItem(tokenKey);
         const response = await fetch(url, {
             method: 'POST',

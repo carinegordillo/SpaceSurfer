@@ -1,10 +1,16 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using SS.Backend.DataAccess;
+﻿using SS.Backend.DataAccess;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security;
 using System.Text;
+using Microsoft.AspNetCore.Http;
+//using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text.Json;
+using System.Security.Cryptography;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace SS.Backend.Security
 {
@@ -357,22 +363,6 @@ namespace SS.Backend.Security
             }
 
             return true; // Passes all checks
-            /*
-            if (currentPrincipal?.Claims == null)
-            {
-                // If user claims are null, authorization fails
-                return false;
-            }
-
-            foreach (var claim in requiredClaims)
-            {
-                if (!currentPrincipal.Claims.Contains(claim))
-                {
-                    return false;
-                }
-            }
-            return true;
-            */
 
         }
 
@@ -397,99 +387,61 @@ namespace SS.Backend.Security
             return ssPrincipal;
         }
 
-
-        public async Task<string> GenerateAccessToken(string username, IDictionary<string, string> roles)
+        public string CreateJwt(HttpRequest Request, SSPrincipal principal)
         {
-            var builder = new CustomSqlCommandBuilder();
-            Response result = new Response();
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn");
-
-            var claims = new List<Claim>
+            var header = new JwtHeader();
+            var payload = new JwtPayload()
             {
-                new Claim(JwtRegisteredClaimNames.Sub, username),
-                new Claim(JwtRegisteredClaimNames.Iss, "https://spacesurfers.auth.com/"),
-                new Claim(JwtRegisteredClaimNames.Aud, "spacesurfers"),
+                Iss = Request.Host.Host,
+                Sub = principal.UserIdentity,
+                Aud = "spacesurfers",
+                Iat = DateTime.UtcNow.Ticks,
+                Exp = DateTime.UtcNow.AddHours(1).Ticks,
+                Claims = principal.Claims
             };
 
-            foreach (var role in roles)
+            var serializerOptions = new JsonSerializerOptions()
             {
-                claims.Add(new Claim(ClaimTypes.Role, role.Value));
-            }
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                //Expires = DateTime.UtcNow.AddHours(1),
-                Expires = DateTime.UtcNow.AddSeconds(30),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = false
             };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
+            var encodedHeader = Base64UrlEncode(JsonSerializer.Serialize(header, serializerOptions));
+            var encodedPayload = Base64UrlEncode(JsonSerializer.Serialize(payload, serializerOptions));
 
-        public string GetSubjectFromToken(string accessToken)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.ReadJwtToken(accessToken);
-
-            var subject = token.Subject;
-            return subject;
-        }
-
-        public List<string> GetRolesFromToken(string accessToken)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.ReadJwtToken(accessToken);
-
-            var roleClaim = token.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value;
-            return roleClaim != null ? new List<string> { roleClaim } : new List<string>();
-        }
-
-        public string GetExpTimeFromToken(string accessToken)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.ReadJwtToken(accessToken);
-
-            string expirationTime = token.ValidTo.ToString("yyyy-MM-ddTHH:mm:ssZ");
-            return expirationTime;
-        }
-
-        public async Task<(string newToken, Response res)> RefreshToken(string username, IDictionary<string, string> roles)
-        {
-            try
+            using (var hash = new HMACSHA256(Encoding.UTF8.GetBytes("simple-key")))
             {
-                string newToken = await GenerateAccessToken(username, roles);
+                // String to Byte[]
+                var signatureInput = $"{encodedHeader}.{encodedPayload}";
+                var signatureInputBytes = Encoding.UTF8.GetBytes(signatureInput);
 
-                return (newToken, new Response { HasError = false });
-            }
-            catch (Exception ex)
-            {
-                return (null, new Response { HasError = true, ErrorMessage = ex.Message });
+                // Byte[] to String
+                var signatureDigestBytes = hash.ComputeHash(signatureInputBytes);
+                var encodedSignature = WebEncoders.Base64UrlEncode(signatureDigestBytes);
+
+                var jwt = new Jwt()
+                {
+                    Header = header,
+                    Payload = payload,
+                    Signature = encodedSignature
+                };
+
+                return jwt.ToJson();
             }
         }
 
-        public async Task<string> HashToken(string token)
+        private string Base64UrlEncode(string input)
         {
-            Response result = new Response();
+            var bytes = Encoding.UTF8.GetBytes(input);
+            return WebEncoders.Base64UrlEncode(bytes);
+        }
 
-            try
-            {
-                var getCmd = builder
-                    .BeginSelectAll()
-                    .From("TokenSalt")
-                    .Build();
-                result = await sqldao.ReadSqlResult(getCmd);
-                string tokenSalt = (string)result.ValuesRead?.Rows[0]?["Salt"];
-                string tokenHash = hasher.HashData(token, tokenSalt);
-                return tokenHash;
-            }
-            catch (Exception ex)
-            {
-                return (null, new Response { HasError = true, ErrorMessage = ex.Message });
-            }
+        public string CreateIdToken(SSPrincipal principal)
+        {
+            var user = principal.UserIdentity;
+            var idt = new IdToken { Username = user };
+
+            return idt.ToJson();
         }
 
     }

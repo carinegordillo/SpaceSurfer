@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,28 +18,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
-
-var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
-var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
-byte[] keyBytes = jwtKey != null ? Encoding.UTF8.GetBytes(jwtKey) : throw new ArgumentNullException(nameof(jwtKey));
-var issuerSigningKey = new SymmetricSecurityKey(keyBytes);
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtIssuer,
-            IssuerSigningKey = issuerSigningKey
-        };
-    });
-
-//builder.Services.AddAuthorization();
 
 var baseDirectory = AppContext.BaseDirectory;
 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
@@ -75,13 +52,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Content Security Policy (CSP) middleware
-//app.Use(async (context, next) =>
-//{
-//    context.Response.Headers.Add(HeaderNames.ContentSecurityPolicy, "default-src 'self'; script-src 'self' 'unsafe-inline';");
-//    await next();
-//});
-
 app.Use(async (context, next) =>
 {
     // Get the origin header from the request
@@ -110,8 +80,6 @@ app.Use(async (context, next) =>
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();
-
-//app.UseAuthorization();
 
 app.MapControllers();
 

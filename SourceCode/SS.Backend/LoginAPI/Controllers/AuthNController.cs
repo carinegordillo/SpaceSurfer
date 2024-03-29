@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SS.Backend.Security;
 using SS.Backend.Services.EmailService;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace AuthAPI.Controllers
 {
@@ -52,13 +53,12 @@ namespace AuthAPI.Controllers
             {
                 var rolesDictionary = principal.Claims;
 
-                // Check if rolesDictionary is null, and provide a default empty dictionary if it is
                 rolesDictionary ??= new Dictionary<string, string>();
 
-                var token = await _authService.GenerateAccessToken(principal.UserIdentity, rolesDictionary);
-                var hashedToken = await _ authService.HashToken(token);
+                var accessToken = _authService.CreateJwt(Request, principal);
+                var idToken = _authService.CreateIdToken(principal);
 
-                return Ok(token);
+                return Ok(new { accessToken, idToken });
             }
             else
             {
@@ -66,38 +66,25 @@ namespace AuthAPI.Controllers
             }
         }
 
-
-        [HttpPost("decodeToken")]
-        public IActionResult decodeToken([FromBody] string accessToken)
+        [HttpPost("getRole")]
+        public IActionResult GetRole([FromBody] Jwt token)
         {
-            List<string> role = _authService.GetRolesFromToken(accessToken);
-            string exp_time = _authService.GetExpTimeFromToken(accessToken);
-            string subject = _authService.GetSubjectFromToken(accessToken);
-            return Ok( new { role, exp_time, subject });
-        }
-
-        [HttpPost("refreshToken")]
-        public async Task<IActionResult> RefreshToken(string username, IDictionary<string, string>? roles)
-        {
-            try
+            if (token != null)
             {
-                if (username == null)
+                var claims = token.Payload.Claims;
+                if (claims != null)
                 {
-                    return BadRequest("Username cannot be null");
+                    string role = claims["Role"];
+                    return Ok(role);
                 }
-
-                var (newToken, response) = await _authService.RefreshToken(username, roles ?? new Dictionary<string, string>());
-
-                if (response.HasError)
+                else
                 {
-                    return BadRequest(response.ErrorMessage);
+                    return BadRequest("No claims in token.");
                 }
-
-                return Ok(newToken);
             }
-            catch (Exception ex)
+            else
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return BadRequest("No token found.");
             }
         }
 
