@@ -9,7 +9,7 @@ CREATE PROCEDURE CheckConflictingReservations
 AS
 BEGIN
     SELECT reservationID
-    FROM dbo.NewAutoIDReservations 
+    FROM dbo.Reservations
     WHERE companyID = @companyID
     AND floorPlanID = @floorPlanID 
     AND spaceID = @spaceID 
@@ -25,7 +25,7 @@ GO
 CREATE PROCEDURE UpdateReservationStatus
 AS
 BEGIN
-    UPDATE dbo.NewAutoIDReservations
+    UPDATE dbo.Reservations
     SET Status = 'Passed'
     WHERE reservationEndTime < SYSDATETIME()
     AND Status = 'Active'

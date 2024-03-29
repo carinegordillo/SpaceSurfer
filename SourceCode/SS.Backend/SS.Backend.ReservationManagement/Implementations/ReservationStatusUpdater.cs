@@ -4,6 +4,8 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 
 
+
+
 namespace SS.Backend.ReservationManagement{
 
 public class ReservationStatusUpdater : IReservationStatusUpdater 
@@ -15,13 +17,13 @@ public class ReservationStatusUpdater : IReservationStatusUpdater
             _reservationManagementRepository = reservationManagementRepository;
         }
 
-        public async Task<Response> UpdateReservtionStatuses(string tableName)
+        public async Task<Response> UpdateReservtionStatuses(string tableName,string storedProcedureName )
         {
-            Response response = new Response();
+            Response response = new Response(); 
 
 
             CustomSqlCommandBuilder commandBuilder = new CustomSqlCommandBuilder();
-            SqlCommand command = commandBuilder.BeginStoredProcedure("UpdateReservationStatus").Build();
+            SqlCommand command = commandBuilder.BeginStoredProcedure(storedProcedureName).Build();
 
             try{
     

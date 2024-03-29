@@ -20,6 +20,7 @@ namespace SS.Backend.Tests.ReservationManagement{
         private ReservationCreatorService _reservationCreatorService;
 
         string AUTO_ID_TABLE = "dbo.NewAutoIDReservations";
+        string USER_HASH1 = "testUserHash1";
 
         
         [TestInitialize]
@@ -36,7 +37,7 @@ namespace SS.Backend.Tests.ReservationManagement{
 
             _reservationValidationService = new ReservationValidationService(_reservationManagementRepository);
 
-            _reservationCreatorService = new ReservationCreatorService(_reservationManagementRepository, _reservationValidationService);
+            _reservationCreatorService = new ReservationCreatorService(_reservationManagementRepository);
 
 
         }
@@ -55,7 +56,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 SpaceID = "SPACE302",
                 ReservationStartTime = new DateTime(2023, 01, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2023, 01, 01, 15, 00, 00), 
-                Status = ReservationStatus.Active
+                Status = ReservationStatus.Active,
+                UserHash = USER_HASH1
             };
 
             // Act 1: Create the first reservation
@@ -68,10 +70,11 @@ namespace SS.Backend.Tests.ReservationManagement{
             {
                 CompanyID = 2,
                 FloorPlanID = 3,
-                SpaceID = "Space302",
+                SpaceID = "SPACE302",
                 ReservationStartTime = new DateTime(2023, 01, 01, 14, 00, 00), 
                 ReservationEndTime = new DateTime(2023, 01, 01, 16, 00, 00), 
-                Status = ReservationStatus.Active
+                Status = ReservationStatus.Active,
+                UserHash = USER_HASH1
             };
 
             response = await _reservationValidationService.ValidateNoConflictingReservationsAsync(reservation2);
@@ -94,7 +97,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 SpaceID = "SPACE302",
                 ReservationStartTime = new DateTime(2025, 03, 01, 13, 00, 00), // Jan 1, 2022, 1:00 PM
                 ReservationEndTime = new DateTime(2025, 03, 01, 14, 00, 00), // Jan 1, 2022, 3:00 PM
-                Status = ReservationStatus.Active
+                Status = ReservationStatus.Active,
+                 UserHash = USER_HASH1
             };
 
             // Act 1: Create the first reservation
@@ -107,10 +111,11 @@ namespace SS.Backend.Tests.ReservationManagement{
             {
                 CompanyID = 2,
                 FloorPlanID = 3,
-                SpaceID = "Space302",
+                SpaceID = "SPACE302",
                 ReservationStartTime = new DateTime(2025, 03, 01, 16, 00, 00), 
                 ReservationEndTime = new DateTime(2025, 03, 01, 18, 00, 00), 
-                Status = ReservationStatus.Active
+                Status = ReservationStatus.Active,
+                UserHash = USER_HASH1
             };
 
             // Act 2 Check for conflicts before creating the second reservation
@@ -133,7 +138,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 SpaceID = "SPACE202",
                 ReservationStartTime = new DateTime(2023, 01, 01, 07, 00, 00), 
                 ReservationEndTime = new DateTime(2023, 01, 01, 08, 00, 00), 
-                Status = ReservationStatus.Active
+                Status = ReservationStatus.Active,
+                 UserHash = USER_HASH1
             };
 
             // Act 1: Create the first reservation
@@ -152,9 +158,10 @@ namespace SS.Backend.Tests.ReservationManagement{
                 CompanyID = 1,
                 FloorPlanID = 2,
                 SpaceID = "SPACE202",
-                ReservationStartTime = new DateTime(2023, 01, 01, 13, 00, 00), // Jan 1, 2022, 1:00 PM
-                ReservationEndTime = new DateTime(2023, 01, 01, 14, 00, 00), // Jan 1, 2022, 3:00 PM
-                Status = ReservationStatus.Active
+                ReservationStartTime = new DateTime(2024, 03, 29, 13, 00, 00), 
+                ReservationEndTime = new DateTime(2024, 03, 29, 14, 00, 00), 
+                Status = ReservationStatus.Active,
+                 UserHash = USER_HASH1
             };
 
             // Act 1: Create the first reservation
@@ -174,7 +181,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 SpaceID = "SPACE202",
                 ReservationStartTime = new DateTime(2026, 01, 01, 07, 00, 00), 
                 ReservationEndTime = new DateTime(2026, 01, 01, 08, 00, 00), 
-                Status = ReservationStatus.Active
+                Status = ReservationStatus.Active,
+                 UserHash = USER_HASH1
             };
 
             // Act
@@ -196,7 +204,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 SpaceID = "SPACE202",
                 ReservationStartTime = new DateTime(2026, 01, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2026, 01, 01, 18, 00, 00), 
-                Status = ReservationStatus.Active
+                Status = ReservationStatus.Active,
+                 UserHash = USER_HASH1
             };
 
             // Act
@@ -217,13 +226,13 @@ namespace SS.Backend.Tests.ReservationManagement{
                 FloorPlanID = 2,
                 SpaceID = "SPACE202",
                 ReservationStartTime = new DateTime(2024, 03, 23, 13, 00, 00), 
-                ReservationEndTime = new DateTime(2024, 03, 23, 18, 00, 00), 
+                ReservationEndTime = new DateTime(2024, 03, 23, 18, 00, 00),
+                UserHash = USER_HASH1 
             };
-            int maxLeadTime = 5;
-            TimeUnit unitOfTime = TimeUnit.Days;
+            TimeSpan maxLeadTime = TimeSpan.FromDays(12);
 
             // Act
-            var response =  _reservationValidationService.ValidateReservationLeadTime(userReservationsModel, maxLeadTime, unitOfTime);
+            var response =  _reservationValidationService.ValidateReservationLeadTime(userReservationsModel, maxLeadTime);
 
             // Assert
             Console.WriteLine(response.ErrorMessage);
@@ -241,12 +250,12 @@ namespace SS.Backend.Tests.ReservationManagement{
                 SpaceID = "SPACE202",
                 ReservationStartTime = new DateTime(2024, 07, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2024, 07, 01, 18, 00, 00), 
+                UserHash = USER_HASH1
             };
-            int maxLeadTime = 5;
-            TimeUnit unitOfTime = TimeUnit.Days;
 
+            TimeSpan maxLeadTime = TimeSpan.FromDays(5);
             // Act
-            var response =  _reservationValidationService.ValidateReservationLeadTime(userReservationModel, maxLeadTime, unitOfTime);
+            var response =  _reservationValidationService.ValidateReservationLeadTime(userReservationModel, maxLeadTime);
 
             // Assert
             Console.WriteLine(response.ErrorMessage);

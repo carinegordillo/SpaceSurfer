@@ -59,7 +59,7 @@ namespace SS.Backend.ReservationManagement
             catch (Exception ex)
             {
                 result.HasError = true;
-                Console.WriteLine($"Error in WriteReservationTables: {ex.Message}");
+                Console.WriteLine($"Error in ExecuteUpdateReservationTables: {ex.Message}");
                 result.ErrorMessage = ex.Message;
             }
             return result;

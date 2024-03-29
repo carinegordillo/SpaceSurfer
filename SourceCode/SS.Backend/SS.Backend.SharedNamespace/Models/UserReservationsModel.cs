@@ -16,5 +16,6 @@ namespace SS.Backend.ReservationManagement
         public DateTime ReservationStartTime { get; set; }
         public DateTime ReservationEndTime { get; set; }
         public ReservationStatus Status { get; set; }
+        public string UserHash { get; set; }
     }
 }
