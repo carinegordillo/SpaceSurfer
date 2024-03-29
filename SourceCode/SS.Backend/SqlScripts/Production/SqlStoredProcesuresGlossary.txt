@@ -1,0 +1,7 @@
+
+
+CheckConflictingReservations:
+    This stored procedure checks if there are any conflicting reservations for a given floor plan, space, and time range.
+    It returns the reservation IDs of the conflicting reservations.
+    If a reservation ID is provided to exclude, it will exclude that reservation from the check.
+    This is useful when updating a reservation, as the reservation being updated should not conflict with itself. 

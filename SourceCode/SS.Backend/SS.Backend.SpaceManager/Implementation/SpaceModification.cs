@@ -333,7 +333,7 @@ namespace SS.Backend.SpaceManager
 
         private async Task<Response> CheckCompanyReservation(int companyID)
         {
-            var response = await _spaceManagerDao.readTableWhere("companyID", companyID, "dbo.Reservations");
+            var response = await _spaceManagerDao.readTableWhere("companyID", companyID, "dbo.NewAutoIDReservations");
 
             if (response.ValuesRead != null && response.ValuesRead.Rows.Count > 0)
             {
