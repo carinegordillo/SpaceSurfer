@@ -7,7 +7,7 @@ namespace SS.Backend.ReservationManagement
     {
     public Response checkReservationStatus(UserReservationsModel reservation);
 
-     public  Task<Response> CancelReservationAsync(string tableName, int reservationID);
+     public Task<Response> CancelReservationAsync(string tableName, int reservationID);
     }
 
 }

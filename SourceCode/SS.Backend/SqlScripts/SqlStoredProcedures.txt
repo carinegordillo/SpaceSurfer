@@ -1,0 +1,34 @@
+-------------------------------------------------
+CREATE PROCEDURE CheckConflictingReservations
+    @companyID INT,
+    @floorPlanID INT,
+    @spaceID NVARCHAR(255),
+    @proposedStartDateTime DATETIME,
+    @proposedEndDateTime DATETIME,
+    @reservationIdToExclude INT = NULL  -- Default to NULL if not provided
+AS
+BEGIN
+    SELECT reservationID
+    FROM dbo.NewAutoIDReservations 
+    WHERE companyID = @companyID
+    AND floorPlanID = @floorPlanID 
+    AND spaceID = @spaceID 
+    AND status = 'Active'
+    AND NOT (
+        reservationEndTime <= @proposedStartDateTime
+        OR reservationStartTime >= @proposedEndDateTime
+    )
+    AND (@reservationIdToExclude IS NULL OR reservationID != @reservationIdToExclude);
+END;
+GO
+-------------------------------------------------
+CREATE PROCEDURE UpdateReservationStatus
+AS
+BEGIN
+    UPDATE dbo.NewAutoIDReservations
+    SET Status = 'Passed'
+    WHERE reservationEndTime < SYSDATETIME()
+    AND Status = 'Active'
+END
+GO
+-------------------------------------------------
