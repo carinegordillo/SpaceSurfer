@@ -14,7 +14,7 @@ namespace SS.Backend.Tests.ReservationManagement{
     {
         private SqlDAO _sqlDao;
         private ConfigService _configService;
-        private ReservationCreatorService  _ReservationCreatorServiceService;
+        private ReservationCreatorService  _ReservationCreatorService;
 
         private ReservationManagementRepository _reservationManagementRepository;
 
@@ -44,7 +44,7 @@ namespace SS.Backend.Tests.ReservationManagement{
 
             _reservationValidationService = new ReservationValidationService(_reservationManagementRepository);
 
-            _ReservationCreatorServiceService = new ReservationCreatorService(_reservationManagementRepository);
+            _ReservationCreatorService = new ReservationCreatorService(_reservationManagementRepository);
 
 
         }
@@ -67,7 +67,7 @@ namespace SS.Backend.Tests.ReservationManagement{
                 UserHash = USER_HASH2
             };
             // Act
-            var response = await _ReservationCreatorServiceService.CreateReservationWithAutoIDAsync(AUTO_ID_TABLE,userReservationsModel);
+            var response = await _ReservationCreatorService.CreateReservationWithAutoIDAsync(AUTO_ID_TABLE,userReservationsModel);
             Console.WriteLine(response.ErrorMessage);
             
             // Assert

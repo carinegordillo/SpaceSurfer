@@ -14,20 +14,15 @@
 //     {
 //         private SqlDAO _sqlDao;
 //         private ConfigService _configService;
-//         private ReservationCreatorService  _ReservationCreatorServiceService;
+//         private ReservationCreatorService  _reservationCreatorService;
 
 //         private ReservationManagementRepository _reservationManagementRepository;
 
 //         private ReservationValidationService _reservationValidationService;
 
 //         string AUTO_ID_TABLE = "dbo.NewAutoIDReservations";
-//         string USER_HASH2 = "testUserHash2";
-
-
-
-
         
-        
+
 //         [TestInitialize]
 //         public void Setup()
 //         {
@@ -44,7 +39,7 @@
 
 //             _reservationValidationService = new ReservationValidationService(_reservationManagementRepository);
 
-//             _ReservationCreatorServiceService = new ReservationCreatorService(_reservationManagementRepository);
+//             _reservationCreatorService= new ReservationCreatorService(_reservationManagementRepository);
 
 
 
@@ -58,12 +53,28 @@
 //             var reservationId = SetupTestReservation(); 
 
 //             var service = new ReservationValidationService();
+//             UserReservationsModel userReservationsModel = new UserReservationsModel
+//             {
+//                 CompanyID = 1,
+//                 FloorPlanID = 1,
+//                 SpaceID = "Space101",
+//                 ReservationStartTime = new DateTime(2025, 01, 01, 13, 00, 00), 
+//                 ReservationEndTime = new DateTime(2025, 01, 01, 15, 00, 00), 
+//                 Status = ReservationStatus.Active,
+//                 UserHash = "testUserHash4"
+//             };
+
+            
+
 //             var model = new UserReservationsModel
 //             {
 //                 ReservationID = reservationId,
 //                 ReservationStartTime = DateTime.UtcNow.AddDays(1),
 //                 ReservationEndTime = DateTime.UtcNow.AddDays(1).AddHours(2)
 //             };
+            
+//             // Act
+//             var response = await _ReservationCreatorServiceService.CreateReservationWithAutoIDAsync(AUTO_ID_TABLE,userReservationsModel);
 
 //             // Act
 //             var response = await service.ModifyReservationTimes("NewAutoIDReservations", model);
