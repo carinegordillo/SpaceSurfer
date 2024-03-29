@@ -1,10 +1,16 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using SS.Backend.DataAccess;
+﻿using SS.Backend.DataAccess;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security;
 using System.Text;
+using Microsoft.AspNetCore.Http;
+//using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text.Json;
+using System.Security.Cryptography;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace SS.Backend.Security
 {
@@ -40,9 +46,8 @@ namespace SS.Backend.Security
                 .Where($"username = '{user}'")
                 .Build();
             result = await sqldao.ReadSqlResult(getHash);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            string user_hash = (string)result.ValuesRead.Rows[0]["hashedUsername"];
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
+            string user_hash = (string)result.ValuesRead?.Rows[0]?["hashedUsername"];
 
             try
             {
@@ -196,9 +201,7 @@ namespace SS.Backend.Security
                 .Where($"username = '{user}'")
                 .Build();
             result = await sqldao.ReadSqlResult(getHash);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            string user_hash = (string)result.ValuesRead.Rows[0]["hashedUsername"];
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            string user_hash = (string)result.ValuesRead?.Rows[0]?["hashedUsername"];
 
             try
             {
@@ -209,11 +212,10 @@ namespace SS.Backend.Security
                     .Where($"Username = '{user_hash}'")
                     .Build();
                 result = await sqldao.ReadSqlResult(selectCommand);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                string dbOTP = (string)result.ValuesRead.Rows[0]["OTP"];
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-                string dbSalt = (string)result.ValuesRead.Rows[0]["Salt"];
-                DateTime timestamp = (DateTime)result.ValuesRead.Rows[0]["Timestamp"];
+
+                string dbOTP = (string)result.ValuesRead?.Rows[0]?["OTP"];
+                string dbSalt = (string)result.ValuesRead?.Rows[0]?["Salt"];
+                DateTime timestamp = (DateTime)result.ValuesRead?.Rows[0]?["Timestamp"];
                 TimeSpan timeElapsed = DateTime.UtcNow - timestamp;
 
                 // compare the otp stored in DB with user inputted otp
@@ -250,9 +252,7 @@ namespace SS.Backend.Security
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
                         if (result.ValuesRead.Rows.Count > 0)
                         {
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-                            string role = result.ValuesRead.Rows[0]["appRole"].ToString();
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+                            string role = result.ValuesRead?.Rows[0]?["appRole"].ToString();
 
                             // populate the principal
                             SSPrincipal principal = new();
@@ -385,22 +385,6 @@ namespace SS.Backend.Security
             }
 
             return true; // Passes all checks
-            /*
-            if (currentPrincipal?.Claims == null)
-            {
-                // If user claims are null, authorization fails
-                return false;
-            }
-
-            foreach (var claim in requiredClaims)
-            {
-                if (!currentPrincipal.Claims.Contains(claim))
-                {
-                    return false;
-                }
-            }
-            return true;
-            */
 
         }
 
@@ -425,65 +409,61 @@ namespace SS.Backend.Security
             return ssPrincipal;
         }
 
-
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public static async Task<string> GenerateAccessToken(string username, IDictionary<string, string> roles)
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+        public string CreateJwt(HttpRequest Request, SSPrincipal principal)
         {
-            var builder = new CustomSqlCommandBuilder();
-            Response result = new();
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn");
-
-            var claims = new List<Claim>
+            var header = new JwtHeader();
+            var payload = new JwtPayload()
             {
-                new(JwtRegisteredClaimNames.Sub, username),
-                new(JwtRegisteredClaimNames.Iss, "https://spacesurfers.auth.com/"),
-                new(JwtRegisteredClaimNames.Aud, "spacesurfers"),
+                Iss = Request.Host.Host,
+                Sub = principal.UserIdentity,
+                Aud = "spacesurfers",
+                Iat = DateTime.UtcNow.Ticks,
+                Exp = DateTime.UtcNow.AddHours(1).Ticks,
+                Claims = principal.Claims
             };
 
-            foreach (var role in roles)
+            var serializerOptions = new JsonSerializerOptions()
             {
-                claims.Add(new Claim(ClaimTypes.Role, role.Value));
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = false
+            };
+
+            var encodedHeader = Base64UrlEncode(JsonSerializer.Serialize(header, serializerOptions));
+            var encodedPayload = Base64UrlEncode(JsonSerializer.Serialize(payload, serializerOptions));
+
+            using (var hash = new HMACSHA256(Encoding.UTF8.GetBytes("simple-key")))
+            {
+                // String to Byte[]
+                var signatureInput = $"{encodedHeader}.{encodedPayload}";
+                var signatureInputBytes = Encoding.UTF8.GetBytes(signatureInput);
+
+                // Byte[] to String
+                var signatureDigestBytes = hash.ComputeHash(signatureInputBytes);
+                var encodedSignature = WebEncoders.Base64UrlEncode(signatureDigestBytes);
+
+                var jwt = new Jwt()
+                {
+                    Header = header,
+                    Payload = payload,
+                    Signature = encodedSignature
+                };
+
+                return jwt.ToJson();
             }
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
         }
 
-        public string GetSubjectFromToken(string accessToken)
+        private string Base64UrlEncode(string input)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.ReadJwtToken(accessToken);
-
-            var subject = token.Subject;
-            return subject;
+            var bytes = Encoding.UTF8.GetBytes(input);
+            return WebEncoders.Base64UrlEncode(bytes);
         }
 
-        public List<string> GetRolesFromToken(string accessToken)
+        public string CreateIdToken(SSPrincipal principal)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.ReadJwtToken(accessToken);
+            var user = principal.UserIdentity;
+            var idt = new IdToken { Username = user };
 
-            var roleClaim = token.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value;
-            return roleClaim != null ? new List<string> { roleClaim } : new List<string>();
-        }
-
-        public string GetExpTimeFromToken(string accessToken)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.ReadJwtToken(accessToken);
-
-            string expirationTime = token.ValidTo.ToString("yyyy-MM-ddTHH:mm:ssZ");
-            return expirationTime;
+            return idt.ToJson();
         }
 
         public SSPrincipal ValidateToken(string accessToken)
