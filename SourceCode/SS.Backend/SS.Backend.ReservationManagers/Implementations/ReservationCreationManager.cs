@@ -4,7 +4,7 @@ using SS.Backend.ReservationManagement;
 
 namespace SS.Backend.ReservationManagers{
 
-    public class ReservationCreationManager
+    public class ReservationCreationManager : IReservationCreationManager
     {
         private readonly string SS_RESERVATIONS_TABLE = "dbo.reservations";
         private readonly IReservationCreatorService _reservationCreatorService;

@@ -150,7 +150,7 @@ namespace SS.Backend.Tests.ReservationManagement{
         var response = await reservationStatusUpdater.UpdateReservtionStatuses(MANUAL_ID_TABLE, "UpdateReservationStatusManualID");
         Console.WriteLine(response.ErrorMessage);
         Assert.IsFalse(response.HasError); 
-        }
+    }
 
 
         [TestCleanup]

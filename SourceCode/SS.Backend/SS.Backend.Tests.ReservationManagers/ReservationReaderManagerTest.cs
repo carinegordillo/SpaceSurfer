@@ -31,6 +31,8 @@ namespace SS.Backend.Tests.ReservationManagers{
         private ReservationCancellationManager _reservationCancellationManager;
         private ReservationCancellationService _reservationCancellationService;
 
+        private ReservationStatusUpdater _reservationStatusUpdater;
+
 
         //uses newManualIDReservations because it allows manual id insertion
 
@@ -66,7 +68,9 @@ namespace SS.Backend.Tests.ReservationManagers{
             
             _reservationCancellationService = new ReservationCancellationService(_reservationManagementRepository);
 
-            _reservationCancellationManager = new ReservationCancellationManager(_reservationCancellationService, _reservationValidationService);
+            _reservationStatusUpdater = new ReservationStatusUpdater(_reservationManagementRepository);
+
+            _reservationCancellationManager = new ReservationCancellationManager(_reservationCancellationService, _reservationValidationService, _reservationStatusUpdater);
         }
 
         [TestMethod]

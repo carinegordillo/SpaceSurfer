@@ -239,7 +239,60 @@ namespace SS.Backend.SpaceManager
             return await _sqldao.ReadSqlResult(selectCommand);
         }
 
+        public async Task<Response> ExecuteReadCompanyTables(SqlCommand command){
 
+            Response result = new Response();
+            
+            try
+            {
+                result = await _sqldao.ReadSqlResult(command);
 
+            }
+            catch (Exception ex)
+            {
+                result.HasError = true;
+                Console.WriteLine($"Error in ExecuteReadCompanyTables: {ex.Message}");
+                result.ErrorMessage = ex.Message;
+            }
+
+            if (result.HasError == false){
+                result.ErrorMessage += "- ExecuteReadCompanyTables - command successful -";
+                result.HasError = false;
+            }
+            else{
+                result.ErrorMessage += $"- ExecuteReadCompanyTables - {command.CommandText} -  command not successful END OF \n\n -";
+                result.HasError = true;
+
+            }
+            
+            return result;
+        }
+
+        public async Task<Response> ExecuteWriteCompanyTables(SqlCommand command){
+
+            Response result = new Response();
+            
+            try
+            {
+                result = await _sqldao.SqlRowsAffected(command);
+
+            }
+            catch (Exception ex)
+            {
+                result.HasError = true;
+                Console.WriteLine($"Error in ExecuteReadCompanyTables: {ex.Message}");
+                result.ErrorMessage = ex.Message;
+            }
+
+            if (result.HasError == false){
+                result.ErrorMessage += "- ExecuteReadCompanyTables - command successful -";
+                result.HasError = false;
+            }
+            else{
+                result.ErrorMessage += $"- ExecuteReadCompanyTables - {command.CommandText} -  command not successful END OF \n\n -";
+                result.HasError = true;
+
+            }
+            return result;
     }
-}
+}}
