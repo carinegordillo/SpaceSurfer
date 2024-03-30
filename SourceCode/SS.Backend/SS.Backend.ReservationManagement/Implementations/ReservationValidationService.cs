@@ -34,7 +34,7 @@ namespace SS.Backend.ReservationManagement{
             };
 
             CustomSqlCommandBuilder commandBuilder = new CustomSqlCommandBuilder();
-            SqlCommand command = commandBuilder.BeginStoredProcedure("CheckConflictingReservations")
+            SqlCommand command = commandBuilder.BeginStoredProcedure("CheckConflictingReservationsPROD")
                                         .AddParameters(reservationParameters)
                                         .Build();
             try{
@@ -322,6 +322,7 @@ namespace SS.Backend.ReservationManagement{
 
             if (validationFlags.HasFlag(ReservationValidationFlags.ReservationStatusIsActive))
             {
+            
                 var statusResponse = checkReservationStatus(userReservationsModel);
                 if (statusResponse.HasError)
                 {

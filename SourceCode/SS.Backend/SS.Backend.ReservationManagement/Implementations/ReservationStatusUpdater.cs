@@ -17,7 +17,7 @@ public class ReservationStatusUpdater : IReservationStatusUpdater
             _reservationManagementRepository = reservationManagementRepository;
         }
 
-        public async Task<Response> UpdateReservtionStatuses(string tableName,string storedProcedureName )
+        public async Task<Response> UpdateReservtionStatuses(string tableName,string storedProcedureName)
         {
             Response response = new Response(); 
 

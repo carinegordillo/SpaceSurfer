@@ -1,3 +1,124 @@
+
+
+
+select* from userAccount
+
+-- Insert statements for userAccount table
+INSERT INTO [dbo].[userAccount] ([username], [birthDate]) VALUES
+('manager1', '1980-01-01'), -- Replace birthDate with manager1's birthdate
+('manager2', '1985-03-15'), -- Replace birthDate with manager2's birthdate
+('manager3', '1977-08-20'), -- Replace birthDate with manager3's birthdate
+('manager4', '1990-11-10'), -- Replace birthDate with manager4's birthdate
+('user1', '1995-05-25'), -- Replace birthDate with user1's birthdate
+('user2', '1992-09-30'), -- Replace birthDate with user2's birthdate
+('user3', '1988-12-05'), -- Replace birthDate with user3's birthdate
+('user4', '1997-07-12'), -- Replace birthDate with user4's birthdate
+('user5', '1994-04-18'); -- Replace birthDate with user5's birthdate
+
+-- Insert statements for userHash table
+INSERT INTO [dbo].[userHash] ([hashedUsername], [username], [user_id]) VALUES
+('hashed_manager1', 'manager1', 1033),
+('hashed_manager2', 'manager2', 1034),
+('hashed_manager3', 'manager3', 1035),
+('hashed_manager4', 'manager4', 1036),
+('hashed_user1', 'user1', 1037),
+('hashed_user2', 'user2', 1038),
+('hashed_user3', 'user3', 1039),
+('hashed_user4', 'user4', 1040),
+('hashed_user5', 'user5', 1041);
+
+-- Insert statements for userProfile table
+INSERT INTO [dbo].[userProfile] ([hashedUsername], [firstName], [lastName], [backupEmail], [appRole]) VALUES
+('hashed_manager1', 'John', 'Doe', 'john.doe@example.com', 1), -- Manager
+('hashed_manager2', 'Jane', 'Smith', 'jane.smith@example.com', 1), -- Manager
+('hashed_manager3', 'Michael', 'Johnson', 'michael.johnson@example.com', 1), -- Manager
+('hashed_manager4', 'Emily', 'Brown', 'emily.brown@example.com', 1), -- Manager
+('hashed_user1', 'Alice', 'Johnson', 'alice.johnson@example.com', 2), -- General User
+('hashed_user2', 'Bob', 'Williams', 'bob.williams@example.com', 2), -- General User
+('hashed_user3', 'Olivia', 'Jones', 'olivia.jones@example.com', 2), -- General User
+('hashed_user4', 'William', 'Taylor', 'william.taylor@example.com', 2), -- General User
+('hashed_user5', 'Sophia', 'Martinez', 'sophia.martinez@example.com', 2); -- General User
+
+-- Insert statements for companyProfile table
+INSERT INTO [dbo].[companyProfile] ([hashedUsername], [companyName], [address], [openingHours], [closingHours], [daysOpen]) VALUES
+('hashed_manager1', 'Company A', '123 Main St', '08:00:00', '18:00:00', 'MondayTuesdayWednesdayThursdayFridaySaturdaySunday'),
+('hashed_manager2', 'Company B', '456 Elm St', '09:00:00', '19:00:00', 'MondayTuesdayThursdayFriday'),
+('hashed_manager3', 'Company C', '789 Oak St', '07:30:00', '17:30:00', 'MondayTuesdayWednesdayThursday'),
+('hashed_manager4', 'Company D', '101 Maple St', '10:00:00', '20:00:00', 'TuesdayWednesdayThursdayFriday');
+
+
+
+
+
+
+-- Insert statements for userAccount table
+INSERT INTO [dbo].[userAccount] ([username], [birthDate]) VALUES
+('manager1', '1980-01-01'), -- Replace birthDate with manager1's birthdate
+('manager2', '1985-03-15'), -- Replace birthDate with manager2's birthdate
+('manager3', '1977-08-20'), -- Replace birthDate with manager3's birthdate
+('manager4', '1990-11-10'), -- Replace birthDate with manager4's birthdate
+('user1', '1995-05-25'), -- Replace birthDate with user1's birthdate
+('user2', '1992-09-30'), -- Replace birthDate with user2's birthdate
+('user3', '1988-12-05'), -- Replace birthDate with user3's birthdate
+('user4', '1997-07-12'), -- Replace birthDate with user4's birthdate
+('user5', '1994-04-18'); -- Replace birthDate with user5's birthdate
+
+-- Insert statements for userHash table
+INSERT INTO [dbo].[userHash] ([hashedUsername], [username], [user_id]) VALUES
+('hashed_manager1', 'manager1', 1033),
+('hashed_manager2', 'manager2', 1034),
+('hashed_manager3', 'manager3', 1035),
+('hashed_manager4', 'manager4', 1036),
+('hashed_user1', 'user1', 1037),
+('hashed_user2', 'user2', 1038),
+('hashed_user3', 'user3', 1039),
+('hashed_user4', 'user4', 1040),
+('hashed_user5', 'user5', 1041);
+
+-- Insert statements for userProfile table
+INSERT INTO [dbo].[userProfile] ([hashedUsername], [firstName], [lastName], [backupEmail], [appRole]) VALUES
+('hashed_manager1', 'John', 'Doe', 'john.doe@example.com', 1), -- Manager
+('hashed_manager2', 'Jane', 'Smith', 'jane.smith@example.com', 1), -- Manager
+('hashed_manager3', 'Michael', 'Johnson', 'michael.johnson@example.com', 1), -- Manager
+('hashed_manager4', 'Emily', 'Brown', 'emily.brown@example.com', 1), -- Manager
+('hashed_user1', 'Alice', 'Johnson', 'alice.johnson@example.com', 2), -- General User
+('hashed_user2', 'Bob', 'Williams', 'bob.williams@example.com', 2), -- General User
+('hashed_user3', 'Olivia', 'Jones', 'olivia.jones@example.com', 2), -- General User
+('hashed_user4', 'William', 'Taylor', 'william.taylor@example.com', 2), -- General User
+('hashed_user5', 'Sophia', 'Martinez', 'sophia.martinez@example.com', 2); -- General User
+
+-- Insert statements for companyProfile table
+INSERT INTO [dbo].[companyProfile] ([hashedUsername], [companyName], [address], [openingHours], [closingHours], [daysOpen]) VALUES
+('hashed_manager1', 'Company A', '123 Main St', '08:00:00', '18:00:00', 'MondayTuesdayWednesdayThursdayFridaySaturdaySunday'),
+('hashed_manager2', 'Company B', '456 Elm St', '09:00:00', '19:00:00', 'MondayTuesdayThursdayFriday'),
+('hashed_manager3', 'Company C', '789 Oak St', '07:30:00', '17:30:00', 'MondayTuesdayWednesdayThursday'),
+('hashed_manager4', 'Company D', '101 Maple St', '10:00:00', '20:00:00', 'TuesdayWednesdayThursdayFriday');
+
+
+//company floor spaces need to be inserted through the tests
+
+INSERT INTO [dbo].[companyFloorSpaces] ([spaceID], [floorPlanID], [companyID], [timeLimit]) VALUES
+('SPACE001', 60, 1027, 2),
+('SPACE002', 60, 1027, 4),
+('SPACE003', 60, 1027, 6),
+('SPACE004', 61, 1028, 2),
+('SPACE005', 61, 1028, 4),
+('SPACE006', 62, 1028, 2),
+('SPACE007', 62, 1028, 4),
+('SPACE008', 62, 1028, 6),
+('SPACE009', 63, 1029, 2),
+('SPACE005', 63, 1029, 4),
+('SPACE006', 64, 1030, 2),
+('SPACE007', 64, 1030, 4),
+('SPACE008', 64, 1030, 6);
+
+---------------------------- OLD -------------------------------------
+
+
+
+
+
+
 INSERT INTO [dbo].[userAccount] (username, birthDate)
 VALUES 
 ('SingleReservationUser1', '1990-01-01'),

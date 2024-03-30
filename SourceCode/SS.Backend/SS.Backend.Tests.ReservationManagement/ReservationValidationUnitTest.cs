@@ -20,6 +20,8 @@ namespace SS.Backend.Tests.ReservationManagement{
         private ReservationCreatorService _reservationCreatorService;
 
         string AUTO_ID_TABLE = "dbo.NewAutoIDReservations";
+
+        string PROD_TABLE = "dbo.reservations";
         string USER_HASH1 = "testUserHash1";
         string USER_HASH2 = "testUserHash3";
 
@@ -62,7 +64,7 @@ namespace SS.Backend.Tests.ReservationManagement{
             };
 
             // Act 1: Create the first reservation
-            response = await _reservationCreatorService.CreateReservationWithAutoIDAsync(AUTO_ID_TABLE, reservation1);
+            response = await _reservationCreatorService.CreateReservationWithAutoIDAsync(PROD_TABLE, reservation1);
             Console.WriteLine(response.ErrorMessage);
             Assert.IsFalse(response.HasError);
 
