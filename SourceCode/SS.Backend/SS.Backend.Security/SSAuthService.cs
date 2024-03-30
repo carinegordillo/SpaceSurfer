@@ -5,7 +5,6 @@ using System.Security.Claims;
 using System.Security;
 using System.Text;
 using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text.Json;
@@ -466,45 +465,72 @@ namespace SS.Backend.Security
             return idt.ToJson();
         }
 
-        public SSPrincipal ValidateToken(string accessToken)
+        public SSPrincipal? ValidateToken(string tokenString, string expectedIssuer, string expectedSubject)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("g3LQ4A6$h#Z%2&t*BKs@v7GxU9$FqNpDrn");
-            var signingKey = new SymmetricSecurityKey(key);
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = signingKey,
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ClockSkew = TimeSpan.Zero
-            };
-
             try
             {
-                SecurityToken validatedToken;
-                var principal = tokenHandler.ValidateToken(accessToken, validationParameters, out validatedToken);
+                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
+                if (token == null) return null; // Token deserialization failed
 
-                var jwtToken = validatedToken as JwtSecurityToken;
-                if (jwtToken == null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                var issuer = token.Payload.Iss;
+                var subject = token.Payload.Sub;
+                var claims = token.Payload.Claims;
+
+                if (issuer != expectedIssuer || subject != expectedSubject)
                 {
-                    throw new SecurityTokenException("Invalid token");
+                    return null; // Invalid issuer or subject
                 }
 
-                // Use the existing method to map ClaimsPrincipal to SSPrincipal
-                var ssPrincipal = MapToSSPrincipal(principal);
+                var ssPrincipal = new SSPrincipal
+                {
+                    UserIdentity = subject,
+                    Claims = new Dictionary<string, string>() // Claims need to be added individually if they are part of the token
+                };
 
-#pragma warning disable CS8603 // Possible null reference return.
+                if (claims != null)
+                {
+                    foreach (var claim in claims)
+                    {
+                        ssPrincipal.Claims?.Add(claim.Key, claim.Value);
+                    }
+                }
+
                 return ssPrincipal;
-#pragma warning restore CS8603 // Possible null reference return.
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // Log or handle the exception if needed
-                throw new SecurityTokenException("Token validation failed", ex);
+                return null;
+            }
+        }
+        public string? ExtractSubjectFromToken(string tokenString)
+        {
+            try
+            {
+                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
+                return token.Payload.Sub;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 
-
+        /*
+        public IDictionary<string, string>? ExtractClaimsFromToken(string tokenString)
+        {
+            try
+            {
+                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
+                return token.Payload.Claims;
+            }
+            catch (Exception)
+            {
+                // Log or handle exception
+                return null;
+            }
+        }
+        */
     }
+
 }
+

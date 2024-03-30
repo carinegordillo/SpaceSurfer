@@ -6,6 +6,7 @@ using SS.Backend.SharedNamespace;
 using SS.Backend.Security;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using System.Text.Json;
 
 namespace demoAPI.Controllers;
 
@@ -25,6 +26,50 @@ public class DemoController : ControllerBase
     }
 
     // }  
+
+    // new token authorization
+    [HttpPost]
+    [Route("postSpace")]
+    public async Task<IActionResult> PostCreateSpace([FromBody] CompanyFloor companyFloor)
+    {
+        var ssPrincipal = HttpContext.Items["SSPrincipal"] as SSPrincipal;
+        // Check if the SSPrincipal was successfully retrieved and contains a UserIdentity
+        if (ssPrincipal == null || string.IsNullOrEmpty(ssPrincipal.UserIdentity))
+        {
+            return Unauthorized("User is not authorized or the token is missing required claims.");
+        }
+
+        var requiredClaims = new Dictionary<string, string>
+        {
+            // edit to what role/principal is authorized to use function
+            {"Role", "Manager"}
+        };
+
+        try
+        {
+            var isAuthorized = await _authService.IsAuthorize(ssPrincipal, requiredClaims);
+            if (!isAuthorized)
+            {
+                return Forbid("User does not have the required 'Manager' role.");
+            }
+            
+            // If authorized, proceed to create the space.
+            var response = await _spaceCreation.CreateSpace(ssPrincipal.UserIdentity, companyFloor);
+            if (response.HasError)
+            {
+                return BadRequest(response.ErrorMessage);
+            }
+            
+            return Ok(new { message = "SPACE created successfully!", response });
+                
+        }
+        catch(Exception)
+        {
+            return StatusCode(500, "An error occurred while creating the space.");
+        }
+    }
+
+    /*
     [HttpPost]
     [Route("postSpace")]
     public async Task<IActionResult> PostCreateSpace([FromBody] CompanyFloor companyFloor){
@@ -48,6 +93,7 @@ public class DemoController : ControllerBase
         }
         return Ok(new { message = "SPACE created successfully!" + response});
     }
+    */
 
     [HttpPost]
     [Route("modifyTimeLimits")]

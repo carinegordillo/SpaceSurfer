@@ -1,6 +1,7 @@
+/*
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
-using SS.Backend.Security; // Make sure this is pointing to where your SSAuthService is located
+using SS.Backend.Security;
 
 public class AuthenticationMiddleware
 {
@@ -43,3 +44,4 @@ public class AuthenticationMiddleware
         await context.Response.WriteAsync("Unauthorized. Please provide a valid token.");
     }
 }
+*/
