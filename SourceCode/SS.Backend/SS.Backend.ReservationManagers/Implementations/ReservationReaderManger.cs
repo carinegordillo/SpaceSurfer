@@ -1,5 +1,6 @@
 using SS.Backend.SharedNamespace;
 using SS.Backend.ReservationManagement;
+using System.Data;
 
 
 namespace SS.Backend.ReservationManagers{
@@ -17,8 +18,9 @@ namespace SS.Backend.ReservationManagers{
             
         }
 
-        public async Task<Response> GetAllUserSpaceSurferSpaceReservationAsync(string userName, string? tableNameOverride = null)
+       public async Task<IEnumerable<UserReservationsModel>> GetAllUserSpaceSurferSpaceReservationAsync(string userName, string? tableNameOverride = null)
         {
+            List<UserReservationsModel> userReservations = new List<UserReservationsModel>();
             Response response = new Response();
             string tableName = tableNameOverride ?? SS_RESERVATIONS_TABLE;
             
@@ -30,7 +32,7 @@ namespace SS.Backend.ReservationManagers{
                     response =  await _reservationReadService.GetAllUserReservations(tableName, userName);
                     if (response.HasError)
                     {
-                        response.ErrorMessage = "GetAllUserSpaceSurferSpaceReservationAsync, could not read user's Reservation.";
+                        response.ErrorMessage = "Sorry! could not retrieve your reservations.";
                         response.HasError = true;
                     }
                     else
@@ -44,11 +46,45 @@ namespace SS.Backend.ReservationManagers{
                     response.ErrorMessage = ex.Message;
                 }
             }
-            return response;
+
+            if (!response.HasError  && response.ValuesRead != null)
+            {
+
+                foreach (DataRow row in response.ValuesRead.Rows)
+                {
+                    var reservation = new UserReservationsModel
+                    {
+                        ReservationID = Convert.ToInt32(row["reservationID"]),
+                        CompanyID = Convert.ToInt32(row["companyID"]),
+                        FloorPlanID = Convert.ToInt32(row["floorPlanID"]),
+                        SpaceID = Convert.ToString(row["spaceID"]).Trim(),
+                        ReservationStartTime = Convert.ToDateTime(row["reservationStartTime"]),
+                        ReservationEndTime = Convert.ToDateTime(row["reservationEndTime"]),
+                        UserHash = Convert.ToString(row["userHash"]).Trim()
+                    };
+                    string statusString = Convert.ToString(row["status"]).Trim();
+                    if (Enum.TryParse(statusString, out ReservationStatus status))
+                    {
+                        reservation.Status = status;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Warning: Unknown status value '{statusString}'. Setting default status.");
+                    }
+                    userReservations.Add(reservation);
+                }
+            }
+            else
+            {
+                Console.WriteLine("No data found or error occurred.");
+            }
+            return userReservations;
         }
 
-        public async Task<Response> GetAllUserActiveSpaceSurferSpaceReservationAsync(string userName, string? tableNameOverride = null)
+        public async Task<IEnumerable<UserReservationsModel>> GetAllUserActiveSpaceSurferSpaceReservationAsync(string userName, string? tableNameOverride = null)
         {
+            List<UserReservationsModel> activeReservations = new List<UserReservationsModel>();
+
             Response response = new Response();
             string tableName = tableNameOverride ?? SS_RESERVATIONS_TABLE;
             
@@ -60,7 +96,7 @@ namespace SS.Backend.ReservationManagers{
                     response =  await _reservationReadService.GetUserActiveReservations(tableName, userName);
                     if (response.HasError)
                     {
-                        response.ErrorMessage = "GetAllUserActiveSpaceSurferSpaceReservationAsync, could not read user's Reservation.";
+                        response.ErrorMessage = "Sorry! Could not retrieve your active reservations.";
                         response.HasError = true;
                     }
                     else
@@ -74,7 +110,40 @@ namespace SS.Backend.ReservationManagers{
                     response.ErrorMessage = ex.Message;
                 }
             }
-            return response;
+
+            if (!response.HasError  && response.ValuesRead != null)
+            {
+
+                foreach (DataRow row in response.ValuesRead.Rows)
+                {
+                    var reservation = new UserReservationsModel
+                    {
+                        ReservationID = Convert.ToInt32(row["reservationID"]),
+                        CompanyID = Convert.ToInt32(row["companyID"]),
+                        FloorPlanID = Convert.ToInt32(row["floorPlanID"]),
+                        SpaceID = Convert.ToString(row["spaceID"]).Trim(),
+                        ReservationStartTime = Convert.ToDateTime(row["reservationStartTime"]),
+                        ReservationEndTime = Convert.ToDateTime(row["reservationEndTime"]),
+                        UserHash = Convert.ToString(row["userHash"]).Trim()
+                    };
+                    string statusString = Convert.ToString(row["status"]).Trim();
+                    if (Enum.TryParse(statusString, out ReservationStatus status))
+                    {
+                        reservation.Status = status;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Warning: Unknown status value '{statusString}'. Setting default status.");
+                    }
+                    activeReservations.Add(reservation);
+                }
+            }
+            else
+            {
+                Console.WriteLine("No data found or error occurred.");
+            }
+
+            return activeReservations;
         }
     }
 }

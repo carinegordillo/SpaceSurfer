@@ -55,13 +55,13 @@ namespace SS.Backend.Tests.ReservationManagement{
             UserReservationsModel userReservationsModel1 = new UserReservationsModel
             {
                 ReservationID = 6001,
-                CompanyID = 1,
-                FloorPlanID = 1,
-                SpaceID = "Space101",
+                CompanyID = 1027,
+                FloorPlanID = 60,
+                SpaceID = "SPACE003",
                 ReservationStartTime = new DateTime(2025, 01, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2025, 01, 01, 15, 00, 00), 
                 Status = ReservationStatus.Active,
-                UserHash = "testUserHash4"
+                UserHash = "hashed_user4"
             };
             reservationCreationResult = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE,userReservationsModel1);
             Assert.IsFalse(reservationCreationResult.HasError);
@@ -69,13 +69,13 @@ namespace SS.Backend.Tests.ReservationManagement{
             UserReservationsModel userReservationsModel2 = new UserReservationsModel
             {
                 ReservationID = 6002,
-                CompanyID = 1,
-                FloorPlanID = 1,
-                SpaceID = "Space101",
+                CompanyID = 1027,
+                FloorPlanID = 60,
+                SpaceID = "SPACE003",
                 ReservationStartTime = new DateTime(2024, 03, 01, 10, 00, 00), 
                 ReservationEndTime = new DateTime(2024, 03, 01, 11, 00, 00), 
                 Status = ReservationStatus.Active,
-                UserHash = "testUserHash4"
+                UserHash = "hashed_user4"
             };
             reservationCreationResult = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE,userReservationsModel2);
             Assert.IsFalse(reservationCreationResult.HasError);
@@ -83,18 +83,18 @@ namespace SS.Backend.Tests.ReservationManagement{
             UserReservationsModel userReservationsModel3 = new UserReservationsModel
             {
                 ReservationID = 6003,
-                CompanyID = 1,
-                FloorPlanID = 2,
-                SpaceID = "Space202",
+                CompanyID = 1027,
+                FloorPlanID = 60,
+                SpaceID = "SPACE003",
                 ReservationStartTime = new DateTime(2024, 01, 01, 14, 00, 00), 
                 ReservationEndTime = new DateTime(2024, 01, 01, 15, 00, 00), 
                 Status = ReservationStatus.Active,
-                UserHash = "testUserHash4"
+                UserHash = "hashed_user4"
             };
             reservationCreationResult = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE,userReservationsModel3);
             Assert.IsFalse(reservationCreationResult.HasError);
 
-            reservationReadResult = await _reservationReadService.GetAllUserReservations(MANUAL_ID_TABLE , "testUserHash4");
+            reservationReadResult = await _reservationReadService.GetAllUserReservations(MANUAL_ID_TABLE , "hashed_user4");
 
             var expectedIds = new HashSet<int> { 6001, 6002, 6003 }; // IDs of the created reservations
             var actualIds = new HashSet<int>();
@@ -103,9 +103,6 @@ namespace SS.Backend.Tests.ReservationManagement{
             {
                 actualIds.Add((int)row["ReservationID"]); // Assuming "ReservationID" is the column name
             }
-
-            Console.WriteLine("Expected IDs: " + string.Join(",", expectedIds));
-            Console.WriteLine("Actual IDs: " + string.Join(",", actualIds));
 
             Assert.IsTrue(expectedIds.SetEquals(actualIds));
 
@@ -120,13 +117,13 @@ namespace SS.Backend.Tests.ReservationManagement{
             UserReservationsModel userReservationsModel1 = new UserReservationsModel
             {
                 ReservationID = 7001,
-                CompanyID = 1,
-                FloorPlanID = 1,
-                SpaceID = "Space101",
+                CompanyID = 1027,
+                FloorPlanID = 60,
+                SpaceID = "SPACE003",
                 ReservationStartTime = new DateTime(2025, 01, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2025, 01, 01, 15, 00, 00), 
                 Status = ReservationStatus.Active,
-                UserHash = "testUserHash5"
+                UserHash = "hashed_user2"
             };
             reservationCreationResult = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE,userReservationsModel1);
             Assert.IsFalse(reservationCreationResult.HasError);
@@ -134,13 +131,13 @@ namespace SS.Backend.Tests.ReservationManagement{
             UserReservationsModel userReservationsModel2 = new UserReservationsModel
             {
                 ReservationID = 7002,
-                CompanyID = 1,
-                FloorPlanID = 1,
-                SpaceID = "Space101",
+                CompanyID = 1027,
+                FloorPlanID = 60,
+                SpaceID = "SPACE003",
                 ReservationStartTime = new DateTime(2024, 03, 01, 10, 00, 00), 
                 ReservationEndTime = new DateTime(2024, 03, 01, 11, 00, 00), 
                 Status = ReservationStatus.Cancelled,
-                UserHash = "testUserHash5"
+                UserHash = "hashed_user2"
             };
 
             
@@ -150,13 +147,13 @@ namespace SS.Backend.Tests.ReservationManagement{
             UserReservationsModel userReservationsModel5 = new UserReservationsModel
             {
                 ReservationID = 6010,
-                CompanyID = 1,
-                FloorPlanID = 2,
-                SpaceID = "Space202",
+                CompanyID = 1027,
+                FloorPlanID = 60,
+                SpaceID = "SPACE003",
                 ReservationStartTime = new DateTime(2024, 01, 01, 14, 00, 00), 
                 ReservationEndTime = new DateTime(2024, 01, 01, 15, 00, 00), 
                 Status = ReservationStatus.Active,
-                UserHash = "testUserHash4"
+                UserHash = "hashed_user3"
             };
             reservationCreationResult = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE,userReservationsModel5);
             Assert.IsFalse(reservationCreationResult.HasError);
@@ -164,13 +161,13 @@ namespace SS.Backend.Tests.ReservationManagement{
             UserReservationsModel userReservationsModel3 = new UserReservationsModel
             {
                 ReservationID = 7003,
-                CompanyID = 1,
-                FloorPlanID = 2,
-                SpaceID = "Space202",
+                CompanyID = 1027,
+                FloorPlanID = 60,
+                SpaceID = "SPACE003",
                 ReservationStartTime = new DateTime(2022, 01, 01, 14, 00, 00), 
                 ReservationEndTime = new DateTime(2022, 01, 01, 15, 00, 00), 
                 Status = ReservationStatus.Passed,
-                UserHash = "testUserHash5"
+                UserHash = "hashed_user3"
             };
             reservationCreationResult = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE,userReservationsModel3);
             Assert.IsFalse(reservationCreationResult.HasError);
@@ -178,19 +175,19 @@ namespace SS.Backend.Tests.ReservationManagement{
             UserReservationsModel userReservationsModel4 = new UserReservationsModel
             {
                 ReservationID = 7004,
-                CompanyID = 1,
-                FloorPlanID = 1,
-                SpaceID = "Space101",
+                CompanyID = 1027,
+                FloorPlanID = 60,
+                SpaceID = "SPACE003",
                 ReservationStartTime = new DateTime(2027, 01, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2027, 01, 01, 15, 00, 00), 
                 Status = ReservationStatus.Active,
-                UserHash = "testUserHash5"
+                UserHash = "hashed_user2"
             };
 
             reservationCreationResult = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE,userReservationsModel4);
             Assert.IsFalse(reservationCreationResult.HasError);
 
-            reservationReadResult = await _reservationReadService.GetUserActiveReservations(MANUAL_ID_TABLE , "testUserHash5");
+            reservationReadResult = await _reservationReadService.GetUserActiveReservations(MANUAL_ID_TABLE , "hashed_user2");
 
             var expectedIds = new HashSet<int> { 7004, 7001 }; 
             var actualIds = new HashSet<int>();
@@ -200,6 +197,8 @@ namespace SS.Backend.Tests.ReservationManagement{
                 actualIds.Add((int)row["reservationID"]);
                 
             }
+            Console.WriteLine("Expected IDs: " + string.Join(",", expectedIds));
+            Console.WriteLine("Actual IDs: " + string.Join(",", actualIds));
             
             Console.WriteLine(reservationReadResult.ErrorMessage);
 

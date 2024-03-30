@@ -1,13 +1,21 @@
-using SS.Backend.UserManagement;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using System.Data;
+using SS.Backend.SharedNamespace;
+using SS.Backend.ReservationManagement;
+using SS.Backend.ReservationManagers;
 using SS.Backend.DataAccess;
+
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-// Add services to the container.
-//builder.Services.AddTransient<ISqlDAO, SealedSqlDAO>();
 
 
 
@@ -25,10 +33,13 @@ builder.Services.AddTransient<CustomSqlCommandBuilder>();
 builder.Services.AddTransient<IReservationManagementRepository, ReservationManagementRepository>();
 
 //Services Setup
-builder.services.AddTransient<IReservationCreatorService, ReservationCreatorService>();
-builder.services.AddTransient<IReservationCancellationService, ReservationCancellationService>();
-builder.services.AddTransient<IReservationModificationService, ReservationModificationService>();
-builder.services.AddTransient<IReservationReaderService, ReservationReaderService>();
+builder.Services.AddTransient<IReservationCreatorService, ReservationCreatorService>();
+builder.Services.AddTransient<IReservationCancellationService, ReservationCancellationService>();
+builder.Services.AddTransient<IReservationModificationService, ReservationModificationService>();
+builder.Services.AddTransient<IReservationReadService, ReservationReadService>();
+builder.Services.AddTransient<IReservationValidationService, ReservationValidationService>();
+builder.Services.AddTransient<IReservationStatusUpdater, ReservationStatusUpdater>();
+
 
 //Mangers Setup
 builder.Services.AddTransient<IReservationCreationManager, ReservationCreationManager>();
@@ -48,7 +59,7 @@ app.Use((context, next) =>
 {
     
     context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
-    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
     context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Axios-Demo, Space-Surfer-Header");
     context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
 

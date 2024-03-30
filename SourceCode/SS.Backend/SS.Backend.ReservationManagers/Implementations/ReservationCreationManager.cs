@@ -45,12 +45,12 @@ namespace SS.Backend.ReservationManagers{
                     reservationCreationResponse =  await _reservationCreatorService.CreateReservationWithAutoIDAsync(tableName, userReservationsModel);
                     if (reservationCreationResponse.HasError)
                     {
-                        response.ErrorMessage = "CreateSpaceSurferSpaceReservationAsync, could not create Reservation.";
+                        response.ErrorMessage = "Could not create Reservation.";
                         response.HasError = true;
                     }
                     else
                     {
-                        response.ErrorMessage = "CreateSpaceSurferSpaceReservationAsync, Reservation created successfully.";
+                        response.ErrorMessage = "Reservation created successfully!";
                         response.HasError = false;
                     }
                 }

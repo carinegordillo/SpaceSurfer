@@ -6,8 +6,8 @@ namespace SS.Backend.ReservationManagers
 
     public interface IReservationReaderManager
     {
-      public  Task<Response> GetAllUserSpaceSurferSpaceReservationAsync(string userName, string? tableNameOverride = null);
-      public  Task<Response> GetAllUserActiveSpaceSurferSpaceReservationAsync(string userName, string? tableNameOverride = null);
+      public  Task<IEnumerable<UserReservationsModel>> GetAllUserSpaceSurferSpaceReservationAsync(string userName, string? tableNameOverride = null);
+      public  Task<IEnumerable<UserReservationsModel>> GetAllUserActiveSpaceSurferSpaceReservationAsync(string userName, string? tableNameOverride = null);
     }
 
 }

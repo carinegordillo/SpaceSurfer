@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Booking Center</title>
+    <script src="spaceBookingCenter.js"></script>
+    <link rel="stylesheet" href="spaceBookingCenter.css">
+</head>
+<body>
+    <h1>Space Booking Center</h1>
+
+<div class="reservation-container-1">
+    <div class="sidebar">
+        <button id="reserveNowBtn">Reserve Now</button>
+        <button>Employee Booking</button>
+        <button id="yourReservationsBtn" >Your Reservations</button>
+    </div>
+   
+        <div class="locations-container">
+            <div class = "company-info">
+                <div id="companies">
+                    <h2>Companies</h2>
+                    <ul id="companiesList"></ul>
+                </div>
+                <div id="floorPlans">
+                    <h2>Floor Plans</h2>
+                <div id="floorPlansContent"></div>
+                </div>
+            </div>
+            <div>
+                <form id="reservationForm">
+                    <h2>Make a Reservation</h2>
+                
+                    <div class="form-group">
+                        <label for="reservation-startTime">Start Time:</label>
+                        <input type="datetime-local" id="reservation-startTime" required>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="reservation-endTime">End Time:</label>
+                        <input type="datetime-local" id="reservation-endTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reservation-companyId">Company ID:</label>
+                        <input type="hidden" id="reservation-companyId">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="reservation-floorPlanId">Floor Plan ID:</label>
+                        <input type="hidden" id="reservation-floorPlanId">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="reservation-spaceId">Space ID:</label>
+                        <input type="hidden" id="reservation-spaceId">
+                    </div>
+                
+                    <input type="submit" value="Reserve">
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+</body>
+</html>

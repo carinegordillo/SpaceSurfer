@@ -27,7 +27,7 @@ namespace SS.Backend.SpaceManager
         catch (Exception ex)
         {
             Console.WriteLine($"Error executing stored procedure: {ex.Message}");
-            return companyInfos; // Make sure this is the correct return for your method's signature.
+            return companyInfos; 
         }
 
         if (!response.HasError  && response.ValuesRead != null)
@@ -107,6 +107,7 @@ namespace SS.Backend.SpaceManager
             return floors.Values;
         }
 
+        
        public async Task<Response> InsertIntoCompanyFloorPlansAsync(int companyID, string floorPlanName, string floorPlanPath )
         {
             Response response = new Response();
@@ -145,5 +146,5 @@ namespace SS.Backend.SpaceManager
         return imageBytes;
     }
 
-    }
-}
+
+}}

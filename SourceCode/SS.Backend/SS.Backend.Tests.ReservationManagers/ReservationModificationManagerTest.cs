@@ -14,22 +14,22 @@ namespace SS.Backend.Tests.ReservationManagers{
     {
         private SqlDAO _sqlDao;
         private ConfigService _configService;
-        private ReservationCreatorService  _reservationCreatorService;
+        private IReservationCreatorService  _reservationCreatorService;
 
-        private ReservationManagementRepository _reservationManagementRepository;
+        private IReservationManagementRepository _reservationManagementRepository;
 
-        private ReservationValidationService _reservationValidationService;
+        private IReservationValidationService _reservationValidationService;
 
-        private ReservationModificationService _reservationModificationService;
+        private IReservationModificationService _reservationModificationService;
 
-        private ReservationModificationManager _reservationModificationManager;
+        private IReservationModificationManager _reservationModificationManager;
 
         //uses newManualIDReservations because it allows manual id insertion
 
         string MANUAL_ID_TABLE = "dbo.NewManualIDReservations";
 
 
-        string userHash1 = "testUserHash1";
+        string userHash1 = "hashed_manager4";
 
         [TestInitialize]
         public void Setup()
@@ -63,9 +63,9 @@ namespace SS.Backend.Tests.ReservationManagers{
             UserReservationsModel userReservationsModel = new UserReservationsModel
             {
                 ReservationID = 2002,
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE303",
+                CompanyID = 1027,
+                FloorPlanID = 60,
+                SpaceID = "SPACE002",
                 ReservationStartTime = reservationStart,
                 ReservationEndTime = reservationEnd,
                 UserHash = userHash1
