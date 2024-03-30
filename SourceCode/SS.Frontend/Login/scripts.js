@@ -38,7 +38,6 @@ function authenticateUser() {
                 url: 'http://localhost:5270/api/auth/getRole',
                 type: 'POST',
                 contentType: 'application/json',
-                //data: JSON.stringify({token: accessToken}),
                 data: accessToken,
                 success: function (response) {
                     if (response === "2" || response === "3") {
@@ -70,58 +69,27 @@ function logout() {
     document.getElementById("sendOTPSection").style.display = "block";
 }
 
-//function getClaim() {
-//    var token = sessionStorage['accessToken']
-    
-//}
-//function getRole(callback) {
-//    var token = sessionStorage['accessToken'];
+function waitlistAccess() {
+    var accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+        console.error('Access token is not available.');
+        return;
+    }
 
-//    if (!token) {
-//        var accessTokenContainer = document.getElementById("accessTokenContainer");
-//        accessTokenContainer.innerHTML = "<p>No access token found</p>";
-//        return;
-//    }
-
-//    $.ajax({
-//        url: 'http://localhost:5270/api/auth/decodeToken',
-//        type: 'POST',
-//        contentType: 'application/json',
-//        data: JSON.stringify(token),
-//        success: function (response) {
-//            var role = response.role;
-//            callback(role);
-//        },
-//        error: function (xhr, status, error) {
-//            var accessTokenContainer = document.getElementById("accessTokenContainer");
-//            accessTokenContainer.innerHTML = "<p>Error retrieving token info</p>";
-//        }
-//    });
-//}
-
-//function getExpirationTime(callback) {
-//    var token = sessionStorage['accessToken'];
-
-//    if (!token) {
-//        var accessTokenContainer = document.getElementById("accessTokenContainer");
-//        accessTokenContainer.innerHTML = "<p>No access token found</p>";
-//        return;
-//    }
-
-//    $.ajax({
-//        url: 'http://localhost:5270/api/auth/decodeToken',
-//        type: 'POST',
-//        contentType: 'application/json',
-//        data: JSON.stringify(token),
-//        success: function (response) {
-//            var time = response.exp_time;
-//            callback(time);
-//        },
-//        error: function (xhr, status, error) {
-//            var accessTokenContainer = document.getElementById("accessTokenContainer");
-//            accessTokenContainer.innerHTML = "<p>Error retrieving token info</p>";
-//        }
-//    });
-//}
-
+    $.ajax({
+        url: 'http://localhost:5099/api/waitlist/test',
+        type: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        },
+        contentType: 'application/json',
+        success: function (response) {
+            console.log(response);
+            window.location.href = '../Waitlist/index.html';
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+}
 

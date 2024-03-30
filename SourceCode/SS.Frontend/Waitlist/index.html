@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270;">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="scripts.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <div>
+                <img src="images/sslogo.png" alt="Logo" class="header-logo flipped-image">
+            </div>
+            <div>
+                <img src="images/ssname.png" alt="Title" class="header-title">
+            </div>
+        </div>
+        <nav>
+            <div class="nav-item" id="navAbout" onclick="window.location.href='../About/about.html'">About</div>
+            <div class="nav-item" id="navLogout" onclick="logout()">Logout</div>
+        </nav>
+    </header>
+
+    <section id="waitlistSection" class="form-container" style="display: block;">
+        <label style="color: #003153; font-size: 18px;">Waitlist Page</label>
+    </section>
+
+    <footer>
+        <p>Designed and Developed by the PixelPals Team</p>
+    </footer>
+</body>
+</html>

@@ -444,5 +444,68 @@ namespace SS.Backend.Security
             return idt.ToJson();
         }
 
+        public SSPrincipal? ValidateToken(string tokenString, string expectedIssuer, string expectedSubject)
+        {
+            try
+            {
+                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
+                if (token == null) return null; // Token deserialization failed
+
+                var issuer = token.Payload.Iss;
+                var subject = token.Payload.Sub;
+                var claims = token.Payload.Claims;
+
+                if (issuer != expectedIssuer || subject != expectedSubject)
+                {
+                    return null; // Invalid issuer or subject
+                }
+
+                var ssPrincipal = new SSPrincipal
+                {
+                    UserIdentity = subject,
+                    Claims = new Dictionary<string, string>() // Claims need to be added individually if they are part of the token
+                };
+
+                if (claims != null)
+                {
+                    foreach (var claim in claims)
+                    {
+                        ssPrincipal.Claims?.Add(claim.Key, claim.Value);
+                    }
+                }
+
+                return ssPrincipal;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        public string? ExtractSubjectFromToken(string tokenString)
+        {
+            try
+            {
+                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
+                return token.Payload.Sub;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public string? ExtractClaimsFromToken(string tokenString)
+        {
+            try
+            {
+                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
+                var claimsJson = JsonSerializer.Serialize(token.Payload.Claims);
+                return claimsJson;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }
