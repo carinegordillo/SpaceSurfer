@@ -7,14 +7,14 @@ namespace SS.Backend.ReservationManagers{
     public class ReservationModificationManager : IReservationModificationManager
     {
         private readonly string SS_RESERVATIONS_TABLE = "dbo.reservations";
-        private readonly ReservationModificationService _reservationModificationService;
+        private readonly IReservationModificationService _reservationModificationService;
         private readonly IReservationValidationService _reservationValidationService;
 
         private readonly IReservationRequirements _reservationRequirements = new SpaceSurferReservationRequirements();
         
     
 
-        public ReservationModificationManager(ReservationModificationService reservationModificationService, IReservationValidationService reservationValidationService)
+        public ReservationModificationManager(IReservationModificationService reservationModificationService, IReservationValidationService reservationValidationService)
         {
             _reservationModificationService = reservationModificationService;
             _reservationValidationService = reservationValidationService;
@@ -33,7 +33,7 @@ namespace SS.Backend.ReservationManagers{
     
             if (validationResponse.HasError)
             {
-                response.ErrorMessage += "Reservation did not pass validation checks: " + validationResponse.ErrorMessage;
+                response.ErrorMessage = "Reservation did not pass validation checks: " + validationResponse.ErrorMessage;
                 response.HasError = true;
             }
 
@@ -44,12 +44,12 @@ namespace SS.Backend.ReservationManagers{
                     reservationCreationResponse =  await _reservationModificationService.ModifyReservationTimes(tableName, userReservationsModel);
                     if (reservationCreationResponse.HasError)
                     {
-                        response.ErrorMessage = "CreateSpaceSurferSpaceReservationAsync, could not create Reservation.";
+                        response.ErrorMessage = "Sorry! could not create Reservation.";
                         response.HasError = true;
                     }
                     else
                     {
-                        response.ErrorMessage = "CreateSpaceSurferSpaceReservationAsync, Reservation created successfully.";
+                        response.ErrorMessage = "Reservation updated successfully.";
                         response.HasError = false;
                     }
                 }

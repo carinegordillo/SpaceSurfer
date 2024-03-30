@@ -10,7 +10,7 @@ using SS.Backend.DataAccess;
 namespace CompanyAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/v1/spaceBookingCenter/companies")]
 public class CompanyInfoController : ControllerBase
 {
     private readonly ISpaceReader _spaceReader;

@@ -22,8 +22,8 @@ namespace SS.Backend.Tests.ReservationManagement{
         string AUTO_ID_TABLE = "dbo.NewAutoIDReservations";
 
         string PROD_TABLE = "dbo.reservations";
-        string USER_HASH1 = "testUserHash1";
-        string USER_HASH2 = "testUserHash3";
+        string USER_HASH1 = "hashed_user1";
+        string USER_HASH2 = "hashed_user2";
 
         
         [TestInitialize]
@@ -54,9 +54,9 @@ namespace SS.Backend.Tests.ReservationManagement{
 
             UserReservationsModel reservation1 = new UserReservationsModel
             {
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE302",
+                CompanyID = 1029,
+                FloorPlanID = 63,
+                SpaceID = "SPACE005",
                 ReservationStartTime = new DateTime(2023, 01, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2023, 01, 01, 15, 00, 00), 
                 Status = ReservationStatus.Active,
@@ -71,9 +71,9 @@ namespace SS.Backend.Tests.ReservationManagement{
             
             UserReservationsModel reservation2 = new UserReservationsModel
             {
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE302",
+                CompanyID = 1029,
+                FloorPlanID = 63,
+                SpaceID = "SPACE005",
                 ReservationStartTime = new DateTime(2023, 01, 01, 14, 00, 00), 
                 ReservationEndTime = new DateTime(2023, 01, 01, 16, 00, 00), 
                 Status = ReservationStatus.Active,
@@ -95,9 +95,9 @@ namespace SS.Backend.Tests.ReservationManagement{
             // First reservation
             UserReservationsModel reservation1 = new UserReservationsModel
             {
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE302",
+                CompanyID = 1029,
+                FloorPlanID = 63,
+                SpaceID = "SPACE005",
                 ReservationStartTime = new DateTime(2025, 03, 01, 13, 00, 00), // Jan 1, 2022, 1:00 PM
                 ReservationEndTime = new DateTime(2025, 03, 01, 14, 00, 00), // Jan 1, 2022, 3:00 PM
                 Status = ReservationStatus.Active,
@@ -112,9 +112,9 @@ namespace SS.Backend.Tests.ReservationManagement{
             // Second reservation which overlaps the first one
             UserReservationsModel reservation2 = new UserReservationsModel
             {
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE302",
+                CompanyID = 1029,
+                FloorPlanID = 63,
+                SpaceID = "SPACE005",
                 ReservationStartTime = new DateTime(2025, 03, 01, 16, 00, 00), 
                 ReservationEndTime = new DateTime(2025, 03, 01, 18, 00, 00), 
                 Status = ReservationStatus.Active,
@@ -136,9 +136,9 @@ namespace SS.Backend.Tests.ReservationManagement{
    
             UserReservationsModel reservation1 = new UserReservationsModel
             {
-                CompanyID = 1,
-                FloorPlanID = 2,
-                SpaceID = "SPACE202",
+                CompanyID = 1029,
+                FloorPlanID = 63,
+                SpaceID = "SPACE005",
                 ReservationStartTime = new DateTime(2023, 01, 01, 07, 00, 00), 
                 ReservationEndTime = new DateTime(2023, 01, 01, 08, 00, 00), 
                 Status = ReservationStatus.Active,
@@ -158,11 +158,11 @@ namespace SS.Backend.Tests.ReservationManagement{
             // First reservation
             UserReservationsModel reservation1 = new UserReservationsModel
             {
-                CompanyID = 1,
-                FloorPlanID = 2,
-                SpaceID = "SPACE202",
-                ReservationStartTime = new DateTime(2024, 03, 29, 13, 00, 00), 
-                ReservationEndTime = new DateTime(2024, 03, 29, 14, 00, 00), 
+                CompanyID = 1029,
+                FloorPlanID = 63,
+                SpaceID = "SPACE005",
+                ReservationStartTime = new DateTime(2024, 03, 28, 13, 00, 00), 
+                ReservationEndTime = new DateTime(2024, 03, 28, 14, 00, 00), 
                 Status = ReservationStatus.Active,
                  UserHash = USER_HASH1
             };
@@ -179,9 +179,9 @@ namespace SS.Backend.Tests.ReservationManagement{
             // Arrange
             UserReservationsModel userReservationsModel = new UserReservationsModel
             {
-                CompanyID = 1,
-                FloorPlanID = 2,
-                SpaceID = "SPACE202",
+                CompanyID = 1029,
+                FloorPlanID = 63,
+                SpaceID = "SPACE005",
                 ReservationStartTime = new DateTime(2026, 01, 01, 07, 00, 00), 
                 ReservationEndTime = new DateTime(2026, 01, 01, 08, 00, 00), 
                 Status = ReservationStatus.Active,
@@ -202,9 +202,9 @@ namespace SS.Backend.Tests.ReservationManagement{
             // Arrange
             UserReservationsModel userReservationsModel = new UserReservationsModel
             {
-                CompanyID = 1,
-                FloorPlanID = 2,
-                SpaceID = "SPACE202",
+                CompanyID = 1029,
+                FloorPlanID = 63,
+                SpaceID = "SPACE005",
                 ReservationStartTime = new DateTime(2026, 01, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2026, 01, 01, 18, 00, 00), 
                 Status = ReservationStatus.Active,
@@ -225,9 +225,9 @@ namespace SS.Backend.Tests.ReservationManagement{
             // Arrange
             UserReservationsModel userReservationsModel = new UserReservationsModel
             {
-                CompanyID = 1,
-                FloorPlanID = 2,
-                SpaceID = "SPACE202",
+                CompanyID = 1029,
+                FloorPlanID = 63,
+                SpaceID = "SPACE005",
                 ReservationStartTime = new DateTime(2024, 03, 23, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2024, 03, 23, 18, 00, 00),
                 UserHash = USER_HASH1 
@@ -248,9 +248,9 @@ namespace SS.Backend.Tests.ReservationManagement{
             // Arrange
             UserReservationsModel userReservationModel = new UserReservationsModel
             {
-                CompanyID = 1,
-                FloorPlanID = 2,
-                SpaceID = "SPACE202",
+                CompanyID = 1029,
+                FloorPlanID = 63,
+                SpaceID = "SPACE005",
                 ReservationStartTime = new DateTime(2024, 07, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2024, 07, 01, 18, 00, 00), 
                 UserHash = USER_HASH1
@@ -272,10 +272,9 @@ namespace SS.Backend.Tests.ReservationManagement{
 
             UserReservationsModel activeReservation = new UserReservationsModel
             {
-                ReservationID = 90,
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE302",
+                CompanyID = 1029,
+                FloorPlanID = 63,
+                SpaceID = "SPACE005",
                 ReservationStartTime = new DateTime(2024, 02, 23, 11, 00, 00),
                 ReservationEndTime = new DateTime(2024, 02, 23, 12, 00, 00), 
                 Status = ReservationStatus.Active,
@@ -294,10 +293,9 @@ namespace SS.Backend.Tests.ReservationManagement{
 
             UserReservationsModel cancelledReservation = new UserReservationsModel
             {
-                ReservationID = 90,
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE302",
+                CompanyID = 1029,
+                FloorPlanID = 63,
+                SpaceID = "SPACE005",
                 ReservationStartTime = new DateTime(2024, 02, 23, 11, 00, 00), 
                 ReservationEndTime = new DateTime(2024, 02, 23, 12, 00, 00), 
                 Status = ReservationStatus.Cancelled,
@@ -317,10 +315,9 @@ namespace SS.Backend.Tests.ReservationManagement{
 
             UserReservationsModel passedReservation = new UserReservationsModel
             {
-                ReservationID = 90,
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE302",
+                CompanyID = 1029,
+                FloorPlanID = 63,
+                SpaceID = "SPACE005",
                 ReservationStartTime = new DateTime(2024, 02, 23, 11, 00, 00), 
                 ReservationEndTime = new DateTime(2024, 02, 23, 12, 00, 00), 
                 Status = ReservationStatus.Passed,

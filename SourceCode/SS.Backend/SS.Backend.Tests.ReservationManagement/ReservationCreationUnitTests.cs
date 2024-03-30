@@ -21,7 +21,7 @@ namespace SS.Backend.Tests.ReservationManagement{
         private ReservationValidationService _reservationValidationService;
 
         string AUTO_ID_TABLE = "dbo.NewAutoIDReservations";
-        string USER_HASH2 = "testUserHash2";
+        string USER_HASH2 = "hashed_user4";
 
 
 
@@ -58,19 +58,19 @@ namespace SS.Backend.Tests.ReservationManagement{
             
             UserReservationsModel userReservationsModel = new UserReservationsModel
             {
-                CompanyID = 1,
-                FloorPlanID = 1,
-                SpaceID = "Space101",
+                CompanyID = 1027,
+                FloorPlanID = 60,
+                SpaceID = "SPACE001",
                 ReservationStartTime = new DateTime(2025, 01, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2025, 01, 01, 15, 00, 00), 
                 Status = ReservationStatus.Active,
                 UserHash = USER_HASH2
             };
-            // Act
+
             var response = await _ReservationCreatorService.CreateReservationWithAutoIDAsync(AUTO_ID_TABLE,userReservationsModel);
             Console.WriteLine(response.ErrorMessage);
             
-            // Assert
+
             Assert.IsFalse(response.HasError);
         }
 

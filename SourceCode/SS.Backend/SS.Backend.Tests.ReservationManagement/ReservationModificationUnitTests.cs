@@ -58,17 +58,15 @@ namespace SS.Backend.Tests.ReservationManagement{
             UserReservationsModel userReservationsModel = new UserReservationsModel
             {
                 ReservationID = 2001,
-                CompanyID = 1,
-                FloorPlanID = 1,
-                SpaceID = "Space101",
+                CompanyID = 1029,
+                FloorPlanID = 63,
+                SpaceID = "SPACE005",
                 ReservationStartTime = new DateTime(2025, 01, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2025, 01, 01, 15, 00, 00), 
                 Status = ReservationStatus.Active,
-                UserHash = "testUserHash4"
+                UserHash = "hashed_user3"
             };
 
-
-            // Act
             creationResponse = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE,userReservationsModel);
 
             Assert.IsFalse(creationResponse.HasError);

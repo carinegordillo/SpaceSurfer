@@ -10,7 +10,7 @@ using System.Data;
 namespace SS.Backend.ReservationManagement{
 
 
-    public class ReservationModificationService 
+    public class ReservationModificationService : IReservationModificationService
     {
         private IReservationManagementRepository _reservationManagementRepository;
 

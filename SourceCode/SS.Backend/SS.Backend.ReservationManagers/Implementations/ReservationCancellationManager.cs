@@ -13,6 +13,7 @@ namespace SS.Backend.ReservationManagers{
 
         private readonly IReservationRequirements _reservationRequirements = new SpaceSurferReservationRequirements();
         
+        
     
 
         public ReservationCancellationManager(IReservationCancellationService reservationCancellationService, IReservationValidationService reservationValidationService, IReservationStatusUpdater reservationStatusUpdater)
@@ -59,12 +60,12 @@ namespace SS.Backend.ReservationManagers{
                         if (reservationCancellationResponse.HasError)
                         {
                             
-                            response.ErrorMessage = "CancelSpaceSurferSpaceReservationAsync, could not create Reservation.";
+                            response.ErrorMessage = "could not cancel Reservation.";
                             response.HasError = true;
                         }
                         else
                         {
-                            response.ErrorMessage = "CancelSpaceSurferSpaceReservationAsync, Reservation created successfully.";
+                            response.ErrorMessage = "Reservation cancelled successfully.";
                             response.HasError = false;
                         }
                     }
