@@ -21,6 +21,7 @@
   <ProjectReference Include="..\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
   <ProjectReference Include="..\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj" />
   <ProjectReference Include="..\SS.Backend.ReservationManagers\SS.Backend.ReservationManagers.csproj" />
+  <ProjectReference Include="..\SS.Backend.SpaceManager\SS.Backend.SpaceManager.csproj" />
   </ItemGroup>
 
 </Project>

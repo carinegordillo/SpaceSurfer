@@ -2,7 +2,7 @@ using Microsoft.Net.Http.Headers;
 using SS.Backend.DataAccess;
 using SS.Backend.Services.DeletingService;
 using SS.Backend.SharedNamespace;
-using SS.Backend.Security;
+// using SS.Backend.Security;
 using SS.Backend.Services.LoggingService;
 
 // Creates a new web application builder
@@ -23,13 +23,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton(new ConfigService(Path.Combine("C:/Users/brand/Documents/GitHub/SpaceSurfer/SourceCode/SS.Backend/config.local.txt")));
 
 // Register services for dependency injection
-builder.Services.AddTransient<GenOTP>();
-builder.Services.AddTransient<Hashing>();
-builder.Services.AddTransient<SqlDAO>();
-builder.Services.AddTransient<Logger>();
-builder.Services.AddTransient<IAuthenticator, SSAuthService>();
-builder.Services.AddTransient<IAuthorizer, SSAuthService>();
-builder.Services.AddTransient<IAccountDeletion, AccountDeletion>();
+// builder.Services.AddTransient<GenOTP>();
+// builder.Services.AddTransient<Hashing>();
+// builder.Services.AddTransient<SqlDAO>();
+// builder.Services.AddTransient<Logger>();
+// builder.Services.AddTransient<IAuthenticator, SSAuthService>();
+// builder.Services.AddTransient<IAuthorizer, SSAuthService>();
+// builder.Services.AddTransient<IAccountDeletion, AccountDeletion>();
 
 
 // builds the application
