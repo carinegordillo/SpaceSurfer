@@ -396,7 +396,8 @@ namespace SS.Backend.Security
                 Sub = principal.UserIdentity,
                 Aud = "spacesurfers",
                 Iat = DateTime.UtcNow.Ticks,
-                Exp = DateTime.UtcNow.AddHours(1).Ticks,
+                //Exp = DateTime.UtcNow.AddHours(1).Ticks,
+                Exp = DateTime.UtcNow.AddMinutes(1).Ticks,
                 Claims = principal.Claims
             };
 
@@ -505,6 +506,54 @@ namespace SS.Backend.Security
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        public IDictionary<string, string>? ExtractClaimsFromToken_Dictionary(string tokenString)
+        {
+            try
+            {
+                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
+                return token?.Payload?.Claims;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public bool CheckExpTime(string tokenString)
+        {
+            try
+            {
+                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
+                var expTicks = token.Payload.Exp;
+                var expDateTime = new DateTime(expTicks, DateTimeKind.Utc);
+
+                var timeDifference = expDateTime - DateTime.UtcNow;
+
+                //return timeDifference <= TimeSpan.FromMinutes(10);
+                return timeDifference <= TimeSpan.FromSeconds(30);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool IsTokenExpired(string tokenString)
+        {
+            try
+            {
+                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
+                var expTicks = token.Payload.Exp;
+                var expDateTime = new DateTime(expTicks, DateTimeKind.Utc);
+
+                return expDateTime <= DateTime.UtcNow;
+            }
+            catch (Exception)
+            {
+                return true;
             }
         }
     }

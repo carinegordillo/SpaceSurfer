@@ -53,6 +53,78 @@ namespace WaitlistApi.Controllers
             }
         }
 
+        [HttpGet("button")]
+        public async Task<IActionResult> button()
+        {
+            
+            string accessToken = HttpContext.Request.Headers["Authorization"];
+            if (accessToken != null && accessToken.StartsWith("Bearer "))
+            {
+                accessToken = accessToken.Substring("Bearer ".Length).Trim();
+                var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+
+                if (claimsJson != null)
+                {
+                    var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+
+                    if (claims.TryGetValue("Role", out var role) && role == "2")
+                    {
+                        bool closeToExpTime = _authService.CheckExpTime(accessToken);
+                        if (closeToExpTime)
+                        {
+                            SSPrincipal principal = new SSPrincipal();
+                            principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                            principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                            var newToken = _authService.CreateJwt(Request, principal);
+
+                            bool testVar = true;
+                            return Ok(new { testVar, newToken });
+                        }
+                        else
+                        {
+                            bool testVar = true;
+                            return Ok(testVar);
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest("Unauthorized role.");
+                    }
+                }
+                else
+                {
+                    return BadRequest("Invalid token.");
+                }
+            }
+            else
+            {
+                return BadRequest("Unauthorized. Access token is missing or invalid.");
+            }
+        }
+
+        [HttpGet("checkTokenExp")]
+        public async Task<IActionResult> checkTokenExp()
+        {
+
+            string accessToken = HttpContext.Request.Headers["Authorization"];
+            if (accessToken != null && accessToken.StartsWith("Bearer "))
+            {
+                accessToken = accessToken.Substring("Bearer ".Length).Trim();
+                bool tokenExpired = _authService.IsTokenExpired(accessToken);
+                if (tokenExpired)
+                {
+                    return Ok(true);
+                }
+                else
+                {
+                    return Ok(false);
+                }
+            }
+            else
+            {
+                return BadRequest("Unauthorized. Access token is missing or invalid.");
+            }
+        }
 
     }
 }
