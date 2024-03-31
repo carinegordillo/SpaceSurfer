@@ -1,46 +1,23 @@
 using SS.Backend.SpaceManager;
 using SS.Backend.DataAccess;
 using SS.Backend.Security;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
 using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
-var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
- .AddJwtBearer(options =>
- {
-#pragma warning disable CS8604 // Possible null reference argument.
-     options.TokenValidationParameters = new TokenValidationParameters
-     {
-         ValidateIssuer = true,
-         ValidateAudience = true,
-         ValidateLifetime = true,
-         ValidateIssuerSigningKey = true,
-         ValidIssuer = jwtIssuer,
-         ValidAudience = jwtIssuer,
-         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-     };
-#pragma warning restore CS8604 // Possible null reference argument.
- });
-
-builder.Services.AddAuthorization();
-
-
 var baseDirectory = AppContext.BaseDirectory;
 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
 var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
 
-builder.Services.AddTransient<ConfigService>(provider =>new ConfigService(configFilePath));
+builder.Services.AddTransient<ConfigService>(provider => new ConfigService(configFilePath));
 
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
 
@@ -96,9 +73,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
+
+app.UseMiddleware<AuthorizationMiddleware>();
 
 app.MapControllers();
 
 app.Run();
-
