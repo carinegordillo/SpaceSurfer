@@ -4,6 +4,7 @@ using System.Data;
 using SS.Backend.SharedNamespace;
 using SS.Backend.ReservationManagement;
 using SS.Backend.ReservationManagers;
+using SS.Backend.SpaceManager;
 using SS.Backend.DataAccess;
 
 
@@ -18,17 +19,20 @@ public class ReservationController : ControllerBase
     private readonly IReservationCancellationManager _reservationCancellationManager;
     private readonly IReservationModificationManager _reservationModificationManager;
     private readonly IReservationReaderManager _reservationReaderManager;
+    private readonly IAvailibilityDisplayManager _availibilityDisplayManager;
 
     public ReservationController(IReservationCreationManager reservationCreationManager,
                                  IReservationCancellationManager reservationCancellationManager,
                                  IReservationModificationManager reservationModificationManager,
-                                 IReservationReaderManager reservationReaderManager)
+                                 IReservationReaderManager reservationReaderManager,
+                                 IAvailibilityDisplayManager availibilityDisplayManager)
                                  
     {
        _reservationCreationManager = reservationCreationManager;
        _reservationCancellationManager = reservationCancellationManager;
        _reservationModificationManager = reservationModificationManager;
        _reservationReaderManager = reservationReaderManager;
+       _availibilityDisplayManager = availibilityDisplayManager;
        
     }
 
@@ -96,6 +100,20 @@ public class ReservationController : ControllerBase
         try
         {
             var response = await _reservationCancellationManager.CancelSpaceSurferSpaceReservationAsync(reservation);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Internal server error: " + ex.Message);
+        }
+    }
+
+    [HttpGet("CheckAvailability")]
+    public async Task<IActionResult> CheckAvailability(int companyId, DateTime startTime, DateTime endTime)
+    {
+        try
+        {
+            var response = await _availibilityDisplayManager.CheckAvailabilityAsync(companyId, startTime, endTime);
             return Ok(response);
         }
         catch (Exception ex)
