@@ -20,7 +20,7 @@ namespace SS.Backend.UserManagement
 
             Response result = await _userManagementDao.GeneralModifier("hashedUsername", userhash, "IsActive", "no", "dbo.activeAccount");
 
-            if (result.HasError = false){
+            if (result.HasError == false){
                 result.ErrorMessage += "- Updated account status to diasbled successful -";
             }
             else{

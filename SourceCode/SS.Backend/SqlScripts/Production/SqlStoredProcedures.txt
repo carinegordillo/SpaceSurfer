@@ -1,0 +1,43 @@
+-------------------------------------------------
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[CheckConflictingReservationsPROD]
+    @companyID INT,
+    @floorPlanID INT,
+    @spaceID NVARCHAR(255),
+    @proposedStartDateTime DATETIME,
+    @proposedEndDateTime DATETIME,
+    @reservationIdToExclude INT = NULL  
+AS
+BEGIN
+    SELECT reservationID
+    FROM dbo.reservations 
+    WHERE companyID = @companyID
+    AND floorPlanID = @floorPlanID 
+    AND spaceID = @spaceID 
+    AND status = 'Active'
+    AND NOT (
+        reservationEndTime <= @proposedStartDateTime
+        OR reservationStartTime >= @proposedEndDateTime
+    )
+    AND (@reservationIdToExclude IS NULL OR reservationID != @reservationIdToExclude);
+END;
+GO
+
+-------------------------------------------------
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[UpdateReservtaionStatusesPROD]
+AS
+BEGIN
+    UPDATE dbo.reservations
+    SET Status = 'Passed'
+    WHERE reservationEndTime < SYSDATETIME()
+    AND Status = 'Active'
+END
+GO
+-------------------------------------------------

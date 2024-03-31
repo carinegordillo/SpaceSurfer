@@ -4,38 +4,31 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 
 
+
+
 namespace SS.Backend.ReservationManagement{
 
-public class ReservationStatusUpdater : IReservationStatusUpdater
+public class ReservationStatusUpdater : IReservationStatusUpdater 
 {
-    private ISqlDAO _sqldao;
+    private IReservationManagementRepository _reservationManagementRepository;
 
-        public ReservationStatusUpdater(ISqlDAO sqldao)
+        public ReservationStatusUpdater(IReservationManagementRepository reservationManagementRepository)
         {
-            _sqldao = sqldao;
+            _reservationManagementRepository = reservationManagementRepository;
         }
 
-        public async Task<Response> updateReservtionStatuses(string tableName)
+        public async Task<Response> UpdateReservtionStatuses(string tableName,string storedProcedureName)
         {
-            Console.WriteLine(tableName);
-            Response response = new Response();
-            var sql = $@"UPDATE {tableName}
-            SET Status = 'Passed'
-            WHERE DATETIMEFROMPARTS(
-                    YEAR(reservationDate), 
-                    MONTH(reservationDate), 
-                    DAY(reservationDate), 
-                    DATEPART(HOUR, reservationEndTime), 
-                    DATEPART(MINUTE, reservationEndTime), 
-                    DATEPART(SECOND, reservationEndTime), 
-                    0) < SYSDATETIME()
-            AND Status = 'Active'";
+            Response response = new Response(); 
 
-            SqlCommand command = new SqlCommand(sql);
 
-            try
-            {
-                response = await _sqldao.SqlRowsAffected(command);
+            CustomSqlCommandBuilder commandBuilder = new CustomSqlCommandBuilder();
+            SqlCommand command = commandBuilder.BeginStoredProcedure(storedProcedureName).Build();
+
+            try{
+    
+                response = await _reservationManagementRepository.ExecuteUpdateReservationTables(command);
+
                 if (response.HasError == false)
                 {
                     response.ErrorMessage += "- Reservation Statuses updated successfully -";
@@ -44,13 +37,14 @@ public class ReservationStatusUpdater : IReservationStatusUpdater
                 {
                     response.ErrorMessage += "- Reservation Statuses not updated -";
                 }
-                
+
             }
             catch (Exception ex)
             {
-                response.HasError = true;
-                response.ErrorMessage += $"Error updating statuses: {ex.Message}";
+               response.HasError = true;
+               response.ErrorMessage += $"Error updating statuses: {ex.Message}";
             }
+
             return response;
         
         }

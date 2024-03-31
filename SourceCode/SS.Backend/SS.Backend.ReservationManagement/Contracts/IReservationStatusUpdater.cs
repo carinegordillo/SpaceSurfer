@@ -5,6 +5,6 @@ namespace SS.Backend.ReservationManagement
 {
     public interface IReservationStatusUpdater
     {
-        public  Task<Response> updateReservtionStatuses(string tableName);
+        public  Task<Response> UpdateReservtionStatuses(string tableName, string storedProcedureName);
     }
 }

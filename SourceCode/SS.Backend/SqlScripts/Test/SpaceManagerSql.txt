@@ -1,0 +1,28 @@
+
+CREATE PROCEDURE GetCompanyInfoPROD
+AS
+BEGIN
+    SELECT companyName, address, openingHours, closingHours, daysOpen
+    FROM dbo.companyProfile;
+END
+
+
+CREATE PROCEDURE GetCompanyFloorPROD
+    @companyId INT
+AS
+BEGIN
+    SELECT f.FloorPlanName, f.FloorPlanImage, s.spaceID, s.timeLimit
+    FROM dbo.companyFloor f
+    JOIN dbo.companyFloorSpaces s ON f.floorPlanID = s.floorPlanID
+    WHERE f.companyID = @companyId;
+END
+
+
+CREATE PROCEDURE GetFloorSpacesPROD
+    @floorPlanID INT
+AS
+BEGIN
+    SELECT spaceID, floorPlanID, companyID, timeLimit
+    FROM dbo.companyFloorSpaces
+    WHERE floorPlanID = @floorPlanID;
+END
