@@ -208,11 +208,14 @@ namespace SS.Backend.Tests.ReservationManagers{
             var expectedIds = new HashSet<int> { 2008, 2009}; 
             var actualIds = new HashSet<int>();
 
-        
-            foreach (var info in reservationReadResult)
+            if (reservationReadResult != null)
             {
-                actualIds.Add(info.ReservationID.Value);
+                foreach (var info in reservationReadResult)
+                {
+                    actualIds.Add(info.ReservationID.Value);
+                }
             }
+        
 
             Assert.IsNotNull(reservationReadResult);
             Assert.IsTrue(reservationReadResult.Any());
