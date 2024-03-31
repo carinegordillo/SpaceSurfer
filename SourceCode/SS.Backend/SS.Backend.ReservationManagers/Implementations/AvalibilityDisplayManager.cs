@@ -27,7 +27,7 @@ namespace SS.Backend.ReservationManagers
             var availableSpaces = new List<SpaceAvailability>();
             var floors = await _spaceReader.GetCompanyFloorsAsync(companyId);
 
-            ReservationValidationFlags flags = ReservationValidationFlags.CheckBusinessHours | ReservationValidationFlags.MaxDurationPerSeat | ReservationValidationFlags.ReservationLeadTime | ReservationValidationFlags.NoConflictingReservations;
+            ReservationValidationFlags flags = ReservationValidationFlags.CheckBusinessHours | ReservationValidationFlags.MaxDurationPerSeat | ReservationValidationFlags.ReservationLeadTime | ReservationValidationFlags.NoConflictingReservations | ReservationValidationFlags.CheckReservationFormatIsValid;
             
             foreach (var floor in floors)
             {

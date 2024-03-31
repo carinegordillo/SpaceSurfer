@@ -10,6 +10,7 @@ namespace SS.Backend.SharedNamespace
         ReservationLeadTime = 1 << 3, 
         NoConflictingReservations = 1 << 4, 
         ReservationStatusIsActive = 1 << 5, 
-        All = CheckBusinessHours | MinReservationDuration | MaxDurationPerSeat | ReservationLeadTime | NoConflictingReservations | ReservationStatusIsActive
+        CheckReservationFormatIsValid = 1 << 6,
+        All = CheckBusinessHours | MinReservationDuration | MaxDurationPerSeat | ReservationLeadTime | NoConflictingReservations | ReservationStatusIsActive | CheckReservationFormatIsValid
     }
 }

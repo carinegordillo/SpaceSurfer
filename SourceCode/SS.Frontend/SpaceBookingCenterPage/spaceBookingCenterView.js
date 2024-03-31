@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     initSidebar();
     
-    const formContainer = document.querySelector('.form-container'); // Adjusted selector to class
+    const formContainer = document.querySelector('.form-container'); 
     if (formContainer) { 
         const reservationForm = createReservationForm();
         reservationForm.addEventListener('submit', function(event) {
@@ -51,7 +51,6 @@ function initSidebar() {
 
 
 function initReservationOverviewButtons() {
-    // Attach event listeners to buttons
     
     document.getElementById('reserveNowBtn').addEventListener('click', handleReserveNowClick);
     document.getElementById('yourReservationsBtn').addEventListener('click', handleYourReservationsClick);
@@ -61,7 +60,6 @@ function initReservationOverviewButtons() {
 
 
 function getReservationCenter() {
-    alert('Load Reserve Now View');
     fetchCompanies();
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -80,12 +78,7 @@ function getReservationCenter() {
 
 
 function getReservtionOverview() {
-
-
-    alert('Load Your Reservations View')
-    
     reservationOverviewButtons();
-    
 }
 
 
@@ -96,7 +89,7 @@ function getReservtionOverview() {
 
 function reservationOverviewButtons() {
     const content = document.querySelector('.reservation-buttons');
-    content.innerHTML = ''; // Clear previous buttons if needed
+    content.innerHTML = ''; 
 
     const buttons = [
         { id: 'loadActiveReservationsBtn', text: 'Active Reservations', onClickFunction: () => getUsersActiveReservations('hashed_user3') },
@@ -133,15 +126,13 @@ function getUsersActiveReservations(userName) {
         return response.json();
     })
     .then(data => {
-        console.log("in here");
-        console.log(data);
 
         renderReservations(data, '.reservation-list');
         
     })
     .catch(error => {
         console.error('Error fetching reservations:', error);
-        window.alert("Error fetching reservations");
+        onError("Error fetching active reservations")
     });
 }
 
@@ -170,7 +161,7 @@ function getUsersReservations(userName) {
     })
     .catch(error => {
         console.error('Error fetching reservations:', error);
-        window.alert("Error fetching reservations");
+        onError("Error fetching reservations")
     });
 }
 
@@ -289,7 +280,7 @@ function submitModification(reservation) {
         userHash: "hashed_user3"
     };
 
-    // Send the modification request to your backend
+    // Send the modification request to backend
     fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/UpdateReservation`, {
         method: 'PUT',
         headers: {
@@ -297,16 +288,24 @@ function submitModification(reservation) {
         },
         body: JSON.stringify(modificationData),
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
-        alert('Reservation modified successfully');
-        // Close the modal and refresh the reservations list or handle as needed
-        document.querySelector('.modal-content').remove();
-        getUsersActiveReservations('hashed_user3'); // Reload active reservations
+        if (data.hasError) {
+            console.log(`Reservation error: ${data.errorMessage}`);
+            onError(data.errorMessage); 
+        } else {
+            console.log('Reservation modified successfully');
+            onSuccess('Reservation modified successfully!');
+        }
     })
     .catch(error => {
         console.error('Error modifying reservation:', error);
-        alert('Error modifying reservation');
+        onError(`Error modifying reservation: ${error} `); 
     });
 }
 
@@ -369,16 +368,26 @@ function submitCancellation(reservation) {
         },
         body: JSON.stringify(modificationData),
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
-        alert('Reservation Cancelled successfully');
-        document.querySelector('.modal-content').remove();
-        getUsersActiveReservations('hashed_user3'); 
+        if (data.hasError) {
+            console.log(`Reservation error: ${data.errorMessage}`);
+            onError(data.errorMessage); 
+        } else {
+            console.log('Reservation cancelled successfully');
+            onSuccess('Reservation was cancelled.');
+        }
     })
     .catch(error => {
-        console.error('Error modifying reservation:', error);
-        alert('Error modifying reservation');
+        console.error('Error cancelling reservation:', error);
+        onError(`Error cancelling reservation: ${error} `); 
     });
+
 }
 
 
@@ -462,12 +471,12 @@ function createReservationForm() {
     form.appendChild(submitButton);
 
     const checkAvailabilityButton = document.createElement('button');
-    checkAvailabilityButton.type = 'button'; // It's not a submit button
+    checkAvailabilityButton.type = 'button'; 
     checkAvailabilityButton.textContent = 'Check Availability';
     checkAvailabilityButton.id = 'checkAvailabilityButton';
 
     checkAvailabilityButton.addEventListener('click', function() {
-        checkAvailability() // Replace this with your actual functionality
+        checkAvailability() 
     });
 
     
@@ -476,7 +485,6 @@ function createReservationForm() {
     return form;
 }
 function checkAvailability() {
-    window.alert("Checking availability");
     const companyIdInput = document.getElementById('reservation-companyId').value;
     const startTimeInput = document.getElementById('reservation-startTime').value;
     const endTimeInput = document.getElementById('reservation-endTime').value;
@@ -595,7 +603,7 @@ function fetchFloorPlans(companyID) {
             }
             
             const floorPlansContent = document.getElementById('floorPlansContent');
-            floorPlansContent.innerHTML = ''; // Clear previous content
+            floorPlansContent.innerHTML = ''; 
 
             data.forEach(floorPlan => {
                 const floorDiv = document.createElement('div');
@@ -639,7 +647,6 @@ function fetchFloorPlans(companyID) {
 function handleFormSubmit(event) {
     event.preventDefault(); 
 
-    // Gather data from the form
     const reservationData = {
         companyId: parseInt(document.getElementById('reservation-companyId').value, 10),
         floorPlanId: parseInt(document.getElementById('reservation-floorPlanId').value, 10),
@@ -650,11 +657,8 @@ function handleFormSubmit(event) {
 
     };
 
-
     const requestData = JSON.stringify(reservationData);
-    window.alert("making a resertvion with:" + requestData);
 
-    
     fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/CreateReservation', {
         method: 'POST',
         headers: {
@@ -669,12 +673,17 @@ function handleFormSubmit(event) {
         return response.json();
     })
     .then(data => {
-        console.log('Reservation created successfully:', data);
-        window.alert("Reservation created successfully");
+        if (data.hasError) {
+            console.log(`Reservation error: ${data.errorMessage}`);
+            onError(data.errorMessage); 
+        } else {
+            console.log('Reservation created successfully');
+            onSuccess('Reservation created successfully!');
+        }
     })
     .catch(error => {
         console.error('Error creating reservation:', error);
-        window.alert("Error creating reservation");
+        onError("Error creating reservation. Please try again later."); 
     });
 }
 
@@ -696,3 +705,46 @@ function updateReservationForm(companyId, floorPlanId, spaceId) {
 
 
 
+/// modal 
+
+function onSuccess(message) {
+    createAndShowModal(message); 
+}
+
+
+function onError(errorMessage) {
+    createAndShowModal(errorMessage); 
+}
+
+function createAndShowModal(message) {
+    document.querySelectorAll('.modal-backdrop').forEach(modal => modal.remove());
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
+
+    backdrop.addEventListener('click', event => {
+        if (event.target === backdrop) {
+            backdrop.style.display = 'none';
+        }
+    });
+
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'modal-close-btn';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.onclick = function() {
+        backdrop.style.display = 'none';
+    };
+
+    const text = document.createElement('p');
+    text.textContent = message;
+
+    modalContent.appendChild(closeBtn);
+    modalContent.appendChild(text);
+    backdrop.appendChild(modalContent);
+    document.body.appendChild(backdrop);
+
+    backdrop.style.display = 'flex';
+}
