@@ -5,6 +5,7 @@ using SS.Backend.SharedNamespace;
 using SS.Backend.ReservationManagement;
 using SS.Backend.ReservationManagers;
 using SS.Backend.DataAccess;
+using SS.Backend.SpaceManager;
 
 
 
@@ -46,6 +47,11 @@ builder.Services.AddTransient<IReservationCreationManager, ReservationCreationMa
 builder.Services.AddTransient<IReservationCancellationManager, ReservationCancellationManager>();
 builder.Services.AddTransient<IReservationModificationManager, ReservationModificationManager>();
 builder.Services.AddTransient<IReservationReaderManager, ReservationReaderManager>();
+builder.Services.AddTransient<IAvailibilityDisplayManager, AvailabilityDisplayManager>();
+
+//spaceMAnger setup
+builder.Services.AddTransient<ISpaceManagerDao, SpaceManagerDao>();
+builder.Services.AddTransient<ISpaceReader, SpaceReader>();
 
 
 
