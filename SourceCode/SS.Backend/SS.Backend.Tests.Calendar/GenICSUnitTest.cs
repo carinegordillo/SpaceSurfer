@@ -10,7 +10,9 @@ namespace SS.Backend.Tests.Calendar
         public async Task GenICS_Success()
         {
             // Arrange
-            var tempFilePath = Path.GetTempFileName();
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var tempFilePath = Path.Combine(projectRootDirectory, "CalendarFiles", "SSReservation.ics");
             var reservationInfo = new ReservationInfo
             {
                 filePath = tempFilePath,

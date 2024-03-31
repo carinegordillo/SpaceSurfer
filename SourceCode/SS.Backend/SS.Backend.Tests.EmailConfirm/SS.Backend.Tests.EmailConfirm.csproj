@@ -20,4 +20,11 @@
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj" />
+    <ProjectReference Include="..\SS.Backend.Services\SS.Backend.Services.csproj" />
+    <ProjectReference Include="..\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
+    <ProjectReference Include="..\SS.Backend.EmailConfirm\SS.Backend.EmailConfirm.csproj" />
+  </ItemGroup>
+
 </Project>

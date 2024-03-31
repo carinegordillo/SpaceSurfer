@@ -9,7 +9,7 @@ namespace SS.Backend.Services.CalendarService
     public class CalendarCreator : ICalendarCreator
     {
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public async Task CreateCalendar(ReservationInfo reservationInfo)
+        public async Task<string> CreateCalendar(ReservationInfo reservationInfo)
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             StringBuilder str = new StringBuilder();
@@ -28,15 +28,14 @@ namespace SS.Backend.Services.CalendarService
             str.AppendLine("END:VEVENT");
             str.AppendLine("END:VCALENDAR");
 
+            Directory.CreateDirectory(Path.GetDirectoryName(reservationInfo.filePath));
+
             using (var writer = new StreamWriter(reservationInfo.filePath, false, Encoding.UTF8))
             {
                 await writer.WriteAsync(str.ToString());
             }
-        }
 
-        void ICalendarCreator.CreateCalendar(ReservationInfo reservationInfo)
-        {
-            throw new NotImplementedException();
+            return reservationInfo.filePath;
         }
     }
 

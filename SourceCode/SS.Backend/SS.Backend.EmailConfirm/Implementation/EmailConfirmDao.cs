@@ -20,14 +20,14 @@ namespace SS.Backend.EmailConfirm
 
             var parameters = new Dictionary<string, object>
             {
-                {"ReservationID", ReservationID}
+                {"reservationID", ReservationID}
             };
 
             var cmd = builder.BeginSelect()
-                            .SelectColumns("r.*", "cp.address AS CompanyAddress")
+                            .SelectColumns("r.*", "cp.address AS CompanyAddress", "cp.companyName as CompanyName")
                             .From("Reservations AS r")
                             .Join("companyProfile AS cp", "r.companyID", "cp.companyID")
-                            .WhereMuliple(parameters)
+                            .Where("r.ReservationID = reservationID")
                             .AddParameters(parameters)
                             .Build();
 
@@ -76,21 +76,22 @@ namespace SS.Backend.EmailConfirm
             return response;
         }
 
-        public async Task<Response> InsertConfirmationInfo(int ReservationID, string otp)
+        public async Task<Response> InsertConfirmationInfo(int ReservationID, string otp, byte[] file)
         {
             Response response = new Response();
             var builder = new CustomSqlCommandBuilder();
 
             var parameters = new Dictionary<string, object>
             {
-                {"@ReservationID", ReservationID},
-                {"@ReservationOtp", otp},
-                {"@ConfirmStatus", "no"}
+                {"reservationID", ReservationID},
+                {"reservationOtp", otp},
+                {"confirmStatus", "no"},
+                {"icsFile", file}
             };
 
             var cmd = builder.BeginInsert("ConfirmReservations")
-                            .Columns(new List<string> { "reservationID", "reservationOtp", "confirmStatus" })
-                            .Values(new List<string> { "@ReservationID", "@ReservationOtp", "@ConfirmStatus" })
+                            .Columns(new List<string> { "reservationID", "reservationOtp", "confirmStatus", "icsFile" })
+                            .Values(new List<string> { "reservationID", "reservationOtp", "confirmStatus", "icsFile" })
                             .AddParameters(parameters)
                             .Build();
 
@@ -138,7 +139,7 @@ namespace SS.Backend.EmailConfirm
             return response;
         }
 
-        public async Task<Response> UpdateOtp(int ReservationID, int otp)
+        public async Task<Response> UpdateOtp(int ReservationID, string otp)
         {
             Response response = new Response();
             var builder = new CustomSqlCommandBuilder();
@@ -168,5 +169,6 @@ namespace SS.Backend.EmailConfirm
             }
             return response;
         }
+
     }
 }
