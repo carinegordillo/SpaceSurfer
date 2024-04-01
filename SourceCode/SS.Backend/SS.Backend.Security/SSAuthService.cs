@@ -47,7 +47,7 @@ namespace SS.Backend.Security
                 .Build();
             result = await sqldao.ReadSqlResult(getHash);
 
-            string user_hash = (string)result.ValuesRead?.Rows[0]?["hashedUsername"];
+            string? user_hash = result.ValuesRead?.Rows[0]?["hashedUsername"].ToString();
 
             try
             {
@@ -202,7 +202,7 @@ namespace SS.Backend.Security
                 .Build();
             result = await sqldao.ReadSqlResult(getHash);
 
-            string user_hash = (string)result.ValuesRead?.Rows[0]?["hashedUsername"];
+            string? user_hash = result.ValuesRead?.Rows[0]?["hashedUsername"].ToString();
 
             try
             {
@@ -214,9 +214,11 @@ namespace SS.Backend.Security
                     .Build();
                 result = await sqldao.ReadSqlResult(selectCommand);
 
-                string dbOTP = (string)result.ValuesRead?.Rows[0]?["OTP"];
-                string dbSalt = (string)result.ValuesRead?.Rows[0]?["Salt"];
-                DateTime timestamp = (DateTime)result.ValuesRead?.Rows[0]?["Timestamp"];
+                string? dbOTP = result.ValuesRead?.Rows[0]?["OTP"].ToString();
+                string? dbSalt = result.ValuesRead?.Rows[0]?["Salt"].ToString();
+                DateTime timestamp = result.ValuesRead?.Rows[0]?["Timestamp"] != DBNull.Value 
+                ? (DateTime)result.ValuesRead.Rows[0]["Timestamp"]
+                : DateTime.MinValue;
 
                 TimeSpan timeElapsed = DateTime.UtcNow - timestamp;
 
@@ -254,7 +256,7 @@ namespace SS.Backend.Security
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
                         if (result.ValuesRead.Rows.Count > 0)
                         {
-                            string role = result.ValuesRead?.Rows[0]?["appRole"].ToString();
+                            string? role = result.ValuesRead?.Rows[0]?["appRole"].ToString();
 
 
                             // populate the principal
@@ -418,13 +420,13 @@ namespace SS.Backend.Security
             var header = new JwtHeader();
             var payload = new JwtPayload()
             {
-                Iss = Request.Host.Host,
-                Sub = principal.UserIdentity,
+                Iss = Request.Host.Host ?? "defaultIssuer" ,
+                Sub = principal.UserIdentity ?? "defaultIdentity",
                 Aud = "spacesurfers",
                 Iat = DateTime.UtcNow.Ticks,
                 Exp = DateTime.UtcNow.AddHours(1).Ticks,
                 
-                Claims = principal.Claims
+                Claims = principal.Claims ?? new Dictionary<string, string>()
             };
 
             var serializerOptions = new JsonSerializerOptions()
