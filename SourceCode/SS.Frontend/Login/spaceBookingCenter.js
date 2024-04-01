@@ -1,7 +1,8 @@
 
 
 
-document.addEventListener('DOMContentLoaded', function() {
+document.getElementById('initAppButton').addEventListener('click', function() {
+    window.alert("initAppButton clicked");
     
     initSidebar();
     
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     var accessToken = sessionStorage.getItem('accessToken');
+
 
 
 
@@ -50,6 +52,7 @@ function logout() {
 
 
 function initSidebar() {
+    window.alert("initSidebar called");
     const sidebar = document.querySelector('.sidebar');
 
     const buttons = [
@@ -76,6 +79,7 @@ function initReservationOverviewButtons() {
 
 
 function getReservationCenter() {
+    window.alert("getReservationCenter called");
 
         fetchCompanies();
         document.getElementById('companiesList').addEventListener('click', function(event) {
@@ -595,13 +599,17 @@ function updateSpaceAvailabilityUI(data) {
 
 async function fetchCompanies() {
 
+    window.alert("fetchCompanies called");
+
     
     const accessToken = sessionStorage.getItem('accessToken');
     const isTokenValid = await checkTokenExpiration(accessToken);
     if (!isTokenValid) {
+        window.alert("Token is not valid");
         logout();
         return;
     }
+    window.alert("Token is valid"); 
 
     try {
         const response = await fetch('http://localhost:5001/api/v1/spaceBookingCenter/companies/ListCompanies', {
