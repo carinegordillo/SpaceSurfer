@@ -5,7 +5,6 @@ using System.Security.Claims;
 using System.Security;
 using System.Text;
 using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text.Json;
@@ -201,7 +200,6 @@ namespace SS.Backend.Security
                 .Where($"username = '{user}'")
                 .Build();
             result = await sqldao.ReadSqlResult(getHash);
-
             string user_hash = (string)result.ValuesRead?.Rows[0]?["hashedUsername"];
 
             try
@@ -217,7 +215,6 @@ namespace SS.Backend.Security
                 string dbOTP = (string)result.ValuesRead?.Rows[0]?["OTP"];
                 string dbSalt = (string)result.ValuesRead?.Rows[0]?["Salt"];
                 DateTime timestamp = (DateTime)result.ValuesRead?.Rows[0]?["Timestamp"];
-
                 TimeSpan timeElapsed = DateTime.UtcNow - timestamp;
 
                 // compare the otp stored in DB with user inputted otp
@@ -255,7 +252,6 @@ namespace SS.Backend.Security
                         if (result.ValuesRead.Rows.Count > 0)
                         {
                             string role = result.ValuesRead?.Rows[0]?["appRole"].ToString();
-
 
                             // populate the principal
                             SSPrincipal principal = new();
@@ -412,7 +408,6 @@ namespace SS.Backend.Security
             return ssPrincipal;
         }
 
-
         public string CreateJwt(HttpRequest Request, SSPrincipal principal)
         {
             var header = new JwtHeader();
@@ -523,66 +518,22 @@ namespace SS.Backend.Security
             }
         }
 
-        public string? ExtractClaimsFromToken(string tokenString)
+        /*
+        public IDictionary<string, string>? ExtractClaimsFromToken(string tokenString)
         {
             try
             {
                 var token = JsonSerializer.Deserialize<Jwt>(tokenString);
-                var claimsJson = JsonSerializer.Serialize(token.Payload.Claims);
-                return claimsJson;
+                return token.Payload.Claims;
             }
             catch (Exception)
             {
+                // Log or handle exception
                 return null;
             }
         }
-
-        public IDictionary<string, string>? ExtractClaimsFromToken_Dictionary(string tokenString)
-        {
-            try
-            {
-                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
-                return token?.Payload?.Claims;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        public bool CheckExpTime(string tokenString)
-        {
-            try
-            {
-                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
-                var expTicks = token.Payload.Exp;
-                var expDateTime = new DateTime(expTicks, DateTimeKind.Utc);
-
-                var timeDifference = expDateTime - DateTime.UtcNow;
-
-                //return timeDifference <= TimeSpan.FromMinutes(10);
-                return timeDifference <= TimeSpan.FromSeconds(30);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public bool IsTokenExpired(string tokenString)
-        {
-            try
-            {
-                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
-                var expTicks = token.Payload.Exp;
-                var expDateTime = new DateTime(expTicks, DateTimeKind.Utc);
-
-                return expDateTime <= DateTime.UtcNow;
-            }
-            catch (Exception)
-            {
-                return true;
-            }
-        }
+        */
     }
+
 }
+

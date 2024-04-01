@@ -79,7 +79,12 @@ app.Use(async (context, next) =>
 
 app.UseStaticFiles();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+
+//app.UseAuthorization();
+
+//app.UseMiddleware<AuthenticationMiddleware>();
+app.UseMiddleware<AuthorizationMiddleware>();
 
 app.MapControllers();
 

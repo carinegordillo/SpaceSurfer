@@ -4,6 +4,6 @@ namespace SS.Backend.Services.CalendarService
 {
     public interface ICalendarCreator
     {
-        public void CreateCalendar(ReservationInfo reservationInfo);
+        public Task<string> CreateCalendar(ReservationInfo reservationInfo);
     }
 }
