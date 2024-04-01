@@ -30,7 +30,7 @@ public class CompanyInfoController : ControllerBase
     [HttpGet("ListCompanies")]
     public async Task<IActionResult> ListCompanies()
     {
-        string accessToken = HttpContext.Request.Headers["Authorization"];
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
@@ -99,7 +99,7 @@ public class CompanyInfoController : ControllerBase
     [HttpGet("FloorPlans/{companyId}")]
     public async Task<IActionResult> GetCompanyFloorPlans(int companyId)
     {
-        string accessToken = HttpContext.Request.Headers["Authorization"];
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
@@ -171,10 +171,10 @@ public class CompanyInfoController : ControllerBase
 
 
     [HttpGet("checkTokenExp")]
-    public async Task<IActionResult> checkTokenExp()
+    public IActionResult checkTokenExp()
     {
 
-        string accessToken = HttpContext.Request.Headers["Authorization"];
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
