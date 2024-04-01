@@ -302,7 +302,6 @@ function showModifyModal(reservation) {
 }
 
 async function submitModification(reservation) {
-    if (reservation) reservation.preventDefault();
 
     var accessToken = sessionStorage.getItem('accessToken', accessToken);
     var idToken = sessionStorage.getItem('idToken');
@@ -435,7 +434,7 @@ function showCancelModal(reservation) {
     };
 
     try {
-        const response =  fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/CancelReservation`, {
+        const response =  await fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/CancelReservation`, {
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
