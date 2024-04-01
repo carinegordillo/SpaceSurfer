@@ -77,19 +77,19 @@ namespace SS.Backend.SpaceManager
             {
                 foreach (DataRow row in response.ValuesRead.Rows)
                 {
-                    int floorPlanID = (int)row["floorPlanID"];
+                    int floorPlanID = row["floorPlanID"]as int? ?? default(int);
                     string? floorPlanName = row["floorPlanName"]?.ToString().Trim();
                     byte[]? floorPlanImage = row["floorPlanImage"] as byte[];
                     string? spaceID = row["spaceID"]?.ToString().Trim();
-                    int timeLimit = (int)row["timeLimit"];
+                    int timeLimit = row["timeLimit"] as int? ?? default;
 
-                    CompanyFloorStrImage floor;
+                    CompanyFloorStrImage? floor;
                     if (!floors.TryGetValue(floorPlanID, out floor))
                     {
                         floor = new CompanyFloorStrImage
                         {
                              FloorPlanID = floorPlanID,
-                            FloorPlanName = floorPlanName,
+                           FloorPlanName = floorPlanName ?? string.Empty,
                             FloorPlanImageBase64 = floorPlanImage != null ? Convert.ToBase64String(floorPlanImage) : null,
                         };
                         floors.Add(floorPlanID, floor);
