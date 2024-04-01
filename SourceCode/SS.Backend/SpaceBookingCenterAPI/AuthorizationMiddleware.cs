@@ -26,9 +26,9 @@ public class AuthorizationMiddleware
 
         try
         {
-            string expectedIssuer = context.Request.Host.Host;
-            string tokenString = authorizationHeader.Substring("Bearer ".Length).Trim();
-            string expectedSubject = authService.ExtractSubjectFromToken(tokenString);
+            string? expectedIssuer = context.Request.Host.Host;
+            string? tokenString = authorizationHeader.Substring("Bearer ".Length).Trim();
+            string? expectedSubject = authService.ExtractSubjectFromToken(tokenString);
 
             // validating token authenticity and returning the currentPrincipal of user
             var ssPrincipal = authService.ValidateToken(tokenString, expectedIssuer, expectedSubject);
@@ -47,7 +47,7 @@ public class AuthorizationMiddleware
         {
             // Log exception or handle token validation errors
             context.Response.StatusCode = 500; // Internal server error
-            await context.Response.WriteAsync($"An error occurred during token validation.");
+            await context.Response.WriteAsync($"An error occurred during token validation. {ex.Message}");
         }
     }
 }

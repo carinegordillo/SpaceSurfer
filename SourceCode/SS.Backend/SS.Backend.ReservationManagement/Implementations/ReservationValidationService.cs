@@ -21,9 +21,9 @@ namespace SS.Backend.ReservationManagement{
 
     public class ReservationValidationService : IReservationValidationService
     {
-        string COMPANY_PROFILE_TABLE = "dbo.companyProfile";
-        string COMPANY_FLOOR_PLAN_TABLE = "dbo.companyFloor";
-        string COMPANY_FLOOR_PLAN_SPACES_TABLE = "dbo.companyFloorSpaces";
+        // string COMPANY_PROFILE_TABLE = "dbo.companyProfile";
+        // string COMPANY_FLOOR_PLAN_TABLE = "dbo.companyFloor";
+        // string COMPANY_FLOOR_PLAN_SPACES_TABLE = "dbo.companyFloorSpaces";
         private IReservationManagementRepository _reservationManagementRepository;
         public ReservationValidationService(IReservationManagementRepository reservationManagementRepository)
         {
