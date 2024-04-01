@@ -28,8 +28,10 @@ namespace SS.Backend.Tests.ReservationManagers{
 
         string MANUAL_ID_TABLE = "dbo.NewManualIDReservations";
 
+        
 
-        string userHash1 = "hashed_manager4";
+
+        string userHash1 = "Yu86Ho6KDmtOeP687I/AHNE4rhxoCzZDs9v/Mpe+SZw=";
 
         [TestInitialize]
         public void Setup()
@@ -57,15 +59,15 @@ namespace SS.Backend.Tests.ReservationManagers{
         public async Task ModifySpaceSurferSpaceReservation_Success()
         {
             DateTime now = DateTime.Now;
-            DateTime reservationStart = new DateTime(now.Year, now.Month, now.Day, 16, 0, 0).AddDays(0);
-            DateTime reservationEnd = new DateTime(now.Year, now.Month, now.Day, 17, 0, 0).AddDays(0);
+            DateTime reservationStart = new DateTime(now.Year, now.Month, now.Day, 16, 0, 0).AddDays(1);
+            DateTime reservationEnd = new DateTime(now.Year, now.Month, now.Day, 17, 0, 0).AddDays(1);
 
             UserReservationsModel userReservationsModel = new UserReservationsModel
             {
                 ReservationID = 2002,
-                CompanyID = 1027,
-                FloorPlanID = 60,
-                SpaceID = "SPACE002",
+                CompanyID = 1,
+                FloorPlanID = 4,
+                SpaceID = "S5-FP4",
                 ReservationStartTime = reservationStart,
                 ReservationEndTime = reservationEnd,
                 UserHash = userHash1
@@ -77,8 +79,8 @@ namespace SS.Backend.Tests.ReservationManagers{
 
             Assert.IsFalse(response.HasError);
 
-            userReservationsModel.ReservationStartTime = new DateTime(now.Year, now.Month, now.Day, 17, 0, 0).AddDays(0);
-            userReservationsModel.ReservationEndTime = new DateTime(now.Year, now.Month, now.Day, 18, 0, 0).AddDays(0);
+            userReservationsModel.ReservationStartTime = new DateTime(now.Year, now.Month, now.Day, 17, 0, 0).AddDays(2);
+            userReservationsModel.ReservationEndTime = new DateTime(now.Year, now.Month, now.Day, 18, 0, 0).AddDays(2);
 
             response = await _reservationModificationManager.ModifySpaceSurferSpaceReservationAsync(userReservationsModel, MANUAL_ID_TABLE);
             //check again if the reservation was modified

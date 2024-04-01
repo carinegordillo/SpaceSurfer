@@ -24,7 +24,7 @@ namespace SS.Backend.Tests.ReservationManagement{
         //using dbo.TestReservtaions becaus it allows manual id insertion
 
         string MANUAL_ID_TABLE = "dbo.NewManualIDReservations";
-        string USER_HASH2 = "hashed_user5";
+        string USER_HASH2 = "Yu86Ho6KDmtOeP687I/AHNE4rhxoCzZDs9v/Mpe+SZw=";
 
         
         
@@ -60,9 +60,9 @@ namespace SS.Backend.Tests.ReservationManagement{
             UserReservationsModel reservationToBeCancelled = new UserReservationsModel
             {
                 ReservationID = 112,
-                CompanyID = 1027,
-                FloorPlanID = 60,
-                SpaceID = "SPACE002",
+                CompanyID = 1,
+                FloorPlanID = 1,
+                SpaceID = "S2-FP1",
                 ReservationStartTime = new DateTime(2025, 01, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2025, 01, 01, 15, 00, 00), 
                 Status = ReservationStatus.Active,
@@ -91,9 +91,9 @@ namespace SS.Backend.Tests.ReservationManagement{
             UserReservationsModel reservationToBeCancelled = new UserReservationsModel
             {
                 ReservationID = 578,
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE302",
+                CompanyID = 1,
+                FloorPlanID = 1,
+                SpaceID = "S2-FP1",
                 ReservationStartTime = new DateTime(2024, 05, 01, 13, 00, 00), // Jan 1, 2022, 1:00 PM
                 ReservationEndTime = new DateTime(2024, 05, 01, 15, 00, 00), // Jan 1, 2022, 3:00 PM
                 Status = ReservationStatus.Active,
@@ -115,9 +115,9 @@ namespace SS.Backend.Tests.ReservationManagement{
         UserReservationsModel reservation1 = new UserReservationsModel
             {
                 ReservationID = 927,
-                CompanyID = 1027,
-                FloorPlanID = 60,
-                SpaceID = "SPACE002",
+                CompanyID = 1,
+                FloorPlanID = 1,
+                SpaceID = "S2-FP1",
                 ReservationStartTime = new DateTime(2024, 02, 23, 11, 00, 00), 
                 ReservationEndTime = new DateTime(2024, 02, 23, 12, 00, 00), 
                 Status = ReservationStatus.Active,
@@ -132,9 +132,9 @@ namespace SS.Backend.Tests.ReservationManagement{
         // Reservation 2 is set to a future date
         UserReservationsModel reservation2 = new UserReservationsModel {
             ReservationID = 6765,
-            CompanyID = 1027,
-            FloorPlanID = 60,
-            SpaceID = "SPACE002",
+            CompanyID = 1,
+            FloorPlanID = 1,
+            SpaceID = "S2-FP1",
             ReservationStartTime = DateTime.UtcNow.AddDays(2).Date + new TimeSpan(14, 0, 0),
             ReservationEndTime = DateTime.UtcNow.AddDays(2).Date + new TimeSpan(17, 0, 0), 
             Status = ReservationStatus.Active,
