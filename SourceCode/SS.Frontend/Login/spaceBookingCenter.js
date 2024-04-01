@@ -1,8 +1,11 @@
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     
     initSidebar();
     
-    const formContainer = document.querySelector('.form-container'); 
+    const formContainer = document.querySelector('.space-form-container'); 
     if (formContainer) { 
         const reservationForm = createReservationForm();
 
@@ -23,17 +26,17 @@ document.addEventListener('DOMContentLoaded', function() {
     var accessToken = sessionStorage.getItem('accessToken');
 
 
-    fetchCompanies();
-    document.getElementById('companiesList').addEventListener('click', function(event) {
-        if (event.target && event.target.nodeName === "LI") {
-            const companyID = event.target.getAttribute('data-company-id');
-            fetchFloorPlans(companyID);
-        }
-    });
 
-    document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);
-        
+        fetchCompanies();
+        document.getElementById('companiesList').addEventListener('click', function(event) {
+            if (event.target && event.target.nodeName === "LI") {
+                const companyID = event.target.getAttribute('data-company-id');
+                fetchFloorPlans(companyID);
+            }
+        });
     
+        document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);
+        
 });
 
 function logout() {
@@ -74,17 +77,16 @@ function initReservationOverviewButtons() {
 
 function getReservationCenter() {
 
-    fetchCompanies();
-    document.getElementById('companiesList').addEventListener('click', function(event) {
-        if (event.target && event.target.nodeName === "LI") {
-            const companyID = event.target.getAttribute('data-company-id');
-            fetchFloorPlans(companyID);
-        }
-    });
-
-    document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);
-        
+        fetchCompanies();
+        document.getElementById('companiesList').addEventListener('click', function(event) {
+            if (event.target && event.target.nodeName === "LI") {
+                const companyID = event.target.getAttribute('data-company-id');
+                fetchFloorPlans(companyID);
+            }
+        });
     
+        document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);
+        
 }
 
 
@@ -610,6 +612,7 @@ async function fetchCompanies() {
             }
         });
 
+        window.alert("Received companies data:", response.json());
         const data = await response.json();
         console.log('Received companies data:', data);
         window.alert("Received companies data:", data);
@@ -663,10 +666,8 @@ function formatTime(timeString) {
     return `${formattedHours}:${minutes} ${ampm}`;
 }
 
- function fetchFloorPlans(companyID) {
-
-    const accessToken = sessionStorage.getItem('accessToken');
-    const isTokenValid =   checkTokenExpiration(accessToken);
+ function fetchFloorPlans(companyID, accessToken) {
+    const isTokenValid =  checkTokenExpiration(accessToken);
     if (!isTokenValid) {
         logout();
         return;

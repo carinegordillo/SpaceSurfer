@@ -364,63 +364,17 @@ public class ReservationController : ControllerBase
     [HttpGet("CheckAvailability")]
     public async Task<IActionResult> CheckAvailability(int companyId, DateTime startTime, DateTime endTime)
     {
-        string accessToken = HttpContext.Request.Headers["Authorization"];
-        if (accessToken != null && accessToken.StartsWith("Bearer "))
+        try
         {
-            accessToken = accessToken.Substring("Bearer ".Length).Trim();
-            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
-
-            if (claimsJson != null)
-            {
-                var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
-
-                if (claims.TryGetValue("Role", out var role) && role == "1" || role == "2" || role == "3" || role == "4" || role == "5")
-                {
-                    bool closeToExpTime = _authService.CheckExpTime(accessToken);
-                    if (closeToExpTime)
-                    {
-                        SSPrincipal principal = new SSPrincipal();
-                        principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
-                        principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
-                        var newToken = _authService.CreateJwt(Request, principal);
-                        try
-                        {
-                            var response = await _availibilityDisplayManager.CheckAvailabilityAsync(companyId, startTime, endTime);
-                            return Ok(new { response, newToken });
-                        }
-                        catch (Exception ex)
-                        {
-                            return StatusCode(500, "Internal server error: " + ex.Message);
-                        }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            var response = await _availibilityDisplayManager.CheckAvailabilityAsync(companyId, startTime, endTime);
-                            return Ok(response);
-                        }
-                        catch (Exception ex)
-                        {
-                            return StatusCode(500, "Internal server error: " + ex.Message);
-                        }
-                    }
-                }
-                else
-                {
-                    return BadRequest("Unauthorized role.");
-                }
-            }
-            else
-            {
-                return BadRequest("Invalid token.");
-            }
+            var response = await _availibilityDisplayManager.CheckAvailabilityAsync(companyId, startTime, endTime);
+            return Ok(response);
         }
-        else
+        catch (Exception ex)
         {
-            return BadRequest("Unauthorized. Access token is missing or invalid.");
+            return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
+
 
     // [HttpGet("test")]
     // public async Task<IActionResult> test()
