@@ -60,15 +60,15 @@ var app = builder.Build();
 app.Use((context, next) =>
 {
     
-    context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
-    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+    context.Response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:3000");
+    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
     context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
 
     
     if (context.Request.Method == "OPTIONS")
     {
-        context.Response.Headers.Add("Access-Control-Max-Age", "86400"); 
+        context.Response.Headers.Append("Access-Control-Max-Age", "86400"); 
         context.Response.StatusCode = 204; 
         return Task.CompletedTask;
     }
