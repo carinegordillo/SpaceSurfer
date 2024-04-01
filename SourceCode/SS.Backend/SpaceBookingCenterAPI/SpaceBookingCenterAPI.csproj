@@ -20,6 +20,9 @@
   <ProjectReference Include="..\SS.Backend.ReservationManagers\SS.Backend.ReservationManagers.csproj" />
   <ProjectReference Include="..\..\SS.Backend\SS.Backend.SpaceManager\SS.Backend.SpaceManager.csproj" />
 
+		<ProjectReference Include="..\SS.Backend.Security.AuthN\SS.Backend.Security.AuthN.csproj" />
+		<ProjectReference Include="..\SS.Backend.Security\SS.Backend.Security.csproj" />
+
 
   </ItemGroup>
 

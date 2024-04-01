@@ -9,6 +9,7 @@
         "list": "off"
       }
     ],
-    "no-inline-styles": "off"
+    "no-inline-styles": "off",
+    "meta-viewport": "off"
   }
 }

@@ -5,21 +5,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const formContainer = document.querySelector('.form-container'); 
     if (formContainer) { 
         const reservationForm = createReservationForm();
+
         reservationForm.addEventListener('submit', function(event) {
             event.preventDefault(); 
-            handleFormSubmit(event);
+            var accessToken = sessionStorage.getItem('accessToken');
+            if (!accessToken) {
+                console.error('Access token is not available.');
+                return;
+            }
+            handleReservationCreationFormSubmit(event, accessToken);
 
         });
         formContainer.appendChild(reservationForm);
-
         
     }
+    var accessToken = sessionStorage.getItem('accessToken');
 
     
-    fetchCompanies();
+    fetchCompanies(accessToken);
 
     document.addEventListener('DOMContentLoaded', function() {
-        fetchCompanies();
+        fetchCompanies(accessToken);
         document.getElementById('companiesList').addEventListener('click', function(event) {
             if (event.target && event.target.nodeName === "LI") {
                 const companyID = event.target.getAttribute('data-company-id');
@@ -27,10 +33,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     
-        document.getElementById('reservationForm').addEventListener('submit', handleFormSubmit);
+        document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);
         
     });
 });
+
+function logout() {
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('idToken');
+    document.getElementById("homepageGen").style.display = "none";
+    document.getElementById("homepageManager").style.display = "none";
+    document.getElementById("sendOTPSection").style.display = "block";
+}
+
 
 
 function initSidebar() {
@@ -71,7 +86,7 @@ function getReservationCenter() {
             }
         });
     
-        document.getElementById('reservationForm').addEventListener('submit', handleFormSubmit);
+        document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);
         
     });
 }
@@ -91,9 +106,11 @@ function reservationOverviewButtons() {
     const content = document.querySelector('.reservation-buttons');
     content.innerHTML = ''; 
 
+    var accessToken = sessionStorage.getItem('accessToken');
+
     const buttons = [
         { id: 'loadActiveReservationsBtn', text: 'Active Reservations', onClickFunction: () => getUsersActiveReservations('hashed_user3') },
-        { id: 'loadAllReservationsBtn', text: 'All Reservations', onClickFunction: () => getUsersReservations('hashed_user3') }
+        { id: 'loadAllReservationsBtn', text: 'All Reservations', onClickFunction: () => getUsersReservations('hashed_user3', accessToken) }
     ];
 
     buttons.forEach(({ id, text, onClickFunction }) => {
@@ -115,6 +132,7 @@ function getUsersActiveReservations(userName) {
     fetch(url, {
         method: 'GET',
         headers: {
+            'Authorization': 'Bearer ' + accessToken,
             'Accept': 'application/json',
         }
         
@@ -136,13 +154,14 @@ function getUsersActiveReservations(userName) {
     });
 }
 
-function getUsersReservations(userName) {
+function getUsersReservations(userName, accessToken) {
    
     const url = `http://localhost:5005/api/v1/spaceBookingCenter/reservations/ListReservations?userName=${encodeURIComponent(userName)}`;
 
     fetch(url, {
         method: 'GET',
         headers: {
+            'Authorization': 'Bearer ' + accessToken,
             'Accept': 'application/json',
         }
         
@@ -251,15 +270,32 @@ function showModifyModal(reservation) {
             <button type="submit">Submit</button>
         </form>
     `;
-
     document.body.appendChild(modalContent);
-    document.getElementById('modifyReservationForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        submitModification(reservation);
-    });
+
+    var accessToken = sessionStorage.getItem('accessToken');
+    if (accessToken) {
+        document.getElementById('modifyReservationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            submitModification(reservation);
+        });
+    }
+    else {
+        console.error('Access token is not available.');
+        return;
+    }
+
+   
+    
 }
 
-function submitModification(reservation) {
+function submitModification(reservation, accessToken) {
+
+    const isTokenValid = checkTokenExpiration(accessToken);
+    if (!isTokenValid){
+        logout();
+        return;
+    }; 
+    
     const form = document.getElementById('modifyReservationForm');
     const newStartTime = form.querySelector('#newStartTime').value;
     const newEndTime = form.querySelector('#newEndTime').value;
@@ -284,6 +320,7 @@ function submitModification(reservation) {
     fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/UpdateReservation`, {
         method: 'PUT',
         headers: {
+            'Authorization': 'Bearer ' + accessToken,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(modificationData),
@@ -335,15 +372,32 @@ function showCancelModal(reservation) {
     `;
 
     document.body.appendChild(modalContent);
-    document.getElementById('confirmCancel').addEventListener('click', function() {
-        submitCancellation(reservation);
-    });
-    document.getElementById('cancelCancel').addEventListener('click', function() {
-        document.querySelector('.modal-content').remove();
-    });
+
+    var accessToken = sessionStorage.getItem('accessToken');
+    if (accessToken) {
+        document.getElementById('confirmCancel').addEventListener('click', function() {
+            submitCancellation(reservation, accessToken);
+        });
+        document.getElementById('cancelCancel').addEventListener('click', function() {
+            document.querySelector('.modal-content').remove();
+        });
+    }
+    else {
+        console.error('Access token is not available.');
+        return;
+    }
+        
+   
 }
 
-function submitCancellation(reservation) {
+function submitCancellation(reservation, accessToken) {
+
+    const isTokenValid = checkTokenExpiration(accessToken);
+    if (!isTokenValid){
+        logout();
+        return;
+    }; 
+    
 
     const modificationData = {
         reservationID: reservation.reservationID,
@@ -364,6 +418,7 @@ function submitCancellation(reservation) {
     fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/CancelReservation`, {
         method: 'PUT',
         headers: {
+            'Authorization': 'Bearer ' + accessToken,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(modificationData),
@@ -542,10 +597,26 @@ function updateSpaceAvailabilityUI(data) {
 
 
 
-function fetchCompanies() {
-    fetch('http://localhost:5001/api/v1/spaceBookingCenter/companies/ListCompanies') 
+function fetchCompanies(accessToken) {
+    const isTokenValid = checkTokenExpiration(accessToken);
+    if (!isTokenValid){
+        logout();
+        return;
+    }; 
+    fetch('http://localhost:5001/api/v1/spaceBookingCenter/companies/ListCompanies',{
+        method: 'GET', 
+        headers: {
+            'Authorization': 'Bearer ' + accessToken, 
+            'Content-Type': 'application/json'
+        }
+    })
         .then(response => response.json())
+        
         .then(data => {
+            if (!Array.isArray(data)) {
+                console.error('Data is not an array:', data);
+                return;
+            }
             const companiesList = document.getElementById('companiesList');
             companiesList.innerHTML = ''; 
             
@@ -569,7 +640,7 @@ function fetchCompanies() {
             document.querySelectorAll('.clickable').forEach(item => {
                 item.addEventListener('click', function(event) {
                     const companyID = event.target.getAttribute('data-company-id');
-                    fetchFloorPlans(companyID);
+                    fetchFloorPlans(companyID, accessToken);
                 });
             });
         })
@@ -589,7 +660,14 @@ function formatTime(timeString) {
     return `${formattedHours}:${minutes} ${ampm}`;
 }
 
-function fetchFloorPlans(companyID) {
+function fetchFloorPlans(companyID, accessToken) {
+
+    const isTokenValid = checkTokenExpiration(accessToken);
+    if (!isTokenValid){
+        logout();
+        return;
+    }; 
+    
     fetch(`http://localhost:5001/api/v1/spaceBookingCenter/companies/FloorPlans/${companyID}`) 
         .then(response => {
             if (!response.ok) {
@@ -644,8 +722,44 @@ function fetchFloorPlans(companyID) {
         .catch(error => console.error('Error fetching floor plans:', error));
 }
 
-function handleFormSubmit(event) {
-    event.preventDefault(); 
+
+
+
+
+
+
+function checkTokenExpiration(accessToken) {
+    return fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/checkTokenExp', {
+        method: 'GET', 
+        headers: {
+            'Authorization': 'Bearer ' + accessToken, 
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(response => {
+        if (response === true) {
+            logout();
+            return false; 
+        } else {
+            return true; 
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        return false; 
+    });
+}
+
+
+function handleReservationCreationFormSubmit(event, accessToken) {
+    if (event) event.preventDefault();
+
+    const isTokenValid = checkTokenExpiration(accessToken);
+    if (!isTokenValid){
+        logout();
+        return;
+    }; 
 
     const reservationData = {
         companyId: parseInt(document.getElementById('reservation-companyId').value, 10),
@@ -662,6 +776,7 @@ function handleFormSubmit(event) {
     fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/CreateReservation', {
         method: 'POST',
         headers: {
+            'Authorization': 'Bearer ' + accessToken,
             'Content-Type': 'application/json'
         },
         body: requestData
