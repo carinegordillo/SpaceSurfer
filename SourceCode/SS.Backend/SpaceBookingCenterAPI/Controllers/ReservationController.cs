@@ -468,15 +468,18 @@ public class ReservationController : ControllerBase
             bool tokenExpired = _authService.IsTokenExpired(accessToken);
             if (tokenExpired)
             {
+                console.WriteLine("Token is expired.");
                 return Ok(true);
             }
             else
             {
+                console.WriteLine("Token is not expired.");
                 return Ok(false);
             }
         }
         else
         {
+            console.WriteLine("Token is missing or invalid.");
             return BadRequest("Unauthorized. Access token is missing or invalid.");
         }
     }

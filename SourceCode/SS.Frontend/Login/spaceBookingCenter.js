@@ -757,12 +757,15 @@ async function checkTokenExpiration(accessToken) {
         });
         
         if (!response.ok) {
+            window.alert("Failed to check token expiration");
             throw new Error('Failed to check token expiration');
         }
+        window.alert("in here");
 
         const data = await response.json();
         return data;
     } catch (error) {
+        window.alert("Error checking token expiration");
         console.error('Error:', error);
         return false;
     }
