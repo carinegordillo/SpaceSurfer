@@ -422,8 +422,8 @@ namespace SS.Backend.Security
                 Sub = principal.UserIdentity,
                 Aud = "spacesurfers",
                 Iat = DateTime.UtcNow.Ticks,
-                //Exp = DateTime.UtcNow.AddHours(1).Ticks,
-                Exp = DateTime.UtcNow.AddMinutes(1).Ticks,
+                Exp = DateTime.UtcNow.AddHours(1).Ticks,
+                
                 Claims = principal.Claims
             };
 
@@ -560,8 +560,8 @@ namespace SS.Backend.Security
 
                 var timeDifference = expDateTime - DateTime.UtcNow;
 
-                //return timeDifference <= TimeSpan.FromMinutes(10);
-                return timeDifference <= TimeSpan.FromSeconds(30);
+                return timeDifference <= TimeSpan.FromMinutes(10);
+                
             }
             catch (Exception)
             {
