@@ -4,6 +4,7 @@ using System.Data;
 
 namespace SS.Backend.SpaceManager
 {
+    
     public class SpaceReader : ISpaceReader
     {
         private readonly ISpaceManagerDao _spaceManagerDao;

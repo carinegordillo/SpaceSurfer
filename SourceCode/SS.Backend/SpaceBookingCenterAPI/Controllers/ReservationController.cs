@@ -211,6 +211,7 @@ public class ReservationController : ControllerBase
                         try
                         {
                             var response = await _reservationCreationManager.CreateSpaceSurferSpaceReservationAsync(reservation);
+                            Console.WriteLine(response.ErrorMessage);
                             return Ok(response);
                         }
                         catch (Exception ex)
@@ -274,6 +275,7 @@ public class ReservationController : ControllerBase
                         try
                         {
                             var response = await _reservationModificationManager.ModifySpaceSurferSpaceReservationAsync(reservation);
+                            Console.WriteLine("in modification");
                             Console.WriteLine(response.ErrorMessage);
                             return Ok(response);
                         }
@@ -376,86 +378,6 @@ public class ReservationController : ControllerBase
     }
 
 
-    // [HttpGet("test")]
-    // public async Task<IActionResult> test()
-    // {
-    //     string accessToken = HttpContext.Request.Headers["Authorization"];
-    //     if (accessToken != null && accessToken.StartsWith("Bearer "))
-    //     {
-    //         accessToken = accessToken.Substring("Bearer ".Length).Trim();
-    //         var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
-
-    //         if (claimsJson != null)
-    //         {
-    //             var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
-
-    //             if (claims.TryGetValue("Role", out var role) && role == "2")
-    //             {
-    //                 return Ok("Role is valid.");
-    //             }
-    //             else
-    //             {
-    //                 return BadRequest("Unauthorized role.");
-    //             }
-    //         }
-    //         else
-    //         {
-    //             return BadRequest("Invalid token.");
-    //         }
-    //     }
-    //     else
-    //     {
-    //         return BadRequest("Unauthorized. Access token is missing or invalid.");
-    //     }
-    // }
-    // [HttpGet("button")]
-    // public async Task<IActionResult> button()
-    // {
-        
-    //     string accessToken = HttpContext.Request.Headers["Authorization"];
-    //     if (accessToken != null && accessToken.StartsWith("Bearer "))
-    //     {
-    //         accessToken = accessToken.Substring("Bearer ".Length).Trim();
-    //         var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
-
-    //         if (claimsJson != null)
-    //         {
-    //             var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
-
-    //             if (claims.TryGetValue("Role", out var role) && role == "2")
-    //             {
-    //                 bool closeToExpTime = _authService.CheckExpTime(accessToken);
-    //                 if (closeToExpTime)
-    //                 {
-    //                     SSPrincipal principal = new SSPrincipal();
-    //                     principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
-    //                     principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
-    //                     var newToken = _authService.CreateJwt(Request, principal);
-
-    //                     bool testVar = true;
-    //                     return Ok(new { testVar, newToken });
-    //                 }
-    //                 else
-    //                 {
-    //                     bool testVar = true;
-    //                     return Ok(testVar);
-    //                 }
-    //             }
-    //             else
-    //             {
-    //                 return BadRequest("Unauthorized role.");
-    //             }
-    //         }
-    //         else
-    //         {
-    //             return BadRequest("Invalid token.");
-    //         }
-    //     }
-    //     else
-    //     {
-    //         return BadRequest("Unauthorized. Access token is missing or invalid.");
-    //     }
-    // }
 
     [HttpGet("checkTokenExp")]
     public async Task<IActionResult> checkTokenExp()
@@ -468,18 +390,18 @@ public class ReservationController : ControllerBase
             bool tokenExpired = _authService.IsTokenExpired(accessToken);
             if (tokenExpired)
             {
-                console.WriteLine("Token is expired.");
+                Console.WriteLine("Token is expired.");
                 return Ok(true);
             }
             else
             {
-                console.WriteLine("Token is not expired.");
+                Console.WriteLine("Token is not expired.");
                 return Ok(false);
             }
         }
         else
         {
-            console.WriteLine("Token is missing or invalid.");
+            Console.WriteLine("Token is missing or invalid.");
             return BadRequest("Unauthorized. Access token is missing or invalid.");
         }
     }

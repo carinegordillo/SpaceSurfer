@@ -6,6 +6,7 @@ body, html {
     align-items: center; /* Vertically centers */
     justify-content: center; /* Horizontally centers */
     font-family: Arial, sans-serif;
+    color: black;
 }
 
 
