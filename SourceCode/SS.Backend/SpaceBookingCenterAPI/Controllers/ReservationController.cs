@@ -49,7 +49,7 @@ public class ReservationController : ControllerBase
     [HttpGet("ListReservations")]
     public async Task<IActionResult> ListUserReservations(string userName)
     {
-        string accessToken = HttpContext.Request.Headers["Authorization"];
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
@@ -113,7 +113,7 @@ public class ReservationController : ControllerBase
     public async Task<IActionResult> ListUserActiveReservations(string userName)
     {
 
-        string accessToken = HttpContext.Request.Headers["Authorization"];
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
@@ -177,7 +177,7 @@ public class ReservationController : ControllerBase
     public async Task<IActionResult> CreateReservation([FromBody] UserReservationsModel reservation)
     {
  
-        string accessToken = HttpContext.Request.Headers["Authorization"];
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
@@ -241,7 +241,7 @@ public class ReservationController : ControllerBase
     [HttpPut("UpdateReservation")]
     public async Task<IActionResult> UpdateReservation([FromBody] UserReservationsModel reservation)
     {
-         string accessToken = HttpContext.Request.Headers["Authorization"];
+         string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
@@ -305,7 +305,7 @@ public class ReservationController : ControllerBase
     [HttpPut("CancelReservation")]
     public async Task<IActionResult> CancelReservation([FromBody] UserReservationsModel reservation)
     {
-        string accessToken = HttpContext.Request.Headers["Authorization"];
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
@@ -380,14 +380,14 @@ public class ReservationController : ControllerBase
 
 
     [HttpGet("checkTokenExp")]
-    public async Task<IActionResult> checkTokenExp()
+    public  IActionResult checkTokenExp()
     {
 
-        string accessToken = HttpContext.Request.Headers["Authorization"];
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
-            bool tokenExpired = _authService.IsTokenExpired(accessToken);
+            bool tokenExpired =  _authService.IsTokenExpired(accessToken);
             if (tokenExpired)
             {
                 Console.WriteLine("Token is expired.");
