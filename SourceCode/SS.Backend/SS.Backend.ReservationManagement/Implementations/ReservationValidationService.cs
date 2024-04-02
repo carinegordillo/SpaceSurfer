@@ -4,6 +4,11 @@ using Microsoft.Data.SqlClient;
 using SS.Backend.DataAccess;
 using System.Data;
 
+
+/// <summary>
+/// Provides reservation validation services for checking conflicting reservations, validating reservation within company hours,
+/// validating reservation duration, validating reservation lead time, and checking reservation status.
+/// </summary>
 namespace SS.Backend.ReservationManagement{
     public enum TimeUnit
     {
@@ -13,13 +18,19 @@ namespace SS.Backend.ReservationManagement{
     }
 
 
+
     public class ReservationValidationService : IReservationValidationService
     {
+        // string COMPANY_PROFILE_TABLE = "dbo.companyProfile";
+        // string COMPANY_FLOOR_PLAN_TABLE = "dbo.companyFloor";
+        // string COMPANY_FLOOR_PLAN_SPACES_TABLE = "dbo.companyFloorSpaces";
         private IReservationManagementRepository _reservationManagementRepository;
         public ReservationValidationService(IReservationManagementRepository reservationManagementRepository)
         {
             _reservationManagementRepository = reservationManagementRepository;
         }
+
+        
 
         public async Task<Response> ValidateNoConflictingReservationsAsync(UserReservationsModel userReservationsModel){
             Response result = new Response();
@@ -88,7 +99,7 @@ namespace SS.Backend.ReservationManagement{
 
                 if (result.ValuesRead.Rows.Count > 0)
                 {
-                    string openDays = result.ValuesRead.Rows[0]["daysOpen"].ToString();
+                    string? openDays = result.ValuesRead.Rows[0]["daysOpen"].ToString();
 
                     bool isOpenDay = openDays.Contains(userReservationsModel.ReservationStartTime.ToString("dddd"), StringComparison.OrdinalIgnoreCase);
 
@@ -281,6 +292,63 @@ namespace SS.Backend.ReservationManagement{
             return userReservationsModel.ReservationEndTime <= maxLeadDateTime;
         }
 
+        public Response CheckReservationFormatIsValid(UserReservationsModel userReservationsModel){
+
+            Response response = new Response();
+
+            response.HasError = false;
+            response.ErrorMessage = "Reservation Format is Valid.";
+
+            if (userReservationsModel == null)
+            {
+                response.HasError = true;
+                response.ErrorMessage = "The reservation model cannot be null.";
+            }
+            
+            if (string.IsNullOrWhiteSpace(userReservationsModel.UserHash) || string.IsNullOrWhiteSpace(userReservationsModel.SpaceID))
+            {
+                response.HasError = true;
+                response.ErrorMessage = "Required fields are missing or in invalid format.";
+    
+            }
+
+            if (userReservationsModel.CompanyID <= 0 || userReservationsModel.FloorPlanID <= 0)
+            {
+                response.HasError = true;
+                response.ErrorMessage = "CompanyID and FloorPlanID must be positive numbers.";
+
+            }
+
+            if (userReservationsModel.ReservationStartTime < DateTime.UtcNow || userReservationsModel.ReservationEndTime <= userReservationsModel.ReservationStartTime)
+            {
+                response.HasError = true;
+                response.ErrorMessage = "Invalid date values. Dates cannot be in the past, and the end date must be after the start date.";
+            }
+
+            return response;
+        }
+
+        // public async Task<Response> ValidateEntityExistsAsync(UserReservationsModel userReservationsModel)
+        // {
+        //     Response result = new Response();
+
+
+        //     CustomSqlCommandBuilder commandBuilder = new CustomSqlCommandBuilder();
+
+        //     SqlCommand command = commandBuilder.BeginSelect() 
+        //         .SelectColumns("openingHours, closingHours, daysOpen")
+        //         .From("dbo.companyProfile") 
+        //         .Where("companyID = @companyID") 
+        //         .AddParameters(new Dictionary<string, object> { { "companyID", userReservationsModel.CompanyID } }) 
+        //         .Build();
+
+        //     try
+        //     {
+        //         result = await _reservationManagementRepository.ExecuteReadReservationTables(command);
+
+        //     return response;
+        // }
+
        public async Task<Response> ValidateReservationAsync(UserReservationsModel userReservationsModel, ReservationValidationFlags validationFlags, IReservationRequirements requirements)
         {
             var response = new Response();
@@ -331,6 +399,15 @@ namespace SS.Backend.ReservationManagement{
                 }
             }
 
+            if (validationFlags.HasFlag(ReservationValidationFlags.CheckReservationFormatIsValid))
+            {
+                var formatResponse = CheckReservationFormatIsValid(userReservationsModel);
+                if (formatResponse.HasError)
+                {
+                    failedValidations.Add("CheckReservationFormatIsValid");
+                }
+            }
+
             if (validationFlags.HasFlag(ReservationValidationFlags.NoConflictingReservations))
             {
                 var conflictingReservationsResponse = await ValidateNoConflictingReservationsAsync(userReservationsModel);
@@ -353,53 +430,7 @@ namespace SS.Backend.ReservationManagement{
             return response;
         }
 
-        // public Response CheckReservationFormatIsValid(UserReservationsModel userReservationsModel){
-
-        //     Response response = new Response();
-
-        //     response.HasError = false;
-        //     response.ErrorMessage = "Reservation Format is Valid.";
-
-        //     if (userReservationsModel == null)
-        //     {
-        //         return new Response
-        //         {
-        //             HasError = true,
-        //             ErrorMessage = "The reservation model cannot be null."
-        //         };
-        //     }
-            
-        //     if (string.IsNullOrWhiteSpace(userReservationsModel.UserHash) || string.IsNullOrWhiteSpace(userReservationsModel.SpaceID))
-        //     {
-        //         return new Response
-        //         {
-        //             HasError = true,
-        //             ErrorMessage = "Required fields are missing or in invalid format.";
-        //         };
-    
-        //     }
-
-        //     if (userReservationsModel.CompanyID <= 0 || userReservationsModel.FloorPlanID <= 0)
-        //     {
-        //         return new Response
-        //         {
-        //             HasError = true,
-        //             ErrorMessage = "CompanyID and FloorPlanID must be positive numbers."
-        //         };
-        //     }
-
-            
-        //     if (userReservationsModel.ReservationStartTime < DateTime.UtcNow || userReservationsModel.ReservationEndTime <= userReservationsModel.ReservationStartTime)
-        //     {
-        //         return new Response
-        //         {
-        //             HasError = true,
-        //             ErrorMessage = "Invalid date values. Dates cannot be in the past, and the end date must be after the start date."
-        //         };
-    
-        //     }
-        //     return response;
-        // }
+        
 
     }
 }

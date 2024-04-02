@@ -15,6 +15,7 @@ namespace SS.Backend.ReservationManagement
         public  bool  IsValidReservationLeadTime(UserReservationsModel userReservationsModel, TimeSpan maxLeadTime);
         public Response checkReservationStatus(UserReservationsModel reservation);
         public Task<Response> ValidateReservationAsync(UserReservationsModel userReservationsModel, ReservationValidationFlags validationFlags, IReservationRequirements requirements);
+        public Response CheckReservationFormatIsValid(UserReservationsModel userReservationsModel);
        
     } 
 }
