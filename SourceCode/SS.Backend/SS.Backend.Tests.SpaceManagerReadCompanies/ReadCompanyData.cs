@@ -67,14 +67,14 @@ public class ReadCompanyData
     [TestMethod]
     public async Task GetCompanyFloorsAsync_ReturnsFloorsForSpecificCompany()
     {
-        int companyId = 1028; 
+        int companyId = 1; 
         var floors = await _spaceReader.GetCompanyFloorsAsync(companyId);
 
         foreach (var floor in floors)
         {
             Console.WriteLine($"FloorPlanID: {floor.FloorPlanID}");
             Console.WriteLine($"FloorPlanName: {floor.FloorPlanName}");
-            Console.WriteLine($"FloorPlanImageBase64: {floor.FloorPlanImageBase64?.Substring(0, Math.Min(floor.FloorPlanImageBase64.Length, 100))}..."); // Print first 100 chars of base64 string
+            Console.WriteLine($"FloorPlanImageBase64: {floor.FloorPlanImageBase64?.Substring(0, Math.Min(floor.FloorPlanImageBase64.Length, 100))}..."); 
 
             Console.WriteLine("FloorSpaces:");
             foreach (var space in floor.FloorSpaces)

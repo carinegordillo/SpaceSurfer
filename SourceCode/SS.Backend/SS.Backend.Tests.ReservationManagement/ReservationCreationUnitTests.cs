@@ -21,7 +21,7 @@ namespace SS.Backend.Tests.ReservationManagement{
         private ReservationValidationService _reservationValidationService;
 
         string AUTO_ID_TABLE = "dbo.NewAutoIDReservations";
-        string USER_HASH2 = "hashed_user4";
+        string USER_HASH2 = "Yu86Ho6KDmtOeP687I/AHNE4rhxoCzZDs9v/Mpe+SZw=";
 
 
 
@@ -58,9 +58,9 @@ namespace SS.Backend.Tests.ReservationManagement{
             
             UserReservationsModel userReservationsModel = new UserReservationsModel
             {
-                CompanyID = 1027,
-                FloorPlanID = 60,
-                SpaceID = "SPACE001",
+                CompanyID = 1,
+                FloorPlanID = 1,
+                SpaceID = "S2-FP1",
                 ReservationStartTime = new DateTime(2025, 01, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2025, 01, 01, 15, 00, 00), 
                 Status = ReservationStatus.Active,

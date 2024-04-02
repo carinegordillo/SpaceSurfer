@@ -36,7 +36,7 @@ namespace SS.Backend.Tests.ReservationManagers{
         string MANUAL_ID_TABLE = "dbo.NewManualIDReservations";
 
 
-        string userHash1 = "hashed_manager3";
+        string userHash1 = "Yu86Ho6KDmtOeP687I/AHNE4rhxoCzZDs9v/Mpe+SZw=";
 
         [TestInitialize]
         public void Setup()
@@ -76,9 +76,9 @@ namespace SS.Backend.Tests.ReservationManagers{
             UserReservationsModel userReservationsModel = new UserReservationsModel
             {
                 ReservationID = 2003,
-                CompanyID = 1029,
-                FloorPlanID = 63,
-                SpaceID = "SPACE005",
+                CompanyID = 2,
+                FloorPlanID = 2,
+                SpaceID = "S4-FP2",
                 ReservationStartTime = reservationStart,
                 ReservationEndTime = reservationEnd,
                 UserHash = userHash1

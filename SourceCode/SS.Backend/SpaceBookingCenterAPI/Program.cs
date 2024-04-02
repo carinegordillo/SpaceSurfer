@@ -7,6 +7,13 @@ using SS.Backend.ReservationManagers;
 using SS.Backend.DataAccess;
 using SS.Backend.SpaceManager;
 
+using SS.Backend.Security;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
+using SS.Backend.Services.LoggingService;
+using System.Text;
+
+
 
 
 
@@ -53,6 +60,25 @@ builder.Services.AddTransient<IAvailibilityDisplayManager, AvailabilityDisplayMa
 builder.Services.AddTransient<ISpaceManagerDao, SpaceManagerDao>();
 builder.Services.AddTransient<ISpaceReader, SpaceReader>();
 
+//security
+
+builder.Services.AddTransient<GenOTP>();
+builder.Services.AddTransient<Hashing>();
+builder.Services.AddTransient<Response>();
+builder.Services.AddTransient<LogEntry>();
+builder.Services.AddTransient<ILogTarget, SqlLogTarget>();
+builder.Services.AddTransient<Logger>();
+builder.Services.AddTransient<SqlDAO>();
+
+
+builder.Services.AddTransient<SSAuthService>(provider =>
+    new SSAuthService(
+        provider.GetRequiredService<GenOTP>(),
+        provider.GetRequiredService<Hashing>(),
+        provider.GetRequiredService<SqlDAO>(),
+        provider.GetRequiredService<Logger>()
+    )
+);
 
 
 // Learn more about configuring Swagger/OpenAPI
@@ -64,15 +90,15 @@ var app = builder.Build();
 app.Use((context, next) =>
 {
     
-    context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
-    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
-    context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Axios-Demo, Space-Surfer-Header");
-    context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+    context.Response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:3000");
+    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+    context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
 
     
     if (context.Request.Method == "OPTIONS")
     {
-        context.Response.Headers.Add("Access-Control-Max-Age", "86400"); 
+        context.Response.Headers.Append("Access-Control-Max-Age", "86400"); 
         context.Response.StatusCode = 204; 
         return Task.CompletedTask;
     }
@@ -98,7 +124,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseMiddleware<AuthorizationMiddleware>();
 
 app.MapControllers();
 

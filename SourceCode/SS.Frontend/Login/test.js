@@ -1,8 +1,104 @@
+function sendOTP() {
+    var userIdentity = document.getElementById("userIdentity").value;
+    console.log(userIdentity);
+
+    $.ajax({
+        url: 'http://localhost:5270/api/auth/sendOTP',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ userIdentity: userIdentity }),
+        success: function (response) {
+            document.getElementById("sendOTPSection").style.display = "none";
+            document.getElementById("enterOTPSection").style.display = "block";
+        },
+        error: function (xhr, status, error) {
+            alert('Error sending verification code.');
+        }
+    });
+}
+function authenticateUser() {
+    var otp = document.getElementById("otp").value;
+    var userIdentity = document.getElementById("userIdentity").value;
+
+    $.ajax({
+        url: 'http://localhost:5270/api/auth/authenticate',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ userIdentity: userIdentity, proof: otp }),
+        success: function (response) {
+            var accessToken = response.accessToken;
+            var idToken = response.idToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            sessionStorage.setItem('idToken', idToken);
+            document.getElementById("enterOTPSection").style.display = "none";
+            document.getElementById("successResult").style.display = "none";
+
+            var accessToken = sessionStorage.getItem('accessToken');
+
+            $.ajax({
+                url: 'http://localhost:5270/api/auth/getRole',
+                type: 'POST',
+                contentType: 'application/json',
+                data: accessToken,
+                success: function (response) {
+                    if (response === "2" || response === "3") {
+                        document.getElementById("homepageManager").style.display = "block";
+                        document.getElementById("homepageGen").style.display = "none";
+                    }
+                    else {
+                        document.getElementById("homepageGen").style.display = "block";
+                     }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching role:', error);
+                }
+            });
+        },
+        error: function (xhr, status, error) {
+            document.getElementById("enterOTPSection").style.display = "none";
+            document.getElementById("successResult").style.display = "none";
+            document.getElementById("failResult").style.display = "block";
+        }
+    });
+}
+
+function logout() {
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('idToken');
+    document.getElementById("homepageGen").style.display = "none";
+    document.getElementById("homepageManager").style.display = "none";
+    document.getElementById("sendOTPSection").style.display = "block";
+}
+
+function waitlistAccess() {
+    var accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+        console.error('Access token is not available.');
+        return;
+    }
+
+    $.ajax({
+        url: 'http://localhost:5099/api/waitlist/test',
+        type: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        },
+        contentType: 'application/json',
+        success: function (response) {
+            console.log(response);
+            window.location.href = '../Waitlist/index.html';
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     
     initSidebar();
     
-    const formContainer = document.querySelector('.form-container'); 
+    const formContainer = document.querySelector('.space-form-container'); 
     if (formContainer) { 
         const reservationForm = createReservationForm();
 
@@ -23,17 +119,17 @@ document.addEventListener('DOMContentLoaded', function() {
     var accessToken = sessionStorage.getItem('accessToken');
 
 
-    fetchCompanies();
-    document.getElementById('companiesList').addEventListener('click', function(event) {
-        if (event.target && event.target.nodeName === "LI") {
-            const companyID = event.target.getAttribute('data-company-id');
-            fetchFloorPlans(companyID);
-        }
-    });
 
-    document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);
-        
+        fetchCompanies();
+        document.getElementById('companiesList').addEventListener('click', function(event) {
+            if (event.target && event.target.nodeName === "LI") {
+                const companyID = event.target.getAttribute('data-company-id');
+                fetchFloorPlans(companyID);
+            }
+        });
     
+        document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);
+        
 });
 
 function logout() {
@@ -74,17 +170,16 @@ function initReservationOverviewButtons() {
 
 function getReservationCenter() {
 
-    fetchCompanies();
-    document.getElementById('companiesList').addEventListener('click', function(event) {
-        if (event.target && event.target.nodeName === "LI") {
-            const companyID = event.target.getAttribute('data-company-id');
-            fetchFloorPlans(companyID);
-        }
-    });
-
-    document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);
-        
+        fetchCompanies();
+        document.getElementById('companiesList').addEventListener('click', function(event) {
+            if (event.target && event.target.nodeName === "LI") {
+                const companyID = event.target.getAttribute('data-company-id');
+                fetchFloorPlans(companyID);
+            }
+        });
     
+        document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);
+        
 }
 
 
@@ -284,8 +379,8 @@ function showModifyModal(reservation) {
     
 }
 
-async function submitModification(reservation, accessToken) {
-    const tokenExpired = await checkTokenExpiration(accessToken);
+ function submitModification(reservation, accessToken) {
+    const tokenExpired =  checkTokenExpiration(accessToken);
     if (tokenExpired) {
         logout();
         return;
@@ -307,7 +402,7 @@ async function submitModification(reservation, accessToken) {
     };
 
     try {
-        const response = await fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/UpdateReservation`, {
+        const response =  fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/UpdateReservation`, {
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -320,7 +415,7 @@ async function submitModification(reservation, accessToken) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const responseData = await response.json();
+        const responseData =  response.json();
 
         if (responseData.newToken) {
             accessToken = responseData.newToken;
@@ -591,18 +686,18 @@ function updateSpaceAvailabilityUI(data) {
 
 
 
-async function fetchCompanies() {
+ function fetchCompanies() {
 
     
     const accessToken = sessionStorage.getItem('accessToken');
-    const isTokenValid = await checkTokenExpiration(accessToken);
+    const isTokenValid =  checkTokenExpiration(accessToken);
     if (!isTokenValid) {
         logout();
         return;
     }
 
     try {
-        const response = await fetch('http://localhost:5001/api/v1/spaceBookingCenter/companies/ListCompanies', {
+        const response =  fetch('http://localhost:5001/api/v1/spaceBookingCenter/companies/ListCompanies', {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -610,7 +705,8 @@ async function fetchCompanies() {
             }
         });
 
-        const data = await response.json();
+        window.alert("Received companies data:", response.json());
+        const data =  response.json();
         console.log('Received companies data:', data);
         window.alert("Received companies data:", data);
         if (data.newToken) {
@@ -663,10 +759,8 @@ function formatTime(timeString) {
     return `${formattedHours}:${minutes} ${ampm}`;
 }
 
- function fetchFloorPlans(companyID) {
-
-    const accessToken = sessionStorage.getItem('accessToken');
-    const isTokenValid =   checkTokenExpiration(accessToken);
+ function fetchFloorPlans(companyID, accessToken) {
+    const isTokenValid =  checkTokenExpiration(accessToken);
     if (!isTokenValid) {
         logout();
         return;
@@ -737,9 +831,9 @@ function formatTime(timeString) {
 }
 
 
-async function checkTokenExpiration(accessToken) {
+ function checkTokenExpiration(accessToken) {
     try {
-        const response = await fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/checkTokenExp', {
+        const response =  fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/checkTokenExp', {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -751,7 +845,7 @@ async function checkTokenExpiration(accessToken) {
             throw new Error('Failed to check token expiration');
         }
 
-        const data = await response.json();
+        const data =  response.json();
         return data;
     } catch (error) {
         console.error('Error:', error);

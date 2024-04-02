@@ -10,7 +10,7 @@ public class IdToken
         return JsonSerializer.Serialize(this);
     }
     
-    public static IdToken FromJson(string json)
+    public static IdToken? FromJson(string json)
     {
         return JsonSerializer.Deserialize<IdToken>(json);
     }

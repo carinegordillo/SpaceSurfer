@@ -58,7 +58,7 @@ namespace SS.Backend.Tests.ReservationManagers{
         [TestMethod]
         public async Task CheckAvailability_NoConflicts_ReturnsAllSpacesAsAvailable()
         {
-            int testCompanyId = 1027;
+            int testCompanyId = 1;
             DateTime start = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 9, 0, 0); // Today at 9:00 AM
             DateTime end = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 12, 0, 0); // Today at 12:00 PM
 

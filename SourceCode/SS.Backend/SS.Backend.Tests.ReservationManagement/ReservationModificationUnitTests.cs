@@ -23,6 +23,8 @@ namespace SS.Backend.Tests.ReservationManagement{
         private ReservationModificationService _reservationModificationService;
 
         string MANUAL_ID_TABLE = "dbo.NewManualIDReservations";
+
+        string USER_HASH = "Yu86Ho6KDmtOeP687I/AHNE4rhxoCzZDs9v/Mpe+SZw=";
         
 
         [TestInitialize]
@@ -58,13 +60,13 @@ namespace SS.Backend.Tests.ReservationManagement{
             UserReservationsModel userReservationsModel = new UserReservationsModel
             {
                 ReservationID = 2001,
-                CompanyID = 1029,
-                FloorPlanID = 63,
-                SpaceID = "SPACE005",
+                CompanyID = 1,
+                FloorPlanID = 1,
+                SpaceID = "S2-FP1",
                 ReservationStartTime = new DateTime(2025, 01, 01, 13, 00, 00), 
                 ReservationEndTime = new DateTime(2025, 01, 01, 15, 00, 00), 
                 Status = ReservationStatus.Active,
-                UserHash = "hashed_user3"
+                UserHash = USER_HASH
             };
 
             creationResponse = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE,userReservationsModel);

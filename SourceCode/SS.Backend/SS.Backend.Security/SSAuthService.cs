@@ -46,7 +46,7 @@ namespace SS.Backend.Security
                 .Build();
             result = await sqldao.ReadSqlResult(getHash);
 
-            string user_hash = (string)result.ValuesRead?.Rows[0]?["hashedUsername"];
+            string? user_hash = result.ValuesRead?.Rows[0]?["hashedUsername"].ToString();
 
             try
             {
@@ -200,7 +200,8 @@ namespace SS.Backend.Security
                 .Where($"username = '{user}'")
                 .Build();
             result = await sqldao.ReadSqlResult(getHash);
-            string user_hash = (string)result.ValuesRead?.Rows[0]?["hashedUsername"];
+
+            string? user_hash = result.ValuesRead?.Rows[0]?["hashedUsername"].ToString();
 
             try
             {
@@ -212,9 +213,12 @@ namespace SS.Backend.Security
                     .Build();
                 result = await sqldao.ReadSqlResult(selectCommand);
 
-                string dbOTP = (string)result.ValuesRead?.Rows[0]?["OTP"];
-                string dbSalt = (string)result.ValuesRead?.Rows[0]?["Salt"];
-                DateTime timestamp = (DateTime)result.ValuesRead?.Rows[0]?["Timestamp"];
+                string? dbOTP = result.ValuesRead?.Rows[0]?["OTP"].ToString();
+                string? dbSalt = result.ValuesRead?.Rows[0]?["Salt"].ToString();
+                DateTime timestamp = result.ValuesRead?.Rows[0]?["Timestamp"] != DBNull.Value 
+                ? (DateTime)result.ValuesRead.Rows[0]["Timestamp"]
+                : DateTime.MinValue;
+
                 TimeSpan timeElapsed = DateTime.UtcNow - timestamp;
 
                 // compare the otp stored in DB with user inputted otp
@@ -251,7 +255,8 @@ namespace SS.Backend.Security
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
                         if (result.ValuesRead.Rows.Count > 0)
                         {
-                            string role = result.ValuesRead?.Rows[0]?["appRole"].ToString();
+                            string? role = result.ValuesRead?.Rows[0]?["appRole"].ToString();
+
 
                             // populate the principal
                             SSPrincipal principal = new();
@@ -413,13 +418,13 @@ namespace SS.Backend.Security
             var header = new JwtHeader();
             var payload = new JwtPayload()
             {
-                Iss = Request.Host.Host,
-                Sub = principal.UserIdentity,
+                Iss = Request.Host.Host ?? "defaultIssuer" ,
+                Sub = principal.UserIdentity ?? "defaultIdentity",
                 Aud = "spacesurfers",
                 Iat = DateTime.UtcNow.Ticks,
-                //Exp = DateTime.UtcNow.AddHours(1).Ticks,
-                Exp = DateTime.UtcNow.AddMinutes(1).Ticks,
-                Claims = principal.Claims
+                Exp = DateTime.UtcNow.AddHours(1).Ticks,
+                
+                Claims = principal.Claims ?? new Dictionary<string, string>()
             };
 
             var serializerOptions = new JsonSerializerOptions()
@@ -532,8 +537,53 @@ namespace SS.Backend.Security
                 return null;
             }
         }
-        */
+
+        public IDictionary<string, string>? ExtractClaimsFromToken_Dictionary(string tokenString)
+        {
+            try
+            {
+                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
+                return token?.Payload?.Claims;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public bool CheckExpTime(string tokenString)
+        {
+            try
+            {
+                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
+                var expTicks = token.Payload.Exp;
+                var expDateTime = new DateTime(expTicks, DateTimeKind.Utc);
+
+                var timeDifference = expDateTime - DateTime.UtcNow;
+
+                return timeDifference <= TimeSpan.FromMinutes(10);
+                
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool IsTokenExpired(string tokenString)
+        {
+            try
+            {
+                var token = JsonSerializer.Deserialize<Jwt>(tokenString);
+                var expTicks = token.Payload.Exp;
+                var expDateTime = new DateTime(expTicks, DateTimeKind.Utc);
+
+                return expDateTime <= DateTime.UtcNow;
+            }
+            catch (Exception)
+            {
+                return true;
+            }
+        }
     }
-
 }
-

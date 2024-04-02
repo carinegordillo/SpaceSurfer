@@ -5,6 +5,10 @@ using SS.Backend.DataAccess;
 using System.Data;
 
 
+/// <summary>
+/// Provides reservation validation services for checking conflicting reservations, validating reservation within company hours,
+/// validating reservation duration, validating reservation lead time, and checking reservation status.
+/// </summary>
 namespace SS.Backend.ReservationManagement{
     public enum TimeUnit
     {
@@ -17,14 +21,16 @@ namespace SS.Backend.ReservationManagement{
 
     public class ReservationValidationService : IReservationValidationService
     {
-        string COMPANY_PROFILE_TABLE = "dbo.companyProfile";
-        string COMPANY_FLOOR_PLAN_TABLE = "dbo.companyFloor";
-        string COMPANY_FLOOR_PLAN_SPACES_TABLE = "dbo.companyFloorSpaces";
+        // string COMPANY_PROFILE_TABLE = "dbo.companyProfile";
+        // string COMPANY_FLOOR_PLAN_TABLE = "dbo.companyFloor";
+        // string COMPANY_FLOOR_PLAN_SPACES_TABLE = "dbo.companyFloorSpaces";
         private IReservationManagementRepository _reservationManagementRepository;
         public ReservationValidationService(IReservationManagementRepository reservationManagementRepository)
         {
             _reservationManagementRepository = reservationManagementRepository;
         }
+
+        
 
         public async Task<Response> ValidateNoConflictingReservationsAsync(UserReservationsModel userReservationsModel){
             Response result = new Response();
