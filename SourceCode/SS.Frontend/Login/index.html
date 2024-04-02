@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270 http://localhost:5099;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001; img-src 'self' data:;">
     <link rel="stylesheet" href="style.css">
+    <link rel ="stylesheet" href ="spaceBookingCenter.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="scripts.js"></script>
+    <script src="script.js"></script>
+
 </head>
 
 <body>
@@ -53,8 +55,32 @@
 
     <section id="homepageGen" class="homepage-container" style="display: none;">
         <h2>Welcome to SpaceSurfers!</h2>
+        <button id="initAppButton">Initialize spaceBookingCenter</button>
         <div id="accessTokenContainer"></div>
+        <div class="space-booking-center-container">
+            <div class="sidebar"></div>
+            <div class="dynamic-content">
+                <div class="reservation-buttons"></div>
+                <div class="reservation-list"></div>
+            </div>
+            <div class="space-booking-center-container">
+                <div class="company-info">
+                    <div id="companies">
+                        <h2>Companies</h2>
+                        <ul id="companiesList"></ul>
+                    </div>
+                    <div id="floorPlans">
+                        <h2>Floor Plans</h2>
+                        <div id="floorPlansContent"></div>
+                    </div>
+                </div>
+                <div class="space-form-container" id="space-form-container"></div>
+            </div>
+        </div>
+    <div>
         <button type="button" onclick="logout()">Logout</button>
+    </div>
+       
     </section>
 
     <section id="homepageManager" class="homepage-container" style="display: none;">
@@ -68,5 +94,6 @@
     <footer>
         <p>Designed and Developed by the PixelPals Team</p>
     </footer>
+    <script src="spaceBookingCenter.js"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 
 /* 
-
+Reads reservations from the database
 */
 
 namespace SS.Backend.ReservationManagement{

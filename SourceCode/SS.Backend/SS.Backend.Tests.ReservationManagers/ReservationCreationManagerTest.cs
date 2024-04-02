@@ -23,7 +23,7 @@ namespace SS.Backend.Tests.ReservationManagers{
 
         string TABLE_NAME = "dbo.testReservations";
 
-        string userHash1 = "hashed_manager3";
+        string userHash1 = "Yu86Ho6KDmtOeP687I/AHNE4rhxoCzZDs9v/Mpe+SZw=";
 
         [TestInitialize]
         public void Setup()
@@ -49,14 +49,14 @@ namespace SS.Backend.Tests.ReservationManagers{
         public async Task CreateSpaceSurferSpaceReservation_Success()
         {
             DateTime now = DateTime.Now;
-            DateTime reservationStart = new DateTime(now.Year, now.Month, now.Day, 16, 0, 0).AddDays(0);
-            DateTime reservationEnd = new DateTime(now.Year, now.Month, now.Day, 17, 0, 0).AddDays(0);
+            DateTime reservationStart = new DateTime(now.Year, now.Month, now.Day, 16, 0, 0).AddDays(2);
+            DateTime reservationEnd = new DateTime(now.Year, now.Month, now.Day, 17, 0, 0).AddDays(2);
 
             UserReservationsModel userReservationsModel = new UserReservationsModel
             {
-                CompanyID = 1027,
-                FloorPlanID = 60,
-                SpaceID = "SPACE002",
+                CompanyID = 3,
+                FloorPlanID = 3,
+                SpaceID = "S1-FP3",
                 ReservationStartTime = reservationStart,
                 ReservationEndTime = reservationEnd,
                 UserHash = userHash1
@@ -79,9 +79,9 @@ namespace SS.Backend.Tests.ReservationManagers{
             // Arrange
             UserReservationsModel userReservationsModel = new UserReservationsModel
             {
-                CompanyID = 1030,
-                FloorPlanID = 64,
-                SpaceID = "SPACE006",
+                CompanyID = 3,
+                FloorPlanID = 3,
+                SpaceID = "S1-FP3",
                 ReservationStartTime = reservationStart,
                 ReservationEndTime = reservationEnd,
                 UserHash = userHash1

@@ -12,7 +12,7 @@ public class Jwt
         return JsonSerializer.Serialize(this);
     }
 
-    public static Jwt FromJson(string json)
+    public static Jwt? FromJson(string json)
     {
         return JsonSerializer.Deserialize<Jwt>(json);
     }

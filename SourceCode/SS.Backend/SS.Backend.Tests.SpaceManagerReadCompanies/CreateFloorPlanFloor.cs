@@ -1,4 +1,4 @@
-// USED TO INSERT INTO THE TABLE 
+
 // using SS.Backend.DataAccess;
 // using SS.Backend.SharedNamespace;
 // using SS.Backend.SpaceManager;
@@ -37,8 +37,8 @@
 //     public async Task InsertFloorPlan1_Success()
 //     {
         
-//         int CompanyID = 1027;
-//         string FloorPlanName = "Floor Plan Test 11";
+//         int CompanyID = 1;
+//         string FloorPlanName = "Floor Plan 1";
 //         string ImagePath = @"/Users/carinegordillo/CECS491/SpaceSurfer/SourceCode/SS.Backend/FloorPlanImages/FloorPlan1.png";
         
 
@@ -54,7 +54,7 @@
 //     public async Task InsertFloorPlan2_Success()
 //     {
         
-//         int CompanyID = 1028;
+//         int CompanyID = 2;
 //         string FloorPlanName = "Floor1";
 //         string ImagePath = @"/Users/carinegordillo/CECS491/SpaceSurfer/SourceCode/SS.Backend/FloorPlanImages/FloorPlan2.png";
         
@@ -70,7 +70,7 @@
 //     public async Task InsertFloorPlan4_Success()
 //     {
         
-//         int CompanyID = 1028;
+//         int CompanyID = 3;
 //         string FloorPlanName = "Floor2";
 //         string ImagePath = @"/Users/carinegordillo/CECS491/SpaceSurfer/SourceCode/SS.Backend/FloorPlanImages/FloorPlan3.png";
         
@@ -85,8 +85,8 @@
 //     public async Task InsertFloorPlan3_Success()
 //     {
         
-//         int CompanyID = 1029;
-//         string FloorPlanName = "Floor Plan Test 33";
+//         int CompanyID = 1;
+//         string FloorPlanName = "Floor Plan 2nd floor";
 //         string ImagePath = @"/Users/carinegordillo/CECS491/SpaceSurfer/SourceCode/SS.Backend/FloorPlanImages/FloorPlan3.png";
         
 //         // Act
@@ -95,19 +95,19 @@
 //         // Assert
 //         Assert.IsFalse(response.HasError);
 //     }
-//     [TestMethod]
-//     public async Task InsertFloorPlan5_Success()
-//     {
+//     // [TestMethod]
+//     // public async Task InsertFloorPlan5_Success()
+//     // {
         
-//         int CompanyID = 1030;
-//         string FloorPlanName = "Floor Plan Test 33";
-//         string ImagePath = @"/Users/carinegordillo/CECS491/SpaceSurfer/SourceCode/SS.Backend/FloorPlanImages/FloorPlan3.png";
+//     //     int CompanyID = 1030;
+//     //     string FloorPlanName = "Floor Plan Test 33";
+//     //     string ImagePath = @"/Users/carinegordillo/CECS491/SpaceSurfer/SourceCode/SS.Backend/FloorPlanImages/FloorPlan3.png";
         
-//         // Act
-//         var response = await _spaceReader.InsertIntoCompanyFloorPlansAsync(CompanyID,FloorPlanName, ImagePath);
+//     //     // Act
+//     //     var response = await _spaceReader.InsertIntoCompanyFloorPlansAsync(CompanyID,FloorPlanName, ImagePath);
 
-//         // Assert
-//         Assert.IsFalse(response.HasError);
-//     }
+//     //     // Assert
+//     //     Assert.IsFalse(response.HasError);
+//     // }
 
 // }
