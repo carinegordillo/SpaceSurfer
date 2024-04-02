@@ -9,7 +9,7 @@ namespace SS.Backend.Tests.EmailConfirm;
 [TestClass]
 public class ResendUnitTest
 {
-    private EmailConfirmService _emailConfirm;
+     private EmailConfirmService _emailConfirm;
     private IEmailConfirmDAO _emailDAO;
     private SqlDAO _sqlDao;
     private ConfigService _configService;
@@ -181,7 +181,7 @@ public class ResendUnitTest
         else
         {
             // Fail the test if we hit the timeout
-            Assert.Fail("The ResendConfirmation operation timed out.");
+            Assert.Fail("The CreateConfirmation operation timed out.");
         }
 
         //Cleanup

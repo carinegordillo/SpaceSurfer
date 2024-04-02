@@ -9,6 +9,7 @@ using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
 using SecurityAPI;
+using SS.Backend.EmailConfirm;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,6 +53,8 @@ var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../.
 var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
 builder.Services.AddTransient<ConfigService>(provider =>new ConfigService(configFilePath));
 
+builder.Services.AddTransient<IEmailConfirmDAO, EmailConfirmDAO>();
+builder.Services.AddTransient<IEmailConfirmService, EmailConfirmService>();
 builder.Services.AddTransient<SqlDAO>();
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
