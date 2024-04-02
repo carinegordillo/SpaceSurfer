@@ -29,7 +29,7 @@ public class AuthorizationMiddleware
         {
             string expectedIssuer = context.Request.Host.Host;
             //not sure if this is the right way to get the expected subject
-            string expectedSubject = authService.ExtractSubjectFromToken(tokenString);
+            string? expectedSubject = authService.ExtractSubjectFromToken(tokenString);
             
             // validating token authenticity and returning the currentPrincipal of user
             var ssPrincipal = authService.ValidateToken(tokenString, expectedIssuer, expectedSubject); 
@@ -44,7 +44,7 @@ public class AuthorizationMiddleware
             
             await _next(context);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Log exception or handle token validation errors
             context.Response.StatusCode = 500; // Internal server error

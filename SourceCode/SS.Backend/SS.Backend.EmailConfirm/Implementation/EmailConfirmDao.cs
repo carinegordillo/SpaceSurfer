@@ -53,13 +53,12 @@ namespace SS.Backend.EmailConfirm
 
             var parameters = new Dictionary<string, object>
             {
-                {"ReservationID", ReservationID}
+                {"reservationID", ReservationID}
             };
 
-            var cmd = builder.BeginSelect()
-                            .SelectColumns("confirmStatus")
+            var cmd = builder.BeginSelectAll()
                             .From("ConfirmReservations")
-                            .Where("reservationID = @ReservationID")
+                            .Where("reservationID = reservationID")
                             .AddParameters(parameters)
                             .Build();
 
@@ -76,7 +75,7 @@ namespace SS.Backend.EmailConfirm
             return response;
         }
 
-        public async Task<Response> InsertConfirmationInfo(int ReservationID, string otp, byte[] file)
+        public async Task<Response> InsertConfirmationInfo(int ReservationID, string otp, byte[]? file)
         {
             Response response = new Response();
             var builder = new CustomSqlCommandBuilder();
@@ -90,8 +89,8 @@ namespace SS.Backend.EmailConfirm
             };
 
             var cmd = builder.BeginInsert("ConfirmReservations")
-                            .Columns(new List<string> { "reservationID", "reservationOtp", "confirmStatus", "icsFile" })
-                            .Values(new List<string> { "reservationID", "reservationOtp", "confirmStatus", "icsFile" })
+                            .Columns(parameters.Keys)
+                            .Values(parameters.Keys)
                             .AddParameters(parameters)
                             .Build();
 
@@ -115,8 +114,8 @@ namespace SS.Backend.EmailConfirm
 
             var parameters = new Dictionary<string, object>
             {
-                {"@ReservationID", ReservationID},
-                {"@ConfirmStatus", "Yes"} 
+                {"ReservationID", ReservationID},
+                {"ConfirmStatus", "yes"} 
             };
 
             var cmd = builder.BeginUpdate("ConfirmReservations")
@@ -146,14 +145,14 @@ namespace SS.Backend.EmailConfirm
 
             var parameters = new Dictionary<string, object>
             {
-                {"@ReservationID", ReservationID},
-                {"@ReservationOtp", otp}
+                {"reservationID", ReservationID},
+                {"reservationOtp", otp}
             };
 
             var cmd = builder.BeginUpdate("ConfirmReservations")
                             .Set(new Dictionary<string, object>
-                                {{"reservationOtp", "@ReservationOtp"}})
-                            .Where("reservationID = @ReservationID")
+                                {{"reservationOTP", "reservationOtp"}})
+                            .Where("reservationID = reservationID")
                             .AddParameters(parameters)
                             .Build();
 
@@ -161,11 +160,11 @@ namespace SS.Backend.EmailConfirm
 
             if (!response.HasError)
             {
-                response.ErrorMessage += " -- UpdateOtp Command: Successful";
+                response.ErrorMessage = " -- UpdateOtp Command: Successful";
             }
             else
             {
-                response.ErrorMessage += $" -- UpdateOtp Command: {cmd.CommandText} Failed";
+                response.ErrorMessage = $" -- UpdateOtp Command: {cmd.CommandText} Failed";
             }
             return response;
         }

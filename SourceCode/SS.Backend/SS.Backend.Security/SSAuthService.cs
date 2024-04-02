@@ -46,7 +46,7 @@ namespace SS.Backend.Security
                 .Build();
             result = await sqldao.ReadSqlResult(getHash);
 
-            string user_hash = (string)result.ValuesRead?.Rows[0]?["hashedUsername"];
+            string user_hash = (string)result.ValuesRead.Rows[0]["hashedUsername"];
 
             try
             {
@@ -200,7 +200,7 @@ namespace SS.Backend.Security
                 .Where($"username = '{user}'")
                 .Build();
             result = await sqldao.ReadSqlResult(getHash);
-            string user_hash = (string)result.ValuesRead?.Rows[0]?["hashedUsername"];
+            string user_hash = (string)result.ValuesRead.Rows[0]["hashedUsername"];
 
             try
             {
@@ -212,9 +212,9 @@ namespace SS.Backend.Security
                     .Build();
                 result = await sqldao.ReadSqlResult(selectCommand);
 
-                string dbOTP = (string)result.ValuesRead?.Rows[0]?["OTP"];
-                string dbSalt = (string)result.ValuesRead?.Rows[0]?["Salt"];
-                DateTime timestamp = (DateTime)result.ValuesRead?.Rows[0]?["Timestamp"];
+                string dbOTP = (string)result.ValuesRead.Rows[0]["OTP"];
+                string dbSalt = (string)result.ValuesRead.Rows[0]["Salt"];
+                DateTime timestamp = (DateTime)result.ValuesRead.Rows[0]["Timestamp"];
                 TimeSpan timeElapsed = DateTime.UtcNow - timestamp;
 
                 // compare the otp stored in DB with user inputted otp
@@ -251,7 +251,7 @@ namespace SS.Backend.Security
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
                         if (result.ValuesRead.Rows.Count > 0)
                         {
-                            string role = result.ValuesRead?.Rows[0]?["appRole"].ToString();
+                            string role = result.ValuesRead.Rows[0]["appRole"].ToString();
 
                             // populate the principal
                             SSPrincipal principal = new();

@@ -74,6 +74,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configs", "Configs", "{3733
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PersonalOverview", "PersonalOverview\PersonalOverview.csproj", "{256E2E69-205C-4AC1-BC25-D7AF9559D916}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.EmailConfirm", "SS.Backend.EmailConfirm\SS.Backend.EmailConfirm.csproj", "{C6CE1564-7947-4C3F-AF7D-EB52710AD5B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.EmailConfirm", "SS.Backend.Tests.EmailConfirm\SS.Backend.Tests.EmailConfirm.csproj", "{1ACF1758-AE60-42CD-B23F-D6544D9EFF90}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -156,6 +160,14 @@ Global
 		{256E2E69-205C-4AC1-BC25-D7AF9559D916}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{256E2E69-205C-4AC1-BC25-D7AF9559D916}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{256E2E69-205C-4AC1-BC25-D7AF9559D916}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6CE1564-7947-4C3F-AF7D-EB52710AD5B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6CE1564-7947-4C3F-AF7D-EB52710AD5B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6CE1564-7947-4C3F-AF7D-EB52710AD5B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6CE1564-7947-4C3F-AF7D-EB52710AD5B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ACF1758-AE60-42CD-B23F-D6544D9EFF90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ACF1758-AE60-42CD-B23F-D6544D9EFF90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ACF1758-AE60-42CD-B23F-D6544D9EFF90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ACF1758-AE60-42CD-B23F-D6544D9EFF90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

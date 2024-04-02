@@ -29,6 +29,7 @@ namespace SS.Backend.EmailConfirm
             var calendarFilePath = Path.Combine(projectRootDirectory, "CalendarFiles", "SSReservation.ics");
             string otp = string.Empty;
             string icsFile = string.Empty;
+            byte[] fileBytes = null;
 
             var infoResponse = await _emailDAO.GetReservationInfo(reservationID);
             if (!infoResponse.HasError && infoResponse.ValuesRead != null && infoResponse.ValuesRead.Rows.Count > 0)
@@ -74,21 +75,26 @@ namespace SS.Backend.EmailConfirm
                 };
                 var calendarCreator = new CalendarCreator();
                 icsFile = await calendarCreator.CreateCalendar(reservationInfo);
-                byte[] fileBytes = await File.ReadAllBytesAsync(calendarFilePath);
+                fileBytes = await File.ReadAllBytesAsync(icsFile);
                 
                 // insert to db table
-                var insertResponse = await _emailDAO.InsertConfirmationInfo(resID, otp, fileBytes);
-                if (insertResponse.HasError || insertResponse.ValuesRead == null || insertResponse.ValuesRead.Rows.Count == 0)
+                response = await _emailDAO.InsertConfirmationInfo(reservationID, otp, fileBytes);
+                // if (response.ValuesRead == null || response.ValuesRead.Rows.Count == 0)
+                // {
+                //     response.HasError = true;
+                //     response.ErrorMessage += " Failed to insert confirmation info into database. ";
+                // }
+                if (response.HasError)
                 {
                     response.HasError = true;
-                    response.ErrorMessage = "Failed to insert confirmation info into database.";
+                    response.ErrorMessage += "Error inserting confirmation info into database.";
                 }
 
             }
             else
             {
                 response.HasError = true;
-                response.ErrorMessage = "An error occured during reservation confirmation creation. Please try again later.";
+                response.ErrorMessage += "An error occured during reservation confirmation creation. Please try again later.";
             }
 
             return (icsFile, otp, response);
@@ -101,33 +107,45 @@ namespace SS.Backend.EmailConfirm
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
             var calendarFilePath = Path.Combine(projectRootDirectory, "CalendarFiles", "SSReservation.ics");
-            string otp = string.Empty;
+            string newOtp = string.Empty;
             string icsFile = string.Empty;
+            byte[] fileBytes = null;
             
+            // check confirmation status
             var statusResponse = await _emailDAO.GetConfirmInfo(reservationID);
             if (!statusResponse.HasError && statusResponse.ValuesRead != null && statusResponse.ValuesRead.Rows.Count > 0)
             {
                 DataRow statusRow = statusResponse.ValuesRead.Rows[0];
                 var reservationOtp = statusResponse.ValuesRead.Columns.Contains("reservationOTP") ? statusRow["reservationOTP"].ToString() : null;
                 var confirmStatus = statusResponse.ValuesRead.Columns.Contains("confirmStatus") ? statusRow["confirmStatus"].ToString() : null;
+
+                if (reservationOtp == null) response.ErrorMessage += "The 'reservationOtp' data was not found.";
+                if (confirmStatus == null) response.ErrorMessage += "The 'confirmStatus' data was not found.";
+
                 if (confirmStatus == "yes") 
                 {
-                    response.ErrorMessage = "Unable to send confirmation Email. Reservation is already confirmed.";
-                    return (icsFile, otp, response);
+                    response.HasError = true;
+                    response.ErrorMessage += "Unable to send confirmation Email. Reservation is already confirmed.";
+                    //return (icsFile, otp, response);
                 }
 
+                //get reservation data
                 var infoResponse = await _emailDAO.GetReservationInfo(reservationID);
                 if (!infoResponse.HasError && infoResponse.ValuesRead != null && infoResponse.ValuesRead.Rows.Count > 0)
                 {
                     DataRow row = infoResponse.ValuesRead.Rows[0];
 
                     var getOtp = new GenOTP();
-                    otp = getOtp.generateOTP();
+                    newOtp = getOtp.generateOTP();
 
                     //extract reservation info
-                    var companyName = infoResponse.ValuesRead.Columns.Contains("companyName") ? row["companyName"].ToString() : null;
-                    var address = infoResponse.ValuesRead.Columns.Contains("address") ? row["address"].ToString() : null;
+                    // int resID = infoResponse.ValuesRead.Columns.Contains("reservationID") && row["reservationID"] != DBNull.Value
+                    //             ? Convert.ToInt32(row["reservationID"])
+                    //             : -1; // or any other default value you choose
+
+                    var address = infoResponse.ValuesRead.Columns.Contains("CompanyAddress") ? row["CompanyAddress"].ToString() : null;
                     var spaceID = infoResponse.ValuesRead.Columns.Contains("spaceID") ? row["spaceID"].ToString() : null;
+                    var companyName = infoResponse.ValuesRead.Columns.Contains("CompanyName") ? row["CompanyName"].ToString() : null;
                     //extract and handle reservation date and time 
                     var date = row.Table.Columns.Contains("reservationDate") ? Convert.ToDateTime(row["reservationDate"]) : (DateTime?)null;
                     var startTime = row.Table.Columns.Contains("reservationStartTime") ? (DateTime?)DateTime.Parse(date?.ToShortDateString() + " " + row["reservationStartTime"].ToString()) : null;
@@ -136,7 +154,8 @@ namespace SS.Backend.EmailConfirm
                     
                     if (address == null) response.ErrorMessage = "The 'address' data was not found.";
                     if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
-                    if (companyName == null) response.ErrorMessage = "The 'companyName' data was not found.";
+                    //if (resID == null) response.ErrorMessage = "The 'reservationID' data was not found.";
+                    if (companyName == null) response.ErrorMessage = "The 'CompanyName' data was not found.";
                     if (date == null) response.ErrorMessage = "The 'reservationDate' data was not found.";
                     if (startTime == null) response.ErrorMessage = "The 'reservationStartTime' data was not found.";
                     if (endTime == null) response.ErrorMessage = "The 'reservationEndTime' data was not found.";
@@ -155,28 +174,36 @@ namespace SS.Backend.EmailConfirm
                     };
                     var calendarCreator = new CalendarCreator();
                     icsFile = await calendarCreator.CreateCalendar(reservationInfo);
-                    byte[] fileBytes = await File.ReadAllBytesAsync(calendarFilePath);
-                    
+                    fileBytes = await File.ReadAllBytesAsync(icsFile);
                     // if resending, update otp
-                    if (reservationOtp != otp)
+                    if (reservationOtp != newOtp)
                     {
-                        await _emailDAO.UpdateOtp(reservationID, otp);
+                        var otpResponse = await _emailDAO.UpdateOtp(reservationID, newOtp);
+                        if (!otpResponse.HasError)
+                        {
+                            response.HasError = false;
+                            response.ErrorMessage += $"Successfully updated reservation otp. {otpResponse.HasError}";
+                        }
+                    }
+                    else
+                    {
+                        response.ErrorMessage += "Failed to generate new reservation otp.";
                     }
 
                 }
                 else
                 {
                     response.HasError = true;
-                    response.ErrorMessage = infoResponse.ErrorMessage;
+                    response.ErrorMessage += "Failed to get reservation data.";
                 }
             }
             else
             {
                 response.HasError = true;
-                response.ErrorMessage = "Failed to check confirmation status.";
+                response.ErrorMessage += "Failed to check confirmation status.";
             }
 
-            return (icsFile, otp, response);
+            return (icsFile, newOtp, response);
         }
 
         public async Task<Response> ConfirmReservation(int reservationID, string otp)
