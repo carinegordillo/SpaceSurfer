@@ -1,0 +1,120 @@
+﻿html,body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background: linear-gradient(to bottom, white, #6b4e88, black);
+}
+
+h1 {
+    font-family: "Arial Rounded MT";
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    height: 100%;
+    -webkit-text-stroke: 2px #9869c8;
+    paint-order: stroke fill;
+}
+
+#calendar-container {
+    text-align: center;
+    background: linear-gradient(to bottom, white, dimgray);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#calendar-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#prev-month,
+#next-month {
+    cursor: pointer;
+    color: white;
+    background: dimgray;
+    padding: 10px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    width: 20px;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+    transition: background-color 0.3s;
+}
+
+    #prev-month:hover,
+    #next-month:hover {
+        background-color: #9869c8;
+    }
+
+#month-info-container {
+    background: dimgray;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 20px;
+    width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 auto; /* Center horizontally */
+}
+
+#calendar,
+#reservation-list {
+    width: 100%; /* Take up all available width */
+    display: none; /* Hide by default */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    position: relative;
+    padding: 10px;
+    border: 1px solid #ddd;
+    height: 50px;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.day-number {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.reservation-details {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.place,
+.time {
+    margin-bottom: 5px;
+}
+
+.current-date {
+    background-color: yellow;
+}
+
+/* Style for scrollable list */
+#reservation-list {
+    overflow-y: auto;
+    border: solid;
+    max-height: 200px; /* Adjust the maximum height as needed */
+    padding: 0 10px; /* Add some padding for better aesthetics */
+}
