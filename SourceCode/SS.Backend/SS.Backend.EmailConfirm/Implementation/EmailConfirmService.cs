@@ -20,16 +20,18 @@ namespace SS.Backend.EmailConfirm
             _emailDAO = emailDAO;
         }
 
-        public async Task<(string ics, string otp, Response res)> CreateConfirmation(int reservationID)
+        public async Task<(string ics, string otp, string body, Response res)> CreateConfirmation(int reservationID)
         {
             var response = new Response();
             //DataRow reservationInput = reservationInfo.ValuesRead.Rows[0];
+            var reservationinfo = new ReservationInfo();
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-            var calendarFilePath = Path.Combine(projectRootDirectory, "CalendarFiles", "SSReservation.ics");
+            reservationinfo.filePath = Path.Combine(projectRootDirectory, "CalendarFiles", "SSReservation.ics");
             string otp = string.Empty;
             string icsFile = string.Empty;
-            byte[] fileBytes = null;
+            byte[]? fileBytes = null;
+            string htmlBody = string.Empty;
 
             var infoResponse = await _emailDAO.GetReservationInfo(reservationID);
             if (!infoResponse.HasError && infoResponse.ValuesRead != null && infoResponse.ValuesRead.Rows.Count > 0)
@@ -40,76 +42,115 @@ namespace SS.Backend.EmailConfirm
                 otp = getOtp.generateOTP();
 
                 //extract reservation info
-                int resID = infoResponse.ValuesRead.Columns.Contains("reservationID") && row["reservationID"] != DBNull.Value
-                            ? Convert.ToInt32(row["reservationID"])
-                            : -1; // or any other default value you choose
+                // int resID = infoResponse.ValuesRead.Columns.Contains("reservationID") && row["reservationID"] != DBNull.Value
+                //             ? Convert.ToInt32(row["reservationID"])
+                //             : -1; // or any other default value you choose
 
-                var address = infoResponse.ValuesRead.Columns.Contains("CompanyAddress") ? row["CompanyAddress"].ToString() : null;
+                reservationinfo.location = infoResponse.ValuesRead.Columns.Contains("CompanyAddress") ? row["CompanyAddress"].ToString() : null;
                 var spaceID = infoResponse.ValuesRead.Columns.Contains("spaceID") ? row["spaceID"].ToString() : null;
                 var companyName = infoResponse.ValuesRead.Columns.Contains("CompanyName") ? row["CompanyName"].ToString() : null;
                 //extract and handle reservation date and time 
-                var date = row.Table.Columns.Contains("reservationDate") ? Convert.ToDateTime(row["reservationDate"]) : (DateTime?)null;
-                var startTime = row.Table.Columns.Contains("reservationStartTime") ? (DateTime?)DateTime.Parse(date?.ToShortDateString() + " " + row["reservationStartTime"].ToString()) : null;
-                var endTime = row.Table.Columns.Contains("reservationEndTime") ? (DateTime?)DateTime.Parse(date?.ToShortDateString() + " " + row["reservationEndTime"].ToString()) : null;
+                reservationinfo.dateTime = row.Table.Columns.Contains("reservationDate") ? Convert.ToDateTime(row["reservationDate"]) : (DateTime?)null;
+                reservationinfo.start = row.Table.Columns.Contains("reservationStartTime") ? (DateTime?)DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationStartTime"].ToString()) : null;
+                reservationinfo.end = row.Table.Columns.Contains("reservationEndTime") ? (DateTime?)DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationEndTime"].ToString()) : null;
 
                 
-                if (address == null) response.ErrorMessage = "The 'address' data was not found.";
+                if (reservationinfo.location == null) response.ErrorMessage = "The 'address' data was not found.";
                 if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
-                if (resID == null) response.ErrorMessage = "The 'reservationID' data was not found.";
+                //if (resID == null) response.ErrorMessage = "The 'reservationID' data was not found.";
                 if (companyName == null) response.ErrorMessage = "The 'CompanyName' data was not found.";
-                if (date == null) response.ErrorMessage = "The 'reservationDate' data was not found.";
-                if (startTime == null) response.ErrorMessage = "The 'reservationStartTime' data was not found.";
-                if (endTime == null) response.ErrorMessage = "The 'reservationEndTime' data was not found.";
+                if (reservationinfo.dateTime == null) response.ErrorMessage = "The 'reservationDate' data was not found.";
+                if (reservationinfo.start == null) response.ErrorMessage = "The 'reservationStartTime' data was not found.";
+                if (reservationinfo.end == null) response.ErrorMessage = "The 'reservationEndTime' data was not found.";
                 
 
                 //calendar ics creator
                 var reservationInfo = new ReservationInfo
                 {
-                    filePath = calendarFilePath,
+                    filePath = reservationinfo.filePath,
                     eventName = "SpaceSurfer Reservation",
-                    dateTime = date,
-                    start = startTime,
-                    end = endTime,
+                    dateTime = reservationinfo.dateTime,
+                    start = reservationinfo.start,
+                    end = reservationinfo.end,
                     description = $"Reservation at: {companyName} \nReservationID: {reservationID} \nSpaceID: {spaceID}",
-                    location = address
+                    location = reservationinfo.location
                 };
                 var calendarCreator = new CalendarCreator();
                 icsFile = await calendarCreator.CreateCalendar(reservationInfo);
                 fileBytes = await File.ReadAllBytesAsync(icsFile);
-                
+                if (string.IsNullOrEmpty(icsFile))
+                {
+                    // Handle the case where ICS file generation failed
+                    return (null, null, null, new Response { HasError = true, ErrorMessage = "Failed to generate the ICS file." });
+                }
                 // insert to db table
                 response = await _emailDAO.InsertConfirmationInfo(reservationID, otp, fileBytes);
-                // if (response.ValuesRead == null || response.ValuesRead.Rows.Count == 0)
-                // {
-                //     response.HasError = true;
-                //     response.ErrorMessage += " Failed to insert confirmation info into database. ";
-                // }
                 if (response.HasError)
                 {
                     response.HasError = true;
                     response.ErrorMessage += "Error inserting confirmation info into database.";
                 }
 
-            }
+                // create the email body with reservation details
+                htmlBody = @"
+                <!DOCTYPE html>
+                <html lang='en'>
+                <head>
+                    <meta charset='UTF-8'>
+                    <title>Reservation Confirmation</title>
+                </head>
+                <body>
+                    <p>Hello!</p>
+                    <p>Thank you for reserving a space at SpaceSurfer! Here are the details of your reservation:</p>
+                    <ul>
+                        <li>Reservation at: <strong>{companyName}</strong></li>
+                        <li>Location: <strong>{address}</strong></li>
+                        <li>SpaceID: <strong>{spaceID}</strong></li>
+                        <li>Date: <strong>{date}</strong></li>
+                        <li>Start Time: <strong>{startTime}</strong></li>
+                        <li>End Time: <strong>{endTime}</strong></li>
+                    </ul>
+                    <p>To confirm your reservation, head over to SpaceSurfer --&gt; Personal Overview, and confirm your Reservation with this code:</p>
+                    <p><strong>{otp}</strong></p>
+                    <p>Best,<br>PixelPals</p>
+                </body>
+                </html>";
+
+                string? dateString = reservationinfo.dateTime?.ToString("MMMM d, yyyy");
+                string? startTimeString = reservationinfo.start?.ToString("h:mm tt"); 
+                string? endTimeString = reservationinfo.end?.ToString("h:mm tt"); // "11:00 AM"
+
+                htmlBody = htmlBody.Replace("{companyName}", companyName)
+                                    .Replace("{address}", reservationinfo.location)
+                                    .Replace("{spaceID}", spaceID)
+                                    .Replace("{date}", dateString)
+                                    .Replace("{startTime}", startTimeString)
+                                    .Replace("{endTime}", endTimeString)
+                                    .Replace("{otp}", otp);
+
+                }
             else
             {
-                response.HasError = true;
-                response.ErrorMessage += "An error occured during reservation confirmation creation. Please try again later.";
+                return (null, null, null, new Response { HasError = true, ErrorMessage = "Failed to retrieve reservation info." });
+                // response.HasError = true;
+                // response.ErrorMessage += "An error occured during reservation confirmation creation. Please try again later.";
             }
 
-            return (icsFile, otp, response);
+            return (icsFile, otp, htmlBody,response);
         }
 
-        public async Task<(string ics, string otp, Response res)> ResendConfirmation(int reservationID)
+        public async Task<(string ics, string otp, string body, Response res)> ResendConfirmation(int reservationID)
         {
             var response = new Response();
             //DataRow reservationInput = reservationInfo.ValuesRead.Rows[0];
+            var reservationinfo = new ReservationInfo();
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-            var calendarFilePath = Path.Combine(projectRootDirectory, "CalendarFiles", "SSReservation.ics");
+            reservationinfo.filePath = Path.Combine(projectRootDirectory, "CalendarFiles", "SSReservation.ics");
             string newOtp = string.Empty;
             string icsFile = string.Empty;
-            byte[] fileBytes = null;
+            byte[]? fileBytes = null;
+            string htmlBody = string.Empty;
             
             // check confirmation status
             var statusResponse = await _emailDAO.GetConfirmInfo(reservationID);
@@ -143,34 +184,34 @@ namespace SS.Backend.EmailConfirm
                     //             ? Convert.ToInt32(row["reservationID"])
                     //             : -1; // or any other default value you choose
 
-                    var address = infoResponse.ValuesRead.Columns.Contains("CompanyAddress") ? row["CompanyAddress"].ToString() : null;
+                    reservationinfo.location = infoResponse.ValuesRead.Columns.Contains("CompanyAddress") ? row["CompanyAddress"].ToString() : null;
                     var spaceID = infoResponse.ValuesRead.Columns.Contains("spaceID") ? row["spaceID"].ToString() : null;
                     var companyName = infoResponse.ValuesRead.Columns.Contains("CompanyName") ? row["CompanyName"].ToString() : null;
                     //extract and handle reservation date and time 
-                    var date = row.Table.Columns.Contains("reservationDate") ? Convert.ToDateTime(row["reservationDate"]) : (DateTime?)null;
-                    var startTime = row.Table.Columns.Contains("reservationStartTime") ? (DateTime?)DateTime.Parse(date?.ToShortDateString() + " " + row["reservationStartTime"].ToString()) : null;
-                    var endTime = row.Table.Columns.Contains("reservationEndTime") ? (DateTime?)DateTime.Parse(date?.ToShortDateString() + " " + row["reservationEndTime"].ToString()) : null;
+                    reservationinfo.dateTime = row.Table.Columns.Contains("reservationDate") ? Convert.ToDateTime(row["reservationDate"]) : (DateTime?)null;
+                    reservationinfo.start = row.Table.Columns.Contains("reservationStartTime") ? (DateTime?)DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationStartTime"].ToString()) : null;
+                    reservationinfo.end = row.Table.Columns.Contains("reservationEndTime") ? (DateTime?)DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationEndTime"].ToString()) : null;
 
                     
-                    if (address == null) response.ErrorMessage = "The 'address' data was not found.";
+                    if (reservationinfo.location == null) response.ErrorMessage = "The 'address' data was not found.";
                     if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
                     //if (resID == null) response.ErrorMessage = "The 'reservationID' data was not found.";
                     if (companyName == null) response.ErrorMessage = "The 'CompanyName' data was not found.";
-                    if (date == null) response.ErrorMessage = "The 'reservationDate' data was not found.";
-                    if (startTime == null) response.ErrorMessage = "The 'reservationStartTime' data was not found.";
-                    if (endTime == null) response.ErrorMessage = "The 'reservationEndTime' data was not found.";
+                    if (reservationinfo.dateTime == null) response.ErrorMessage = "The 'reservationDate' data was not found.";
+                    if (reservationinfo.start == null) response.ErrorMessage = "The 'reservationStartTime' data was not found.";
+                    if (reservationinfo.end == null) response.ErrorMessage = "The 'reservationEndTime' data was not found.";
                     
 
                     //calendar ics creator
                     var reservationInfo = new ReservationInfo
                     {
-                        filePath = calendarFilePath,
+                        filePath = reservationinfo.filePath,
                         eventName = "SpaceSurfer Reservation",
-                        dateTime = date,
-                        start = startTime,
-                        end = endTime,
+                        dateTime = reservationinfo.dateTime,
+                        start = reservationinfo.start,
+                        end = reservationinfo.end,
                         description = $"Reservation at: {companyName} \nReservationID: {reservationID} \nSpaceID: {spaceID}",
-                        location = address
+                        location = reservationinfo.location
                     };
                     var calendarCreator = new CalendarCreator();
                     icsFile = await calendarCreator.CreateCalendar(reservationInfo);
@@ -189,6 +230,43 @@ namespace SS.Backend.EmailConfirm
                     {
                         response.ErrorMessage += "Failed to generate new reservation otp.";
                     }
+                    
+                    // create the email body with reservation details
+                    htmlBody = @"
+                    <!DOCTYPE html>
+                    <html lang='en'>
+                    <head>
+                        <meta charset='UTF-8'>
+                        <title>Reservation Confirmation</title>
+                    </head>
+                    <body>
+                        <p>Hello!</p>
+                        <p>Thank you for reserving a space at SpaceSurfer! Here are the details of your reservation:</p>
+                        <ul>
+                            <li>Reservation at: <strong>{companyName}</strong></li>
+                            <li>Location: <strong>{address}</strong></li>
+                            <li>SpaceID: <strong>{spaceID}</strong></li>
+                            <li>Date: <strong>{date}</strong></li>
+                            <li>Start Time: <strong>{startTime}</strong></li>
+                            <li>End Time: <strong>{endTime}</strong></li>
+                        </ul>
+                        <p>To confirm your reservation, head over to SpaceSurfer --&gt; Personal Overview, and confirm your Reservation with this code:</p>
+                        <p><strong>{otp}</strong></p>
+                        <p>Best,<br>PixelPals</p>
+                    </body>
+                    </html>";
+
+                    string? dateString = reservationinfo.dateTime?.ToString("MMMM d, yyyy");
+                    string? startTimeString = reservationinfo.start?.ToString("h:mm tt"); 
+                    string? endTimeString = reservationinfo.end?.ToString("h:mm tt"); // "11:00 AM"
+
+                    htmlBody = htmlBody.Replace("{companyName}", companyName)
+                                        .Replace("{address}", reservationinfo.location)
+                                        .Replace("{spaceID}", spaceID)
+                                        .Replace("{date}", dateString)
+                                        .Replace("{startTime}", startTimeString)
+                                        .Replace("{endTime}", endTimeString)
+                                        .Replace("{otp}", newOtp);
 
                 }
                 else
@@ -203,7 +281,7 @@ namespace SS.Backend.EmailConfirm
                 response.ErrorMessage += "Failed to check confirmation status.";
             }
 
-            return (icsFile, newOtp, response);
+            return (icsFile, newOtp, htmlBody, response);
         }
 
         public async Task<Response> ConfirmReservation(int reservationID, string otp)

@@ -56,6 +56,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SS.Backend.Services.EmailService;
 using SS.Backend.EmailConfirm;
+using SS.Backend.SharedNamespace;
 // Assuming MailSender is using MailKit for sending emails
 using MailKit.Net.Smtp;
 using System.IO;
@@ -80,16 +81,41 @@ namespace SecurityAPI.Controllers
         {
             if (string.IsNullOrWhiteSpace(targetEmail))
             {
+                _logger.LogWarning("Target email address is required.");
                 return BadRequest("Target email address is required.");
             }
 
             try
             {
-                (string ics, string otp, var result) = await _emailConfirm.CreateConfirmation(6);
+                int reservationID = 3;
+
+                (string ics, string otp, string body, Response result) = await _emailConfirm.CreateConfirmation(reservationID);
+                //(ics, otp, result) = await _emailConfirm.ResendConfirmation(reservationID);
+
+                if (string.IsNullOrEmpty(body))
+                {
+                    _logger.LogError("Failed to create email confirmation. body is null");
+                    return StatusCode(500, "Failed to create email confirmation. body is null");
+                }
+                if (string.IsNullOrEmpty(ics))
+                {
+                    _logger.LogError("Failed to create email confirmation. Ics is null");
+                    return StatusCode(500, "Failed to create email confirmation. Ics is null");
+                }
+                if (string.IsNullOrEmpty(otp))
+                {
+                    _logger.LogError("Failed to create email confirmation. Otp is null");
+                    return StatusCode(500, "Failed to create email confirmation. Otp is null");
+                }
+                if (string.IsNullOrEmpty(ics) || string.IsNullOrEmpty(otp) || result.HasError)
+                {
+                    _logger.LogError("Failed to create email confirmation.");
+                    return StatusCode(500, "Failed to create email confirmation.");
+                }
+
                 string subject = "Testing Email Confirmation";
                 string msg = $"Hello,\n\nThis is a test email sent from SpaceSurfers! \nReservation: {ics} \nConfirmation Otp: {otp} \n\nBest,\nPixelPals";
-                
-                await MailSender.SendEmail(targetEmail, subject, msg);
+                await MailSender.SendConfirmEmail(targetEmail, ics, body);
                 _logger.LogInformation("Successfully sent email to {Email}.", targetEmail);
                 return Ok("Success");
             }

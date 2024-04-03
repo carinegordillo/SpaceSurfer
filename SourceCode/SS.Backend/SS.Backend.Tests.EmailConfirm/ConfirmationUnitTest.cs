@@ -3,6 +3,7 @@ using SS.Backend.SharedNamespace;
 using SS.Backend.DataAccess;
 using Microsoft.Data.SqlClient;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authentication;
 
 namespace SS.Backend.Tests.EmailConfirm;
 
@@ -41,17 +42,12 @@ public class ConfirmationUnitTest
             {
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                string sql1 = $"DELETE FROM dbo.ConfirmReservations WHERE [reservationID] = '37'";
-                //string sql2 = $"DELETE FROM dbo.Reservations WHERE [spaceID] = 'SPACE103'";
+                string sql1 = $"DELETE FROM dbo.ConfirmReservations WHERE [reservationID] = '5'";
 
                 using (SqlCommand command1 = new SqlCommand(sql1, connection))
                 {
                     await command1.ExecuteNonQueryAsync().ConfigureAwait(false);
                 }
-            //     using (SqlCommand command2 = new SqlCommand(sql2, connection))
-            //     {
-            //         await command2.ExecuteNonQueryAsync().ConfigureAwait(false);
-            //     }
             }
         }
         catch (Exception ex)
@@ -66,8 +62,8 @@ public class ConfirmationUnitTest
         //Arrange
         Stopwatch timer = new Stopwatch();
         Response result = new Response();
-        int reservationID = 37;
-        (string icsFile, string otp, result) = await _emailConfirm.CreateConfirmation(reservationID);
+        int reservationID = 5;
+        (string icsFile, string otp, string html, result) = await _emailConfirm.CreateConfirmation(reservationID);
 
         //Act
         timer.Start();
@@ -88,8 +84,8 @@ public class ConfirmationUnitTest
         //Arrange
         Stopwatch timer = new Stopwatch();
         Response result = new Response();
-        int reservationID = 37;
-        (string icsFile, string otp, result) = await _emailConfirm.CreateConfirmation(reservationID);
+        int reservationID = 5;
+        (string icsFile, string otp, string html, result) = await _emailConfirm.CreateConfirmation(reservationID);
 
         //Act
         timer.Start();
@@ -114,7 +110,7 @@ public class ConfirmationUnitTest
         int reservationID = -1;
         var getOtp = new GenOTP();
         var newOtp = getOtp.generateOTP();
-        (string icsFile, string otp, result) = await _emailConfirm.CreateConfirmation(reservationID);
+        (string icsFile, string otp, string html, result) = await _emailConfirm.CreateConfirmation(reservationID);
 
          //Act
         timer.Start();
@@ -126,6 +122,7 @@ public class ConfirmationUnitTest
         Assert.IsFalse(string.IsNullOrEmpty(result.ErrorMessage), "Expected an error message for invalid input.");
         Assert.IsNotNull(icsFile);
         Assert.IsNotNull(otp);
+        Assert.IsNotNull(html);
         Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
         //Cleanup
@@ -136,9 +133,9 @@ public class ConfirmationUnitTest
     public async Task CreateConfirm_Timeout_Fail()
     {
         //Arrange
-        int reservationID = 37;
+        int reservationID = 5;
         var timeoutTask = Task.Delay(TimeSpan.FromMilliseconds(3000));
-        (string icsFile, string otp, Response response) = await _emailConfirm.CreateConfirmation(reservationID);
+        (string icsFile, string otp, string html, Response result)= await _emailConfirm.CreateConfirmation(reservationID);
 
         //Act
         var operationTask =  _emailConfirm.ConfirmReservation(reservationID, otp);
@@ -148,10 +145,10 @@ public class ConfirmationUnitTest
         if (completedTask == operationTask)
         {
             // Operation completed before timeout, now it's safe to await it and check results
-            response = await operationTask;
+            result = await operationTask;
 
             // Assert the operation's success
-            Assert.IsFalse(response.HasError, response.ErrorMessage);
+            Assert.IsFalse(result.HasError, result.ErrorMessage);
             Assert.IsNotNull(otp);
         }
         else
@@ -164,9 +161,4 @@ public class ConfirmationUnitTest
         await CleanupTestData().ConfigureAwait(false);
     }
 
-    // // // [TestMethod]
-    // // // public async Tas CreateConfirm_DBRetrieval_Fail()
-    // // // {
-
-    // // // }
 }

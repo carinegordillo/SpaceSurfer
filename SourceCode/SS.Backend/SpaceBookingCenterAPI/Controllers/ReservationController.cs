@@ -8,6 +8,12 @@ using SS.Backend.SpaceManager;
 using SS.Backend.DataAccess;
 using SS.Backend.Security;
 using System.Text.Json;
+using System.Net.Mail;
+using MailKit.Security;
+using SS.Backend.Services.EmailService;
+using SS.Backend.EmailConfirm;
+using MailKit.Net.Smtp;
+using System.IO;
 
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -26,13 +32,15 @@ public class ReservationController : ControllerBase
     private readonly IAvailibilityDisplayManager _availibilityDisplayManager;
     private readonly SSAuthService _authService;
     private readonly IConfiguration _config;
+    private readonly IEmailConfirmService _emailConfirm;
 
     public ReservationController(IReservationCreationManager reservationCreationManager,
                                  IReservationCancellationManager reservationCancellationManager,
                                  IReservationModificationManager reservationModificationManager,
                                  IReservationReaderManager reservationReaderManager,
                                  IAvailibilityDisplayManager availibilityDisplayManager,
-                                 SSAuthService authService, IConfiguration config)
+                                 SSAuthService authService, IConfiguration config,
+                                 IEmailConfirmService emailConfirm)
                                  
     {
        _reservationCreationManager = reservationCreationManager;
@@ -40,6 +48,7 @@ public class ReservationController : ControllerBase
        _reservationModificationManager = reservationModificationManager;
        _reservationReaderManager = reservationReaderManager;
        _availibilityDisplayManager = availibilityDisplayManager;
+       _emailConfirm = emailConfirm;
 
        _authService = authService;
        _config = config;
@@ -212,6 +221,18 @@ public class ReservationController : ControllerBase
                         {
                             var response = await _reservationCreationManager.CreateSpaceSurferSpaceReservationAsync(reservation);
                             Console.WriteLine(response.ErrorMessage);
+                            // send confirmation
+                            if(!response.HasError)
+                            {
+                                    //get reservation ID
+                                    SSPrincipal principal = new SSPrincipal();
+                                    principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                                    var reservationID = reservation.ReservationID ?? -1;
+                                    // create confirmation information
+                                    (string ics, string otp, string body, Response result) = await _emailConfirm.CreateConfirmation(reservationID);
+                                    // send email
+                                    await MailSender.SendConfirmEmail(principal.UserIdentity, ics, body);
+                            }
                             return Ok(response);
                         }
                         catch (Exception ex)

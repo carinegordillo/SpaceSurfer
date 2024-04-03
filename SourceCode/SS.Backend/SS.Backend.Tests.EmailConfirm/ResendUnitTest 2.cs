@@ -41,17 +41,13 @@ public class ResendUnitTest
             {
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                string sql1 = $"DELETE FROM dbo.ConfirmReservations WHERE [reservationID] = '7'";
-                //string sql2 = $"DELETE FROM dbo.Reservations WHERE [spaceID] = 'SPACE103'";
+                string sql1 = $"DELETE FROM dbo.ConfirmReservations WHERE [reservationID] = '4'";
 
                 using (SqlCommand command1 = new SqlCommand(sql1, connection))
                 {
                     await command1.ExecuteNonQueryAsync().ConfigureAwait(false);
                 }
-            //     using (SqlCommand command2 = new SqlCommand(sql2, connection))
-            //     {
-            //         await command2.ExecuteNonQueryAsync().ConfigureAwait(false);
-            //     }
+
             }
         }
         catch (Exception ex)
@@ -65,14 +61,13 @@ public class ResendUnitTest
     {
         //Arrange
         Stopwatch timer = new Stopwatch();
-        Response result = new Response();
-        int reservationID = 7;
+        int reservationID = 4;
         var getOtp = new GenOTP();
         var newOtp = getOtp.generateOTP();
 
         //Act
         timer.Start();
-        (string icsFile, string otp, result) = await _emailConfirm.CreateConfirmation(reservationID);
+        var (icsFile, otp, html, result) = await _emailConfirm.CreateConfirmation(reservationID);
         var otpResult = await _emailDAO.UpdateOtp(reservationID, newOtp);
         timer.Stop();
 
@@ -89,12 +84,11 @@ public class ResendUnitTest
     {
         //Arrange
         Stopwatch timer = new Stopwatch();
-        Response result = new Response();
-        int reservationID = 7;
+        int reservationID = 4;
 
         //Act
         timer.Start();
-        (string icsFile, string otp, result) = await _emailConfirm.CreateConfirmation(reservationID);
+        var (icsFile, otp, html, result)= await _emailConfirm.CreateConfirmation(reservationID);
         var statusResult = await _emailDAO.GetConfirmInfo(reservationID);
         timer.Stop();
 
@@ -112,19 +106,19 @@ public class ResendUnitTest
     {
         //Arrange
         Stopwatch timer = new Stopwatch();
-        Response result = new Response();
-        int reservationID = 7;
-        (string icsFile, string otp, result) = await _emailConfirm.CreateConfirmation(reservationID);
+        int reservationID = 4;
+        var (icsFile, otp, html, result)= await _emailConfirm.CreateConfirmation(reservationID);
 
         //Act
         timer.Start();
-        (icsFile, otp, result) = await _emailConfirm.ResendConfirmation(reservationID);
+        (icsFile, otp, html, result) = await _emailConfirm.ResendConfirmation(reservationID);
         timer.Stop();
 
         //Assert
         Assert.IsFalse(result.HasError, result.ErrorMessage);
         Assert.IsNotNull(icsFile);
         Assert.IsNotNull(otp);
+        Assert.IsNotNull(html);
         Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
         //Cleanup
@@ -136,13 +130,12 @@ public class ResendUnitTest
     {
         //Arrange
         Stopwatch timer = new Stopwatch();
-        Response result = new Response();
         int reservationID = -1;
-        (string icsFile, string otp, result) = await _emailConfirm.CreateConfirmation(reservationID);
+        var (icsFile, otp, html, result) = await _emailConfirm.CreateConfirmation(reservationID);
 
         //Act
         timer.Start();
-        (icsFile, otp, result) = await _emailConfirm.ResendConfirmation(reservationID);
+        (icsFile, otp, html, result)= await _emailConfirm.ResendConfirmation(reservationID);
         timer.Stop();
 
         //Assert
@@ -150,6 +143,7 @@ public class ResendUnitTest
         Assert.IsFalse(string.IsNullOrEmpty(result.ErrorMessage), "Expected an error message for invalid input.");
         Assert.IsNotNull(icsFile);
         Assert.IsNotNull(otp);
+        Assert.IsNotNull(html);
         Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
         //Cleanup
@@ -160,9 +154,9 @@ public class ResendUnitTest
     public async Task CreateConfirm_Timeout_Fail()
     {
         //Arrange
-        int reservationID = 7;
+        int reservationID = 4;
         var timeoutTask = Task.Delay(TimeSpan.FromMilliseconds(3000));
-        (string icsFile, string otp, Response response) = await _emailConfirm.CreateConfirmation(reservationID);
+        var (icsFile, otp, html, response) = await _emailConfirm.CreateConfirmation(reservationID);
 
         //Act
         var operationTask =  _emailConfirm.ResendConfirmation(reservationID);
@@ -172,7 +166,7 @@ public class ResendUnitTest
         if (completedTask == operationTask)
         {
             // Operation completed before timeout, now it's safe to await it and check results
-            (icsFile, otp, response) = await operationTask;
+            (icsFile, otp, html, response) = await operationTask;
 
             // Assert the operation's success
             Assert.IsFalse(response.HasError, response.ErrorMessage);
@@ -188,9 +182,4 @@ public class ResendUnitTest
         await CleanupTestData().ConfigureAwait(false);
     }
 
-    // // [TestMethod]
-    // // public async Tas CreateConfirm_DBRetrieval_Fail()
-    // // {
-
-    // // }
 }

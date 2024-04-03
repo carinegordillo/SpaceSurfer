@@ -1,14 +1,14 @@
-﻿BEGIN: VCALENDAR
+﻿BEGIN:VCALENDAR
 VERSION:2.0
-PRODID: -//SpaceSurfer//Reservation Confirmation//EN
+PRODID:-//SpaceSurfer//Reservation Confirmation//EN
 BEGIN:VEVENT
-UID:f25625b6-e6ee-4326-9b29-f470f0a0f081@gmail.com
+UID:59f54739-7a14-46a1-b153-94e0dddc3a66@gmail.com
 DTSTAMP:20240401T000000Z
-DTSTART:20240401T090000Z
-DTEND:20240401T170000Z
+DTSTART:20240401T110000Z
+DTEND:20240401T140000Z
 SUMMARY:SpaceSurfer Reservation
 DESCRIPTION:Reservation at: Test Company 1 
-ReservationID: 7 
+ReservationID: 4 
 SpaceID: SPACE101  
 LOCATION:123 Test Lane                                     
 END:VEVENT

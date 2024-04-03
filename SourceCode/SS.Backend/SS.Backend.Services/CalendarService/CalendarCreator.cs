@@ -14,9 +14,9 @@ namespace SS.Backend.Services.CalendarService
         {
             StringBuilder str = new StringBuilder();
 
-            str.AppendLine("BEGIN: VCALENDAR");
+            str.AppendLine("BEGIN:VCALENDAR");
             str.AppendLine("VERSION:2.0");
-            str.AppendLine("PRODID: -//SpaceSurfer//Reservation Confirmation//EN");
+            str.AppendLine("PRODID:-//SpaceSurfer//Reservation Confirmation//EN");
             str.AppendLine("BEGIN:VEVENT");
             str.AppendLine($"UID:{Guid.NewGuid()}@gmail.com");
             str.AppendLine($"DTSTAMP:{reservationInfo.dateTime:yyyyMMddTHHmmssZ}");

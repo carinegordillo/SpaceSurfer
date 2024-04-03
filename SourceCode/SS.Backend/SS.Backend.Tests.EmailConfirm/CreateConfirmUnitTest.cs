@@ -46,17 +46,12 @@ public class CreateConfirmUnitTest
             {
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                string sql1 = $"DELETE FROM dbo.ConfirmReservations WHERE [reservationID] = '6'";
-                //string sql2 = $"DELETE FROM dbo.Reservations WHERE [spaceID] = 'SPACE103'";
+                string sql1 = $"DELETE FROM dbo.ConfirmReservations WHERE [reservationID] = '3'";
 
                 using (SqlCommand command1 = new SqlCommand(sql1, connection))
                 {
                     await command1.ExecuteNonQueryAsync().ConfigureAwait(false);
                 }
-            //     using (SqlCommand command2 = new SqlCommand(sql2, connection))
-            //     {
-            //         await command2.ExecuteNonQueryAsync().ConfigureAwait(false);
-            //     }
             }
         }
         catch (Exception ex)
@@ -71,7 +66,7 @@ public class CreateConfirmUnitTest
         //Arrange
         Stopwatch timer = new Stopwatch();
         Response result = new Response();
-        int reservationID = 6;
+        int reservationID = 3;
         var response = new Response();
         var baseDirectory = AppContext.BaseDirectory;
         var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
@@ -87,11 +82,10 @@ public class CreateConfirmUnitTest
 
             var getOtp = new GenOTP();
             otp = getOtp.generateOTP();
-
-            //extract reservation info
-            // int resID = infoResponse.ValuesRead.Columns.Contains("reservationID") && row["reservationID"] != DBNull.Value
-            //             ? Convert.ToInt32(row["reservationID"])
-            //             : -1; // or any other default value you choose
+            if (otp == null)
+            {
+                response.ErrorMessage = "The otp is null";
+            }
 
             var address = infoResponse.ValuesRead.Columns.Contains("CompanyAddress") ? row["CompanyAddress"].ToString() : null;
             var spaceID = infoResponse.ValuesRead.Columns.Contains("spaceID") ? row["spaceID"].ToString() : null;
@@ -104,7 +98,6 @@ public class CreateConfirmUnitTest
             
             if (address == null) response.ErrorMessage = "The 'address' data was not found.";
             if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
-            //if (resID == null) response.ErrorMessage = "The 'reservationID' data was not found.";
             if (companyName == null) response.ErrorMessage = "The 'CompanyName' data was not found.";
             if (date == null) response.ErrorMessage = "The 'reservationDate' data was not found.";
             if (startTime == null) response.ErrorMessage = "The 'reservationStartTime' data was not found.";
@@ -124,6 +117,10 @@ public class CreateConfirmUnitTest
             };
             var calendarCreator = new CalendarCreator();
             icsFile = await calendarCreator.CreateCalendar(reservationInfo);
+            if (icsFile == null)
+            {
+                response.ErrorMessage = "The ics file is null";
+            }
             fileBytes = await File.ReadAllBytesAsync(icsFile);
         }
 
@@ -148,23 +145,23 @@ public class CreateConfirmUnitTest
     {
         //Arrange
         Stopwatch timer = new Stopwatch();
-        Response result = new Response();
-        int reservationID = 6;
+        int reservationID = 3;
 
         //Act
         timer.Start();
-        (string icsFile, string otp, result) = await _emailConfirm.CreateConfirmation(reservationID);
+        var (icsFile, otp, html, result) = await _emailConfirm.CreateConfirmation(reservationID);
         //result = await _emailDAO.InsertConfirmationInfo(reservationID, otp, fileBytes);
         timer.Stop();
 
         //Assert
-        Assert.IsFalse(result.HasError, result.ErrorMessage);
         Assert.IsNotNull(icsFile);
         Assert.IsNotNull(otp);
+        Assert.IsNotNull(html);
+        Assert.IsFalse(result.HasError, result.ErrorMessage);
         Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
         //Cleanup
-        await CleanupTestData().ConfigureAwait(false);
+        //await CleanupTestData().ConfigureAwait(false);
     }
 
     [TestMethod]
@@ -172,12 +169,11 @@ public class CreateConfirmUnitTest
     {
         //Arrange
         Stopwatch timer = new Stopwatch();
-        Response result = new Response();
         int reservationID = -1;
 
         //Act
         timer.Start();
-        (string icsFile, string otp, result) = await _emailConfirm.CreateConfirmation(reservationID);
+        var (icsFile, otp, html, result) = await _emailConfirm.CreateConfirmation(reservationID);
         timer.Stop();
 
         //Assert
@@ -185,6 +181,7 @@ public class CreateConfirmUnitTest
         Assert.IsFalse(string.IsNullOrEmpty(result.ErrorMessage), "Expected an error message for invalid input.");
         Assert.IsNotNull(icsFile);
         Assert.IsNotNull(otp);
+        Assert.IsNotNull(html);
         Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
         //Cleanup
@@ -195,7 +192,7 @@ public class CreateConfirmUnitTest
     public async Task CreateConfirm_Timeout_Fail()
     {
         //Arrange
-        int reservationID = 6;
+        int reservationID = 3;
         var timeoutTask = Task.Delay(TimeSpan.FromMilliseconds(3000));
 
         //Act
@@ -206,7 +203,7 @@ public class CreateConfirmUnitTest
         if (completedTask == operationTask)
         {
             // Operation completed before timeout, now it's safe to await it and check results
-            (string fileBytes, string otp, Response response) = await operationTask;
+            var (icsFile, otp, html, response) = await operationTask;
 
             // Assert the operation's success
             Assert.IsFalse(response.HasError, response.ErrorMessage);
@@ -221,10 +218,4 @@ public class CreateConfirmUnitTest
         //Cleanup
         await CleanupTestData().ConfigureAwait(false);
     }
-
-    // [TestMethod]
-    // public async Tas CreateConfirm_DBRetrieval_Fail()
-    // {
-
-    // }
 }

@@ -84,7 +84,7 @@ app.UseStaticFiles();
 //app.UseAuthorization();
 
 //app.UseMiddleware<AuthenticationMiddleware>();
-app.UseMiddleware<AuthorizationMiddleware>();
+//app.UseMiddleware<AuthorizationMiddleware>();
 
 app.MapControllers();
 
