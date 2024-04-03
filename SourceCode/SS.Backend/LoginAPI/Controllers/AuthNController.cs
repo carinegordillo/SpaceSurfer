@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SS.Backend.Security;
 using SS.Backend.Services.EmailService;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace AuthAPI.Controllers
 {
@@ -48,19 +49,44 @@ namespace AuthAPI.Controllers
                 return BadRequest(response.ErrorMessage);
             }
 
-            var rolesDictionary = principal.Claims;
-            var token = await _authService.GenerateAccessToken(principal.UserIdentity, rolesDictionary);
+            if (principal != null && !string.IsNullOrEmpty(principal.UserIdentity))
+            {
+                var rolesDictionary = principal.Claims;
 
-            return Ok(token);
+                rolesDictionary ??= new Dictionary<string, string>();
+
+                var accessToken = _authService.CreateJwt(Request, principal);
+                var idToken = _authService.CreateIdToken(principal);
+
+                return Ok(new { accessToken, idToken });
+            }
+            else
+            {
+                return BadRequest("Principal or UserIdentity is null or empty.");
+            }
         }
 
-        [HttpPost("decodeToken")]
-        public async Task<IActionResult> decodeToken([FromBody] string accessToken)
+        [HttpPost("getRole")]
+        public IActionResult GetRole([FromBody] Jwt token)
         {
-            List<string> role = _authService.GetRolesFromToken(accessToken);
-            string exp_time = _authService.GetExpTimeFromToken(accessToken);
-            string subject = _authService.GetSubjectFromToken(accessToken);
-            return Ok( new { role, exp_time, subject });
+            if (token != null)
+            {
+                var claims = token.Payload.Claims;
+                if (claims != null)
+                {
+                    string role = claims["Role"];
+                    return Ok(role);
+                }
+                else
+                {
+                    return BadRequest("No claims in token.");
+                }
+            }
+            else
+            {
+                return BadRequest("No token found.");
+            }
         }
+
     }
 }

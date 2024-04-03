@@ -25,7 +25,7 @@
         }
 
         if (!token) {
-            window.location = "HomePage/index.html"
+            window.location = "UnAuthnAbout/about.html"
         } else {
             window.location = "SpaceManager/index.html"
         }

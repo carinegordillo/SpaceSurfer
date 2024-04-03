@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.0.4" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.0.4" />
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj" />
+    <ProjectReference Include="..\SS.Backend.Services\SS.Backend.Services.csproj" />
+    <ProjectReference Include="..\SS.Backend.SpaceManager\SS.Backend.SpaceManager.csproj" />
+    <ProjectReference Include="..\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
+  </ItemGroup>
+  
+
+</Project>

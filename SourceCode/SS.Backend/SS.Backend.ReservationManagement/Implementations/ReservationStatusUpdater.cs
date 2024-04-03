@@ -3,39 +3,37 @@ using SS.Backend.SharedNamespace;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
-
-namespace SS.Backend.ReservationManagement{
-
-public class ReservationStatusUpdater : IReservationStatusUpdater
+namespace SS.Backend.ReservationManagement
 {
-    private ISqlDAO _sqldao;
+    /// <summary>
+    /// Updates reservation statuses in the database.
+    /// </summary>
+    public class ReservationStatusUpdater : IReservationStatusUpdater 
+    {
+        private IReservationManagementRepository _reservationManagementRepository;
 
-        public ReservationStatusUpdater(ISqlDAO sqldao)
+        public ReservationStatusUpdater(IReservationManagementRepository reservationManagementRepository)
         {
-            _sqldao = sqldao;
+            _reservationManagementRepository = reservationManagementRepository;
         }
 
-        public async Task<Response> updateReservtionStatuses(string tableName)
+        /// <summary>
+        /// Updates reservation statuses in the specified table using the specified stored procedure.
+        /// </summary>
+        /// <param name="tableName">The name of the table to update.</param>
+        /// <param name="storedProcedureName">The name of the stored procedure to execute.</param>
+        /// <returns>A response indicating the success or failure of the update operation.</returns>
+        public async Task<Response> UpdateReservtionStatuses(string tableName, string storedProcedureName)
         {
-            Console.WriteLine(tableName);
-            Response response = new Response();
-            var sql = $@"UPDATE {tableName}
-            SET Status = 'Passed'
-            WHERE DATETIMEFROMPARTS(
-                    YEAR(reservationDate), 
-                    MONTH(reservationDate), 
-                    DAY(reservationDate), 
-                    DATEPART(HOUR, reservationEndTime), 
-                    DATEPART(MINUTE, reservationEndTime), 
-                    DATEPART(SECOND, reservationEndTime), 
-                    0) < SYSDATETIME()
-            AND Status = 'Active'";
+            Response response = new Response(); 
 
-            SqlCommand command = new SqlCommand(sql);
+            CustomSqlCommandBuilder commandBuilder = new CustomSqlCommandBuilder();
+            SqlCommand command = commandBuilder.BeginStoredProcedure(storedProcedureName).Build();
 
             try
             {
-                response = await _sqldao.SqlRowsAffected(command);
+                response = await _reservationManagementRepository.ExecuteUpdateReservationTables(command);
+
                 if (response.HasError == false)
                 {
                     response.ErrorMessage += "- Reservation Statuses updated successfully -";
@@ -44,16 +42,14 @@ public class ReservationStatusUpdater : IReservationStatusUpdater
                 {
                     response.ErrorMessage += "- Reservation Statuses not updated -";
                 }
-                
             }
             catch (Exception ex)
             {
                 response.HasError = true;
                 response.ErrorMessage += $"Error updating statuses: {ex.Message}";
             }
-            return response;
-        
-        }
 
+            return response;
+        }
     }
 }

@@ -10,17 +10,21 @@ using Microsoft.Data.SqlClient;
 namespace SS.Backend.Tests.ReservationManagement{
 
     [TestClass]
-    public class ReservationCancellationUnitTests
+    public class ReservationCancellationServiceUnitTests
     {
         private SqlDAO _sqlDao;
         private ConfigService _configService;
-        private SqlCommand _command;
-        private ReservationCreation  _reservationcreationService;
-        private ReservationCancellation _reservationCancellationService;
+        private ReservationCreatorService  _reservationCreatorService;
+        private ReservationCancellationService _reservationCancellationService;
 
         private ReservationValidationService _reservationValidationService;
 
-        string tableName = "dbo.TestReservations";
+        private ReservationManagementRepository _reservationManagementRepository;
+
+        //using dbo.TestReservtaions becaus it allows manual id insertion
+
+        string MANUAL_ID_TABLE = "dbo.NewManualIDReservations";
+        string USER_HASH2 = "Yu86Ho6KDmtOeP687I/AHNE4rhxoCzZDs9v/Mpe+SZw=";
 
         
         
@@ -34,10 +38,13 @@ namespace SS.Backend.Tests.ReservationManagement{
             _configService = new ConfigService(configFilePath);
             _sqlDao = new SqlDAO(_configService);
 
-            _reservationValidationService = new ReservationValidationService();
+            _reservationManagementRepository = new ReservationManagementRepository(_sqlDao);
 
-            _reservationcreationService = new ReservationCreation(_sqlDao, _reservationValidationService);
-            _reservationCancellationService = new ReservationCancellation(_sqlDao);
+            _reservationValidationService = new ReservationValidationService(_reservationManagementRepository);
+
+            _reservationCreatorService = new ReservationCreatorService(_reservationManagementRepository);
+
+            _reservationCancellationService = new ReservationCancellationService(_reservationManagementRepository);
 
 
         }
@@ -48,28 +55,29 @@ namespace SS.Backend.Tests.ReservationManagement{
             // Arrange
 
             Response reservtaionCreationResult = new Response();
-            Response reservtaionCancellationResult = new Response();
+            Response reservationCancellationResult = new Response();
 
             UserReservationsModel reservationToBeCancelled = new UserReservationsModel
             {
                 ReservationID = 112,
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE302",
-                ReservationDate = DateTime.Parse("2024-05-01"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), // 1:00 PM as TimeSpan
-                ReservationEndTime = TimeSpan.Parse("15:00"), // 2:00 PM as TimeSpan
-                Status = ReservationStatus.Active
+                CompanyID = 1,
+                FloorPlanID = 1,
+                SpaceID = "S2-FP1",
+                ReservationStartTime = new DateTime(2025, 01, 01, 13, 00, 00), 
+                ReservationEndTime = new DateTime(2025, 01, 01, 15, 00, 00), 
+                Status = ReservationStatus.Active,
+                UserHash = USER_HASH2
             };
             
-           reservtaionCreationResult = await _reservationcreationService.CreateReservationWithManualID(tableName,reservationToBeCancelled);
-
+            
+            reservtaionCreationResult = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE,reservationToBeCancelled);
             Assert.IsFalse(reservtaionCreationResult.HasError);
 
             // cancel reservtion
-            reservtaionCancellationResult = await _reservationCancellationService.CancelReservation(tableName, reservationToBeCancelled.ReservationID.Value);
-            Assert.IsFalse(reservtaionCancellationResult.HasError);
-            Assert.IsTrue(reservtaionCancellationResult.RowsAffected > 0);
+            reservationCancellationResult = await _reservationCancellationService.CancelReservationAsync(MANUAL_ID_TABLE, reservationToBeCancelled.ReservationID.Value);
+            Console.WriteLine(reservationCancellationResult.ErrorMessage);
+            Assert.IsFalse(reservationCancellationResult.HasError);
+            Assert.IsTrue(reservationCancellationResult.RowsAffected > 0);
             
         }
 
@@ -82,18 +90,18 @@ namespace SS.Backend.Tests.ReservationManagement{
 
             UserReservationsModel reservationToBeCancelled = new UserReservationsModel
             {
-                ReservationID = 2341,
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE302",
-                ReservationDate = DateTime.Parse("2024-05-01"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), // 1:00 PM as TimeSpan
-                ReservationEndTime = TimeSpan.Parse("15:00"), // 2:00 PM as TimeSpan
-                Status = ReservationStatus.Active
+                ReservationID = 578,
+                CompanyID = 1,
+                FloorPlanID = 1,
+                SpaceID = "S2-FP1",
+                ReservationStartTime = new DateTime(2024, 05, 01, 13, 00, 00), // Jan 1, 2022, 1:00 PM
+                ReservationEndTime = new DateTime(2024, 05, 01, 15, 00, 00), // Jan 1, 2022, 3:00 PM
+                Status = ReservationStatus.Active,
+                UserHash = USER_HASH2
             };
 
             // cancel reservtion
-            reservtaionCancellationResult = await _reservationCancellationService.CancelReservation(tableName, reservationToBeCancelled.ReservationID.Value);
+            reservtaionCancellationResult = await _reservationCancellationService.CancelReservationAsync(MANUAL_ID_TABLE, reservationToBeCancelled.ReservationID.Value);
             Assert.IsTrue(reservtaionCancellationResult.HasError);
             Assert.IsTrue(reservtaionCancellationResult.RowsAffected == 0);
             
@@ -106,62 +114,59 @@ namespace SS.Backend.Tests.ReservationManagement{
 
         UserReservationsModel reservation1 = new UserReservationsModel
             {
-                ReservationID = 1009,
-                CompanyID = 2,
-                FloorPlanID = 3,
-                SpaceID = "SPACE302",
-                ReservationDate = DateTime.Parse("2024-03-22"),
-                ReservationStartTime = TimeSpan.Parse("13:00"), // 1:00 PM as TimeSpan
-                ReservationEndTime = TimeSpan.Parse("15:00"), // 2:00 PM as TimeSpan
-                Status = ReservationStatus.Active
+                ReservationID = 927,
+                CompanyID = 1,
+                FloorPlanID = 1,
+                SpaceID = "S2-FP1",
+                ReservationStartTime = new DateTime(2024, 02, 23, 11, 00, 00), 
+                ReservationEndTime = new DateTime(2024, 02, 23, 12, 00, 00), 
+                Status = ReservationStatus.Active,
+                UserHash = USER_HASH2
             };
 
         // Act 1: Create the first reservation
-        reservation1Response = await _reservationcreationService.CreateReservationWithManualID(tableName, reservation1);
+        reservation1Response = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE, reservation1);
         Console.WriteLine(reservation1Response.ErrorMessage);
         Assert.IsFalse(reservation1Response.HasError);
 
         // Reservation 2 is set to a future date
         UserReservationsModel reservation2 = new UserReservationsModel {
-            ReservationID = 1010,
-            CompanyID = 2,
-            FloorPlanID = 3,
-            SpaceID = "SPACE302",
-            ReservationDate = DateTime.UtcNow, 
-            ReservationStartTime = TimeSpan.Parse("13:00"),
-            ReservationEndTime = TimeSpan.Parse("15:00"),
-            Status = ReservationStatus.Active
+            ReservationID = 6765,
+            CompanyID = 1,
+            FloorPlanID = 1,
+            SpaceID = "S2-FP1",
+            ReservationStartTime = DateTime.UtcNow.AddDays(2).Date + new TimeSpan(14, 0, 0),
+            ReservationEndTime = DateTime.UtcNow.AddDays(2).Date + new TimeSpan(17, 0, 0), 
+            Status = ReservationStatus.Active,
+            UserHash = USER_HASH2
         };
 
-        var reservation2Response = await _reservationcreationService.CreateReservationWithManualID(tableName, reservation2);
+        var reservation2Response = await _reservationCreatorService.CreateReservationWithManualIDAsync(MANUAL_ID_TABLE, reservation2);
 
         Assert.IsFalse(reservation2Response.HasError);
 
         // Update reservation statuses
-        ReservationStatusUpdater reservationStatusUpdater = new ReservationStatusUpdater(_sqlDao);
-        var response = await reservationStatusUpdater.updateReservtionStatuses(tableName);
+        ReservationStatusUpdater reservationStatusUpdater = new ReservationStatusUpdater(_reservationManagementRepository);
+        var response = await reservationStatusUpdater.UpdateReservtionStatuses(MANUAL_ID_TABLE, "UpdateReservationStatusManualID");
         Console.WriteLine(response.ErrorMessage);
         Assert.IsFalse(response.HasError); 
     }
 
-        
-        
 
+        [TestCleanup]
+        public void Cleanup()
+        {
 
-        // [TestCleanup]
-        // public void Cleanup()
-        // {
-        //     // clean up the test data
-        //     var commandBuilder = new CustomSqlCommandBuilder();
-        //     var deleteCommand = commandBuilder.BeginDelete(tableName)
-        //         .Where("reservationID = 108")
-        //         .Build();
-        //     _sqlDao.SqlRowsAffected(deleteCommand);
-        // }
-        
+            var testReservtaionIds = new List<int> { 112, 927, 6765};
+            var commandBuilder = new CustomSqlCommandBuilder();
 
+            var deleteCommand = commandBuilder.BeginDelete(MANUAL_ID_TABLE)
+                                            .Where($"reservationID IN ({string.Join(",", testReservtaionIds)})")
+                                            .Build();
+                                            
+            _sqlDao.SqlRowsAffected(deleteCommand);
 
-
+        }
 
     }
        

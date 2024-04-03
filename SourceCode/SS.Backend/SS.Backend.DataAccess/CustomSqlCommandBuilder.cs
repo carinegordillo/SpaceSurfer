@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Data.SqlClient;
 using System.Text;
+using System.Data;
 
 namespace SS.Backend.DataAccess;
 public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
@@ -106,6 +107,14 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         {
             _command.Parameters.AddWithValue($"@{param.Key}", param.Value);
         }
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder BeginStoredProcedure(string storedProcedureName)
+    {
+        ResetBuilder(); 
+        _command.CommandType = CommandType.StoredProcedure;
+        _commandText.Append(storedProcedureName); 
         return this;
     }
 
