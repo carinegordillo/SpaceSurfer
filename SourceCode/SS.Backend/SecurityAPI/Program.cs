@@ -151,6 +151,7 @@ var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local
 
 builder.Services.AddTransient<IEmailConfirmDAO, EmailConfirmDAO>();
 builder.Services.AddTransient<IEmailConfirmService, EmailConfirmService>();
+builder.Services.AddTransient<IEmailConfirmSender, EmailConfirmSender>();
 builder.Services.AddTransient<ConfigService>(provider =>
     new ConfigService(configFilePath));
 builder.Services.AddTransient<SqlDAO>();

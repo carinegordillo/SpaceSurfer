@@ -2,13 +2,13 @@
 VERSION:2.0
 PRODID:-//SpaceSurfer//Reservation Confirmation//EN
 BEGIN:VEVENT
-UID:59f54739-7a14-46a1-b153-94e0dddc3a66@gmail.com
+UID:2c576986-0da1-4b89-a20b-997fa500cd2b@gmail.com
 DTSTAMP:20240401T000000Z
 DTSTART:20240401T110000Z
 DTEND:20240401T140000Z
 SUMMARY:SpaceSurfer Reservation
 DESCRIPTION:Reservation at: Test Company 1 
-ReservationID: 4 
+ReservationID: 3 
 SpaceID: SPACE101  
 LOCATION:123 Test Lane                                     
 END:VEVENT

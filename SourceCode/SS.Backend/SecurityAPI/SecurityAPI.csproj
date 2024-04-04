@@ -14,6 +14,7 @@
     <ProjectReference Include="..\..\SS.Backend\SS.Backend.EmailConfirm\SS.Backend.EmailConfirm.csproj" />
     <ProjectReference Include="..\..\SS.Backend\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
     <ProjectReference Include="..\..\SS.Backend\SS.Backend.ConsoleApp\SS.Backend.ConsoleApp.csproj" />
+    <ProjectReference Include="..\..\SS.Backend\SS.Backend.ReservationManagement\SS.Backend.ReservationManagement.csproj" />
 
   </ItemGroup>
 

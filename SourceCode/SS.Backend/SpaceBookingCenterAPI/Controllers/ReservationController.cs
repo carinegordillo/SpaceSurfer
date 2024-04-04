@@ -224,14 +224,22 @@ public class ReservationController : ControllerBase
                             // send confirmation
                             if(!response.HasError)
                             {
+                                if(reservation.ReservationID.HasValue)
+                                {
                                     //get reservation ID
                                     SSPrincipal principal = new SSPrincipal();
                                     principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
-                                    var reservationID = reservation.ReservationID ?? -1;
+                                    
                                     // create confirmation information
+                                    int reservationID = reservation.ReservationID.Value;
                                     (string ics, string otp, string body, Response result) = await _emailConfirm.CreateConfirmation(reservationID);
+                                    if (string.IsNullOrEmpty(otp) || string.IsNullOrEmpty(ics) || string.IsNullOrEmpty(body) || result.HasError)
+                                    {
+                                        return BadRequest("Failed to create email confirmation.");
+                                    }
                                     // send email
                                     await MailSender.SendConfirmEmail(principal.UserIdentity, ics, body);
+                                }
                             }
                             return Ok(response);
                         }

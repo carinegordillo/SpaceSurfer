@@ -169,5 +169,37 @@ namespace SS.Backend.EmailConfirm
             return response;
         }
 
+        public async Task<Response> GetUsername(string userHash)
+        {
+            Response response = new Response();
+            var builder = new CustomSqlCommandBuilder();
+            
+            //string user = authRequest.UserIdentity;
+            var parameters = new Dictionary<string, object>
+            {
+                {"HashedUsername", userHash}
+            };
+
+            var cmd = builder.BeginSelect()
+                .SelectColumns("username")
+                .From("userHash")
+                .Where("hashedUsername = HashedUsername")
+                .AddParameters(parameters)
+                .Build();
+
+            response = await _sqlDao.ReadSqlResult(cmd);
+            string targetEmail = response.ValuesRead.Rows[0]["username"].ToString();
+
+            if (!response.HasError)
+            {
+                response.ErrorMessage = $" -- GetUsername Command: Successful {targetEmail}";
+            }
+            else
+            {
+                response.ErrorMessage = $" -- GetUsername Command: {cmd.CommandText} Failed";
+            }
+            return response;
+        }
+
     }
 }

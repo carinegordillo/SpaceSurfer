@@ -57,9 +57,12 @@ using Microsoft.Extensions.Logging;
 using SS.Backend.Services.EmailService;
 using SS.Backend.EmailConfirm;
 using SS.Backend.SharedNamespace;
+
 // Assuming MailSender is using MailKit for sending emails
 using MailKit.Net.Smtp;
 using System.IO;
+using SecurityAPI.Models;
+using SS.Backend.ReservationManagement;
 
 namespace SecurityAPI.Controllers
 {
@@ -68,55 +71,77 @@ namespace SecurityAPI.Controllers
     public class MailController : ControllerBase
     {
         private readonly ILogger<MailController> _logger;
-        private readonly IEmailConfirmService _emailConfirm;
+        private readonly IEmailConfirmSender _emailConfirm;
 
-        public MailController(IEmailConfirmService emailConfirm, ILogger<MailController> logger)
+        public MailController(IEmailConfirmSender emailConfirm, ILogger<MailController> logger)
         {
             _emailConfirm = emailConfirm ?? throw new ArgumentNullException(nameof(emailConfirm));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Send([FromBody] string targetEmail)
+        public async Task<IActionResult> Send()
         {
-            if (string.IsNullOrWhiteSpace(targetEmail))
-            {
-                _logger.LogWarning("Target email address is required.");
-                return BadRequest("Target email address is required.");
-            }
+            // if (!ModelState.IsValid)
+            // {
+            //     return BadRequest(ModelState);
+            // }
+            // string targetEmail = request.TargetEmail;
+
+            // if (string.IsNullOrWhiteSpace(targetEmail))
+            // {
+            //     _logger.LogWarning("Target email address is required.");
+            //     return BadRequest("Target email address is required.");
+            // }
 
             try
             {
                 int reservationID = 3;
+                
 
-                (string ics, string otp, string body, Response result) = await _emailConfirm.CreateConfirmation(reservationID);
-                //(ics, otp, result) = await _emailConfirm.ResendConfirmation(reservationID);
+                // (string ics, string body, Response result) = await _emailConfirm.CreateConfirmation(reservationID);
+                // //(ics, otp, result) = await _emailConfirm.ResendConfirmation(reservationID);
 
-                if (string.IsNullOrEmpty(body))
-                {
-                    _logger.LogError("Failed to create email confirmation. body is null");
-                    return StatusCode(500, "Failed to create email confirmation. body is null");
-                }
-                if (string.IsNullOrEmpty(ics))
-                {
-                    _logger.LogError("Failed to create email confirmation. Ics is null");
-                    return StatusCode(500, "Failed to create email confirmation. Ics is null");
-                }
-                if (string.IsNullOrEmpty(otp))
-                {
-                    _logger.LogError("Failed to create email confirmation. Otp is null");
-                    return StatusCode(500, "Failed to create email confirmation. Otp is null");
-                }
-                if (string.IsNullOrEmpty(ics) || string.IsNullOrEmpty(otp) || result.HasError)
-                {
-                    _logger.LogError("Failed to create email confirmation.");
-                    return StatusCode(500, "Failed to create email confirmation.");
-                }
+                // if (string.IsNullOrEmpty(body))
+                // {
+                //     _logger.LogError("Failed to create email confirmation. body is null");
+                //     return StatusCode(500, "Failed to create email confirmation. body is null");
+                // }
+                // if (string.IsNullOrEmpty(ics))
+                // {
+                //     _logger.LogError("Failed to create email confirmation. Ics is null");
+                //     return StatusCode(500, "Failed to create email confirmation. Ics is null");
+                // }
+                // if (string.IsNullOrEmpty(otp))
+                // {
+                //     _logger.LogError("Failed to create email confirmation. Otp is null");
+                //     return StatusCode(500, "Failed to create email confirmation. Otp is null");
+                // }
+                // if (string.IsNullOrEmpty(ics) || string.IsNullOrEmpty(otp) || result.HasError)
+                // {
+                //     _logger.LogError("Failed to create email confirmation.");
+                //     return StatusCode(500, "Failed to create email confirmation.");
+                // }
 
                 string subject = "Testing Email Confirmation";
-                string msg = $"Hello,\n\nThis is a test email sent from SpaceSurfers! \nReservation: {ics} \nConfirmation Otp: {otp} \n\nBest,\nPixelPals";
-                await MailSender.SendConfirmEmail(targetEmail, ics, body);
-                _logger.LogInformation("Successfully sent email to {Email}.", targetEmail);
+                UserReservationsModel reservation = new UserReservationsModel
+                {
+                    ReservationID = 3, // Assuming it's not set yet if it's a new reservation
+                    CompanyID = 6, // Example company ID
+                    FloorPlanID = 4, // Example floor plan ID
+                    SpaceID = "SPACE101", // Identifier for the specific space being reserved
+                    ReservationStartTime = new DateTime(2024, 4, 1, 11, 0, 0), // May 21, 2024, 14:00
+                    ReservationEndTime = new DateTime(2024, 4, 1, 14, 0, 0), // May 21, 2024, 16:00
+                    Status = ReservationStatus.Active, // Assuming the reservation is currently active
+                    UserHash = "7mLYo1Gu98LGqqtvSQcZ31hJhDEit2iDK4BCD3DM8ZU="
+                };
+                //string msg = $"Hello,\n\nThis is a test email sent from SpaceSurfers! \nReservation: {ics} \nConfirmation Otp: {otp} \n\nBest,\nPixelPals";
+                Response response = await _emailConfirm.SendConfirmation(reservation);
+                if (response.HasError)
+                {
+                    return StatusCode(500, $"Failed to send email confirmation {response.ErrorMessage}");
+                }
+                _logger.LogInformation("Successfully sent email to {Email}.");
                 return Ok("Success");
             }
             catch (SmtpCommandException ex)
@@ -140,6 +165,43 @@ namespace SecurityAPI.Controllers
                 return StatusCode(500, "Error sending email: " + ex.Message);
             }
         }
+
+        // [HttpPost]
+        // public async Task<IActionResult> CreateEmail([FromBody]int reservationID)
+        // {
+        //     if (!ModelState.IsValid)
+        //     {
+        //         return BadRequest(ModelState);
+        //     }
+        //     string otp = string.Empty;
+        //     string icsFile = string.Empty;
+        //     string htmlBody = string.Empty;
+        //     Response result = new Response();
+        //     (icsFile, otp, htmlBody, result) = await _emailConfirm.CreateConfirmation(reservationID);
+        //     //result = await _emailDAO.InsertConfirmationInfo(reservationID, otp, fileBytes);
+        //     if (string.IsNullOrEmpty(htmlBody))
+        //     {
+        //         _logger.LogError("Failed to create email confirmation. body is null");
+        //         return StatusCode(500, "Failed to create email confirmation. body is null");
+        //     }
+        //     if (string.IsNullOrEmpty(icsFile))
+        //     {
+        //         _logger.LogError("Failed to create email confirmation. Ics is null");
+        //         return StatusCode(500, "Failed to create email confirmation. Ics is null");
+        //     }
+        //     if (string.IsNullOrEmpty(otp))
+        //     {
+        //         _logger.LogError("Failed to create email confirmation. Otp is null");
+        //         return StatusCode(500, "Failed to create email confirmation. Otp is null");
+        //     }
+        //     if (result.HasError)
+        //     {
+        //         _logger.LogError("Failed to create email confirmation.");
+        //         return StatusCode(500, "Failed to create email confirmation.");
+        //     }
+        //     return Ok(new{icsFile, htmlBody, result});
+    
+        // }
     }
 }
 

@@ -1,13 +1,7 @@
 using SS.Backend.SharedNamespace;
-using SS.Backend.DataAccess;
-//using SS.Backend.Services.LoggingSerivces;
 using SS.Backend.Services.CalendarService;
-//using SS.Backend.Security;
-using System.Text.RegularExpressions;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
-using System.Text;
-using System.IO;
+
 
 namespace SS.Backend.EmailConfirm
 {
