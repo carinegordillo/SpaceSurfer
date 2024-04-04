@@ -19,9 +19,9 @@ namespace SS.Backend.Services.CalendarService
             str.AppendLine("PRODID:-//SpaceSurfer//Reservation Confirmation//EN");
             str.AppendLine("BEGIN:VEVENT");
             str.AppendLine($"UID:{Guid.NewGuid()}@gmail.com");
-            str.AppendLine($"DTSTAMP:{reservationInfo.dateTime:yyyyMMddTHHmmssZ}");
-            str.AppendLine($"DTSTART:{reservationInfo.start:yyyyMMddTHHmmssZ}");
-            str.AppendLine($"DTEND:{reservationInfo.end:yyyyMMddTHHmmssZ}");
+            str.AppendLine($"DTSTAMP:{reservationInfo.dateTime:yyyyMMddTHHmmss}");
+            str.AppendLine($"DTSTART:{reservationInfo.start:yyyyMMddTHHmmss}");
+            str.AppendLine($"DTEND:{reservationInfo.end:yyyyMMddTHHmmss}");
             str.AppendLine($"SUMMARY:{reservationInfo.eventName}");
             str.AppendLine($"DESCRIPTION:{reservationInfo.description}");
             str.AppendLine($"LOCATION:{reservationInfo.location}");

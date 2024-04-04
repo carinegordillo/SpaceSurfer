@@ -28,6 +28,7 @@ namespace SS.Backend.EmailConfirm
             string htmlBody;
             if (!infoResponse.HasError && infoResponse.ValuesRead != null && infoResponse.ValuesRead.Rows.Count > 0)
             {
+                Console.WriteLine(infoResponse.ErrorMessage);
                 DataRow row = infoResponse.ValuesRead.Rows[0];
 
                 var getOtp = new GenOTP();
@@ -39,21 +40,24 @@ namespace SS.Backend.EmailConfirm
                 //             : -1; // or any other default value you choose
 
                 var location = infoResponse.ValuesRead.Rows[0]["CompanyAddress"].ToString();
+                Console.WriteLine(location, reservationID);
                 var spaceID = infoResponse.ValuesRead.Rows[0]["spaceID"].ToString();
+                Console.WriteLine(spaceID);
                 var companyName = infoResponse.ValuesRead.Rows[0]["CompanyName"].ToString();
+                Console.WriteLine(companyName);
                 //extract and handle reservation date and time 
                 DateTime? start = null;
                 if (row.Table.Columns.Contains("reservationStartTime") && row["reservationStartTime"] != DBNull.Value)
                 {
-                    start = DateTime.Parse(row["reservationStartTime"].ToString()).ToUniversalTime();
+                    start = DateTime.Parse(row["reservationStartTime"].ToString());
                 }
                 DateTime? end = null;
                 if (row.Table.Columns.Contains("reservationEndTime") && row["reservationEndTime"] != DBNull.Value)
                 {
-                    end = DateTime.Parse(row["reservationEndTime"].ToString()).ToUniversalTime();
+                    end = DateTime.Parse(row["reservationEndTime"].ToString());
                 }
 
-                DateTime? date = start.Value.ToUniversalTime();;
+                DateTime? date = start.Value;
 
                 if (location == null) response.ErrorMessage = "The 'address' data was not found.";
                 if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
@@ -77,6 +81,7 @@ namespace SS.Backend.EmailConfirm
                 };
                 var calendarCreator = new CalendarCreator();
                 icsFilePath = await calendarCreator.CreateCalendar(reservationInfo);
+                Console.WriteLine(icsFilePath);
                 // var firstLine = File.ReadLines(icsFilePath).First();
                 // if (firstLine != "BEGIN:VCALENDAR")
                 // {
@@ -195,10 +200,18 @@ namespace SS.Backend.EmailConfirm
                     var spaceID = infoResponse.ValuesRead.Columns.Contains("spaceID") ? row["spaceID"].ToString() : null;
                     var companyName = infoResponse.ValuesRead.Columns.Contains("CompanyName") ? row["CompanyName"].ToString() : null;
                     //extract and handle reservation date and time 
-                    reservationinfo.start = row.Table.Columns.Contains("reservationStartTime") ? DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationStartTime"].ToString()) : null;
-                    reservationinfo.end = row.Table.Columns.Contains("reservationEndTime") ? DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationEndTime"].ToString()) : null;
-                    reservationinfo.dateTime = reservationinfo.start.Value.Date;
+                    DateTime? start = null;
+                    if (row.Table.Columns.Contains("reservationStartTime") && row["reservationStartTime"] != DBNull.Value)
+                    {
+                        start = DateTime.Parse(row["reservationStartTime"].ToString());
+                    }
+                    DateTime? end = null;
+                    if (row.Table.Columns.Contains("reservationEndTime") && row["reservationEndTime"] != DBNull.Value)
+                    {
+                        end = DateTime.Parse(row["reservationEndTime"].ToString());
+                    }
 
+                    DateTime? date = start.Value;
                     
                     if (reservationinfo.location == null) response.ErrorMessage = "The 'address' data was not found.";
                     if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
@@ -263,12 +276,12 @@ namespace SS.Backend.EmailConfirm
                     </body>
                     </html>";
 
-                    string? dateString = reservationinfo.dateTime?.ToString("MMMM d, yyyy");
-                    string? startTimeString = reservationinfo.start?.ToString("h:mm tt"); 
-                    string? endTimeString = reservationinfo.end?.ToString("h:mm tt"); // "11:00 AM"
+                    string? dateString = reservationInfo.dateTime?.ToString("MMMM d, yyyy");
+                    string? startTimeString = reservationInfo.start?.ToString("h:mm tt");
+                    string? endTimeString = reservationInfo.end?.ToString("h:mm tt"); 
 
                     htmlBody = htmlBody.Replace("{companyName}", companyName)
-                                        .Replace("{address}", reservationinfo.location)
+                                        .Replace("{address}", reservationInfo.location)
                                         .Replace("{spaceID}", spaceID)
                                         .Replace("{date}", dateString)
                                         .Replace("{startTime}", startTimeString)

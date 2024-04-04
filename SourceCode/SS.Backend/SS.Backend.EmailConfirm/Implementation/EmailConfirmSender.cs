@@ -22,6 +22,7 @@ namespace SS.Backend.EmailConfirm
         public async Task<Response> SendConfirmation (UserReservationsModel reservation)
         {
             int reservationID = (int)reservation.ReservationID;
+            Console.WriteLine(reservationID);
             //string targetEmail = reservation.UserHash;
             Response emailResponse = await _emailDao.GetUsername(reservation.UserHash);
             string targetEmail = emailResponse.ValuesRead.Rows[0]["username"].ToString();
