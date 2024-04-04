@@ -7,6 +7,7 @@ namespace SS.Backend.EmailConfirm
     public interface IEmailConfirmSender
     {
         public Task<Response> SendConfirmation(UserReservationsModel reservation);
+        public Task<Response> ResendEmail(UserReservationsModel reservation);
         
     }
 }

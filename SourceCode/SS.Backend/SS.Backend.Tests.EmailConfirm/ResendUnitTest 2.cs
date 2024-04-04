@@ -125,6 +125,31 @@ public class ResendUnitTest
         await CleanupTestData().ConfigureAwait(false);
     }
 
+    // [TestMethod]
+    // public async Task ResendConfirm_Confirmed_Fail()
+    // {
+    //     //Arrange
+    //     Stopwatch timer = new Stopwatch();
+    //     int reservationID = 14;
+    //     //var (icsFile, otp, html, result) = await _emailConfirm.CreateConfirmation(reservationID);
+
+    //     //Act
+    //     timer.Start();
+    //     var (icsFile, otp, html, result)= await _emailConfirm.ResendConfirmation(reservationID);
+    //     timer.Stop();
+
+    //     //Assert
+    //     Assert.IsTrue(result.HasError, "Expected ResendConfirmation to fail with confirmed reservation.");
+    //     Assert.IsFalse(string.IsNullOrEmpty(result.ErrorMessage), "Expected an error message for confirmed reservation.");
+    //     Assert.IsNotNull(icsFile);
+    //     Assert.IsNotNull(otp);
+    //     Assert.IsNotNull(html);
+    //     Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
+
+    //     //Cleanup
+    //     await CleanupTestData().ConfigureAwait(false);
+    // }
+
     [TestMethod]
     public async Task ResendConfirm_InvalidInputs_Fail()
     {
@@ -147,7 +172,7 @@ public class ResendUnitTest
         Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
         //Cleanup
-        await CleanupTestData().ConfigureAwait(false);
+        //await CleanupTestData().ConfigureAwait(false);
     }
 
     [TestMethod]

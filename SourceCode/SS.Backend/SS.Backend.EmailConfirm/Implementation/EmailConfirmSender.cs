@@ -21,7 +21,7 @@ namespace SS.Backend.EmailConfirm
 
         public async Task<Response> SendConfirmation (UserReservationsModel reservation)
         {
-            int reservationID = (int)reservation.ReservationID;
+            int reservationID = reservation.ReservationID.Value;
             //string targetEmail = reservation.UserHash;
             Response emailResponse = await _emailDao.GetUsername(reservation.UserHash);
             string targetEmail = emailResponse.ValuesRead.Rows[0]["username"].ToString();
@@ -93,7 +93,7 @@ namespace SS.Backend.EmailConfirm
             }
             if (result.HasError)
             {
-                result.HasError = true;
+               
                 result.ErrorMessage = "Failed to create email confirmation.";
             }
             try

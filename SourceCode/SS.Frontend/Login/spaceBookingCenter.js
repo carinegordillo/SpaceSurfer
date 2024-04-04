@@ -214,6 +214,8 @@ function renderReservations(data, containerSelector) {
             buttonsHtml = `
             <button class="modify-btn" data-reservation='${JSON.stringify(reservation)}'>Modify</button>
             <button class="cancel-btn" data-reservation='${JSON.stringify(reservation)}'>Cancel</button>
+            <button class="confirm-btn" data-reservation-id="${reservation.reservationID}">Confirm</button>
+            <button class="resend-confirm-btn" data-reservation-id="${reservation.reservationID}">Resend Email</button>
         `;
             break;
         case 1: 
@@ -259,6 +261,25 @@ function attachEventListeners() {
         button.addEventListener('click', function() {
             const reservationData = JSON.parse(this.getAttribute('data-reservation'));
             showCancelModal(reservationData);
+        });
+    });
+    document.querySelectorAll('.confirm-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const reservationData = JSON.parse(this.getAttribute('data-reservation'));
+            showConfirmationModal(reservationData);
+        });
+    });
+    document.querySelectorAll('.resend-email-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const reservationData = JSON.parse(this.getAttribute('data-reservation'));
+            var accessToken = sessionStorage.getItem('accessToken');
+            if (accessToken){
+                resendEmail(reservationData, accessToken);
+            }
+            else {
+                console.error('Access token is not available.');
+                return;
+            }
         });
     });
 }
@@ -465,6 +486,128 @@ function showCancelModal(reservation) {
     } catch (error) {
         console.error('Error cancelling reservation:', error);
         onError(`Error cancelling reservation: ${error}`);
+    }
+}
+
+////////////////////////////
+
+function showConfirmationModal(reservation) {
+    const reservationID = reservation.reservationID;
+
+    const existingModal = document.querySelector('.modal-content');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+    const modalContent = document.createElement('div');
+    modalContent.classList.add('modal-content');
+    modalContent.innerHTML = `
+        <h2>Confirm Reservation</h2>
+        <h3>Confirm Reservation ${reservation.reservationID}</h3>
+        <input type="text" id="confirmationCodeInput" placeholder="Enter confirmation code" />
+        <button id="confirmCode">Submit</button>
+    `;
+    document.body.appendChild(modalContent);
+
+    var accessToken = sessionStorage.getItem('accessToken');
+    if (accessToken) {
+        document.getElementById('confirmCode').addEventListener('click', function() {
+            const code = document.getElementById('confirmationCodeInput').value.trim();
+            if (code) {
+                confirmReservation(reservationID, code, accessToken);
+            } else {
+                console.error("You must enter a confirmation code.");
+            }
+        });
+    }
+    else {
+        console.error('Access token is not available.');
+        return;
+    }
+}
+
+async function confirmReservation(reservation, code, accessToken) {
+    const tokenExpired = await checkTokenExpiration(accessToken);
+    if (tokenExpired) {
+        logout();
+        return;
+    }
+
+    const reservationID = reservation.reservationID;
+
+    try{
+        
+        const response = await fetch(`http://localhost:5116/api/v1/reservationConfirmation/ConfirmReservation`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ reservationID, code }),
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+
+        if (responseData.newToken) {
+            accessToken = responseData.newToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            console.log('New access token stored:', accessToken);
+        }
+
+        if (responseData.hasError) {
+            console.log(`Reservation error: ${responseData.errorMessage}. Failed to confirm reservation. Please check your code and try again.`);
+            onError(responseData.errorMessage);
+        } else {
+            console.log('Reservation confirmed successfully');
+            onSuccess('Reservation confirmed successfully!');
+        }
+    }catch(error) {
+        console.error('Error confirming reservation:', error);
+        onError(`Error confirming reservation: ${error}`);
+    }
+}
+
+async function resendEmail(reservation, accessToken) {
+    const tokenExpired = await checkTokenExpiration(accessToken);
+    if (tokenExpired) {
+        logout();
+        return;
+    }
+    const reservationID = reservation.reservationID;
+    try{
+        const response = await fetch(`http://localhost:5116/api/v1/reservationConfirmation/ResendConfirmation`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ reservationID, code }),
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+
+        if (responseData.newToken) {
+            accessToken = responseData.newToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            console.log('New access token stored:', accessToken);
+        }
+
+        if (responseData.hasError) {
+            console.log(`Reservation error: ${responseData.errorMessage}. Failed to resend confirmation. Please check your confirmation status and try again.`);
+            onError(responseData.errorMessage);
+        } else {
+            console.log('Confirmation resentsuccessfully');
+            onSuccess('Confirmation resent successfully!');
+        }
+    }catch(error) {
+        console.error('Error resending confirmation:', error);
+        onError(`Error resending confirmation: ${error}`);
     }
 }
 

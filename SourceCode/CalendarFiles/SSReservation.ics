@@ -2,14 +2,14 @@
 VERSION:2.0
 PRODID:-//SpaceSurfer//Reservation Confirmation//EN
 BEGIN:VEVENT
-UID:2c576986-0da1-4b89-a20b-997fa500cd2b@gmail.com
-DTSTAMP:20240401T000000Z
-DTSTART:20240401T110000Z
-DTEND:20240401T140000Z
+UID:38414635-5d90-401a-9efe-589dda34a72d@gmail.com
+DTSTAMP:20240405T000000Z
+DTSTART:20240405T110000Z
+DTEND:20240405T130000Z
 SUMMARY:SpaceSurfer Reservation
-DESCRIPTION:Reservation at: Test Company 1 
-ReservationID: 3 
-SpaceID: SPACE101  
-LOCATION:123 Test Lane                                     
+DESCRIPTION:Reservation at: Orbital Logistics Corp 
+ReservationID: 15 
+SpaceID: SPACE001  
+LOCATION:1001 Launchpad Rd, Cape Canaveral, FL             
 END:VEVENT
 END:VCALENDAR

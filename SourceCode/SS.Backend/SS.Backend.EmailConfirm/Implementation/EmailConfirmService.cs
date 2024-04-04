@@ -3,6 +3,7 @@ using SS.Backend.Services.CalendarService;
 using System.Data;
 
 
+
 namespace SS.Backend.EmailConfirm
 {
     public class EmailConfirmService : IEmailConfirmService
@@ -44,10 +45,9 @@ namespace SS.Backend.EmailConfirm
                 var spaceID = infoResponse.ValuesRead.Columns.Contains("spaceID") ? row["spaceID"].ToString() : null;
                 var companyName = infoResponse.ValuesRead.Columns.Contains("CompanyName") ? row["CompanyName"].ToString() : null;
                 //extract and handle reservation date and time 
-                reservationinfo.dateTime = row.Table.Columns.Contains("reservationDate") ? Convert.ToDateTime(row["reservationDate"]) : (DateTime?)null;
-                reservationinfo.start = row.Table.Columns.Contains("reservationStartTime") ? (DateTime?)DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationStartTime"].ToString()) : null;
-                reservationinfo.end = row.Table.Columns.Contains("reservationEndTime") ? (DateTime?)DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationEndTime"].ToString()) : null;
-
+                reservationinfo.start = row.Table.Columns.Contains("reservationStartTime") ? DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationStartTime"].ToString()) : null;
+                reservationinfo.end = row.Table.Columns.Contains("reservationEndTime") ? DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationEndTime"].ToString()) : null;
+                reservationinfo.dateTime = reservationinfo.start.Value.Date;
                 
                 if (reservationinfo.location == null) response.ErrorMessage = "The 'address' data was not found.";
                 if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
@@ -104,7 +104,8 @@ namespace SS.Backend.EmailConfirm
                         <li>Start Time: <strong>{startTime}</strong></li>
                         <li>End Time: <strong>{endTime}</strong></li>
                     </ul>
-                    <p>To confirm your reservation, head over to SpaceSurfer --&gt; Personal Overview, and confirm your Reservation with this code:</p>
+                    <p>To confirm your reservation, please head over to SpaceSurfers --&gt; Your Reservations --&gt; Active Reservation, 
+                    and confirm your Reservation with this code:</p>
                     <p><strong>{otp}</strong></p>
                     <p>Best,<br>PixelPals</p>
                 </body>
@@ -182,9 +183,9 @@ namespace SS.Backend.EmailConfirm
                     var spaceID = infoResponse.ValuesRead.Columns.Contains("spaceID") ? row["spaceID"].ToString() : null;
                     var companyName = infoResponse.ValuesRead.Columns.Contains("CompanyName") ? row["CompanyName"].ToString() : null;
                     //extract and handle reservation date and time 
-                    reservationinfo.dateTime = row.Table.Columns.Contains("reservationDate") ? Convert.ToDateTime(row["reservationDate"]) : (DateTime?)null;
-                    reservationinfo.start = row.Table.Columns.Contains("reservationStartTime") ? (DateTime?)DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationStartTime"].ToString()) : null;
-                    reservationinfo.end = row.Table.Columns.Contains("reservationEndTime") ? (DateTime?)DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationEndTime"].ToString()) : null;
+                    reservationinfo.start = row.Table.Columns.Contains("reservationStartTime") ? DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationStartTime"].ToString()) : null;
+                    reservationinfo.end = row.Table.Columns.Contains("reservationEndTime") ? DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationEndTime"].ToString()) : null;
+                    reservationinfo.dateTime = reservationinfo.start.Value.Date;
 
                     
                     if (reservationinfo.location == null) response.ErrorMessage = "The 'address' data was not found.";
@@ -281,31 +282,44 @@ namespace SS.Backend.EmailConfirm
         public async Task<Response> ConfirmReservation(int reservationID, string otp)
         {
             var response = await _emailDAO.GetConfirmInfo(reservationID);
-            if (!response.HasError && response.ValuesRead != null && response.ValuesRead.Rows.Count > 0)
+            DataRow statusRow = response.ValuesRead.Rows[0];
+            var reservationOtp = response.ValuesRead.Columns.Contains("reservationOTP") ? statusRow["reservationOTP"].ToString() : null;
+            var confirmStatus = response.ValuesRead.Columns.Contains("confirmStatus") ? statusRow["confirmStatus"].ToString() : null;
+
+            if (reservationOtp == null) response.ErrorMessage += "The 'reservationOtp' data was not found.";
+            if (confirmStatus == null) response.ErrorMessage += "The 'confirmStatus' data was not found.";
+
+            if (confirmStatus == "yes") 
             {
-                DataRow row = response.ValuesRead.Rows[0];
-                var reservationOtp = response.ValuesRead.Columns.Contains("reservationOTP") ? row["reservationOTP"].ToString() : null;
-                if (otp == reservationOtp)
+                response.HasError = true;
+                response.ErrorMessage += "Unable to confirmation Email. Reservation is already confirmed.";
+                return response;
+            }
+            else
+            {
+                if (!response.HasError && response.ValuesRead != null && response.ValuesRead.Rows.Count > 0)
                 {
-                    var updateResponse = await _emailDAO.UpdateConfirmStatus(reservationID);
-                    if (updateResponse.HasError)
+                    if (otp == reservationOtp)
+                    {
+                        var updateResponse = await _emailDAO.UpdateConfirmStatus(reservationID);
+                        if (updateResponse.HasError)
+                        {
+                            response.HasError = true;
+                            response.ErrorMessage = "Failed to update confirmation status.";
+                        }
+                    }
+                    else
                     {
                         response.HasError = true;
-                        response.ErrorMessage = "Failed to update confirmation status.";
+                        response.ErrorMessage = "OTP does not match. Please try again.";
                     }
                 }
                 else
                 {
                     response.HasError = true;
-                    response.ErrorMessage = "OTP does not match. Please try again.";
+                    response.ErrorMessage = "Failed to retrieve reservation confirmation info. Please try again later.";
                 }
             }
-            else
-            {
-                response.HasError = true;
-                response.ErrorMessage = "Failed to retrieve reservation confirmation info. Please try again later.";
-            }
-            
             return response;
         }
     }

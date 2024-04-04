@@ -7,14 +7,8 @@ using SS.Backend.ReservationManagers;
 using SS.Backend.SpaceManager;
 using SS.Backend.DataAccess;
 using SS.Backend.Security;
+using SS.Backend.EmailConfirm;
 using System.Text.Json;
-using System.Net.Mail;
-using MailKit.Security;
-using SS.Backend.Services.EmailService;
-using SS.Backend.EmailConfirm;
-using MailKit.Net.Smtp;
-using System.IO;
-using SS.Backend.EmailConfirm;
 
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -33,8 +27,9 @@ public class ReservationController : ControllerBase
     private readonly IAvailibilityDisplayManager _availibilityDisplayManager;
     private readonly SSAuthService _authService;
     private readonly IConfiguration _config;
+    private readonly IEmailConfirmService _emailService;
     private readonly IEmailConfirmSender _emailSender;
-    private readonly IEmailConfirmService _emailConfirm;
+
 
     public ReservationController(IReservationCreationManager reservationCreationManager,
                                  IReservationCancellationManager reservationCancellationManager,
@@ -42,7 +37,8 @@ public class ReservationController : ControllerBase
                                  IReservationReaderManager reservationReaderManager,
                                  IAvailibilityDisplayManager availibilityDisplayManager,
                                  SSAuthService authService, IConfiguration config,
-                                 IEmailConfirmService emailConfirm)
+                                 IEmailConfirmService emailService,
+                                 IEmailConfirmSender emailSender)
                                  
     {
        _reservationCreationManager = reservationCreationManager;
@@ -50,10 +46,11 @@ public class ReservationController : ControllerBase
        _reservationModificationManager = reservationModificationManager;
        _reservationReaderManager = reservationReaderManager;
        _availibilityDisplayManager = availibilityDisplayManager;
-       _emailConfirm = emailConfirm;
 
        _authService = authService;
        _config = config;
+       _emailService = emailService;
+       _emailSender = emailSender;
        
     }
 
@@ -181,7 +178,7 @@ public class ReservationController : ControllerBase
             return BadRequest("Unauthorized. Access token is missing or invalid.");
         }
 
-
+       
     }
 
     [HttpPost("CreateReservation")]
@@ -210,21 +207,14 @@ public class ReservationController : ControllerBase
                         try
                         {
                             var response = await _reservationCreationManager.CreateSpaceSurferSpaceReservationAsync(reservation);
-                            // send confirmation
-                            if(!response.HasError)
-                            {
-                                if(reservation.ReservationID.HasValue)
-                                {
-                                    //get reservation ID
-                                    
-                                    principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
-                                    
-                                    // create confirmation information
-                                    int reservationID = reservation.ReservationID.Value;
-                                    //response = await _emailConfirm.CreateConfirmation(reservationID);
-                                    response = await _emailSender.SendConfirmation(reservation);
-                                }
-                            }
+                            // if (!response.HasError)
+                            // {
+                            //     Response emailResponse = await _emailSender.SendConfirmation(reservation);
+                            //     if (emailResponse.HasError)
+                            //     {
+                            //         return StatusCode(500, $"Failed to send email confirmation {emailResponse.ErrorMessage}");
+                            //     }
+                            // }
                             return Ok(new { response, newToken });
                         }
                         catch (Exception ex)
@@ -237,21 +227,15 @@ public class ReservationController : ControllerBase
                         try
                         {
                             var response = await _reservationCreationManager.CreateSpaceSurferSpaceReservationAsync(reservation);
+                            // if (!response.HasError)
+                            // {
+                            //     Response emailResponse = await _emailSender.SendConfirmation(reservation);
+                            //     if (emailResponse.HasError)
+                            //     {
+                            //         return StatusCode(500, $"Failed to send email confirmation {emailResponse.ErrorMessage}");
+                            //     }
+                            // }
                             Console.WriteLine(response.ErrorMessage);
-                            // send confirmation
-                            if(!response.HasError)
-                            {
-                                if(reservation.ReservationID.HasValue)
-                                {
-                                    //get reservation ID
-                                    
-                                   
-                                    // create confirmation information
-                                    int reservationID = reservation.ReservationID.Value;
-                                    //response = await _emailConfirm.CreateConfirmation(reservationID);
-                                    response = await _emailSender.SendConfirmation(reservation);
-                                }
-                            }
                             return Ok(response);
                         }
                         catch (Exception ex)
@@ -402,137 +386,6 @@ public class ReservationController : ControllerBase
             return BadRequest("Unauthorized. Access token is missing or invalid.");
         }
     }
-
-    [HttpPut("ConfirmReservation")]
-    public async Task<IActionResult> ConfirmReservation([FromBody] UserReservationsModel reservation)
-    {
-        string? accessToken = HttpContext.Request.Headers["Authorization"];
-        if (accessToken != null && accessToken.StartsWith("Bearer "))
-        {
-            accessToken = accessToken.Substring("Bearer ".Length).Trim();
-            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
-
-            if (claimsJson != null)
-            {
-                var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
-
-                if (claims.TryGetValue("Role", out var role) && role == "1" || role == "2" || role == "3" || role == "4" || role == "5")
-                {
-                    bool closeToExpTime = _authService.CheckExpTime(accessToken);
-                    if (closeToExpTime)
-                    {
-                        SSPrincipal principal = new SSPrincipal();
-                        principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
-                        principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
-                        var newToken = _authService.CreateJwt(Request, principal);
-                        try
-                        {
-                            // int reservationID = reservation.ReservationID;
-                            // var response = await _emailConfirm.ConfirmReservation(reservationID);
-                             var response = await _reservationCreationManager.CreateSpaceSurferSpaceReservationAsync(reservation);
-                            return Ok(new { response, newToken });
-                        }
-                        catch (Exception ex)
-                        {
-                            return StatusCode(500, "Internal server error: " + ex.Message);
-                        }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            // int reservationID = reservation.ReservationID;
-                            // var response = await _emailConfirm.ConfirmReservation(reservationID);
-                            var response = await _reservationCreationManager.CreateSpaceSurferSpaceReservationAsync(reservation);
-                            Console.WriteLine(response.ErrorMessage);
-                            return Ok(response);
-                        }
-                        catch (Exception ex)
-                        {
-                            return StatusCode(500, "Internal server error: " + ex.Message);
-                        }
-                    }
-                }
-                else
-                {
-                    return BadRequest("Unauthorized role.");
-                }
-            }
-            else
-            {
-                return BadRequest("Invalid token.");
-            }
-        }
-        else
-        {
-            return BadRequest("Unauthorized. Access token is missing or invalid.");
-        }
-    }
-
-    // [HttpPut("ResendConfirmation")]
-    // public async Task<IActionResult> ResendConfirmation([FromBody] UserReservationsModel reservation)
-    // {
-    //     string? accessToken = HttpContext.Request.Headers["Authorization"];
-    //     if (accessToken != null && accessToken.StartsWith("Bearer "))
-    //     {
-    //         accessToken = accessToken.Substring("Bearer ".Length).Trim();
-    //         var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
-
-    //         if (claimsJson != null)
-    //         {
-    //             var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
-
-    //             if (claims.TryGetValue("Role", out var role) && role == "1" || role == "2" || role == "3" || role == "4" || role == "5")
-    //             {
-    //                 bool closeToExpTime = _authService.CheckExpTime(accessToken);
-    //                 if (closeToExpTime)
-    //                 {
-    //                     SSPrincipal principal = new SSPrincipal();
-    //                     principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
-    //                     principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
-    //                     var newToken = _authService.CreateJwt(Request, principal);
-    //                     try
-    //                     {
-    //                         int reservationID = reservation.ReservationID;
-    //                         //var response = await _emailConfirm.ResendConfirmation(reservationID);
-    //                         var response = await _emailSender.ResendEmail(reservation);
-    //                         return Ok(new { response, newToken });
-    //                     }
-    //                     catch (Exception ex)
-    //                     {
-    //                         return StatusCode(500, "Internal server error: " + ex.Message);
-    //                     }
-    //                 }
-    //                 else
-    //                 {
-    //                     try
-    //                     {
-    //                         int reservationID = reservation.ReservationID;
-    //                         //var response = await _emailConfirm.ResendConfirmation(reservationID);
-    //                         var response = await _emailSender.ResendEmail(reservation);
-    //                         return Ok(response);
-    //                     }
-    //                     catch (Exception ex)
-    //                     {
-    //                         return StatusCode(500, "Internal server error: " + ex.Message);
-    //                     }
-    //                 }
-    //             }
-    //             else
-    //             {
-    //                 return BadRequest("Unauthorized role.");
-    //             }
-    //         }
-    //         else
-    //         {
-    //             return BadRequest("Invalid token.");
-    //         }
-    //     }
-    //     else
-    //     {
-    //         return BadRequest("Unauthorized. Access token is missing or invalid.");
-    //     }
-    // }
 
     [HttpGet("CheckAvailability")]
     public async Task<IActionResult> CheckAvailability(int companyId, DateTime startTime, DateTime endTime)

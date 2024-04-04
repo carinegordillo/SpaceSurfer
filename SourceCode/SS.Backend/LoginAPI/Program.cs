@@ -81,11 +81,6 @@ app.UseStaticFiles();
 
 //app.UseHttpsRedirection();
 
-//app.UseAuthorization();
-
-//app.UseMiddleware<AuthenticationMiddleware>();
-//app.UseMiddleware<AuthorizationMiddleware>();
-
 app.MapControllers();
 
 app.Run();

@@ -102,7 +102,7 @@ public class ConfirmationUnitTest
 
 
     [TestMethod]
-    public async Task ResendConfirm_InvalidInputs_Fail()
+    public async Task ResendConfirm_InvalidID_Fail()
     {
         //Arrange
         Stopwatch timer = new Stopwatch();
