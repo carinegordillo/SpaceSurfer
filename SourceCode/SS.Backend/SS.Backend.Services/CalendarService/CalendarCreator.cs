@@ -30,10 +30,12 @@ namespace SS.Backend.Services.CalendarService
 
             Directory.CreateDirectory(Path.GetDirectoryName(reservationInfo.filePath));
 
-            using (var writer = new StreamWriter(reservationInfo.filePath, false, Encoding.UTF8))
-            {
-                await writer.WriteAsync(str.ToString());
-            }
+            // using (var writer = new StreamWriter(reservationInfo.filePath, false, Encoding.UTF8))
+            // {
+            //     await writer.WriteAsync(str.ToString());
+            // }
+
+            await File.WriteAllTextAsync(reservationInfo.filePath, str.ToString());
 
             return reservationInfo.filePath;
         }

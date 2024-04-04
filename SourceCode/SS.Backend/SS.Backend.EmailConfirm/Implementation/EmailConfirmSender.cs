@@ -21,11 +21,12 @@ namespace SS.Backend.EmailConfirm
 
         public async Task<Response> SendConfirmation (UserReservationsModel reservation)
         {
-            int reservationID = reservation.ReservationID.Value;
+            int reservationID = (int)reservation.ReservationID;
             //string targetEmail = reservation.UserHash;
             Response emailResponse = await _emailDao.GetUsername(reservation.UserHash);
             string targetEmail = emailResponse.ValuesRead.Rows[0]["username"].ToString();
             (string icsFile, string otp, string body, Response result) = await _emailConfirm.CreateConfirmation(reservationID);
+
             if (string.IsNullOrEmpty(body))
             {
                 result.HasError = true;
@@ -44,7 +45,7 @@ namespace SS.Backend.EmailConfirm
             if (result.HasError)
             {
                 result.HasError = true;
-                result.ErrorMessage = "Failed to create email confirmation.";
+                result.ErrorMessage += "Failed to create email confirmation.";
             }
             try
             {
@@ -93,7 +94,7 @@ namespace SS.Backend.EmailConfirm
             }
             if (result.HasError)
             {
-               
+                result.HasError = true;
                 result.ErrorMessage = "Failed to create email confirmation.";
             }
             try

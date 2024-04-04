@@ -33,26 +33,26 @@ namespace EmailConfirmationAPI.Controllers
         }
 
         [HttpPost("SendConfirmation")]
-        public async Task<IActionResult> SendConfirmation([FromBody] UserReservationsModel reservation)
+        public async Task<IActionResult> SendConfirmation()
         {
             try
             {
-                // UserReservationsModel reservation = new UserReservationsModel
-                // {
-                //     ReservationID = 14, // Assuming it's not set yet if it's a new reservation
-                //     CompanyID = 10, // Example company ID
-                //     FloorPlanID = 9, // Example floor plan ID
-                //     SpaceID = "SPACE033", // Identifier for the specific space being reserved
-                //     ReservationStartTime = new DateTime(2024, 4, 9, 10, 46, 0), // May 21, 2024, 14:00
-                //     ReservationEndTime = new DateTime(2024, 4, 1, 12, 46, 0), // May 21, 2024, 16:00
-                //     Status = ReservationStatus.Active, // Assuming the reservation is currently active
-                //     UserHash = "7mLYo1Gu98LGqqtvSQcZ31hJhDEit2iDK4BCD3DM8ZU="
-                // };
+                UserReservationsModel reservation = new UserReservationsModel
+                {
+                    ReservationID = 15, // Assuming it's not set yet if it's a new reservation
+                    CompanyID = 9, // Example company ID
+                    FloorPlanID = 8, // Example floor plan ID
+                    SpaceID = "SPACE0321", // Identifier for the specific space being reserved
+                    ReservationStartTime = new DateTime(2024, 4, 10, 14, 0, 0), // May 21, 2024, 14:00
+                    ReservationEndTime = new DateTime(2024, 4, 1, 15, 0, 0), // May 21, 2024, 16:00
+                    Status = ReservationStatus.Active, // Assuming the reservation is currently active
+                    UserHash = "7mLYo1Gu98LGqqtvSQcZ31hJhDEit2iDK4BCD3DM8ZU="
+                };
                 //string msg = $"Hello,\n\nThis is a test email sent from SpaceSurfers! \nReservation: {ics} \nConfirmation Otp: {otp} \n\nBest,\nPixelPals";
                 Response response = await _emailSender.SendConfirmation(reservation);
                 if (response.HasError)
                 {
-                    return StatusCode(500, $"Failed to send email confirmation {response.ErrorMessage}");
+                    return StatusCode(500, $"Failed to send email confirmation: {response.ErrorMessage}");
                 }
                
                 return Ok("Success");
@@ -94,7 +94,7 @@ namespace EmailConfirmationAPI.Controllers
                 Response response = await _emailSender.ResendEmail(reservation);
                 if (response.HasError)
                 {
-                    return StatusCode(500, $"Failed to send email confirmation {response.ErrorMessage}");
+                    return StatusCode(500, $"Failed to send email confirmation: {response.ErrorMessage}");
                 }
                
                 return Ok("Success");
@@ -136,7 +136,7 @@ namespace EmailConfirmationAPI.Controllers
                 Response response = await _emailService.ConfirmReservation(reservationID, otp);
                 if (response.HasError)
                 {
-                    return StatusCode(500, $"Failed to send email confirmation {response.ErrorMessage}");
+                    return StatusCode(500, $"Failed to confirm reservation: {response.ErrorMessage}");
                 }
                
                 return Ok("Success");

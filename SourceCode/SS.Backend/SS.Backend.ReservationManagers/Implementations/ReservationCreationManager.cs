@@ -1,6 +1,6 @@
 ﻿using SS.Backend.SharedNamespace;
 using SS.Backend.ReservationManagement;
-
+using SS.Backend.EmailConfirm;
 
 namespace SS.Backend.ReservationManagers{
 
@@ -9,15 +9,25 @@ namespace SS.Backend.ReservationManagers{
         private readonly string SS_RESERVATIONS_TABLE = "dbo.reservations";
         private readonly IReservationCreatorService _reservationCreatorService;
         private readonly IReservationValidationService _reservationValidationService;
+        private readonly IEmailConfirmDAO _emailDao;
+        private readonly IEmailConfirmService _emailService;
+        private readonly IEmailConfirmSender _emailSender;
 
         private readonly IReservationRequirements _reservationRequirements = new SpaceSurferReservationRequirements();
         
     
 
-        public ReservationCreationManager(IReservationCreatorService reservationCreatorService, IReservationValidationService reservationValidationService)
+        public ReservationCreationManager(IReservationCreatorService reservationCreatorService, 
+                                            IReservationValidationService reservationValidationService, 
+                                            IEmailConfirmSender emailSender,
+                                            IEmailConfirmService emailService,
+                                            IEmailConfirmDAO emailDao)
         {
             _reservationCreatorService = reservationCreatorService;
             _reservationValidationService = reservationValidationService;
+            _emailService = emailService;
+            _emailSender = emailSender;
+            _emailDao = emailDao;
             
         }
 
@@ -25,6 +35,7 @@ namespace SS.Backend.ReservationManagers{
         {
             Response response = new Response();
             Response reservationCreationResponse = new Response();
+            Response emailResponse = new Response();
 
             string tableName = tableNameOverride ?? SS_RESERVATIONS_TABLE;
                 
@@ -43,6 +54,7 @@ namespace SS.Backend.ReservationManagers{
                 try
                 {
                     reservationCreationResponse =  await _reservationCreatorService.CreateReservationWithAutoIDAsync(tableName, userReservationsModel);
+                    emailResponse = await _emailSender.SendConfirmation(userReservationsModel);
                     if (reservationCreationResponse.HasError)
                     {
                         response.ErrorMessage = "Could not create Reservation.";
@@ -53,6 +65,11 @@ namespace SS.Backend.ReservationManagers{
                         response.ErrorMessage = "Reservation created successfully!";
                         response.HasError = false;
                     }
+                    // if(emailResponse.HasError)
+                    // {
+                    //     response.ErrorMessage += "Could not send confirmation email.";
+                    //     Console.WriteLine("Could not send confirmation email.");
+                    // }
                 }
                 catch (Exception ex)
                 {

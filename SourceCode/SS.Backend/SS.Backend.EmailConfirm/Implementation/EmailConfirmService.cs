@@ -19,16 +19,13 @@ namespace SS.Backend.EmailConfirm
         {
             var response = new Response();
             //DataRow reservationInput = reservationInfo.ValuesRead.Rows[0];
-            var reservationinfo = new ReservationInfo();
+            //var reservationinfo = new ReservationInfo();
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-            reservationinfo.filePath = Path.Combine(projectRootDirectory, "CalendarFiles", "SSReservation.ics");
-            string otp = string.Empty;
-            string icsFile = string.Empty;
-            byte[]? fileBytes = null;
-            string htmlBody = string.Empty;
-
+            var icsFilePath = Path.Combine(projectRootDirectory, "CalendarFiles", "SSReservation.ics");
             var infoResponse = await _emailDAO.GetReservationInfo(reservationID);
+            string otp;
+            string htmlBody;
             if (!infoResponse.HasError && infoResponse.ValuesRead != null && infoResponse.ValuesRead.Rows.Count > 0)
             {
                 DataRow row = infoResponse.ValuesRead.Rows[0];
@@ -41,41 +38,57 @@ namespace SS.Backend.EmailConfirm
                 //             ? Convert.ToInt32(row["reservationID"])
                 //             : -1; // or any other default value you choose
 
-                reservationinfo.location = infoResponse.ValuesRead.Columns.Contains("CompanyAddress") ? row["CompanyAddress"].ToString() : null;
-                var spaceID = infoResponse.ValuesRead.Columns.Contains("spaceID") ? row["spaceID"].ToString() : null;
-                var companyName = infoResponse.ValuesRead.Columns.Contains("CompanyName") ? row["CompanyName"].ToString() : null;
+                var location = infoResponse.ValuesRead.Rows[0]["CompanyAddress"].ToString();
+                var spaceID = infoResponse.ValuesRead.Rows[0]["spaceID"].ToString();
+                var companyName = infoResponse.ValuesRead.Rows[0]["CompanyName"].ToString();
                 //extract and handle reservation date and time 
-                reservationinfo.start = row.Table.Columns.Contains("reservationStartTime") ? DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationStartTime"].ToString()) : null;
-                reservationinfo.end = row.Table.Columns.Contains("reservationEndTime") ? DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationEndTime"].ToString()) : null;
-                reservationinfo.dateTime = reservationinfo.start.Value.Date;
-                
-                if (reservationinfo.location == null) response.ErrorMessage = "The 'address' data was not found.";
+                DateTime? start = null;
+                if (row.Table.Columns.Contains("reservationStartTime") && row["reservationStartTime"] != DBNull.Value)
+                {
+                    start = DateTime.Parse(row["reservationStartTime"].ToString()).ToUniversalTime();
+                }
+                DateTime? end = null;
+                if (row.Table.Columns.Contains("reservationEndTime") && row["reservationEndTime"] != DBNull.Value)
+                {
+                    end = DateTime.Parse(row["reservationEndTime"].ToString()).ToUniversalTime();
+                }
+
+                DateTime? date = start.Value.ToUniversalTime();;
+
+                if (location == null) response.ErrorMessage = "The 'address' data was not found.";
                 if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
                 //if (resID == null) response.ErrorMessage = "The 'reservationID' data was not found.";
                 if (companyName == null) response.ErrorMessage = "The 'CompanyName' data was not found.";
-                if (reservationinfo.dateTime == null) response.ErrorMessage = "The 'reservationDate' data was not found.";
-                if (reservationinfo.start == null) response.ErrorMessage = "The 'reservationStartTime' data was not found.";
-                if (reservationinfo.end == null) response.ErrorMessage = "The 'reservationEndTime' data was not found.";
-                
+                if (date == null) response.ErrorMessage = "The 'reservationDate' data was not found.";
+                if (start == null) response.ErrorMessage = "The 'reservationStartTime' data was not found.";
+                if (end == null) response.ErrorMessage = "The 'reservationEndTime' data was not found.";
+
 
                 //calendar ics creator
                 var reservationInfo = new ReservationInfo
                 {
-                    filePath = reservationinfo.filePath,
+                    filePath = icsFilePath,
                     eventName = "SpaceSurfer Reservation",
-                    dateTime = reservationinfo.dateTime,
-                    start = reservationinfo.start,
-                    end = reservationinfo.end,
-                    description = $"Reservation at: {companyName} \nReservationID: {reservationID} \nSpaceID: {spaceID}",
-                    location = reservationinfo.location
+                    dateTime = date,
+                    start = start,
+                    end = end,
+                    description = $"Reservation at: {companyName} ReservationID: {reservationID} SpaceID: {spaceID}",
+                    location = location
                 };
                 var calendarCreator = new CalendarCreator();
-                icsFile = await calendarCreator.CreateCalendar(reservationInfo);
-                fileBytes = await File.ReadAllBytesAsync(icsFile);
-                if (string.IsNullOrEmpty(icsFile))
+                icsFilePath = await calendarCreator.CreateCalendar(reservationInfo);
+                // var firstLine = File.ReadLines(icsFilePath).First();
+                // if (firstLine != "BEGIN:VCALENDAR")
+                // {
+                //     // Log error or handle the situation when the file wasn't updated as expected
+                //     Console.WriteLine("The ICS file was not updated correctly.");
+                // }
+                byte[]? fileBytes = await File.ReadAllBytesAsync(icsFilePath);
+                if (string.IsNullOrEmpty(icsFilePath))
                 {
                     // Handle the case where ICS file generation failed
-                    return (null, null, null, new Response { HasError = true, ErrorMessage = "Failed to generate the ICS file." });
+                    response.HasError = true;
+                    response.ErrorMessage += "Failed to generate the ICS file.";
                 }
                 // insert to db table
                 response = await _emailDAO.InsertConfirmationInfo(reservationID, otp, fileBytes);
@@ -111,19 +124,19 @@ namespace SS.Backend.EmailConfirm
                 </body>
                 </html>";
 
-                string? dateString = reservationinfo.dateTime?.ToString("MMMM d, yyyy");
-                string? startTimeString = reservationinfo.start?.ToString("h:mm tt"); 
-                string? endTimeString = reservationinfo.end?.ToString("h:mm tt"); // "11:00 AM"
+                string? dateString = reservationInfo.dateTime?.ToString("MMMM d, yyyy");
+                string? startTimeString = reservationInfo.start?.ToString("h:mm tt");
+                string? endTimeString = reservationInfo.end?.ToString("h:mm tt"); 
 
                 htmlBody = htmlBody.Replace("{companyName}", companyName)
-                                    .Replace("{address}", reservationinfo.location)
+                                    .Replace("{address}", reservationInfo.location)
                                     .Replace("{spaceID}", spaceID)
                                     .Replace("{date}", dateString)
                                     .Replace("{startTime}", startTimeString)
                                     .Replace("{endTime}", endTimeString)
                                     .Replace("{otp}", otp);
 
-                }
+            }
             else
             {
                 return (null, null, null, new Response { HasError = true, ErrorMessage = "Failed to retrieve reservation info." });
@@ -131,7 +144,7 @@ namespace SS.Backend.EmailConfirm
                 // response.ErrorMessage += "An error occured during reservation confirmation creation. Please try again later.";
             }
 
-            return (icsFile, otp, htmlBody,response);
+            return (icsFilePath, otp, htmlBody,response);
         }
 
         public async Task<(string ics, string otp, string body, Response res)> ResendConfirmation(int reservationID)
@@ -144,7 +157,6 @@ namespace SS.Backend.EmailConfirm
             reservationinfo.filePath = Path.Combine(projectRootDirectory, "CalendarFiles", "SSReservation.ics");
             string newOtp = string.Empty;
             string icsFile = string.Empty;
-            byte[]? fileBytes = null;
             string htmlBody = string.Empty;
             
             // check confirmation status
@@ -205,12 +217,12 @@ namespace SS.Backend.EmailConfirm
                         dateTime = reservationinfo.dateTime,
                         start = reservationinfo.start,
                         end = reservationinfo.end,
-                        description = $"Reservation at: {companyName} \nReservationID: {reservationID} \nSpaceID: {spaceID}",
+                        description = $"Reservation at: {companyName} ReservationID: {reservationID} SpaceID: {spaceID}",
                         location = reservationinfo.location
                     };
                     var calendarCreator = new CalendarCreator();
                     icsFile = await calendarCreator.CreateCalendar(reservationInfo);
-                    fileBytes = await File.ReadAllBytesAsync(icsFile);
+                    byte[]? fileBytes = await File.ReadAllBytesAsync(icsFile);
                     // if resending, update otp
                     if (reservationOtp != newOtp)
                     {

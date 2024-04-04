@@ -27,6 +27,7 @@ public class ReservationController : ControllerBase
     private readonly IAvailibilityDisplayManager _availibilityDisplayManager;
     private readonly SSAuthService _authService;
     private readonly IConfiguration _config;
+    private readonly IEmailConfirmDAO _emailDao;
     private readonly IEmailConfirmService _emailService;
     private readonly IEmailConfirmSender _emailSender;
 
@@ -38,7 +39,8 @@ public class ReservationController : ControllerBase
                                  IAvailibilityDisplayManager availibilityDisplayManager,
                                  SSAuthService authService, IConfiguration config,
                                  IEmailConfirmService emailService,
-                                 IEmailConfirmSender emailSender)
+                                 IEmailConfirmSender emailSender,
+                                 IEmailConfirmDAO emailDao)
                                  
     {
        _reservationCreationManager = reservationCreationManager;
@@ -51,6 +53,7 @@ public class ReservationController : ControllerBase
        _config = config;
        _emailService = emailService;
        _emailSender = emailSender;
+       _emailDao = emailDao;
        
     }
 
