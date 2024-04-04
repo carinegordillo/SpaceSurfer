@@ -129,4 +129,13 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         _command.CommandText = _commandText.ToString();
         return _command;
     }
+
+    // Waitlist Custom Query
+    public ICustomSqlCommandBuilder CountWaitlistUsersForReservation(int reservationID)
+    {
+        ResetBuilder();
+        _commandText.Append("SELECT COUNT(*) AS Count FROM Waitlist WHERE ReservationID = @ReservationID");
+        _command.Parameters.AddWithValue("@ReservationID", reservationID);
+        return this;
+    }
 }

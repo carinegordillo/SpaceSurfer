@@ -1,10 +1,41 @@
-<!DOCTYPE html>
-<html>
+<!--<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270 http://localhost:5099;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waitlist Feature</title>
     <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="reservations-container">
+            <h2>Current Reservations</h2>
+            <ul id="reservations-list">
+                Reservations will be dynamically loaded here
+            </ul>
+        </div>
+        <div class="reservation-details-container">
+            <h2>Reservation Details</h2>
+            <div id="reservation-details">
+                Reservation details will be dynamically loaded here
+            </div>
+        </div>
+    </div>
+</body>
+</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001; img-src 'self' data:;">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="spaceBookingCenter.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="script.js"></script>
+
 </head>
 
 <body>
@@ -18,18 +49,25 @@
             </div>
         </div>
         <nav>
-            <div class="nav-item" id="navAbout" onclick="window.location.href='../About/about.html'">About</div>
-            <div class="nav-item" id="navLogout" onclick="logout()">Logout</div>
+            <div class="nav-item" id="navAbout" onclick="window.location.href='../UnAuthnAbout/about.html'">About</div>
+            <div class="nav-item" id="navRegister" onclick="window.location.href='../Registration/index.html'">Register</div>
+            <div class="nav-item" id="navLogin" onclick="window.location.href='../Login/index.html'">Login</div>
         </nav>
     </header>
 
-    <section id="waitlistSection" class="form-container" style="display: none;">
-        <label style="color: #003153; font-size: 18px;">Waitlist Page</label>
-    </section>
-
-    <section id="testSection" class="form-container" style="display: block;">
-        <label style="color: #003153; font-size: 18px; display: block; margin-bottom: 10px;">Testing</label>
-        <button type="button" onclick="test()" style="display: block; margin: 0 auto;">Test</button>
+    <section id="homepageGen" class="homepage-container" style="display: block;">
+        <div class="container">
+            <div class="reservations-container content-container">
+                <h2>Waitlisted Reservations</h2>
+                <ul id="reservations-list">
+                </ul>
+            </div>
+            <div class="reservation-details-container content-container">
+                <h2>Reservation Details</h2>
+                <div id="reservation-details">
+                </div>
+            </div>
+        </div>
     </section>
 
     <footer>

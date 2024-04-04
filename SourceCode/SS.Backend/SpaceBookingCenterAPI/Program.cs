@@ -6,6 +6,7 @@ using SS.Backend.ReservationManagement;
 using SS.Backend.ReservationManagers;
 using SS.Backend.DataAccess;
 using SS.Backend.SpaceManager;
+using SS.Backend.Waitlist;
 
 using SS.Backend.Security;
 using Microsoft.IdentityModel.Tokens;
@@ -80,6 +81,12 @@ builder.Services.AddTransient<SSAuthService>(provider =>
     )
 );
 
+//waitlist
+builder.Services.AddTransient<WaitlistService>(provider =>
+    new WaitlistService(
+        provider.GetRequiredService<SqlDAO>()
+    )
+);
 
 // Learn more about configuring Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
