@@ -6,7 +6,7 @@ using SS.Backend.ReservationManagement;
 using SS.Backend.ReservationManagers;
 using SS.Backend.DataAccess;
 using SS.Backend.SpaceManager;
-
+using SS.Backend.EmailConfirm;
 using SS.Backend.Security;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
@@ -47,7 +47,8 @@ builder.Services.AddTransient<IReservationModificationService, ReservationModifi
 builder.Services.AddTransient<IReservationReadService, ReservationReadService>();
 builder.Services.AddTransient<IReservationValidationService, ReservationValidationService>();
 builder.Services.AddTransient<IReservationStatusUpdater, ReservationStatusUpdater>();
-
+// builder.Services.AddTransient<IEmailConfimService, EmailConfirmService>();
+// builder.Services.AddTransient<IEmailConfimSender, EmailConfirmSender>();
 
 //Mangers Setup
 builder.Services.AddTransient<IReservationCreationManager, ReservationCreationManager>();
