@@ -6,16 +6,23 @@
     <title>Personal Overview Center</title>
     <link rel="icon" href="favicon.ico" />
     <link rel="stylesheet" href="PersonalOverviewStyle.css">
-    <script src="PersonalOverviewFunctions.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
+
     <div id="calendar-container">
         <h1 id="POC">Personal Overview Center</h1>
         <div id="calendar-header">
-            <button onclick="showCalendar()">Calendar</button>
-            <button onclick="showReservationList()">List</button>
+            <button id="calendar-button" onclick="selectCalendar()">Calendar</button>
+            <button id="list-button" onclick="selectReservationList()">List</button>
         </div>
+        <div id="date-filter">
+            <label for="from-date">From:</label>
+            <input type="date" id="from-date">
+            <label for="to-date">To:</label>
+            <input type="date" id="to-date">
+        </div>
+        <button id="confirm-button" onclick="confirmSelection()">Confirm Selection</button>
+
         <div id="calendar">
             <div id="month-info-container">
                 <div id="prev-month" onclick="changeMonth(-1)">&lt;</div>
@@ -40,5 +47,8 @@
         <div style=" border: groove; border-radius: 100px;" id="reservation-list">
         </div>
     </div>
+    <script src="PersonalOverviewFunctions.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 </body>
 </html>

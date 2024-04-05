@@ -1,4 +1,4 @@
-﻿html,body {
+﻿html, body {
     font-family: 'Arial', sans-serif;
     display: flex;
     align-items: center;
@@ -32,6 +32,10 @@ h1 {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+}
+
+.selected-button {
+    background-color: lightblue; /* Change this to the desired color */
 }
 
 #prev-month,
@@ -68,15 +72,19 @@ h1 {
     margin: 0 auto; /* Center horizontally */
 }
 
-#calendar,
-#reservation-list {
+#calendar {
     width: 100%; /* Take up all available width */
     display: none; /* Hide by default */
 }
 
+#reservation-list {
+    width: 100%; /* Take up all available width */
+    border-radius: 0px !important; /* Remove border-radius to make it square */
+    display: none; /* Hide by default */
+}
+
 table {
-    width: 100%;
-    border-collapse: collapse;
+    width: 900px;
     margin-top: 20px;
 }
 
@@ -115,6 +123,14 @@ th {
 #reservation-list {
     overflow-y: auto;
     border: solid;
-    max-height: 200px; /* Adjust the maximum height as needed */
-    padding: 0 10px; /* Add some padding for better aesthetics */
+    max-height: 600px; /* Adjust the maximum height as needed */
+    padding: 10px; /* Add padding around the list */
+    margin-top: 10px; /* Add margin at the top */
+}
+
+.reservation-item {
+    border: 1px solid #ccc; /* Add border around each reservation item */
+    border-radius: 5px; /* Add border radius for rounded corners */
+    padding: 10px; /* Add padding inside each reservation item */
+    margin-bottom: 10px; /* Add margin between each reservation item */
 }
