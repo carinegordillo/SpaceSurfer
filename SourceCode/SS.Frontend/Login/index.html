@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001; img-src 'self' data:;">
-    <link rel="stylesheet" href="style.css">
-    <link rel ="stylesheet" href ="spaceBookingCenter.css">
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081; img-src 'self' data:;">-->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112; img-src 'self' data:;">
+    <link rel="stylesheet" href="/Waitlist/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="script.js"></script>
 
 </head>
 
@@ -54,46 +53,107 @@
     </section>
 
     <section id="homepageGen" class="homepage-container" style="display: none;">
-        <h2>Welcome to SpaceSurfers!</h2>
-        <button id="initAppButton">Initialize spaceBookingCenter</button>
-        <div id="accessTokenContainer"></div>
-        <div class="space-booking-center-container">
-            <div class="sidebar"></div>
-            <div class="dynamic-content">
-                <div class="reservation-buttons"></div>
-                <div class="reservation-list"></div>
-            </div>
+        <button id="showWaitlistButtonGen">Show Waitlist View</button>
+        <button id="showSpaceBookingButtonGen">Show Space Booking View</button>
+
+        <!--Space Booking Center View-->
+        <section id="spaceBookingViewGen" class="homepage-container" style="display: none;">
+            <button id="initAppButtonGen">Initialize SpaceBookingCenter</button>
             <div class="space-booking-center-container">
-                <div class="company-info">
-                    <div id="companies">
-                        <h2>Companies</h2>
-                        <ul id="companiesList"></ul>
+                <div class="sidebar"></div>
+                <div class="dynamic-content">
+                    <div class="reservation-buttons"></div>
+                    <div class="reservation-list"></div>
+                </div>
+                <div class="space-booking-center-container">
+                    <div class="company-info">
+                        <div id="companies">
+                            <h2>Companies</h2>
+                            <ul id="companiesList"></ul>
+                        </div>
+                        <div id="floorPlans">
+                            <h2>Floor Plans</h2>
+                            <div id="floorPlansContent"></div>
+                        </div>
                     </div>
-                    <div id="floorPlans">
-                        <h2>Floor Plans</h2>
-                        <div id="floorPlansContent"></div>
+                    <div class="space-form-container" id="space-form-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <!--Waitlist View-->
+        <section id="waitlistViewGen" class="homepage-container" style="display: none;">
+            <button id="initWaitlistButtonGen">Initialize Waitlist</button>
+            <div class="container">
+                <div class="reservations-container content-container">
+                    <h2>Waitlisted Reservations</h2>
+                    <ul id="reservations-list-gen">
+                    </ul>
+                </div>
+                <div class="reservation-details-container content-container">
+                    <h2>Reservation Details</h2>
+                    <div id="reservation-details-gen">
                     </div>
                 </div>
-                <div class="space-form-container" id="space-form-container"></div>
             </div>
-        </div>
-    <div>
-        <button type="button" onclick="logout()">Logout</button>
-    </div>
-       
+        </section>
+
     </section>
 
     <section id="homepageManager" class="homepage-container" style="display: none;">
-        <h2>Welcome to SpaceSurfers!</h2>
-        <button type="button" onclick="window.location.href='../SpaceManager/index.html'">Space Manager</button>
-        <button type="button" onclick="waitlistAccess()">Waitlist</button>
-        <button type="button" onclick="logout()">Logout</button>
+        <button id="showWaitlistButtonManager">Show Waitlist View</button>
+        <button id="showSpaceBookingButtonManager">Show Space Booking View</button>
+
+
+        <!--Space Booking Center View-->
+        <!--<section id="spaceBookingViewManager" class="homepage-container" style="display: none;">
+            <button id="initAppButtonManager">Initialize SpaceBookingCenter</button>
+            <div class="space-booking-center-container">
+                <div class="sidebar"></div>
+                <div class="dynamic-content">
+                    <div class="reservation-buttons"></div>
+                    <div class="reservation-list"></div>
+                </div>
+                <div class="space-booking-center-container">
+                    <div class="company-info">
+                        <div id="companies">
+                            <h2>Companies</h2>
+                            <ul id="companiesList"></ul>
+                        </div>
+                        <div id="floorPlans">
+                            <h2>Floor Plans</h2>
+                            <div id="floorPlansContent"></div>
+                        </div>
+                    </div>
+                    <div class="space-form-container" id="space-form-container"></div>
+                </div>
+            </div>
+        </section>-->
+
+        <!--Waitlist View-->
+        <section id="waitlistViewManager" class="homepage-container" style="display: none;">
+            <button id="initWaitlistButtonManager">Initialize Waitlist</button>
+            <div class="container">
+                <div class="reservations-container content-container">
+                    <h2>Waitlisted Reservations</h2>
+                    <ul id="reservations-list-man">
+                    </ul>
+                </div>
+                <div class="reservation-details-container content-container">
+                    <h2>Reservation Details</h2>
+                    <div id="reservation-details-man">
+                    </div>
+                </div>
+            </div>
+        </section>
     </section>
 
 
     <footer>
         <p>Designed and Developed by the PixelPals Team</p>
     </footer>
-    <script src="spaceBookingCenter.js"></script>
 </body>
+<script src="waitlistScript.js"></script>
+<script src="script.js"></script>
+<script src="spaceBookingCenter.js"></script>
 </html>

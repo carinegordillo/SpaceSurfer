@@ -1,7 +1,7 @@
 
 
 
-document.getElementById('initAppButton').addEventListener('click', function() {
+document.getElementById('initAppButtonGen').addEventListener('click', function() {
     
     initSidebar();
     

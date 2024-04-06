@@ -1,14 +1,37 @@
+
+async function checkTokenExpiration(accessToken) {
+    try {
+        var response = await fetch('http://localhost:5099/api/waitlist/checkTokenExp', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response.ok;
+
+    } catch (error) {
+        console.error('Error:', error);
+        return false;
+    }
+}
+
 // Function to fetch waitlisted reservations and display them
 async function displayWaitlistedReservations() {
-    const accessToken = sessionStorage.getItem('accessToken');
-    const isTokenValid = checkTokenExpiration(accessToken);
-    if (!isTokenValid) {
+    var accessToken = sessionStorage.getItem('accessToken');
+    var idToken = sessionStorage.getItem('idToken');
+    var parsedIdToken = JSON.parse(idToken);
+    var username = parsedIdToken.Username;
+
+    const isTokenExp = await checkTokenExpiration(accessToken);
+    if (isTokenExp) {
         logout();
         return;
     }
 
     try {
-        const response = await fetch(`http://localhost:5099/api/waitlist/getWaitlists`, {
+        const response = await fetch(`http://localhost:5099/api/waitlist/getWaitlists?userHash=${encodeURIComponent(username)}`, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -28,6 +51,7 @@ async function displayWaitlistedReservations() {
             console.log('New access token stored:', accessToken);
         }
 
+        // Clear the existing list of waitlisted reservations
         const reservationsList = document.getElementById('reservations-list');
         reservationsList.innerHTML = '';
 
@@ -46,6 +70,11 @@ async function displayWaitlistedReservations() {
         console.error('Error fetching waitlisted reservations:', error);
     }
 }
+
+// Function to handle click event on "Initialize Waitlist" button
+document.getElementById('initWaitlistButton').addEventListener('click', () => {
+    displayWaitlistedReservations();
+});
 
 // Function to display reservation details
 function displayReservationDetails(reservation) {
@@ -68,73 +97,19 @@ function displayReservationDetails(reservation) {
 
 // Function to confirm leaving the waitlist
 function confirmLeaveWaitlist(reservation) {
+    // Show confirmation pop-up
     const confirmPopup = confirm('Are you sure you want to leave the waitlist?');
     if (confirmPopup) {
-        // call API endpoint to leave the waitlist
+        // Call API endpoint to leave the waitlist
+        // Handle success or error response accordingly
     }
 }
 
-function logout() {
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('idToken');
-    window.location.href = '/UnAuthnAbout/about.html';
-}
 
-document.addEventListener('DOMContentLoaded', () => {
-    displayWaitlistedReservations();
-});
-function test() {
-    var accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Access token is not available.');
-        return;
-    }
+// Call the function to display waitlisted reservations when the page loads
+//document.addEventListener('DOMContentLoaded', () => {
+//    displayWaitlistedReservations();
+//});
 
-    $.ajax({
-        url: 'http://localhost:5099/api/waitlist/checkTokenExp',
-        type: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + accessToken
-        },
-        contentType: 'application/json',
-        success: function (response) {
-            console.log(response);
-            if (response == true) {
-                logout();
-            }
-            else {
-                $.ajax({
-                    url: 'http://localhost:5099/api/waitlist/button',
-                    type: 'GET',
-                    headers: {
-                        'Authorization': 'Bearer ' + accessToken
-                    },
-                    contentType: 'application/json',
-                    success: function (response) {
-                        console.log(response);
-                        if (response) {
-                            var message = "Test successful";
-                            var messageElement = document.createElement('p');
-                            messageElement.textContent = message;
-                            messageElement.style.color = 'green';
 
-                            var testSection = document.getElementById('testSection');
-                            testSection.appendChild(messageElement);
 
-                            if (response.newToken) {
-                                sessionStorage.setItem('accessToken', response.newToken);
-                                console.log('New access token stored:', response.newToken);
-                            }
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error:', error);
-                    }
-                });
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error('Error:', error);
-        }
-    });
-}

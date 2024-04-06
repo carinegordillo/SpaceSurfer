@@ -1,5 +1,6 @@
 ﻿using SS.Backend.SharedNamespace;
 using SS.Backend.ReservationManagement;
+using SS.Backend.Waitlist;
 
 
 namespace SS.Backend.ReservationManagers{
@@ -11,13 +12,16 @@ namespace SS.Backend.ReservationManagers{
         private readonly IReservationValidationService _reservationValidationService;
 
         private readonly IReservationRequirements _reservationRequirements = new SpaceSurferReservationRequirements();
-        
-    
 
-        public ReservationCreationManager(IReservationCreatorService reservationCreatorService, IReservationValidationService reservationValidationService)
+        private readonly WaitlistService _waitlist;
+
+
+
+        public ReservationCreationManager(IReservationCreatorService reservationCreatorService, IReservationValidationService reservationValidationService, WaitlistService waitlistService)
         {
             _reservationCreatorService = reservationCreatorService;
             _reservationValidationService = reservationValidationService;
+            _waitlist = waitlistService;
             
         }
 
@@ -36,6 +40,15 @@ namespace SS.Backend.ReservationManagers{
             {
                 response.ErrorMessage += "Reservation did not pass validation checks: " + validationResponse.ErrorMessage;
                 response.HasError = true;
+
+                // Waitlist Service
+                int compid = userReservationsModel.CompanyID;
+                int floorid = userReservationsModel.FloorPlanID;
+                string spaceid = userReservationsModel.SpaceID;
+                DateTime start = userReservationsModel.ReservationStartTime;
+                DateTime end = userReservationsModel.ReservationEndTime;
+                int resId = await _waitlist.GetReservationID(compid, floorid, spaceid, start, end);
+                await _waitlist.InsertWaitlistedUser(userReservationsModel.UserHash, resId);
             }
 
             else

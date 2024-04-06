@@ -130,12 +130,22 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return _command;
     }
 
-    // Waitlist Custom Query
+    // Waitlist Custom Queries
     public ICustomSqlCommandBuilder CountWaitlistUsersForReservation(int reservationID)
     {
         ResetBuilder();
         _commandText.Append("SELECT COUNT(*) AS Count FROM Waitlist WHERE ReservationID = @ReservationID");
         _command.Parameters.AddWithValue("@ReservationID", reservationID);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder UpdatePosition(int resId, int oldPos, int newPos)
+    {
+        ResetBuilder();
+        _commandText.Append("UPDATE Waitlist SET Position = @new WHERE ReservationID = @id AND Position = @old");
+        _command.Parameters.AddWithValue("@id", resId);
+        _command.Parameters.AddWithValue("@new", newPos);
+        _command.Parameters.AddWithValue("@old", oldPos);
         return this;
     }
 }

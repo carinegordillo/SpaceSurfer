@@ -33,17 +33,17 @@ public class ReservationController : ControllerBase
                                  IReservationReaderManager reservationReaderManager,
                                  IAvailibilityDisplayManager availibilityDisplayManager,
                                  SSAuthService authService, IConfiguration config)
-                                 
-    {
-       _reservationCreationManager = reservationCreationManager;
-       _reservationCancellationManager = reservationCancellationManager;
-       _reservationModificationManager = reservationModificationManager;
-       _reservationReaderManager = reservationReaderManager;
-       _availibilityDisplayManager = availibilityDisplayManager;
 
-       _authService = authService;
-       _config = config;
-       
+    {
+        _reservationCreationManager = reservationCreationManager;
+        _reservationCancellationManager = reservationCancellationManager;
+        _reservationModificationManager = reservationModificationManager;
+        _reservationReaderManager = reservationReaderManager;
+        _availibilityDisplayManager = availibilityDisplayManager;
+
+        _authService = authService;
+        _config = config;
+
     }
 
     [HttpGet("ListReservations")]
@@ -170,13 +170,13 @@ public class ReservationController : ControllerBase
             return BadRequest("Unauthorized. Access token is missing or invalid.");
         }
 
-       
+
     }
 
     [HttpPost("CreateReservation")]
     public async Task<IActionResult> CreateReservation([FromBody] UserReservationsModel reservation)
     {
- 
+
         string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
@@ -241,7 +241,7 @@ public class ReservationController : ControllerBase
     [HttpPut("UpdateReservation")]
     public async Task<IActionResult> UpdateReservation([FromBody] UserReservationsModel reservation)
     {
-         string? accessToken = HttpContext.Request.Headers["Authorization"];
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
@@ -380,14 +380,14 @@ public class ReservationController : ControllerBase
 
 
     [HttpGet("checkTokenExp")]
-    public  IActionResult checkTokenExp()
+    public IActionResult checkTokenExp()
     {
 
         string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
-            bool tokenExpired =  _authService.IsTokenExpired(accessToken);
+            bool tokenExpired = _authService.IsTokenExpired(accessToken);
             if (tokenExpired)
             {
                 Console.WriteLine("Token is expired.");

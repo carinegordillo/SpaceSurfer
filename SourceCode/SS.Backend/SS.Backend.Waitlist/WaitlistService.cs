@@ -101,6 +101,9 @@ namespace SS.Backend.Waitlist
                     .Build();
                 result = await _sqldao.ReadSqlResult(getEmail);
                 string? email = result.ValuesRead?.Rows[0]?["username"].ToString();
+                Console.WriteLine(email);
+                result.PrintDataTable();
+                //string? email = result.ValuesRead?.Rows.Count > 0 ? result.ValuesRead.Rows[0]?["username"].ToString() : null;
 
                 // Get first name from DB
                 var getName = builder
@@ -110,6 +113,7 @@ namespace SS.Backend.Waitlist
                     .Build();
                 result = await _sqldao.ReadSqlResult(getName);
                 string? name = result.ValuesRead?.Rows[0]?["firstName"].ToString();
+                //string? name = result.ValuesRead?.Rows.Count > 0 ? result.ValuesRead.Rows[0]?["firstName"].ToString() : null;
 
                 string targetEmail = email;
                 string subject = $@"Top of Waitlist at {info.companyName}";
@@ -138,17 +142,23 @@ namespace SS.Backend.Waitlist
                 {
                     await MailSender.SendEmail(targetEmail, subject, msg);
                     result.HasError = false;
+                    result.ErrorMessage += "Sent Email.";
+                    Console.WriteLine(result.ErrorMessage);
                 }
                 catch (Exception ex)
                 {
                     result.HasError = true;
                     result.ErrorMessage = ex.Message;
+                    Console.WriteLine("You're' at 144 catch");
+                    Console.WriteLine(result.ErrorMessage);
                 }
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
+                Console.WriteLine("You're at 152 catch");
+                Console.WriteLine(result.ErrorMessage);
                 throw;
             }
         }
@@ -221,11 +231,11 @@ namespace SS.Backend.Waitlist
                     .AddParameters(new Dictionary<string, object>
                     {
                         { "id", resId },
-                        { "username", userHash}
+                        { "user", userHash}
                     })
                     .Build();
                 result = await _sqldao.ReadSqlResult(getPos);
-                int pos = Convert.ToInt32(result.ValuesRead?.Rows[0]?["Position"].ToString());
+                int pos = Convert.ToInt32(result.ValuesRead?.Rows[0]?["Position"]);
                 return pos;
             }
             catch (Exception ex)
@@ -375,6 +385,7 @@ namespace SS.Backend.Waitlist
                     })
                     .Build();
                 result = await _sqldao.ReadSqlResult(getUsersCmd);
+                result.PrintDataTable();
 
                 // Update positions for each user
                 if (result.ValuesRead != null)
@@ -383,32 +394,27 @@ namespace SS.Backend.Waitlist
                     {
                         int oldPosition = Convert.ToInt32(user["Position"]);
                         int newPosition = oldPosition - 1;
-
-                        var updatePositionCmd = builder
-                            .BeginUpdate("Waitlist")
-                            .Set(new Dictionary<string, object>
-                            {
-                                { "Position", newPosition }
-                            })
-                            .Where("ReservationID = @id AND Username = @username")
-                            .AddParameters(new Dictionary<string, object>
-                            {
-                                { "id", resId },
-                                { "username", user["Username"] }
-                            })
-                            .Build();
-                        result = await _sqldao.SqlRowsAffected(updatePositionCmd);
+                        var updateCmd = builder.UpdatePosition(resId, oldPosition, newPosition).Build();
+                        await _sqldao.SqlRowsAffected(updateCmd);
                     }
+
+                    var getWaitlist = builder
+                    .BeginSelectAll()
+                    .From("Waitlist")
+                    .Build();
+                    result = await _sqldao.ReadSqlResult(getWaitlist);
+                    Console.WriteLine("Waitlist table after update cmd\n");
+                    result.PrintDataTable();
                 }
 
                 // userHash
                 var getHash = builder
                     .BeginSelectAll()
                     .From("Waitlist")
-                    .Where("Position = 0")
+                    .Where("Position = 1")
                     .Build();
                 result = await _sqldao.ReadSqlResult(getHash);
-                var userHash = result.ValuesRead?.Rows[0]?["spaceID"].ToString();
+                var userHash = result.ValuesRead?.Rows[0]?["Username"].ToString();
 
                 // spaceID
                 var getSpaceId = builder
@@ -484,14 +490,53 @@ namespace SS.Backend.Waitlist
                     position = 0
                 };
 
+                Console.WriteLine("Sending email");
                 await SendNotificationEmail(entry);
             }
             catch (Exception ex)
             {
+                Console.WriteLine("You're at 481 catch.");
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
                 throw;
             }
+        }
+
+        public async Task DeleteUser(int resId, int leavePos)
+        {
+            var builder = new CustomSqlCommandBuilder();
+            var result = new Response();
+
+            // Delete the user who left
+            var deleteUserCmd = builder
+                .BeginDelete("Waitlist")
+                .Where("ReservationID = @id AND Position = @pos")
+                .AddParameters(new Dictionary<string, object>
+                {
+            { "id", resId },
+            { "pos", leavePos }
+                })
+                .Build();
+            result = await _sqldao.SqlRowsAffected(deleteUserCmd);
+
+        }
+
+        public async Task<Response> SelectAll(int resId)
+        {
+            var builder = new CustomSqlCommandBuilder();
+            var result = new Response();
+
+            var getUsersCmd = builder
+                    .BeginSelectAll()
+                    .From("Waitlist")
+                    .Where("ReservationID = @id")
+                    .AddParameters(new Dictionary<string, object>
+                    {
+                        { "id", resId }
+                    })
+                    .Build();
+            result = await _sqldao.ReadSqlResult(getUsersCmd);
+            return result;
         }
 
 
@@ -503,46 +548,24 @@ namespace SS.Backend.Waitlist
 
             try
             {
-                // Retrieve all users on the waitlist for the reservation
-                var getUsersCmd = builder
-                    .BeginSelectAll()
-                    .From("Waitlist")
-                    .Where("ReservationID = @id")
-                    .AddParameters(new Dictionary<string, object>
-                    {
-                    { "id", resId }
-                    })
-                    .Build();
-                result = await _sqldao.ReadSqlResult(getUsersCmd);
-
-                // Update positions for users below the leaving user
+                await DeleteUser(resId, leavePos);
+                result = await SelectAll(resId);
                 if (result.ValuesRead != null)
                 {
-                    foreach (DataRow user in result.ValuesRead.Rows)
+                    foreach (DataRow row in result.ValuesRead.Rows)
                     {
-                        int oldPosition = Convert.ToInt32(user["Position"]);
-
-                        // Check if the user's position needs to be updated
+                        int oldPosition = Convert.ToInt32(row["Position"]);
                         if (oldPosition > leavePos)
                         {
                             int newPosition = oldPosition - 1;
-
-                            var updatePositionCmd = builder
-                                .BeginUpdate("Waitlist")
-                                .Set(new Dictionary<string, object>
-                                {
-                                { "Position", newPosition }
-                                })
-                                .Where("ReservationID = @id AND Username = @username")
-                                .AddParameters(new Dictionary<string, object>
-                                {
-                                { "id", resId },
-                                { "username", user["Username"] }
-                                })
-                                .Build();
-                            result = await _sqldao.SqlRowsAffected(updatePositionCmd);
+                            var updateCmd = builder.UpdatePosition(resId, oldPosition, newPosition).Build();
+                            await _sqldao.SqlRowsAffected(updateCmd);
                         }
                     }
+                }
+                else
+                {
+                    Console.WriteLine("ValuesRead is null");
                 }
             }
             catch (Exception ex)
@@ -553,60 +576,88 @@ namespace SS.Backend.Waitlist
             }
         }
 
+
         public async Task<List<WaitlistEntry>> GetUserWaitlists(string userHash)
         {
             var builder = new CustomSqlCommandBuilder();
-            var result = new Response();
-
             var waitlists = new List<WaitlistEntry>();
 
             // Get waitlisted reservations for the specified user
             var getReservations = builder
                 .BeginSelectAll()
                 .From("Waitlist")
-                .Where("Username = @user")
+                .Where("Username = @user AND Position > 0")
                 .AddParameters(new Dictionary<string, object>
                 {
                     { "user", userHash }
                 })
                 .Build();
 
-            result = await _sqldao.ReadSqlResult(getReservations);
+            var result = await _sqldao.ReadSqlResult(getReservations);
 
-            // Iterate over each row in the result and create a WaitlistEntry object for each waitlisted reservation
-            foreach (DataRow row in result.ValuesRead.Rows)
+            if (result != null && result.ValuesRead != null)
             {
-                int reservationId = Convert.ToInt32(row["ReservationID"]);
-
-                // Get reservation details using reservationId
-                var getResDetails = builder
-                    .BeginSelectAll()
-                    .From("reservations")
-                    .Where("reservationID = @id")
-                    .AddParameters(new Dictionary<string, object>
-                    {
-                        { "id", reservationId }
-                    })
-                    .Build();
-
-                var resDetailsResult = await _sqldao.ReadSqlResult(getResDetails);
-
-                // Populate WaitlistEntry with reservation details
-                var entry = new WaitlistEntry
+                foreach (DataRow row in result.ValuesRead.Rows)
                 {
-                    userHash = userHash,
-                    spaceID = resDetailsResult.ValuesRead?.Rows[0]?["spaceID"].ToString(),
-                    companyName = resDetailsResult.ValuesRead?.Rows[0]?["companyName"].ToString(),
-                    startTime = Convert.ToDateTime(resDetailsResult.ValuesRead?.Rows[0]?["reservationStartTime"]),
-                    endTime = Convert.ToDateTime(resDetailsResult.ValuesRead?.Rows[0]?["reservationEndTime"]),
-                    position = Convert.ToInt32(row["Position"])
-                };
+                    int reservationId = Convert.ToInt32(row["ReservationID"]);
 
-                waitlists.Add(entry);
+                    // Get reservation details using reservationId
+                    var getResDetails = builder
+                        .BeginSelectAll()
+                        .From("reservations")
+                        .Where("reservationID = @id")
+                        .AddParameters(new Dictionary<string, object>
+                        {
+                            { "id", reservationId }
+                        })
+                        .Build();
+
+                    var resDetailsResult = await _sqldao.ReadSqlResult(getResDetails);
+                    int compId = Convert.ToInt32(resDetailsResult.ValuesRead?.Rows[0]?["companyID"].ToString());
+
+                    if (resDetailsResult != null && resDetailsResult.ValuesRead != null && resDetailsResult.ValuesRead.Rows.Count > 0)
+                    {
+                        string compName = await GetCompanyName(compId);
+                        var entry = new WaitlistEntry
+                        {
+                            userHash = userHash,
+                            spaceID = resDetailsResult.ValuesRead.Rows[0]["spaceID"].ToString(),
+                            companyName = compName,
+                            startTime = Convert.ToDateTime(resDetailsResult.ValuesRead.Rows[0]["reservationStartTime"]),
+                            endTime = Convert.ToDateTime(resDetailsResult.ValuesRead.Rows[0]["reservationEndTime"]),
+                            position = Convert.ToInt32(row["Position"])
+                        };
+
+                        waitlists.Add(entry);
+                    }
+                }
             }
 
             return waitlists;
         }
+
+        public async Task<string>GetCompanyName(int cid)
+        {
+            var builder = new CustomSqlCommandBuilder();
+            var result = new Response();
+
+            // Get company name using companyid
+            var getCompanyName = builder
+                .BeginSelectAll()
+                .From("companyProfile")
+                .Where("companyID = @id")
+                .AddParameters(new Dictionary<string, object>
+                {
+                    { "id", cid }
+                })
+                .Build();
+
+            result = await _sqldao.ReadSqlResult(getCompanyName);
+            string compName = result.ValuesRead?.Rows[0]?["companyName"].ToString();
+
+            return compName;
+        }
+
 
         public async Task<WaitlistEntry> GetReservationDetails(string userHash, int reservationId)
         {
@@ -672,22 +723,83 @@ namespace SS.Backend.Waitlist
             var result = new Response();
 
             var getResId = builder
+                .BeginSelectAll()
+                .From("reservations")
+                .Where("companyID = @cid AND floorPlanID = @fid AND spaceID = @sid AND reservationStartTime = @s AND reservationEndTime = @e")
+                .AddParameters(new Dictionary<string, object>
+                {
+                    { "cid", compID },
+                    { "fid", floorID },
+                    { "sid", spaceID },
+                    { "s", sTime },
+                    { "e", eTime }
+                })
+                .Build();
+
+            result = await _sqldao.ReadSqlResult(getResId);
+
+            if (result.ValuesRead != null && result.ValuesRead.Rows.Count > 0)
+            {
+                int rid = Convert.ToInt32(result.ValuesRead.Rows[0]["reservationID"]);
+                return rid;
+            }
+            else
+            {
+                Console.WriteLine("No reservation found.");
+                return -1;
+            }
+        }
+
+        public async Task<int> GetReservationID_NoFloor(string compName, string spaceID, DateTime sTime, DateTime eTime)
+        {
+            var builder = new CustomSqlCommandBuilder();
+            var result = new Response();
+
+            // get compId
+            var getCompId = builder
+                .BeginSelectAll()
+                .From("companyProfile")
+                .Where("companyName = @name")
+                .AddParameters(new Dictionary<string, object>
+                {
+                    { "name", compName }
+                })
+                .Build();
+
+            result = await _sqldao.ReadSqlResult(getCompId);
+            if (result.ValuesRead != null && result.ValuesRead.Rows.Count > 0)
+            {
+                int cid = Convert.ToInt32(result.ValuesRead.Rows[0]["companyID"]);
+
+                // get floorId
+                var getFloorId = builder
                     .BeginSelectAll()
                     .From("reservations")
-                    .Where("companyID = @cid AND floorID = @fid AND spaceID = @sid AND reservationStartTime = @s AND reservationEndTime = @e")
+                    .Where("companyID = @cid")
                     .AddParameters(new Dictionary<string, object>
                     {
-                        { "cid", compID },
-                        { "fid", floorID },
-                        { "sid", spaceID },
-                        { "s", sTime },
-                        { "e", eTime }
+                    { "cid", cid }
                     })
                     .Build();
 
-            result = await _sqldao.ReadSqlResult(getResId);
-            int rid = Convert.ToInt32(result.ValuesRead?.Rows[0]?["reservationID"].ToString());
-            return rid;
+                result = await _sqldao.ReadSqlResult(getFloorId);
+                if (result.ValuesRead != null && result.ValuesRead.Rows.Count > 0)
+                {
+                    int fid = Convert.ToInt32(result.ValuesRead.Rows[0]["floorPlanID"]);
+                    return await GetReservationID(cid, fid, spaceID, sTime, eTime);
+                }
+                else
+                {
+                    Console.WriteLine("No floorId found.");
+                    return -1;
+                }
+            }
+            else
+            {
+                Console.WriteLine("No company with that ID found.");
+                return -1;
+            }
         }
+
     }
 }

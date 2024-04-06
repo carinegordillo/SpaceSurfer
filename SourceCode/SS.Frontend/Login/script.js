@@ -72,26 +72,34 @@ function logout() {
     document.getElementById("sendOTPSection").style.display = "block";
 }
 
-function waitlistAccess() {
-    var accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Access token is not available.');
-        return;
-    }
-
-    $.ajax({
-        url: 'http://localhost:5099/api/waitlist/test',
-        type: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + accessToken
-        },
-        contentType: 'application/json',
-        success: function (response) {
-            console.log(response);
-            window.location.href = '../Waitlist/index.html';
-        },
-        error: function (xhr, status, error) {
-            console.error('Error:', error);
-        }
-    });
+// Function to toggle the display of views
+function toggleView(viewId) {
+    document.getElementById('spaceBookingViewGen').style.display = 'none';
+    document.getElementById('waitlistViewGen').style.display = 'none';
+    //document.getElementById('spaceBookingViewManager').style.display = 'none';
+    document.getElementById('waitlistViewManager').style.display = 'none';
+    document.getElementById(viewId).style.display = 'block';
 }
+
+//1 if general, 2 if manager
+var page = 1
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('showWaitlistButtonGen').addEventListener('click', () => {
+        toggleView('waitlistViewGen');
+        page = 1;
+    });
+    document.getElementById('showSpaceBookingButtonGen').addEventListener('click', () => {
+        toggleView('spaceBookingViewGen');
+        page = 1;
+    });
+
+    //document.getElementById('showWaitlistButtonManager').addEventListener('click', () => {
+    //    toggleView('waitlistViewManager');
+    //    page = 2;
+    //});
+    document.getElementById('showSpaceBookingButtonManager').addEventListener('click', () => {
+        toggleView('spaceBookingViewManager');
+        page = 2;
+    });
+});

@@ -49,14 +49,6 @@ public class ReservationCancellationService : IReservationCancellationService
                 response.HasError = false;
 
                 await _waitlist.UpdateWaitlist_ApprovedUserLeft(reservationID);
-                if (response.HasError = false)
-                {
-                    response.ErrorMessage += $"Successfully updated waitlist after approved user cancelled reservation.";
-                }
-                else
-                {
-                    response.ErrorMessage += $"Error updating waitlist after approved user cancels reservation.";
-                }
             }
             else
             {
