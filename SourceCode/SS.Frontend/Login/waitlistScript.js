@@ -73,6 +73,7 @@ async function displayWaitlistedReservations() {
                 listItem.addEventListener('click', () => displayReservationDetails(reservation));
 
                 reservationsList.appendChild(listItem);
+                console.log(data);
             });
         } else {
             // If there are no waitlisted reservations, display a message
@@ -84,7 +85,17 @@ async function displayWaitlistedReservations() {
 }
 
 // Function to display reservation details
-function displayReservationDetails(reservation) {
+async function displayReservationDetails(reservation) {
+    console.log(reservation.companyID);
+    console.log(reservation.floorID);
+    const startDate = new Date(reservation.startTime);
+    const endDate = new Date(reservation.endTime);
+
+    // Format date and time
+    const formattedStartDate = startDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+    const formattedStartTime = startDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    const formattedEndTime = endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
     // Display reservation details in the reservation-details container
     let reservationDetails;
     if (page === 1) {
@@ -92,20 +103,68 @@ function displayReservationDetails(reservation) {
     } else {
         reservationDetails = document.getElementById('reservation-details-man');
     }
-    reservationDetails.innerHTML = `
+
+    //FETCH//
+
+    var accessToken = sessionStorage.getItem('accessToken');
+    
+    const isTokenExp = await checkTokenExpiration(accessToken);
+    if (!isTokenExp) {
+        logout();
+        return;
+    }
+    var compName = reservation.companyName
+    var data;
+    console.log(compName);
+    try {
+        const response = await fetch(`http://localhost:5099/api/waitlist/getFloorplan?cid=${reservation.companyID}&fid=${reservation.floorID}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        data = await response.json();
+
+        if (data.newToken) {
+            accessToken = data.newToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            console.log('New access token stored:', accessToken);
+        }
+
+        console.log("floorplan name: " + response.floorPlanName);
+        console.log(data.FloorPlanImageBase64);
+        console.log(data.floorPlanName);
+
+    } catch (error) {
+        console.error('Display reservation details error:', error);
+    }
+
+    /////////
+
+    data.forEach(floorPlan => {
+        reservationDetails.innerHTML = `
         <h3>${reservation.companyName}</h3>
+        <img src="data:image/png;base64,${floorPlan.floorPlanImageBase64}" alt="${floorPlan.floorPlanName}" />
         <p>Space ID: ${reservation.spaceID}</p>
-        <p>From: ${reservation.startTime}</p>
-        <p>To: ${reservation.endTime}</p>
-        <img src="path_to_floor_plan_image" alt="Floor Plan">
+        <p>Date: ${formattedStartDate}</p>
+        <p>From: ${formattedStartTime}</p>
+        <p>To: ${formattedEndTime}</p>
         <p>Current position on waitlist: ${reservation.position}</p>
         <button id="leaveWaitlistBtn">Leave Waitlist</button>
     `;
+    });
 
     // Add click event listener to the leave waitlist button
     const leaveWaitlistBtn = document.getElementById('leaveWaitlistBtn');
     leaveWaitlistBtn.addEventListener('click', () => openDialog(reservation));
 }
+
 
 async function getReservationId(reservation) {
     var accessToken = sessionStorage.getItem('accessToken');

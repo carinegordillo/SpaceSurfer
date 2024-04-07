@@ -802,7 +802,6 @@ async function checkTokenExpiration(accessToken) {
 }
 
 
-
 async function handleReservationCreationFormSubmit(event) {
     event.preventDefault();
 
@@ -850,15 +849,16 @@ async function handleReservationCreationFormSubmit(event) {
         }
 
         if (data.hasError) {
+            showWaitlistModal();
             console.log(`Reservation error: ${data.errorMessage}`);
-            onError(data.errorMessage);
+            //onError(data.errorMessage);
         } else {
             console.log('Reservation created successfully');
             onSuccess('Reservation created successfully!');
         }
     } catch (error) {
         console.error('Error creating reservation:', error);
-        onError("Error creating reservation. Please try again later.");
+        //onError("Error creating reservation. Please try again later.");
     }
 }
 
@@ -883,6 +883,146 @@ function updateReservationForm(companyId, floorPlanId, spaceId) {
     spaceIdInput.required = true;
 }
 
+////// WAITLIST ////////
+
+function showWaitlistModal() {
+    // Check if the modal container element exists
+    let modal = document.getElementById('reservationConflictModal');
+    if (!modal) {
+        // If it doesn't exist, create it
+        modal = document.createElement('div');
+        modal.id = 'reservationConflictModal';
+        modal.classList.add('modal');
+        document.body.appendChild(modal); // Append to the body or another suitable container
+    }
+
+    // Create modal content
+    const modalContent = document.createElement('div');
+    modalContent.classList.add('modal-content');
+    modalContent.innerHTML = `
+        <span class="close-button">&times;</span>
+        <p>This space is already reserved for this time. Would you like to join the waitlist?</p>
+        <button id="joinWaitlistBtn">Yes</button>
+        <button id="cancelWaitlistBtn">No</button>
+    `;
+
+    // Append modal content to modal container
+    modal.innerHTML = ''; // Clear existing content
+    modal.appendChild(modalContent);
+
+    // Create success message element
+    const successMessage = document.createElement('div');
+    successMessage.id = 'successMessage';
+    successMessage.textContent = 'You have successfully joined the waitlist!';
+    successMessage.style.display = 'none';
+
+    // Append success message to modal container
+    modal.appendChild(successMessage);
+
+    // Create error message element
+    const errorMsg = document.createElement('div');
+    errorMsg.id = 'errorMsg';
+    errorMsg.textContent = 'You have already been added to this waitlist.';
+    errorMsg.style.display = 'none';
+
+    // Append error message to modal container
+    modal.appendChild(errorMsg);
+
+    // Show the modal
+    modal.style.display = 'block';
+
+    const closeButton = modal.querySelector('.close-button');
+    const cancelButton = modal.querySelector('#cancelWaitlistBtn');
+    const joinWaitlistButton = modal.querySelector('#joinWaitlistBtn');
+
+    // Add event listeners
+    closeButton.addEventListener('click', closeModal);
+    cancelButton.addEventListener('click', closeModal);
+    joinWaitlistButton.addEventListener('click', joinWaitlist);
+}
+
+
+
+async function joinWaitlist() {
+    console.log('Joining waitlist...');
+    var accessToken = sessionStorage.getItem('accessToken', accessToken);
+    var idToken = sessionStorage.getItem('idToken');
+    var parsedIdToken = JSON.parse(idToken);
+    var username = parsedIdToken.Username;
+
+    const isTokenValid = await checkTokenExpiration(accessToken);
+    if (!isTokenValid) {
+        logout();
+        return;
+    }
+
+    const reservationData = {
+        companyId: parseInt(document.getElementById('reservation-companyId').value, 10),
+        floorPlanId: parseInt(document.getElementById('reservation-floorPlanId').value, 10),
+        spaceId: document.getElementById('reservation-spaceId').value,
+        reservationStartTime: document.getElementById('reservation-startTime').value,
+        reservationEndTime: document.getElementById('reservation-endTime').value,
+        userHash: username
+    };
+
+    const requestData = JSON.stringify(reservationData);
+
+    try {
+        const response = await fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/addToWaitlist', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json'
+            },
+            body: requestData
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data.newToken) {
+            accessToken = data.newToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            console.log('New access token stored:', accessToken);
+        }
+
+        if (data.hasError) {
+            // Show error message
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.style.display = 'block';
+
+            setTimeout(() => {
+                closeModal();
+                errorMsg.style.display = 'none';
+            }, 5000);
+
+            console.log(`Joining waitlist error: User already on waitlist`);
+        } else {
+            // Show success message
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+
+            setTimeout(() => {
+                closeModal();
+                successMessage.style.display = 'none';
+            }, 5000);
+
+            console.log('Successfully joined waitlist');
+        }
+    } catch (error) {
+        console.error('Error joining waitlist:', error);
+    }
+}
+
+
+function closeModal() {
+    const modal = document.getElementById('reservationConflictModal');
+    modal.style.display = 'none';
+}
+
+///////////////////////
 
 
 /// modal 

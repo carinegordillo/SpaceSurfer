@@ -22,6 +22,7 @@
 
 		<ProjectReference Include="..\SS.Backend.Security.AuthN\SS.Backend.Security.AuthN.csproj" />
 		<ProjectReference Include="..\SS.Backend.Security\SS.Backend.Security.csproj" />
+	  <ProjectReference Include="..\SS.Backend.Waitlist\SS.Backend.Waitlist.csproj" />
 
 
   </ItemGroup>

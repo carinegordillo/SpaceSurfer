@@ -40,15 +40,6 @@ namespace SS.Backend.ReservationManagers{
             {
                 response.ErrorMessage += "Reservation did not pass validation checks: " + validationResponse.ErrorMessage;
                 response.HasError = true;
-
-                // Waitlist Service
-                int compid = userReservationsModel.CompanyID;
-                int floorid = userReservationsModel.FloorPlanID;
-                string spaceid = userReservationsModel.SpaceID;
-                DateTime start = userReservationsModel.ReservationStartTime;
-                DateTime end = userReservationsModel.ReservationEndTime;
-                int resId = await _waitlist.GetReservationID(compid, floorid, spaceid, start, end);
-                await _waitlist.InsertWaitlistedUser(userReservationsModel.UserHash, resId);
             }
 
             else
@@ -77,6 +68,44 @@ namespace SS.Backend.ReservationManagers{
             return response;
         }
 
+        public async Task<Response> AddToWaitlist(UserReservationsModel userReservationsModel)
+        {
+            Response response = new Response();
+
+            try
+            {
+                int compid = userReservationsModel.CompanyID;
+                int floorid = userReservationsModel.FloorPlanID;
+                string spaceid = userReservationsModel.SpaceID;
+                DateTime start = userReservationsModel.ReservationStartTime;
+                DateTime end = userReservationsModel.ReservationEndTime;
+
+                int resId = await _waitlist.GetReservationID(compid, floorid, spaceid, start, end);
+
+                bool alreadyOnWaitlist = await _waitlist.IsUserOnWaitlist(userReservationsModel.UserHash, resId);
+
+                Console.WriteLine("ReservationCreationManager AddToWaitlist alreadyOnWaitlist: " + alreadyOnWaitlist);
+
+                if (alreadyOnWaitlist)
+                {
+                    response.HasError = false;
+                    response.ErrorMessage += "Already on waitlist";
+                }
+                else
+                {
+                    response.HasError = false;
+                    response.ErrorMessage += "Added to waitlist";
+                    await _waitlist.InsertWaitlistedUser(userReservationsModel.UserHash, resId);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = "User already on waitlist";
+            }
+
+            return response;
+        }
 
     }
 }
