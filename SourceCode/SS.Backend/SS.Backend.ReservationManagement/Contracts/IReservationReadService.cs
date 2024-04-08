@@ -8,6 +8,7 @@ namespace SS.Backend.ReservationManagement
 
      public  Task<Response> GetAllUserReservations(string tableName, string userHash);
      public  Task<Response> GetUserActiveReservations(string tableName, string userHash);
+     public Task<Response> GetReservationByID(string tableName, int reservationID);
     }
 
 }
