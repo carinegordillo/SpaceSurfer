@@ -34,7 +34,7 @@ body, html {
 }
 
 
-.sidebar-gen {
+.sidebar {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -45,17 +45,7 @@ body, html {
 
 }
 
-.sidebar-man {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    padding: 3rem;
-    max-width: 200px;
-}
-
-.sidebar-gen button {
+.sidebar button {
     display: block;
     width: 12rem;
     height: 3rem;
@@ -66,19 +56,6 @@ body, html {
     background-color: #d9b382;
     color: white;
 }
-
-.sidebar-man button {
-    display: block;
-    width: 12rem;
-    height: 3rem;
-    padding: 1rem;
-    margin-bottom: 2rem;
-    border: none;
-    border-radius: 13rem;
-    background-color: #d9b382;
-    color: white;
-}
-
 
 .location {
     background-color: #fff8e1;
@@ -95,64 +72,35 @@ body, html {
     color: #666;
 }
 
-
-
 .reservation-container-1{
     display:flex;
 }
 
-.clickable-gen {
+.clickable {
     cursor: pointer;
     color: blue; 
     text-decoration: underline; 
 }
 
-.clickable-man {
-    cursor: pointer;
-    color: blue;
-    text-decoration: underline;
-}
-
-.company-item-gen {
+.company-item {
     border: 1px solid #ddd;
     padding: 10px;
     margin-bottom: 10px;
     list-style-type: none;
 }
 
-.company-item-man {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 10px;
-    list-style-type: none;
-}
-
-.company-name-gen {
+.company-name {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 5px; 
 }
 
-.company-info-gen p {
+.company-info p {
     margin: 2px 0;
     font-size: 14px;
 }
 
-.company-name-man {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.company-info-man p {
-    margin: 2px 0;
-    font-size: 14px;
-}
-
-
-
-
-.space-booking-center-container-gen {
+.space-booking-center-container {
 
     max-height: 500px;
     overflow-y: auto;
@@ -163,7 +111,7 @@ body, html {
     flex-direction: row;
 
 }
-.space-form-container-gen {
+.space-form-container {
     height: 500px;
     overflow-y: auto;
     background-color: #f2f0ec;
@@ -174,28 +122,7 @@ body, html {
     align-items: center;
 }
 
-.space-booking-center-container-man {
-    max-height: 500px;
-    overflow-y: auto;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 1rem;
-    display: flex;
-    flex-direction: row;
-}
-
-.space-form-container-man {
-    height: 500px;
-    overflow-y: auto;
-    background-color: #f2f0ec;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 1rem;
-    justify-content: center;
-    align-items: center;
-}
-
-.company-info-gen {
+.company-info {
     width: 80%;
     max-height: 500px;
     overflow-y: auto;
@@ -206,27 +133,10 @@ body, html {
     max-width: 500px;
 }
 
-.company-info-man {
-    width: 80%;
-    max-height: 500px;
-    overflow-y: auto;
-    background-color: #f2f0ec;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 1rem;
-    max-width: 500px;
-}
-
-.company-info-gen img {
+.company-info img {
     max-width: 100%; 
     height: auto; 
     object-fit: contain; 
-}
-
-.company-info-man img {
-    max-width: 100%;
-    height: auto;
-    object-fit: contain;
 }
 
 .location-preview {
@@ -242,14 +152,11 @@ body, html {
 }
 
 
-button-gen:hover {
-    filter: brightness(85%);
-}
-button-man:hover {
+button:hover {
     filter: brightness(85%);
 }
 
-/* REservtaions stuff */
+/* Reservtaions stuff */
 
 .reservation-card {
     border: 1px solid #ddd;
@@ -267,7 +174,7 @@ button-man:hover {
     font-weight: bold;
 }
 
-.modify-btn-gen, .cancel-btn-gen {
+.modify-btn, .cancel-btn {
     padding: 5px 10px;
     margin-right: 5px;
     border: none;
@@ -275,30 +182,12 @@ button-man:hover {
     cursor: pointer;
 }
 
-.modify-btn-gen {
+.modify-btn {
     background-color: #4CAF50;
     color: white;
 }
 
-.cancel-btn-gen {
-    background-color: #f44336;
-    color: white;
-}
-
-.modify-btn-man, .cancel-btn-man {
-    padding: 5px 10px;
-    margin-right: 5px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.modify-btn-man {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.cancel-btn-man {
+.cancel-btn {
     background-color: #f44336;
     color: white;
 }
@@ -319,35 +208,21 @@ button-man:hover {
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-.close-button-gen {
+.close-button {
     color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
 }
 
-.close-button-gen:hover,
-.close-button-gen:focus {
+.close-button:hover,
+.close-button:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
 }
 
-.close-button-man {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-    .close-button-man:hover,
-    .close-button-man:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-.modal-content-gen {
+.modal-content {
     background-color: #fff;
     padding: 20px;
     margin: 20px;
@@ -359,27 +234,7 @@ button-man:hover {
     z-index: 1051;
 }
 
-.modal-content-man {
-    background-color: #fff;
-    padding: 20px;
-    margin: 20px;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    position: relative;
-    max-width: 500px; /* Adjust as needed */
-    width: 100%;
-    z-index: 1051;
-}
-
-.modal-close-btn-gen {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 1.5em;
-}
-
-.modal-close-btn-man {
+.modal-close-btn {
     position: absolute;
     top: 10px;
     right: 10px;

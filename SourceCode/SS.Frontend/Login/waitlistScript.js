@@ -55,12 +55,7 @@ async function displayWaitlistedReservations() {
         console.log(data);
 
         // Clear the existing list of waitlisted reservations
-        let reservationsList;
-        if (page === 1) {
-            reservationsList = document.getElementById('reservations-list-gen');
-        } else {
-            reservationsList = document.getElementById('reservations-list-man');
-        }
+        const reservationsList = document.getElementById('reservations-list');
         reservationsList.innerHTML = '';
 
         // Check if waitlistedReservations exist before iterating over it
@@ -86,8 +81,6 @@ async function displayWaitlistedReservations() {
 
 // Function to display reservation details
 async function displayReservationDetails(reservation) {
-    console.log(reservation.companyID);
-    console.log(reservation.floorID);
     const startDate = new Date(reservation.startTime);
     const endDate = new Date(reservation.endTime);
 
@@ -97,12 +90,7 @@ async function displayReservationDetails(reservation) {
     const formattedEndTime = endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 
     // Display reservation details in the reservation-details container
-    let reservationDetails;
-    if (page === 1) {
-        reservationDetails = document.getElementById('reservation-details-gen');
-    } else {
-        reservationDetails = document.getElementById('reservation-details-man');
-    }
+    const reservationDetails = document.getElementById('reservation-details');
 
     //FETCH//
 
@@ -315,24 +303,14 @@ async function leaveWaitlist(confirm, reservation) {
             }
 
             // Remove the reservation from the waitlisted reservations container
-            let reservationsList;
-            if (page === 1) {
-                reservationsList = document.getElementById('reservations-list-gen');
-            } else {
-                reservationsList = document.getElementById('reservations-list-man');
-            }
+            const reservationsList = document.getElementById('reservations-list');
             const listItemToRemove = document.querySelector(`.waitlist-item[data-space-id="${reservation.spaceID}"]`);
             if (listItemToRemove) {
                 listItemToRemove.remove();
             }
 
             // Clear the reservation details container
-            let reservationDetails;
-            if (page === 1) {
-                reservationDetails = document.getElementById('reservation-details-gen');
-            } else {
-                reservationDetails = document.getElementById('reservation-details-man');
-            }
+            const reservationDetails = document.getElementById('reservation-details');
             reservationDetails.innerHTML = '';
 
         } catch (error) {
@@ -343,10 +321,7 @@ async function leaveWaitlist(confirm, reservation) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('initWaitlistButtonGen').addEventListener('click', () => {
-        displayWaitlistedReservations();
-    });
-    document.getElementById('initWaitlistButtonManager').addEventListener('click', () => {
+    document.getElementById('initWaitlistButton').addEventListener('click', () => {
         displayWaitlistedReservations();
     });
 });

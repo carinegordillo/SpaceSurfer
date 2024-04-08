@@ -52,100 +52,58 @@
         <label style="color: #e33434; font-size: 18px;">Incorrect verification code. Please double-check and try again.</label>
     </section>
 
-    <section id="homepageGen" class="homepage-container" style="display: none;">
-        <button id="showWaitlistButtonGen">Show Waitlist View</button>
-        <button id="showSpaceBookingButtonGen">Show Space Booking View</button>
-
-        <!--Space Booking Center View-->
-        <section id="spaceBookingViewGen" class="homepage-container" style="display: none;">
-            <button id="initAppButtonGen">Initialize SpaceBookingCenter</button>
-            <div class="space-booking-center-container-gen">
-                <div class="sidebar-gen"></div>
-                <div class="dynamic-content">
-                    <div class="reservation-buttons-gen"></div>
-                    <div class="reservation-list-gen"></div>
-                </div>
-                <div class="space-booking-center-container-gen">
-                    <div class="company-info-gen">
-                        <div id="companies-gen">
-                            <h2>Companies</h2>
-                            <ul id="companiesList-gen"></ul>
-                        </div>
-                        <div id="floorPlans-gen">
-                            <h2>Floor Plans</h2>
-                            <div id="floorPlansContent-gen"></div>
-                        </div>
-                    </div>
-                    <div class="space-form-container-gen" id="space-form-container-gen"></div>
-                </div>
+    <!--Space Booking Center View-->
+    <section id="spaceBookingView" class="homepage-container" style="display: none;">
+        <button id="initAppButton">Initialize SpaceBookingCenter</button>
+        <div class="space-booking-center-container">
+            <div class="sidebar"></div>
+            <div class="dynamic-content">
+                <div class="reservation-buttons"></div>
+                <div class="reservation-list"></div>
             </div>
-        </section>
-
-        <!--Waitlist View-->
-        <section id="waitlistViewGen" class="homepage-container" style="display: none;">
-            <button id="initWaitlistButtonGen">Initialize Waitlist</button>
-            <div class="container">
-                <div class="reservations-container content-container">
-                    <h2>Waitlisted Reservations</h2>
-                    <ul id="reservations-list-gen">
-                    </ul>
-                </div>
-                <div class="reservation-details-container content-container">
-                    <h2>Reservation Details</h2>
-                    <div id="reservation-details-gen">
+            <div class="space-booking-center-container">
+                <div class="company-info">
+                    <div id="companies">
+                        <h2>Companies</h2>
+                        <ul id="companiesList"></ul>
+                    </div>
+                    <div id="floorPlans">
+                        <h2>Floor Plans</h2>
+                        <div id="floorPlansContent"></div>
                     </div>
                 </div>
+                <div class="space-form-container" id="space-form-container"></div>
             </div>
-        </section>
-
+        </div>
     </section>
 
+    <!--Waitlist View-->
+    <section id="waitlistView" class="homepage-container" style="display: none;">
+        <button id="initWaitlistButton">Initialize Waitlist</button>
+        <div class="container">
+            <div class="reservations-container content-container">
+                <h2>Waitlisted Reservations</h2>
+                <ul id="reservations-list">
+                </ul>
+            </div>
+            <div class="reservation-details-container content-container">
+                <h2>Reservation Details</h2>
+                <div id="reservation-details">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--General Homepage-->
+    <section id="homepageGen" class="homepage-container" style="display: none;">
+        <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
+        <button type="button" onclick="waitlistAccess()">Waitlist</button>
+    </section>
+
+    <!--Manager Homepage-->
     <section id="homepageManager" class="homepage-container" style="display: none;">
-        <button id="showWaitlistButtonManager">Show Waitlist View</button>
-        <button id="showSpaceBookingButtonManager">Show Space Booking View</button>
-
-
-        <!--Space Booking Center View-->
-        <section id="spaceBookingViewManager" class="homepage-container" style="display: none;">
-            <button id="initAppButtonManager">Initialize SpaceBookingCenter</button>
-            <div class="space-booking-center-container-man">
-                <div class="sidebar-man"></div>
-                <div class="dynamic-content">
-                    <div class="reservation-buttons-man"></div>
-                    <div class="reservation-list-man"></div>
-                </div>
-                <div class="space-booking-center-container-man">
-                    <div class="company-info-man">
-                        <div id="companies-man">
-                            <h2>Companies</h2>
-                            <ul id="companiesList-man"></ul>
-                        </div>
-                        <div id="floorPlans-man">
-                            <h2>Floor Plans</h2>
-                            <div id="floorPlansContent-man"></div>
-                        </div>
-                    </div>
-                    <div class="space-form-container-man" id="space-form-container-man"></div>
-                </div>
-            </div>
-        </section>
-
-        <!--Waitlist View-->
-        <section id="waitlistViewManager" class="homepage-container" style="display: none;">
-            <button id="initWaitlistButtonManager">Initialize Waitlist</button>
-            <div class="container">
-                <div class="reservations-container content-container">
-                    <h2>Waitlisted Reservations</h2>
-                    <ul id="reservations-list-man">
-                    </ul>
-                </div>
-                <div class="reservation-details-container content-container">
-                    <h2>Reservation Details</h2>
-                    <div id="reservation-details-man">
-                    </div>
-                </div>
-            </div>
-        </section>
+        <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
+        <button type="button" onclick="waitlistAccess()">Waitlist</button>
     </section>
 
 

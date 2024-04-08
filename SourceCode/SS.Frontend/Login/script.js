@@ -72,34 +72,23 @@ function logout() {
     document.getElementById("sendOTPSection").style.display = "block";
 }
 
-// Function to toggle the display of views
-function toggleView(viewId) {
-    document.getElementById('spaceBookingViewGen').style.display = 'none';
-    document.getElementById('waitlistViewGen').style.display = 'none';
-    document.getElementById('spaceBookingViewManager').style.display = 'none';
-    document.getElementById('waitlistViewManager').style.display = 'none';
-    document.getElementById(viewId).style.display = 'block';
+function spaceBookingCenterAccess() {
+    document.getElementById('spaceBookingView').style.display = 'block';
+
+    document.getElementById('homepageGen').style.display = 'none';
+    document.getElementById('homepageManager').style.display = 'none';
+    document.getElementById('sendOTPSection').style.display = 'none';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById('failResult').style.display = 'none';
 }
+function waitlistAccess() {
+    document.getElementById('waitlistView').style.display = 'block';
 
-//1 if general, 2 if manager
-var page = 0;
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('showWaitlistButtonGen').addEventListener('click', () => {
-        toggleView('waitlistViewGen');
-        page = 1;
-    });
-    document.getElementById('showSpaceBookingButtonGen').addEventListener('click', () => {
-        toggleView('spaceBookingViewGen');
-        page = 1;
-    });
-
-    document.getElementById('showWaitlistButtonManager').addEventListener('click', () => {
-        toggleView('waitlistViewManager');
-        page = 2;
-    });
-    document.getElementById('showSpaceBookingButtonManager').addEventListener('click', () => {
-        toggleView('spaceBookingViewManager');
-        page = 2;
-    });
-});
+    document.getElementById('homepageGen').style.display = 'none';
+    document.getElementById('homepageManager').style.display = 'none';
+    document.getElementById('sendOTPSection').style.display = 'none';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById('failResult').style.display = 'none';
+}
