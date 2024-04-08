@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001; img-src 'self' data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:5275; img-src 'self' data:;">
     <link rel="stylesheet" href="style.css">
-    <link rel ="stylesheet" href ="spaceBookingCenter.css">
+    <link rel="stylesheet" href="PersonalOverviewStyle.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="script.js"></script>
+
 
 </head>
 
@@ -53,9 +54,58 @@
         <label style="color: #e33434; font-size: 18px;">Incorrect verification code. Please double-check and try again.</label>
     </section>
 
+    <section id="personalOverviewCenter" class="homepage-container" style="display: none;">
+        <h2>Welcome to SpaceSurfers!</h2>
+        <div id="calendar-container">
+            <h3 id="POC">Personal Overview Center</h3>
+            <div id="calendar-header">
+                <button id="calendar-button">Calendar</button>
+                <button id="list-button">List</button>
+            </div>
+            <div id="date-filter">
+                <label for="from-date">From:</label>
+                <input type="date" id="from-date">
+                <label for="to-date">To:</label>
+                <input type="date" id="to-date">
+            </div>
+            <button id="confirm-button">Confirm Selection</button>
+
+            <div id="calendar">
+                <div id="month-info-container">
+                    <div id="prev-month">&lt;</div>
+                    <div id="month-year"></div>
+                    <div id="next-month"">&gt;</div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sun</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div style=" border: groove; border-radius: 100px;" id="reservation-list">
+            </div>
+        </div>
+        <form id="delete-reservation-form" class="delete-form">
+            <label for="reservation-id">Enter Reservation ID to Delete:</label>
+            <input type="number" id="reservation-id" name="reservation-id-name" required>
+            <button id="delete-button">Delete Reservation</button>
+        </form>
+
+    </section>
+
     <section id="homepageGen" class="homepage-container" style="display: none;">
         <h2>Welcome to SpaceSurfers!</h2>
         <button id="initAppButton">Initialize spaceBookingCenter</button>
+        <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
         <div id="accessTokenContainer"></div>
         <div class="space-booking-center-container">
             <div class="sidebar"></div>
@@ -77,23 +127,58 @@
                 <div class="space-form-container" id="space-form-container"></div>
             </div>
         </div>
-    <div>
-        <button type="button" onclick="logout()">Logout</button>
-    </div>
-       
+        <div>
+            <button type="button" onclick="logout()">Logout</button>
+        </div>
     </section>
 
     <section id="homepageManager" class="homepage-container" style="display: none;">
         <h2>Welcome to SpaceSurfers!</h2>
         <button type="button" onclick="window.location.href='../SpaceManager/index.html'">Space Manager</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
+        <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
         <button type="button" onclick="logout()">Logout</button>
     </section>
-
 
     <footer>
         <p>Designed and Developed by the PixelPals Team</p>
     </footer>
-    <script src="spaceBookingCenter.js"></script>
+
+    <template id="reservation-details">
+        <label class="reservationID">ReservationID:</label>
+        <label id="labelReservationID" class="reservation-ID"></label>
+        <br>
+        <label class="companyName">CompanyName:</label>
+        <label id="labelCompany" class="company-Name"></label>
+        <br>
+        <label class="company-id">CompanyID:</label>
+        <label id="labelCompanyID" class="company-ID"></label>
+        <br>
+        <label class="companyAddress">Address:</label>
+        <label id="labelAddress" class="company-address"></label>
+        <br>
+        <label class="plan-id">Floor Plan ID: </label>
+        <label id="labelFloorPlanID" class="floor-plan-ID"></label>
+        <label class="space-id">-</label>
+        <label id="labelSpaceID" class="Space-ID"></label>
+        <br>
+        <label class="reservation-date">Reservation Date:</label>
+        <label id="labelReservationDate" class="reservation-date-class"></label>
+        <br>
+        <label class="reservation-start">Reservation Time:</label>
+        <label id="labelReservationTimeStart" class="reservation-time-start"></label>
+        <label class="reservation-end">-</label>
+        <label id="labelReservationTimeEnd" class="reservation-time-end"></label>
+        <br>
+        <label id="labelStatus" class="reservation-status"></label>
+        <br>
+        <br>
+        <br>
+    </template>
+
+    <script src="PersonalOverviewFunctions.js"></script>
+
 </body>
+
 </html>
+

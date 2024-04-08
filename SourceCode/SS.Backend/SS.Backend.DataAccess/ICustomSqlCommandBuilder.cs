@@ -18,8 +18,8 @@ namespace SS.Backend.DataAccess
         ICustomSqlCommandBuilder BeginDelete(string tableName);
         ICustomSqlCommandBuilder Join(string joinTable, string fromColumn, string toColumn);
         ICustomSqlCommandBuilder BeginStoredProcedure(string storedProcedureName);
+        ICustomSqlCommandBuilder OrderBy(string tableName);
         ICustomSqlCommandBuilder AddParameters(Dictionary<string, object> parameters);
-
         SqlCommand Build();
 
     }

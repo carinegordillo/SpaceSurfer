@@ -15,8 +15,8 @@ public class AuthorizationMiddleware
 
         if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
         {
-            context.Response.StatusCode = 401; // Unauthorized
-            await context.Response.WriteAsync("Unauthorized. Token is missing or invalid.");
+            context.Response.StatusCode = 401;
+            await context.Response.WriteAsync("Missing or invalid authentication credentials");//unauthenticated - dont tell them about token
             return;
         }
 
@@ -30,12 +30,12 @@ public class AuthorizationMiddleware
             var ssPrincipal = authService.ValidateToken(tokenString, expectedIssuer, expectedSubject);
             if (ssPrincipal == null)
             {
-                context.Response.StatusCode = 401; // Unauthorized
+                context.Response.StatusCode = 403; // Unauthorized
                 await context.Response.WriteAsync("Invalid token.");
                 return;
             }
             //store principal in HttpContext for retrieval
-            context.Items["SSPrincipal"] = ssPrincipal;
+            context.Items["SSPrincipal"] = ssPrincipal; // item stays here even if request is done Just make sure to clear out the items when the requets is done
 
             await _next(context);
         }
@@ -43,7 +43,12 @@ public class AuthorizationMiddleware
         {
             // Log exception or handle token validation errors
             context.Response.StatusCode = 500; // Internal server error
-            await context.Response.WriteAsync($"An error occurred during token validation. {ex.Message}");
+            await context.Response.WriteAsync($"An error occurred during authentication. {ex.Message}");
+        }
+        finally
+        {
+            //clear out the items when the request is done to ensure no leakage of information
+            context.Items.Remove("SSPrincipal");
         }
     }
 }

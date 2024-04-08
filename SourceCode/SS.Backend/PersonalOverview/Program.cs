@@ -14,10 +14,10 @@ var baseDirectory = AppContext.BaseDirectory;
 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
 var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
 
-builder.Services.AddTransient<IPersonalOverview, PersonalOverview>();
 builder.Services.AddTransient<ConfigService>(provider => new ConfigService(configFilePath));
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
+builder.Services.AddTransient<IPersonalOverview, PersonalOverview>();
 builder.Services.AddTransient<IPersonalOverviewDAO, PersonalOverviewDAO>();
 builder.Services.AddTransient<GenOTP>();
 builder.Services.AddTransient<Hashing>();
@@ -64,9 +64,6 @@ app.Use((context, next) =>
 });
 
 
-
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -76,10 +73,6 @@ if (app.Environment.IsDevelopment())
 
 }
 
-
-
-
-app.UseHttpsRedirection();
 
 app.UseMiddleware<AuthorizationMiddleware>();
 

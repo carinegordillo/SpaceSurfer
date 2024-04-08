@@ -13,19 +13,19 @@ namespace SS.Backend.Services.PersonalOverviewService
             _personalOverviewDAO = personalOverviewDAO;
         }
 
-        public async Task<IEnumerable<ReservationInformation>> GetUserReservationsAsync(string userHash, DateOnly? fromDate = null, DateOnly? toDate = null)
+        public async Task<IEnumerable<ReservationInformation>> GetUserReservationsAsync(string username, DateOnly? fromDate = null, DateOnly? toDate = null)
         {
-            List<ReservationInformation> reservationInfo = new List<ReservationInformation>();
+            List<ReservationInformation> reservationList = new List<ReservationInformation>();
             Response result = new Response();
             try
             {
-                result = await _personalOverviewDAO.GetReservationList(userHash, fromDate, toDate);
+                result = await _personalOverviewDAO.GetReservationList(username, fromDate, toDate);
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage += $"Encountered an error retrieving the reservation information:{ex.Message}";
-                return reservationInfo;
+                return reservationList;
             }
 
 
@@ -33,16 +33,23 @@ namespace SS.Backend.Services.PersonalOverviewService
             {
                 foreach (DataRow row in result.ValuesRead.Rows)
                 {
+                    var reservationDate = ((DateTime)row["reservationDate"]).Date;
+
                     var reservation = new ReservationInformation
                     {
-                        CompanyName = Convert.ToString(row["companyName"]).Trim(),
-                        SpaceID = Convert.ToInt32(row["spaceID"]),
-                        ReservationDate = new DateOnly(((DateTime)row["reservationDate"]).Year, ((DateTime)row["reservationDate"]).Month, ((DateTime)row["reservationDate"]).Day),
-                        ReservationStartTime = Convert.ToInt32(row["reservationStartTime"]),
-                        ReservationEndTime = Convert.ToInt32(row["reservationEndTime"]),
-                        status = Convert.ToString(row["status"]).Trim(),
-                        userHash = Convert.ToString(row["userHash"]).Trim()
+                        ReservationID = Convert.ToInt32(row["reservationID"]),
+                        CompanyName = row["companyName"].ToString(),
+                        CompanyID = Convert.ToInt32(row["companyID"]),
+                        Address = row["address"].ToString(),
+                        FloorPlanID = Convert.ToInt32(row["floorPlanID"]),
+                        SpaceID = row["spaceID"].ToString(),
+                        ReservationDate = DateOnly.FromDateTime(reservationDate),
+                        ReservationStartTime = ((TimeSpan)row["startTime"]),
+                        ReservationEndTime = ((TimeSpan)row["endTime"]),
+                        Status = row["status"].ToString()
                     };
+
+                    reservationList.Add(reservation);
                 }
             }
             else
@@ -51,7 +58,25 @@ namespace SS.Backend.Services.PersonalOverviewService
                 result.ErrorMessage += $"No data found.";
             }
 
-            return reservationInfo;
+            return reservationList;
+        }
+
+        public async Task<Response> DeleteUserReservationsAsync(string username, int reservationID)
+        {
+
+            Response response = new Response();
+            try
+            {
+                response = await _personalOverviewDAO.DeleteReservation(username, reservationID);
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage += $"Encountered an error deleting the reservation:{ex.Message}";
+                return response;
+            }
+
+            return response;
         }
     }
 }

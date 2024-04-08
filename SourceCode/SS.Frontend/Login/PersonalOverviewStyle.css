@@ -1,4 +1,21 @@
-﻿#calendar-container {
+﻿#reservation-details {
+    font-family: Arial, sans-serif;
+}
+
+.companyName, .companyAddress, .company-id, .plan-id, .space-id, .reservation-date, .reservation-start, .reservation-end {
+    font-weight: bold !important;
+    color: #000000 !important;
+}
+
+.company-Name, .company-ID, .company-address, .floor-plan-ID, .Space-ID, .reservation-date-class, .reservation-time-start, .reservation-time-end {
+    color: #0094ff !important;
+}
+
+.reservation-status {
+    color: #ff0000 !important;
+}
+
+#calendar-container {
     text-align: center;
     background: linear-gradient(to bottom, white, dimgray);
     padding: 20px;
@@ -64,25 +81,36 @@
 }
 
 table {
-    width: 900px;
-    margin-top: 20px;
+    width: 100%; /* Set the table width to 100% */
+    margin: 0 auto; /* Center the table horizontally */
 }
 
-th, td {
-    position: relative;
-    padding: 10px;
+th{
+    padding: 3px;
     border: 1px solid #ddd;
     height: 50px;
+    text-align: center; /* Center the content of table cells */
 }
 
-th {
-    background-color: #f2f2f2;
+td {
+    padding: 3px;
+    border: 1px solid #ddd;
+    height: 50px;
+    text-align: center;
+    position:relative;
 }
 
 .day-number {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 0;
+    right: 0;
+    font-size: 12px;
+    color: #000000;
+}
+
+
+th {
+    background-color: #9869c8;
 }
 
 .reservation-details {
@@ -96,7 +124,7 @@ th {
 }
 
 .current-date {
-    background-color: yellow;
+    background-color: darkgreen;
 }
 
 /* Style for scrollable list */
@@ -114,3 +142,27 @@ th {
     padding: 10px; /* Add padding inside each reservation item */
     margin-bottom: 10px; /* Add margin between each reservation item */
 }
+
+.delete-form {
+    margin-top: 20px;
+    text-align: center; /* Center align the form */
+    align-content:center;
+    align-items:center;
+}
+
+    .delete-form label {
+        font-size: 16px;
+    }
+
+    .delete-form input[type="number"] {
+
+        text-align: center;
+        width:120px;
+    }
+
+    .delete-form button {
+        font-size: 14px;
+        padding: 8px 15px;
+        width:120px; 
+    }
+

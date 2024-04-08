@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using SS.Backend.Security;
 using SS.Backend.Services.PersonalOverviewService;
-
 using System.Text.Json;
+
 
 namespace PersonalOverviewAPI.Controllers
 {
@@ -21,9 +21,8 @@ namespace PersonalOverviewAPI.Controllers
             _config = config;
         }
 
-
-        [HttpGet("reservations/{userHash}")]
-        public async Task<IActionResult> GetUserReservations(string userHash, [FromQuery] DateOnly? fromDate = null, [FromQuery] DateOnly? toDate = null)
+        [HttpGet("Reservations")]
+        public async Task<IActionResult> GetUserReservations([FromQuery(Name = "fromDate")] DateOnly? fromDate = null, [FromQuery(Name = "toDate")] DateOnly? toDate = null)
         {
             string? accessToken = HttpContext.Request.Headers["Authorization"];
             if (accessToken != null && accessToken.StartsWith("Bearer "))
@@ -35,36 +34,28 @@ namespace PersonalOverviewAPI.Controllers
                 {
                     var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
 
-                    if (claims.TryGetValue("Role", out var role) && role == "1" || role == "2" || role == "3" || role == "4" || role == "5")
+                    if (claims.TryGetValue("Role", out var role) && (role == "1" || role == "2" || role == "3" || role == "4" || role == "5"))
                     {
-                        bool closeToExpTime = _authService.CheckExpTime(accessToken);
-                        if (closeToExpTime)
+                        try
                         {
-                            SSPrincipal principal = new SSPrincipal();
-                            principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
-                            principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
-                            var newToken = _authService.CreateJwt(Request, principal);
-                            try
+                            var user = _authService.ExtractSubjectFromToken(accessToken);
+                            var reservations = await _personalOverviewService.GetUserReservationsAsync(user, fromDate, toDate);
+                            if (_authService.CheckExpTime(accessToken))
                             {
-                                var reservations = await _personalOverviewService.GetUserReservationsAsync(userHash, fromDate, toDate);
-                                return Ok(reservations);
+                                SSPrincipal principal = new SSPrincipal();
+                                principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                                principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                                var newToken = _authService.CreateJwt(Request, principal);
+                                return Ok(new { reservations, newToken });
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                return StatusCode(500, $"An error occurred while fetching user reservations: {ex.Message}");
+                                return Ok(reservations);
                             }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            try
-                            {
-                                var reservations = await _personalOverviewService.GetUserReservationsAsync(userHash, fromDate, toDate);
-                                return Ok(reservations);
-                            }
-                            catch (Exception ex)
-                            {
-                                return StatusCode(500, $"An error occurred while fetching user reservations: {ex.Message}");
-                            }
+                            return StatusCode(500, $"An error occurred while fetching user reservations: {ex.Message}");
                         }
                     }
                     else
@@ -81,9 +72,61 @@ namespace PersonalOverviewAPI.Controllers
             {
                 return BadRequest("Unauthorized. Access token is missing or invalid.");
             }
-
-
         }
 
+        [HttpPost("ReservationDeletion")]
+        public async Task<IActionResult> DeleteReservations([FromQuery(Name = "reservationID")] int reservationID)
+        {
+            string? accessToken = HttpContext.Request.Headers["Authorization"];
+            if (accessToken != null && accessToken.StartsWith("Bearer "))
+            {
+                accessToken = accessToken.Substring("Bearer ".Length).Trim();
+                var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+
+                if (claimsJson != null)
+                {
+                    var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+
+                    if (claims.TryGetValue("Role", out var role) && (role == "1" || role == "2" || role == "3" || role == "4" || role == "5"))
+                    {
+                        try
+                        {
+                            var user = _authService.ExtractSubjectFromToken(accessToken);
+                            var deleteReservation = await _personalOverviewService.DeleteUserReservationsAsync(user, reservationID);
+                            if (_authService.CheckExpTime(accessToken))
+                            {
+                                SSPrincipal principal = new SSPrincipal();
+                                principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                                principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                                var newToken = _authService.CreateJwt(Request, principal);
+                                return Ok(new { deleteReservation, newToken });
+                            }
+                            else
+                            {
+                                return Ok(deleteReservation);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, $"An error occurred while fetching user reservations: {ex.Message}");
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest("Unauthorized role.");
+                    }
+                }
+                else
+                {
+                    return BadRequest("Invalid token.");
+                }
+            }
+            else
+            {
+                return BadRequest("Unauthorized. Access token is missing or invalid.");
+            }
+        }
+
+
     }
-}
+};

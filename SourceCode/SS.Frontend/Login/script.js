@@ -95,3 +95,17 @@ function waitlistAccess() {
         }
     });
 }
+
+function personalOverviewAccess() {
+    // Show the personalOverviewCenter section
+    document.getElementById('personalOverviewCenter').style.display = 'block';
+
+    // Hide other sections if needed
+    document.getElementById('homepageGen').style.display = 'none';
+    document.getElementById('homepageManager').style.display = 'none';
+    document.getElementById('sendOTPSection').style.display = 'none';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById('failResult').style.display = 'none';
+
+}
