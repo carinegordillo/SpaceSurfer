@@ -13,12 +13,18 @@ namespace SS.Backend.Waitlist
     public class WaitlistService
     {
         private readonly SqlDAO _sqldao;
+        private readonly Logger log;
 
-        public WaitlistService(SqlDAO sqldao)
+        public WaitlistService(SqlDAO sqldao, Logger log)
         {
             _sqldao = sqldao;
+            this.log = log;
         }
 
+        /// <summary>
+        /// This method sends a confirmation email to the user after they have joined the waitlist
+        /// </summary>
+        /// <param name="info">Contains information pertaining to the waitlisted reservation</param>
         public async Task SendConfirmationEmail(WaitlistEntry info)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -74,13 +80,32 @@ namespace SS.Backend.Waitlist
 
                 try
                 {
+                    // Send email
                     await MailSender.SendEmail(targetEmail, subject, msg);
                     result.HasError = false;
+                    LogEntry entry = new()
+                    {
+                        timestamp = DateTime.UtcNow,
+                        level = "Info",
+                        username = info.userHash,
+                        category = "Business",
+                        description = "Sent waitlist confirmation email to user."
+                    };
+                    await log.SaveData(entry);
                 }
                 catch (Exception ex)
                 {
                     result.HasError = true;
                     result.ErrorMessage = ex.Message;
+                    LogEntry entry = new()
+                    {
+                        timestamp = DateTime.UtcNow,
+                        level = "Error",
+                        username = info.userHash,
+                        category = "Business",
+                        description = "Failed to send waitlist confirmation email to user."
+                    };
+                    await log.SaveData(entry);
                 }
             }
             catch (Exception ex)
@@ -88,19 +113,22 @@ namespace SS.Backend.Waitlist
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
                 throw;
+                LogEntry entry = new()
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = info.userHash,
+                    category = "Business",
+                    description = "Failed to send waitlist confirmation email to user."
+                };
+                await log.SaveData(entry);
             }
         }
 
-        public async Task PrintWaitlistInfo(WaitlistEntry info)
-        {
-            Console.WriteLine(info.userHash);
-            Console.WriteLine(info.spaceID);
-            Console.WriteLine(info.companyName);
-            Console.WriteLine(info.startTime);
-            Console.WriteLine(info.endTime);
-            Console.WriteLine(info.position);
-        }
-
+        /// <summary>
+        /// This method sends an email to the next user on the waitlist after the spot opens up
+        /// </summary>
+        /// <param name="info">Contains information pertaining to the waitlist and reservation</param>
         public async Task SendNotificationEmail(WaitlistEntry info)
         {
             CustomSqlCommandBuilder builder = new CustomSqlCommandBuilder();
@@ -117,7 +145,6 @@ namespace SS.Backend.Waitlist
                 result = await _sqldao.ReadSqlResult(getEmail);
                 string? email = result.ValuesRead?.Rows[0]?["username"].ToString();
                 Console.WriteLine(email);
-                //string? email = result.ValuesRead?.Rows.Count > 0 ? result.ValuesRead.Rows[0]?["username"].ToString() : null;
 
                 // Get first name from DB
                 var getName = builder
@@ -127,7 +154,6 @@ namespace SS.Backend.Waitlist
                     .Build();
                 result = await _sqldao.ReadSqlResult(getName);
                 string? name = result.ValuesRead?.Rows[0]?["firstName"].ToString();
-                //string? name = result.ValuesRead?.Rows.Count > 0 ? result.ValuesRead.Rows[0]?["firstName"].ToString() : null;
 
                 string start = info.startTime.ToString("h:mm tt");
                 string end = info.endTime.ToString("h:mm tt");
@@ -157,30 +183,56 @@ namespace SS.Backend.Waitlist
 
                 try
                 {
+                    // Send email
                     await MailSender.SendEmail(targetEmail, subject, msg);
                     result.HasError = false;
-                    result.ErrorMessage += "Sent Email.";
-                    Console.WriteLine(result.ErrorMessage);
+                    LogEntry entry = new()
+                    {
+                        timestamp = DateTime.UtcNow,
+                        level = "Info",
+                        username = info.userHash,
+                        category = "Business",
+                        description = "Sent waitlist notification email to user."
+                    };
+                    await log.SaveData(entry);
                 }
                 catch (Exception ex)
                 {
                     result.HasError = true;
                     result.ErrorMessage = ex.Message;
-                    Console.WriteLine("You're at 148 catch");
-                    Console.WriteLine(result.ErrorMessage);
+                    LogEntry entry = new()
+                    {
+                        timestamp = DateTime.UtcNow,
+                        level = "Info",
+                        username = info.userHash,
+                        category = "Business",
+                        description = "Failed to send waitlist notification email to user."
+                    };
+                    await log.SaveData(entry);
                 }
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                Console.WriteLine("An error occurred while sending the notification email:");
-                Console.WriteLine(result.ErrorMessage);
+                LogEntry entry = new()
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Info",
+                    username = info.userHash,
+                    category = "Business",
+                    description = "Failed to send waitlist notification email to user."
+                };
+                await log.SaveData(entry);
             }
 
         }
 
-        // method to insert approved user into waitlist as #0 (called when reservation is made)
+        /// <summary>
+        /// This method is used when a reservation is made successfully. It adds the user to the waitlist table as position 0 for that reservation id
+        /// </summary>
+        /// <param name="userHash">hashed username</param>
+        /// <param name="resId">reservation id</param>
         public async Task InsertApprovedUser(string userHash, int resId)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -201,15 +253,38 @@ namespace SS.Backend.Waitlist
                     .AddParameters(parameters)
                     .Build();
                 result = await _sqldao.SqlRowsAffected(insertCmd);
+                LogEntry entry = new()
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Info",
+                    username = userHash,
+                    category = "Data Store",
+                    description = "Successfully inserted approved user to the waitlist."
+                };
+                await log.SaveData(entry);
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
+                LogEntry entry = new()
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = userHash,
+                    category = "Data Store",
+                    description = "Failed to insert approved user to the waitlist."
+                };
+                await log.SaveData(entry);
                 throw;
             }
         }
 
+        /// <summary>
+        /// This method gets the size of the waitlist for that reservation id
+        /// </summary>
+        /// <param name="resId">reservation id</param>
+        /// <returns>The size of the waitlist for that reservation id</returns>
         public async Task<int> GetWaitlistSize(int resId)
         {
             CustomSqlCommandBuilder builder = new CustomSqlCommandBuilder();
@@ -232,7 +307,12 @@ namespace SS.Backend.Waitlist
             }
         }
 
-        // method to check user's position on a waitlist
+        /// <summary>
+        /// This method gets the position of a user on a waitlist for a specific reservation id
+        /// </summary>
+        /// <param name="userHash">hashed username</param>
+        /// <param name="resId">reservation id</param>
+        /// <returns>Returns the position</returns>
         public async Task<int> GetWaitlistPosition(string userHash, int resId)
         {
             CustomSqlCommandBuilder builder = new CustomSqlCommandBuilder();
@@ -262,6 +342,12 @@ namespace SS.Backend.Waitlist
             }
         }
 
+        /// <summary>
+        /// This method checks to see if a certain user is on the waitlist for a reservation id
+        /// </summary>
+        /// <param name="user">hashed username</param>
+        /// <param name="resId">reservation id</param>
+        /// <returns>True if they are, False if they are not on the waitlist for that reservation id</returns>
         public async Task<bool> IsUserOnWaitlist(string user, int resId)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -280,7 +366,12 @@ namespace SS.Backend.Waitlist
             }
         }
 
-        // method to insert waitlisted user into waitlist as #1 and up (called when joining waitlist)
+        /// <summary>
+        /// This method inserts a user who isn't approved for the rservation into the waitlist
+        /// </summary>
+        /// <param name="resTable">Reservation table name</param>
+        /// <param name="userHash">hashed username</param>
+        /// <param name="resId">reservation id</param>
         public async Task InsertWaitlistedUser(string resTable, string userHash, int resId)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -302,22 +393,28 @@ namespace SS.Backend.Waitlist
                     .AddParameters(parameters)
                     .Build();
                 result = await _sqldao.SqlRowsAffected(insertCmd);
+                LogEntry entry = new()
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Info",
+                    username = userHash,
+                    category = "Data Store",
+                    description = "Successfully inserted waitlisted user to the waitlist."
+                };
+                await log.SaveData(entry);
 
                 // spaceID
                 var getSpaceId = builder.getSid(resTable, resId).Build();
                 result = await _sqldao.ReadSqlResult(getSpaceId);
                 var spaceId = result.ValuesRead?.Rows[0]?["spaceID"].ToString();
-                Console.WriteLine("WaitlistService insertwaitlisted spaceID: " + spaceId);
 
                 // companyName
                 var getCompId = builder.GetCompId(resTable, resId).Build();
                 result = await _sqldao.ReadSqlResult(getCompId);
-                int compId = Convert.ToInt32(result.ValuesRead?.Rows[0]?["companyID"].ToString());
-                Console.WriteLine("WaitlistService insertwaitlisted compId: " + compId);
+                int compId = Convert.ToInt32(result.ValuesRead?.Rows[0]?["companyID"].ToString());=
                 var getCompName = builder.GetCompName(compId).Build();
                 result = await _sqldao.ReadSqlResult(getCompName);
                 string companyName = result.ValuesRead?.Rows[0]?["companyName"].ToString();
-                Console.WriteLine("WaitlistService insertwaitlisted compName: " + companyName);
                 // startTime
                 var getStart = builder
                     .BeginSelectAll()
@@ -330,7 +427,6 @@ namespace SS.Backend.Waitlist
                     .Build();
                 result = await _sqldao.ReadSqlResult(getStart);
                 DateTime startTime = Convert.ToDateTime(result.ValuesRead?.Rows[0]?["reservationStartTime"]);
-                Console.WriteLine("WaitlistService insertwaitlisted stime: " + startTime);
                 // endTime
                 var getEnd = builder
                     .BeginSelectAll()
@@ -343,7 +439,7 @@ namespace SS.Backend.Waitlist
                     .Build();
                 result = await _sqldao.ReadSqlResult(getEnd);
                 DateTime endTime = Convert.ToDateTime(result.ValuesRead?.Rows[0]?["reservationEndTime"]);
-                Console.WriteLine("WaitlistService insertwaitlisted etime: " + endTime);
+
                 // Populate WaitlistEntry with info needed for confirmation email
                 WaitlistEntry entry = new WaitlistEntry
                 {
@@ -354,26 +450,31 @@ namespace SS.Backend.Waitlist
                     endTime = endTime,
                     position = pos
                 };
-
-                Console.WriteLine("POPULATING WAITLIST ENTRY");
-                Console.WriteLine(entry.userHash);
-                Console.WriteLine(entry.spaceID);
-                Console.WriteLine(entry.companyName);
-                Console.WriteLine(entry.startTime);
-                Console.WriteLine(entry.endTime);
-                Console.WriteLine(entry.position);
                 await SendConfirmationEmail(entry);
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
+                LogEntry entry = new()
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = userHash,
+                    category = "Data Store",
+                    description = "Failed to insert waitlisted user to the waitlist."
+                };
+                await log.SaveData(entry);
                 throw;
             }
 
         }
 
-        // method to update user positions on waitlist (called when user who had reservation cancels)
+        /// <summary>
+        /// This method removes the approved user from their waitlist and updates the positions for the rest of the users
+        /// </summary>
+        /// <param name="resTable">Reservation table name</param>
+        /// <param name="resId">reservation id</param>
         public async Task UpdateWaitlist_ApprovedUserLeft(string resTable, int resId)
         {
             Response result = new Response();
@@ -401,6 +502,15 @@ namespace SS.Backend.Waitlist
                     })
                     .Build();
                 result = await _sqldao.SqlRowsAffected(deleteUserCmd);
+                LogEntry entry = new()
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Info",
+                    username = user,
+                    category = "Data Store",
+                    description = "Successfully removed approved user from the waitlist."
+                };
+                await log.SaveData(entry);
 
                 // Retrieve all users on the waitlist for the reservation
                 var getUsersCmd = builder.GetAllWaitlist(resId).Build();
@@ -418,6 +528,15 @@ namespace SS.Backend.Waitlist
                             var updateCmd = builder.UpdatePosition(resId, user, newPosition).Build();
                             await _sqldao.SqlRowsAffected(updateCmd);
                         }
+                        LogEntry entry = new()
+                        {
+                            timestamp = DateTime.UtcNow,
+                            level = "Info",
+                            username = user,
+                            category = "Data Store",
+                            description = "Successfully updated waitlist after approved user removed."
+                        };
+                        await log.SaveData(entry);
                     }
                 }
                 else
@@ -488,13 +607,17 @@ namespace SS.Backend.Waitlist
             }
             catch (Exception ex)
             {
-                Console.WriteLine("You're at 481 catch.");
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
                 throw;
             }
         }
 
+        /// <summary>
+        /// This method removes a user at a certain reservation and position on a waitlist
+        /// </summary>
+        /// <param name="resId">reservation id</param>
+        /// <param name="leavePos">current position of the user leaving</param>
         public async Task DeleteUser(int resId, int leavePos)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -514,6 +637,11 @@ namespace SS.Backend.Waitlist
 
         }
 
+        /// <summary>
+        /// This method gets all of the rows in the waitlist table for a certain reservation id
+        /// </summary>
+        /// <param name="resId">reservation id</param>
+        /// <returns>Response object</returns>
         public async Task<Response> SelectAll(int resId)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -533,7 +661,11 @@ namespace SS.Backend.Waitlist
         }
 
 
-        // user unapproved for reservation leaves waitlist
+        /// <summary>
+        /// This method removes the user leaving the waitlist (unapproved for the reservation) and updates the position of the rest of the users
+        /// </summary>
+        /// <param name="resId">reservation id</param>
+        /// <param name="leavePos">position of user leaving the waitlist</param>
         public async Task UpdateWaitlist_WaitlistedUserLeft(int resId, int leavePos)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -569,7 +701,12 @@ namespace SS.Backend.Waitlist
             }
         }
 
-
+        /// <summary>
+        /// This method removes the user leaving the waitlist (unapproved for the reservation) and updates the position of the rest of the users
+        /// </summary>
+        /// <param name="resTable">reservation table name</param>
+        /// <param name="userHash">hashed username</param>
+        /// <returns>a list of waitlist entries containing information on all the waitlists that a certain user is currently on</returns>
         public async Task<List<WaitlistEntry>> GetUserWaitlists(string resTable, string userHash)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -631,6 +768,11 @@ namespace SS.Backend.Waitlist
             return waitlists;
         }
 
+        /// <summary>
+        /// This method gets the company name
+        /// </summary>
+        /// <param name="cid">company id</param>
+        /// <returns>the company name based on the company id</returns>
         public async Task<string> GetCompanyName(int cid)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -653,7 +795,13 @@ namespace SS.Backend.Waitlist
             return compName;
         }
 
-
+        /// <summary>
+        /// This method gets the rervation details for a waitlist entry
+        /// </summary>
+        /// <param name="resTable">reservation table name</param>
+        /// <param name="userHash">hashed username</param>
+        /// <param name="reservationId">reservation id</param>
+        /// <returns>Waitlist entry containing reservation details</returns>
         public async Task<WaitlistEntry> GetReservationDetails(string resTable, string userHash, int reservationId)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -717,6 +865,11 @@ namespace SS.Backend.Waitlist
             }
         }
 
+        /// <summary>
+        /// This method gets the company id given the name
+        /// </summary>
+        /// <param name="compName">company name</param>
+        /// <returns>returns the company id</returns>
         public async Task<int> GetCompanyId(string compName)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -730,6 +883,12 @@ namespace SS.Backend.Waitlist
             return cid;
         }
 
+        /// <summary>
+        /// This method gets the floor id given the company id
+        /// </summary>
+        /// <param name="tableName">reservation table name</param>
+        /// <param name="compId">company id</param>
+        /// <returns>floor id</returns>
         public async Task<int> GetFloorID(string tableName, int compId)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -743,6 +902,12 @@ namespace SS.Backend.Waitlist
             return fid;
         }
 
+        /// <summary>
+        /// This method gets the floor plan image
+        /// </summary>
+        /// <param name="compId">company id</param>
+        /// <param name="floorId">floor id</param>
+        /// <returns>the company floor image</returns>
         public async Task<IEnumerable<CompanyFloorStrImage>> GetCompanyFloorsAsync(int compId, int floorId)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -787,6 +952,16 @@ namespace SS.Backend.Waitlist
             return floors.Values;
         }
 
+        /// <summary>
+        /// This method gets the reservation id
+        /// </summary>
+        /// <param name="tableName">reservation table name</param>
+        /// <param name="compID">company id</param>
+        /// <param name="floorID">floor id</param>
+        /// <param name="spaceID">space id</param>
+        /// <param name="sTime">reservation start time</param>
+        /// <param name="eTime">reservation end time</param>
+        /// <returns>the reservation id</returns>
         public async Task<int> GetReservationID(string tableName, int compID, int floorID, string spaceID, DateTime sTime, DateTime eTime)
         {
             var builder = new CustomSqlCommandBuilder();
@@ -812,7 +987,15 @@ namespace SS.Backend.Waitlist
             }
         }
 
-
+        /// <summary>
+        /// This method gets the reservation id
+        /// </summary>
+        /// <param name="resTable">reservation table name</param>
+        /// <param name="compName">company name</param>
+        /// <param name="spaceID">space id</param>
+        /// <param name="sTime">reservation start time</param>
+        /// <param name="eTime">reservation end time</param>
+        /// <returns>the reservation id</returns>
         public async Task<int> GetReservationID_NoFloor(string resTable, string compName, string spaceID, DateTime sTime, DateTime eTime)
         {
             var builder = new CustomSqlCommandBuilder();
