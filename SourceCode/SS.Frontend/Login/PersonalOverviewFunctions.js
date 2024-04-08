@@ -9,7 +9,7 @@ document.getElementById('next-month').addEventListener('click', () => changeMont
 document.getElementById('calendar-button').addEventListener('click', selectCalendar);
 document.getElementById('list-button').addEventListener('click', selectReservationList);
 document.getElementById('confirm-button').addEventListener('click', confirmSelection);
-document.getElementById('delete-button').addEventListener('click', fetchReservationDeletion);
+document.getElementById('delete-button').addEventListener('click', fetchReservationDeletion());
 
 // Function to fetch user reservations from the API
 async function fetchUserReservations(fromDateValue, toDateValue) {
@@ -56,37 +56,68 @@ async function fetchUserReservations(fromDateValue, toDateValue) {
     }
 }
 
-async function fetchReservationDeletion(reservationID) {
+async function fetchReservationDeletion() {
     var accessToken = sessionStorage.getItem('accessToken');
+    var idToken = sessionStorage.getItem('idToken');
+    var parsedIdToken = JSON.parse(idToken);
+    var username = parsedIdToken.Username;
+    var reservationID = document.getElementById('reservation-id').value;
+
+    if (!idToken) {
+        console.error('ID token not found.');
+        return;
+    }
+
+    if (!username) {
+        console.error('Username not found in token.');
+        return;
+    }
 
     if (!accessToken) {
         console.error('Access token not found.');
         return;
     }
 
-    const url = 'http://localhost:5275/api/v1/PersonalOverview/ReservationDeletion';
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify(reservationID)
-    };
+    const url = `http://localhost:5275/api/v1/PersonalOverview/ReservationDeletion`;
 
     try {
-        const response = await fetch(url, requestOptions);
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ` + accessToken,
+                'Content-Type': "application/json",
+            },
+            body: JSON.stringify({
+                reservationID: reservationID
+            })
+        });
 
         if (!response.ok) {
-            throw new Error(`Error deleting reservation: ${response.statusText}`);
+            throw new Error(`Error deleting reservations: ${response.status}`);
         }
 
-        return await response.json();
-    } catch (error) {
-        console.error('Error deleting reservation:', error);
-        throw error;
+        const data = await response.json();
+        return data;
     }
+    catch (error) {
+        throw new Error(`Error deleting reservations: ${error.message}`);
+    }
+
 }
+
+//async function deleteReservation() {
+//    var reservationIDValue = document.getElementById('reservation-id').value;
+
+//    try
+//    {
+//        reservationDelete = await fetchReservationDeletion(reservationIDValue);
+//    }
+//    catch(error)
+//    {
+//        console.error(error.message);
+//    }
+
+//}
 
     // Function to apply date filter and fetch reservations
 async function applyDateFilter() {
@@ -255,7 +286,7 @@ function createCalendar(year, month) {
                     reservationDetails.className = 'reservation-details';
 
                     const reservationElement = document.createElement('div');
-                    reservationElementt.className = 'reservationID';
+                    reservationElement.className = 'reservationID';
                     companyElement.textContent = `ReservationID: ${reservation.reservationID}`;
                     reservationDetails.appendChild(reservationElement);
 

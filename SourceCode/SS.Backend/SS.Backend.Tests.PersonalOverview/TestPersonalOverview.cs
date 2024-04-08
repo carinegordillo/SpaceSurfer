@@ -5,7 +5,7 @@ using SS.Backend.SharedNamespace;
 namespace SS.Backend.Tests.PersonalOverviewService
 {
     [TestClass]
-    public class ReadingReservations
+    public class TestPersonalOverview
     {
         private Response response;
         private CustomSqlCommandBuilder commandBuilder;
@@ -111,6 +111,7 @@ namespace SS.Backend.Tests.PersonalOverviewService
 
                 // Check if the result is not null before unboxing
 
+                reservationID = Convert.ToInt32(result.ValuesRead?.Rows[0]?["reservationID"]);
 
 
             }
