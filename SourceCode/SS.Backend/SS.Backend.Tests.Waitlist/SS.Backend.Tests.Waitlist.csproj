@@ -15,11 +15,14 @@
     <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
     <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
   </ItemGroup>
-
+	
 	<ItemGroup>
 		<ProjectReference Include="..\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj" />
 		<ProjectReference Include="..\SS.Backend.Services\SS.Backend.Services.csproj" />
+		<ProjectReference Include="..\SS.Backend.Waitlist\SS.Backend.Waitlist.csproj" />
 		<ProjectReference Include="..\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
+		<ProjectReference Include="..\SS.Backend.ReservationManagement\SS.Backend.ReservationManagement.csproj" />
+		<ProjectReference Include="..\SS.Backend.ReservationManagers\SS.Backend.ReservationManagers.csproj" />
 	</ItemGroup>
 
   <ItemGroup>

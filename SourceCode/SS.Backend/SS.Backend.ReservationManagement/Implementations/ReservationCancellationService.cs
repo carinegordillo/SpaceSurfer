@@ -48,7 +48,7 @@ public class ReservationCancellationService : IReservationCancellationService
                 response.ErrorMessage += $"- CancelReservationAsync - command successful {response.ErrorMessage} -";
                 response.HasError = false;
 
-                await _waitlist.UpdateWaitlist_ApprovedUserLeft(reservationID);
+                await _waitlist.UpdateWaitlist_ApprovedUserLeft(tableName, reservationID);
             }
             else
             {

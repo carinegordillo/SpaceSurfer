@@ -63,7 +63,7 @@ namespace SS.Backend.ReservationManagement{
                 string spaceid = userReservationsModel.SpaceID;
                 DateTime start = userReservationsModel.ReservationStartTime;
                 DateTime end = userReservationsModel.ReservationEndTime;
-                int resId = await _waitlist.GetReservationID(compid, floorid, spaceid, start, end);
+                int resId = await _waitlist.GetReservationID(tableName, compid, floorid, spaceid, start, end);
                 await _waitlist.InsertApprovedUser(userReservationsModel.UserHash, resId);
                 if (response.HasError == false)
                 {

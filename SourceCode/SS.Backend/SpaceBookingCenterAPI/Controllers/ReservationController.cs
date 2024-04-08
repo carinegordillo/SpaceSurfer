@@ -261,7 +261,8 @@ public class ReservationController : ControllerBase
                         var newToken = _authService.CreateJwt(Request, principal);
                         try
                         {
-                            var response = await _reservationCreationManager.AddToWaitlist(reservation);
+                            string tableName = "reservations";
+                            var response = await _reservationCreationManager.AddToWaitlist(tableName, reservation);
                             return Ok(new { response, newToken });
                         }
                         catch (Exception ex)
@@ -273,9 +274,9 @@ public class ReservationController : ControllerBase
                     {
                         try
                         {
-                            var response = await _reservationCreationManager.AddToWaitlist(reservation);
-                            Console.WriteLine("ReservationController addToWaitlist: " + response.HasError);
-                            Console.WriteLine("ReservationController addToWaitlist: " + response.ErrorMessage);
+
+                            string tableName = "reservations";
+                            var response = await _reservationCreationManager.AddToWaitlist(tableName, reservation);
                             return Ok(response);
                         }
                         catch (Exception ex)

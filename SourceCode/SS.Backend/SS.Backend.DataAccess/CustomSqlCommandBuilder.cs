@@ -131,6 +131,13 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
     }
 
     // Waitlist Custom Queries
+    public ICustomSqlCommandBuilder getSid(string tableName, int rid)
+    {
+        ResetBuilder();
+        _commandText.Append($"SELECT* FROM {tableName} WHERE reservationID = @rid");
+        _command.Parameters.AddWithValue("@rid", rid);
+        return this;
+    }
 
     public ICustomSqlCommandBuilder getCid(string compName)
     {
@@ -149,10 +156,10 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
-    public ICustomSqlCommandBuilder getFid(int compId)
+    public ICustomSqlCommandBuilder getFid(string tableName, int compId)
     {
         ResetBuilder();
-        _commandText.Append("SELECT * FROM reservations WHERE companyID = @cid");
+        _commandText.Append($"SELECT * FROM {tableName} WHERE companyID = @cid");
         _command.Parameters.AddWithValue("@cid", compId);
         return this;
     }
@@ -193,10 +200,10 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
-    public ICustomSqlCommandBuilder GetCompId(int resId)
+    public ICustomSqlCommandBuilder GetCompId(string tableName, int resId)
     {
         ResetBuilder();
-        _commandText.Append("SELECT * FROM reservations WHERE reservationID = @id");
+        _commandText.Append($"SELECT * FROM {tableName} WHERE reservationID = @id");
         _command.Parameters.AddWithValue("@id", resId);
         return this;
     }
@@ -209,30 +216,22 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
-    public ICustomSqlCommandBuilder WaitlistCleanup(string user)
-    {
-        ResetBuilder();
-        _commandText.Append("DELETE FROM Waitlist WHERE Username = @user");
-        _command.Parameters.AddWithValue("@user", user);
-        return this;
-    }
+    //public ICustomSqlCommandBuilder getResIDWithConflict(string tableName, int cid, int fid, string sid, DateTime s, DateTime e)
+    //{
+    //    ResetBuilder();
+    //    _commandText.Append($"SELECT * FROM {tableName} WHERE companyID = @cid AND floorPlanID = @fid AND spaceID = @sid AND ((reservationStartTime <= @s AND reservationEndTime >= @s) OR (reservationStartTime <= @e AND reservationEndTime >= @e))");
+    //    _command.Parameters.AddWithValue("@cid", cid);
+    //    _command.Parameters.AddWithValue("@fid", fid);
+    //    _command.Parameters.AddWithValue("@sid", sid);
+    //    _command.Parameters.AddWithValue("@s", s);
+    //    _command.Parameters.AddWithValue("@e", e);
+    //    return this;
+    //}
 
-    public ICustomSqlCommandBuilder getResIDWithConflict(int cid, int fid, string sid, DateTime s, DateTime e)
+    public ICustomSqlCommandBuilder getResIDWithConflict(string tableName, int cid, int fid, string sid, string s, string e)
     {
         ResetBuilder();
-        _commandText.Append("SELECT * FROM reservations WHERE companyID = @cid AND floorPlanID = @fid AND spaceID = @sid AND ((reservationStartTime <= @s AND reservationEndTime >= @s) OR (reservationStartTime <= @e AND reservationEndTime >= @e))");
-        _command.Parameters.AddWithValue("@cid", cid);
-        _command.Parameters.AddWithValue("@fid", fid);
-        _command.Parameters.AddWithValue("@sid", sid);
-        _command.Parameters.AddWithValue("@s", s);
-        _command.Parameters.AddWithValue("@e", e);
-        return this;
-    }
-
-    public ICustomSqlCommandBuilder getResIDWithConflict(int cid, int fid, string sid, string s, string e)
-    {
-        ResetBuilder();
-        _commandText.Append("SELECT * FROM reservations WHERE companyID = @cid AND floorPlanID = @fid AND spaceID = @sid AND ((reservationStartTime <= @s AND reservationEndTime >= @s) OR (reservationStartTime <= @e AND reservationEndTime >= @e))");
+        _commandText.Append($"SELECT * FROM {tableName} WHERE companyID = @cid AND floorPlanID = @fid AND spaceID = @sid AND ((reservationStartTime <= @s AND reservationEndTime >= @s) OR (reservationStartTime <= @e AND reservationEndTime >= @e))");
         _command.Parameters.AddWithValue("@cid", cid);
         _command.Parameters.AddWithValue("@fid", fid);
         _command.Parameters.AddWithValue("@sid", sid);

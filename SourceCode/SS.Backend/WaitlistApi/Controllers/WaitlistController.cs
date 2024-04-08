@@ -91,7 +91,7 @@ namespace WaitlistApi.Controllers
         [HttpPost("getWaitlists")]
         public async Task<IActionResult> GetWaitlistedReservations([FromBody] string userHash)
         {
-            string accessToken = HttpContext.Request.Headers["Authorization"];
+            string? accessToken = HttpContext.Request.Headers["Authorization"];
             if (accessToken != null && accessToken.StartsWith("Bearer "))
             {
                 accessToken = accessToken.Substring("Bearer ".Length).Trim();
@@ -113,7 +113,8 @@ namespace WaitlistApi.Controllers
 
                             try
                             {
-                                var waitlistedReservations = await _waitlistService.GetUserWaitlists(userHash);
+                                string tableName = "reservations";
+                                var waitlistedReservations = await _waitlistService.GetUserWaitlists(tableName, userHash);
                                 return Ok(new { waitlistedReservations, newToken });
                             }
                             catch (Exception ex)
@@ -125,7 +126,8 @@ namespace WaitlistApi.Controllers
                         {
                             try
                             {
-                                var waitlistedReservations = await _waitlistService.GetUserWaitlists(userHash);
+                                string tableName = "reservations";
+                                var waitlistedReservations = await _waitlistService.GetUserWaitlists(tableName, userHash);
                                 return Ok(waitlistedReservations);
                             }
                             catch (Exception ex)
@@ -155,7 +157,7 @@ namespace WaitlistApi.Controllers
         [HttpGet("getDetails")]
         public async Task<IActionResult> GetReservationDetails(string userHash, int reservationId)
         {
-            string accessToken = HttpContext.Request.Headers["Authorization"];
+            string? accessToken = HttpContext.Request.Headers["Authorization"];
             if (accessToken != null && accessToken.StartsWith("Bearer "))
             {
                 accessToken = accessToken.Substring("Bearer ".Length).Trim();
@@ -177,7 +179,8 @@ namespace WaitlistApi.Controllers
 
                             try
                             {
-                                var resDetails = await _waitlistService.GetReservationDetails(userHash, reservationId);
+                                string tableName = "reservations";
+                                var resDetails = await _waitlistService.GetReservationDetails(tableName, userHash, reservationId);
                                 if (resDetails == null)
                                 {
                                     return NotFound();
@@ -193,7 +196,8 @@ namespace WaitlistApi.Controllers
                         {
                             try
                             {
-                                var resDetails = await _waitlistService.GetReservationDetails(userHash, reservationId);
+                                string tableName = "reservations";
+                                var resDetails = await _waitlistService.GetReservationDetails(tableName, userHash, reservationId);
                                 if (resDetails == null)
                                 {
                                     return NotFound();
@@ -226,7 +230,7 @@ namespace WaitlistApi.Controllers
         [HttpPost("leaveWaitlist")]
         public async Task<IActionResult> LeaveWaitlist([FromBody] LeaveRequestModel requestModel)
         {
-            string accessToken = HttpContext.Request.Headers["Authorization"];
+            string? accessToken = HttpContext.Request.Headers["Authorization"];
             if (accessToken != null && accessToken.StartsWith("Bearer "))
             {
                 accessToken = accessToken.Substring("Bearer ".Length).Trim();
@@ -293,7 +297,7 @@ namespace WaitlistApi.Controllers
         [HttpPost("getResId")]
         public async Task<IActionResult> getReservationID([FromBody] ReservationRequestModel requestModel)
         {
-            string accessToken = HttpContext.Request.Headers["Authorization"];
+            string? accessToken = HttpContext.Request.Headers["Authorization"];
             if (accessToken != null && accessToken.StartsWith("Bearer "))
             {
                 accessToken = accessToken.Substring("Bearer ".Length).Trim();
@@ -315,7 +319,8 @@ namespace WaitlistApi.Controllers
 
                             try
                             {
-                                var resId = await _waitlistService.GetReservationID_NoFloor(requestModel.CompanyName, requestModel.SpaceId, requestModel.Start, requestModel.End);
+                                string tableName = "reservations";
+                                var resId = await _waitlistService.GetReservationID_NoFloor(tableName, requestModel.CompanyName, requestModel.SpaceId, requestModel.Start, requestModel.End);
                                 return Ok(new { resId, newToken });
                             }
                             catch (Exception ex)
@@ -327,7 +332,8 @@ namespace WaitlistApi.Controllers
                         {
                             try
                             {
-                                var resId = await _waitlistService.GetReservationID_NoFloor(requestModel.CompanyName, requestModel.SpaceId, requestModel.Start, requestModel.End);
+                                string tableName = "reservations";
+                                var resId = await _waitlistService.GetReservationID_NoFloor(tableName, requestModel.CompanyName, requestModel.SpaceId, requestModel.Start, requestModel.End);
                                 return Ok(resId);
                             }
                             catch (Exception ex)
@@ -353,10 +359,10 @@ namespace WaitlistApi.Controllers
         }
 
         [HttpGet("checkTokenExp")]
-        public async Task<IActionResult> checkTokenExp()
+        public IActionResult checkTokenExp()
         {
 
-            string accessToken = HttpContext.Request.Headers["Authorization"];
+            string? accessToken = HttpContext.Request.Headers["Authorization"];
             if (accessToken != null && accessToken.StartsWith("Bearer "))
             {
                 accessToken = accessToken.Substring("Bearer ".Length).Trim();

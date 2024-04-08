@@ -1,7 +1,7 @@
 
-async function checkTokenExpiration(accessToken) {
+function checkTokenExpiration(accessToken) {
     try {
-        var response = await fetch('http://localhost:5099/api/waitlist/checkTokenExp', {
+        var response = fetch('http://localhost:5099/api/waitlist/checkTokenExp', {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -24,7 +24,7 @@ async function displayWaitlistedReservations() {
     var parsedIdToken = JSON.parse(idToken);
     var username = parsedIdToken.Username;
 
-    const isTokenExp = await checkTokenExpiration(accessToken);
+    const isTokenExp = checkTokenExpiration(accessToken);
     if (!isTokenExp) {
         logout();
         return;
@@ -108,7 +108,7 @@ async function displayReservationDetails(reservation) {
 
     var accessToken = sessionStorage.getItem('accessToken');
     
-    const isTokenExp = await checkTokenExpiration(accessToken);
+    const isTokenExp = checkTokenExpiration(accessToken);
     if (!isTokenExp) {
         logout();
         return;
@@ -138,8 +138,6 @@ async function displayReservationDetails(reservation) {
         }
 
         console.log("floorplan name: " + response.floorPlanName);
-        console.log(data.FloorPlanImageBase64);
-        console.log(data.floorPlanName);
 
     } catch (error) {
         console.error('Display reservation details error:', error);
@@ -172,7 +170,7 @@ async function getReservationId(reservation) {
     var parsedIdToken = JSON.parse(idToken);
     var username = parsedIdToken.Username;
 
-    const isTokenExp = await checkTokenExpiration(accessToken);
+    const isTokenExp = checkTokenExpiration(accessToken);
     if (!isTokenExp) {
         logout();
         return;
@@ -231,7 +229,7 @@ function openDialog(reservation) {
     const closeBtn = document.createElement('span');
     closeBtn.classList.add('close-button');
     closeBtn.innerHTML = '&times;';
-    closeBtn.onclick = closeModal;
+    closeBtn.onclick = closeLeaveModal;
 
     const message = document.createElement('p');
     message.innerText = 'Are you sure you want to leave the waitlist for:';
@@ -248,7 +246,7 @@ function openDialog(reservation) {
 
     const noBtn = document.createElement('button');
     noBtn.innerText = 'No';
-    noBtn.onclick = closeModal;
+    noBtn.onclick = closeLeaveModal;
 
     // Append elements
     modalContent.appendChild(closeBtn);
@@ -265,13 +263,17 @@ function openDialog(reservation) {
     modal.style.display = 'block';
 }
 
-function closeModal() {
+function closeLeaveModal() {
+    console.log('Close modal function called');
     const modal = document.getElementById('confirmModal');
-    if (modal) {
-        modal.remove();
+    if (modal && modal.style) {
+        console.log('Modal element found in DOM');
+        modal.style.display = 'none';
+    } else {
+        console.log('Modal element not found in DOM');
     }
-    displayWaitlistedReservations();
 }
+
 
 async function leaveWaitlist(confirm, reservation) {
     var accessToken = sessionStorage.getItem('accessToken');
@@ -279,7 +281,7 @@ async function leaveWaitlist(confirm, reservation) {
     var parsedIdToken = JSON.parse(idToken);
     var username = parsedIdToken.Username;
 
-    const isTokenExp = await checkTokenExpiration(accessToken);
+    const isTokenExp = checkTokenExpiration(accessToken);
     if (!isTokenExp) {
         logout();
         return;
@@ -336,8 +338,8 @@ async function leaveWaitlist(confirm, reservation) {
         } catch (error) {
             console.error('Error leaving waitlist:', error);
         }
+        closeLeaveModal();
     }
-    closeModal();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

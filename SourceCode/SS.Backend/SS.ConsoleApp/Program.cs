@@ -7,69 +7,105 @@ using System.Data;
 using System.Text;
 using System;
 using SS.Backend.SpaceManager;
+using SS.Backend.Services.EmailService;
+using SS.Backend.ReservationManagement;
+using SS.Backend.ReservationManagers;
+using Microsoft.Data.SqlClient;
+using System.Threading.Tasks;
 
 internal class Program
 {
-    //public static async Task<IEnumerable<CompanyFloorStrImage>> GetCompanyFloorsAsync(int companyId)
-    //{
-    //    var floors = new Dictionary<int, CompanyFloorStrImage>();
+    //private static Response result;
+    //private static CustomSqlCommandBuilder builder;
+    //private static ConfigService configService;
+    //private static SqlDAO dao;
+    //private static WaitlistService waitlistService;
+    //private static ReservationCreatorService _ReservationCreatorService;
+    //private static ReservationManagementRepository _reservationManagementRepository;
+    //private static ReservationValidationService _reservationValidationService;
+    //private static ReservationCreationManager _reservationCreationManager;
+    //private static ReservationCancellationService _reservationCancellationService;
 
-    //    var commandBuilder = new CustomSqlCommandBuilder();
-    //    var command = commandBuilder.BeginStoredProcedure("GetCompanyFloorPROD")
-    //                                .AddParameters(new Dictionary<string, object> { { "companyId", companyId } })
-    //                                .Build();
-
-    //    Console.WriteLine("Command: " + command.CommandText);
-
-    //    Response response = await _spaceManagerDao.ExecuteReadCompanyTables(command);
-
-    //    Console.WriteLine(response.ErrorMessage);
-    //    if (!response.HasError && response.ValuesRead != null)
-    //    {
-    //        foreach (DataRow row in response.ValuesRead.Rows)
-    //        {
-    //            int floorPlanID = row["floorPlanID"] as int? ?? default(int);
-    //            string? floorPlanName = row["floorPlanName"]?.ToString().Trim();
-    //            byte[]? floorPlanImage = row["floorPlanImage"] as byte[];
-    //            string? spaceID = row["spaceID"]?.ToString().Trim();
-    //            int timeLimit = row["timeLimit"] as int? ?? default;
-
-    //            CompanyFloorStrImage? floor;
-    //            if (!floors.TryGetValue(floorPlanID, out floor))
-    //            {
-    //                floor = new CompanyFloorStrImage
-    //                {
-    //                    FloorPlanID = floorPlanID,
-    //                    FloorPlanName = floorPlanName ?? string.Empty,
-    //                    FloorPlanImageBase64 = floorPlanImage != null ? Convert.ToBase64String(floorPlanImage) : null,
-    //                };
-    //                floors.Add(floorPlanID, floor);
-    //            }
-
-    //            floor.FloorSpaces[spaceID] = timeLimit;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        Console.WriteLine("No data found or error occurred.");
-    //    }
-
-    //    Console.WriteLine("Returning floors");
-
-    //    return floors.Values;
-    //}
-
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
-        //Response result = new Response();
+        //result = new Response();
+        //builder = new CustomSqlCommandBuilder();
+
         //var baseDirectory = AppContext.BaseDirectory;
         //var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
         //var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-        //ConfigService configService = new ConfigService(configFilePath);
-        //SqlDAO dao = new SqlDAO(configService);
-        //SpaceManagerDao spacedao = new SpaceManagerDao(dao);
-        //SpaceReader reader = new SpaceReader(spacedao);
 
-        //await GetCompanyFloorsAsync(1);
+        //configService = new ConfigService(configFilePath);
+        //dao = new SqlDAO(configService);
+        //waitlistService = new WaitlistService(dao);
+
+        //_reservationManagementRepository = new ReservationManagementRepository(dao);
+        //_reservationValidationService = new ReservationValidationService(_reservationManagementRepository);
+        //_ReservationCreatorService = new ReservationCreatorService(_reservationManagementRepository, waitlistService);
+        //_reservationCreationManager = new ReservationCreationManager(_ReservationCreatorService, _reservationValidationService, waitlistService);
+        //_reservationCancellationService = new ReservationCancellationService(_reservationManagementRepository, waitlistService);
+
+        //// Arrange
+        //string userHash = "testHash";
+        //string userHash2 = "testHash2";
+        //string userHash3 = "testHash3";
+        //string tableName = "TestReservations";
+        //string testEmail = "test@email.com";
+
+        //UserReservationsModel userReservationsModel = new UserReservationsModel
+        //{
+        //    CompanyID = 1,
+        //    FloorPlanID = 1,
+        //    SpaceID = "OS-02",
+        //    ReservationStartTime = new DateTime(2024, 02, 15, 14, 00, 00),
+        //    ReservationEndTime = new DateTime(2024, 02, 15, 15, 00, 00),
+        //    Status = ReservationStatus.Active,
+        //    UserHash = userHash2
+        //};
+
+        //string sql = $"INSERT INTO TestReservations VALUES ({userReservationsModel.CompanyID},{userReservationsModel.FloorPlanID},'{userReservationsModel.SpaceID}','{userReservationsModel.ReservationStartTime}','{userReservationsModel.ReservationEndTime}','{userReservationsModel.Status}','{userHash}')";
+        //var cmd = new SqlCommand(sql);
+        //var response = await dao.SqlRowsAffected(cmd);
+        //Console.WriteLine("Passed first insert");
+
+        //int resId = await waitlistService.GetReservationID(tableName, 1, 1, "OS-02", userReservationsModel.ReservationStartTime, userReservationsModel.ReservationEndTime);
+        //Console.WriteLine("resId: " + resId);
+
+        //sql = $"INSERT INTO Waitlist VALUES ('{userHash}', {resId}, 0)";
+        //cmd = new SqlCommand(sql);
+        //response = await dao.SqlRowsAffected(cmd);
+        //sql = $"INSERT INTO Waitlist VALUES ('{userHash2}', {resId}, 1)";
+        //cmd = new SqlCommand(sql);
+        //response = await dao.SqlRowsAffected(cmd);
+        //sql = $"INSERT INTO Waitlist VALUES ('{userHash3}', {resId}, 2)";
+        //cmd = new SqlCommand(sql);
+        //response = await dao.SqlRowsAffected(cmd);
+        //Console.WriteLine("Passed waitlist inserts");
+
+        ////// Act
+        //response = await _reservationCancellationService.CancelReservationAsync(tableName, resId);
+        //Console.WriteLine("Passed cancel");
+
+        //sql = $"SELECT * FROM Waitlist WHERE Username = '{userHash}'";
+        //cmd = new SqlCommand(sql);
+        //response = await dao.ReadSqlResult(cmd);
+        //bool empty = false;
+        //if (response.ValuesRead == null)
+        //{
+        //    empty = true;
+        //}
+
+        //int userPosition = await waitlistService.GetWaitlistPosition(userHash2, resId);
+        //int userPosition2 = await waitlistService.GetWaitlistPosition(userHash3, resId);
+
+        //bool isPositionCorrect = false;
+        //if (userPosition == 1 && userPosition2 == 2)
+        //{
+        //    isPositionCorrect = true;
+        //}
+
+        //Console.WriteLine(empty);
+        //Console.WriteLine(isPositionCorrect);
+
     }
 }

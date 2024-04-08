@@ -68,7 +68,7 @@ namespace SS.Backend.ReservationManagers{
             return response;
         }
 
-        public async Task<Response> AddToWaitlist(UserReservationsModel userReservationsModel)
+        public async Task<Response> AddToWaitlist(string tableName, UserReservationsModel userReservationsModel)
         {
             Response response = new Response();
 
@@ -80,28 +80,26 @@ namespace SS.Backend.ReservationManagers{
                 DateTime start = userReservationsModel.ReservationStartTime;
                 DateTime end = userReservationsModel.ReservationEndTime;
 
-                int resId = await _waitlist.GetReservationID(compid, floorid, spaceid, start, end);
+                int resId = await _waitlist.GetReservationID(tableName, compid, floorid, spaceid, start, end);
 
                 bool alreadyOnWaitlist = await _waitlist.IsUserOnWaitlist(userReservationsModel.UserHash, resId);
 
-                Console.WriteLine("ReservationCreationManager AddToWaitlist alreadyOnWaitlist: " + alreadyOnWaitlist);
-
                 if (alreadyOnWaitlist)
                 {
-                    response.HasError = false;
+                    response.HasError = true;
                     response.ErrorMessage += "Already on waitlist";
                 }
                 else
                 {
                     response.HasError = false;
                     response.ErrorMessage += "Added to waitlist";
-                    await _waitlist.InsertWaitlistedUser(userReservationsModel.UserHash, resId);
+                    await _waitlist.InsertWaitlistedUser(tableName, userReservationsModel.UserHash, resId);
                 }
             }
             catch (Exception ex)
             {
                 response.HasError = true;
-                response.ErrorMessage = "User already on waitlist";
+                response.ErrorMessage = "Error adding to waitlist";
             }
 
             return response;
