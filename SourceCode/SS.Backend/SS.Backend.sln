@@ -161,7 +161,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.SpaceManag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaitlistApi", "WaitlistApi\WaitlistApi.csproj", "{C7FACCEB-FCF7-441E-9302-96567CE0E7FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.PersonalOverview", "SS.Backend.Tests.PersonalOverview\SS.Backend.Tests.PersonalOverview.csproj", "{9574EBE3-960D-479B-848C-C8E64E6D8B29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.PersonalOverviewService", "SS.Backend.Tests.PersonalOverview\SS.Backend.Tests.PersonalOverviewService.csproj", "{9574EBE3-960D-479B-848C-C8E64E6D8B29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
