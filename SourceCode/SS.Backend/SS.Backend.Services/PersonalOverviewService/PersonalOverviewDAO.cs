@@ -7,7 +7,7 @@ namespace SS.Backend.Services.PersonalOverviewService
     public class PersonalOverviewDAO : IPersonalOverviewDAO
     {
         private ISqlDAO _sqlDAO;
-        private ConfigService configService;
+        private ConfigService? configService;
         public PersonalOverviewDAO(ISqlDAO sqlDAO)
         {
             _sqlDAO = sqlDAO;
@@ -21,6 +21,7 @@ namespace SS.Backend.Services.PersonalOverviewService
                 var baseDirectory = AppContext.BaseDirectory;
                 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
                 var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+                configService = new ConfigService(configFilePath);
 
                 // initializes a new instance of the logger
                 Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
@@ -103,6 +104,7 @@ namespace SS.Backend.Services.PersonalOverviewService
                 var baseDirectory = AppContext.BaseDirectory;
                 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
                 var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+                configService = new ConfigService(configFilePath);
 
                 // initializes a new instance of the logger
                 Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
@@ -110,10 +112,10 @@ namespace SS.Backend.Services.PersonalOverviewService
                 var commandBuilder = new CustomSqlCommandBuilder();
 
                 var getCommand = commandBuilder.BeginDelete("dbo.reservations")
-                                            .Where($"reservationID = {reservationID} AND userHash = '{username}'")
+                                            .Where($"reservationID = {reservationID} AND userHash = '{username}';")
                                             .Build();
 
-                response = await _sqlDAO.ReadSqlResult(getCommand);
+                response = await _sqlDAO.SqlRowsAffected(getCommand);
 
                 if (response.HasError == false)
                 {

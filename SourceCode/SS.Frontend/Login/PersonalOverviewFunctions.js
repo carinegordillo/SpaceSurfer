@@ -56,65 +56,37 @@ async function fetchUserReservations(fromDateValue, toDateValue) {
     }
 }
 
-async function fetchReservationDeletion() {
+async function fetchReservationDeletion(reservationID) {
     var accessToken = sessionStorage.getItem('accessToken');
-    var idToken = sessionStorage.getItem('idToken');
-    var parsedIdToken = JSON.parse(idToken);
-    var username = parsedIdToken.Username;
-    var reservationID = document.getElementById('reservation-id').value;
-
-    if (!idToken) {
-        console.error('ID token not found.');
-        return;
-    }
-
-    if (!username) {
-        console.error('Username not found in token.');
-        return;
-    }
 
     if (!accessToken) {
         console.error('Access token not found.');
         return;
     }
 
-    const url = `http://localhost:5275/api/v1/PersonalOverview/ReservationDeletion?reservationID=${reservationID}`;
+    const url = 'http://localhost:5275/api/v1/PersonalOverview/ReservationDeletion';
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(reservationID)
+    };
 
     try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ` + accessToken,
-                'Content-Type': "application/json"
-            }
-        });
+        const response = await fetch(url, requestOptions);
 
         if (!response.ok) {
-            throw new Error(`Error deleting reservations: ${response.status}`);
+            throw new Error(`Error deleting reservation: ${response.statusText}`);
         }
 
-        const data = await response.json();
-        return data;
+        return await response.json();
+    } catch (error) {
+        console.error('Error deleting reservation:', error);
+        throw error;
     }
-    catch (error) {
-        throw new Error(`Error deleting reservations: ${error.message}`);
-    }
-
 }
-
-//async function deleteReservation() {
-//    var reservationIDValue = document.getElementById('reservation-id').value;
-
-//    try
-//    {
-//        reservationDelete = await fetchReservationDeletion(reservationIDValue);
-//    }
-//    catch(error)
-//    {
-//        console.error(error.message);
-//    }
-
-//}
 
     // Function to apply date filter and fetch reservations
 async function applyDateFilter() {
@@ -282,10 +254,10 @@ function createCalendar(year, month) {
                     const reservationDetails = document.createElement('div');
                     reservationDetails.className = 'reservation-details';
 
-                    const companyElement = document.createElement('div');
-                    companyElement.className = 'reservationID';
+                    const reservationElement = document.createElement('div');
+                    reservationElementt.className = 'reservationID';
                     companyElement.textContent = `ReservationID: ${reservation.reservationID}`;
-                    reservationDetails.appendChild(companyElement);
+                    reservationDetails.appendChild(reservationElement);
 
                     const companyElement = document.createElement('div');
                     companyElement.className = 'companyNameID';

@@ -13,6 +13,7 @@ namespace SS.Backend.DataAccess
         ICustomSqlCommandBuilder WhereMultiple(Dictionary<string, object> conditions, string logicalOperator = "AND");
         ICustomSqlCommandBuilder BeginSelect();
         ICustomSqlCommandBuilder BeginSelectAll();
+        ICustomSqlCommandBuilder BeginSelectString(string statement);
         ICustomSqlCommandBuilder SelectColumns(params string[] columns);
         ICustomSqlCommandBuilder From(string tableName);
         ICustomSqlCommandBuilder BeginDelete(string tableName);

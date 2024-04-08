@@ -7,6 +7,7 @@ namespace SS.Backend.Services.PersonalOverviewService
 {
     public class PersonalOverview : IPersonalOverview
     {
+
         private ConfigService? configService;
         private readonly IPersonalOverviewDAO _personalOverviewDAO;
 
@@ -17,17 +18,21 @@ namespace SS.Backend.Services.PersonalOverviewService
 
         public async Task<IEnumerable<ReservationInformation>> GetUserReservationsAsync(string username, DateOnly? fromDate = null, DateOnly? toDate = null)
         {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+
             List<ReservationInformation> reservationList = new List<ReservationInformation>();
+
             Response result = new Response();
+
+
+            // initializes a new instance of the logger
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
 
             try
             {
-                var baseDirectory = AppContext.BaseDirectory;
-                var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-                var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-
-                // initializes a new instance of the logger
-                Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
 
                 result = await _personalOverviewDAO.GetReservationList(username, fromDate, toDate);
 
@@ -88,7 +93,6 @@ namespace SS.Backend.Services.PersonalOverviewService
                 result.ErrorMessage = ex.Message;
             }
 
-
             return reservationList;
         }
 
@@ -102,6 +106,7 @@ namespace SS.Backend.Services.PersonalOverviewService
                 var baseDirectory = AppContext.BaseDirectory;
                 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
                 var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+                configService = new ConfigService(configFilePath);
 
                 // initializes a new instance of the logger
                 Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));

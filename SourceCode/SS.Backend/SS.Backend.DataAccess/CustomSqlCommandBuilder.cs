@@ -49,6 +49,13 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
+    public ICustomSqlCommandBuilder BeginSelectString(string statement)
+    {
+        _commandText.Clear();
+        _commandText.Append($"SELECT {statement}");
+        return this;
+    }
+
     public ICustomSqlCommandBuilder BeginSelectAll()
     {
         _commandText.Clear();
@@ -97,7 +104,7 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
     public ICustomSqlCommandBuilder BeginDelete(string tableName)
     {
         ResetBuilder();
-        _commandText.Append($"DELETE FROM {tableName} ");
+        _commandText.Append($"DELETE FROM {tableName}");
         return this;
     }
 
