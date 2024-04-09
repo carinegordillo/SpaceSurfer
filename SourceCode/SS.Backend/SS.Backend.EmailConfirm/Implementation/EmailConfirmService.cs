@@ -348,37 +348,39 @@ namespace SS.Backend.EmailConfirm
                 if (reservationOtp == null) response.ErrorMessage += "The 'reservationOtp' data was not found.";
                 if (confirmStatus == null) response.ErrorMessage += "The 'confirmStatus' data was not found.";
 
-                if (confirmStatus == "yes") 
+                if (confirmStatus.Trim().Equals("yes", StringComparison.OrdinalIgnoreCase)) 
                 {
                     response.HasError = true;
                     response.ErrorMessage += "Unable to confirmation Email. Reservation is already confirmed.";
                     return response;
                 }
-                var resID = Convert.ToInt32(statusRow["ReservationID"]);
-
-                if (resID == reservationID)
+                else
                 {
-                    if (otp == reservationOtp)
+                    var resID = Convert.ToInt32(statusRow["ReservationID"]);
+
+                    if (resID == reservationID)
                     {
-                        var updateResponse = await _emailDAO.UpdateConfirmStatus(reservationID);
-                        if (updateResponse.HasError)
+                        if (otp == reservationOtp)
+                        {
+                            var updateResponse = await _emailDAO.UpdateConfirmStatus(reservationID);
+                            if (updateResponse.HasError)
+                            {
+                                response.HasError = true;
+                                response.ErrorMessage = "Failed to update confirmation status.";
+                            }
+                        }
+                        else
                         {
                             response.HasError = true;
-                            response.ErrorMessage = "Failed to update confirmation status.";
+                            response.ErrorMessage = "OTP does not match. Please try again.";
                         }
                     }
                     else
                     {
                         response.HasError = true;
-                        response.ErrorMessage = "OTP does not match. Please try again.";
+                        response.ErrorMessage = "ReservationID not found in database.";
                     }
                 }
-                else
-                {
-                    response.HasError = true;
-                    response.ErrorMessage = "ReservationID not found in database.";
-                }
-                
             }
             else
             {
