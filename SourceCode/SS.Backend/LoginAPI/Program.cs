@@ -1,15 +1,8 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using SS.Backend.DataAccess;
 using SS.Backend.Security;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
-using System;
-using System.IO;
-using System.Linq;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -78,8 +71,6 @@ app.Use(async (context, next) =>
 });
 
 app.UseStaticFiles();
-
-app.UseHttpsRedirection();
 
 app.MapControllers();
 

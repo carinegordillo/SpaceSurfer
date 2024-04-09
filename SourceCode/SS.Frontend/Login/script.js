@@ -82,6 +82,20 @@ function spaceBookingCenterAccess() {
     document.getElementById('successResult').style.display = 'none';
     document.getElementById('failResult').style.display = 'none';
 }
+
+function personalOverviewAccess() {
+    // Show the personalOverviewCenter section
+    document.getElementById('personalOverviewCenter').style.display = 'block';
+
+    document.getElementById('homepageGen').style.display = 'none';
+    document.getElementById('homepageManager').style.display = 'none';
+    document.getElementById('sendOTPSection').style.display = 'none';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById('failResult').style.display = 'none';
+    ocument.getElementById('waitlistView').style.display = 'none';
+}
+    // Hide other sections if needed
 function waitlistAccess() {
     document.getElementById('waitlistView').style.display = 'block';
 
@@ -91,4 +105,6 @@ function waitlistAccess() {
     document.getElementById('enterOTPSection').style.display = 'none';
     document.getElementById('successResult').style.display = 'none';
     document.getElementById('failResult').style.display = 'none';
+    document.getElementById('personalOverviewCenter').style.display = 'none';
+
 }
