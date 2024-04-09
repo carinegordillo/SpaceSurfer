@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//SpaceSurfer//Reservation Confirmation//EN
+BEGIN:VEVENT
+UID:86d5925a-375c-45c8-99aa-531160b50413@gmail.com
+DTSTAMP:20240408T120000
+DTSTART:20240408T120000
+DTEND:20240405T130000
+SUMMARY:SpaceSurfer Reservation
+DESCRIPTION:Reservation at: Stellar Coffee Roasters ReservationID: 7 SpaceID: SPACE022  
+LOCATION:408 Starlight Expressway, Seattle, WA             
+END:VEVENT
+END:VCALENDAR

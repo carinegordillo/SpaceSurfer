@@ -54,7 +54,7 @@ namespace SS.Backend.ReservationManagers{
                 try
                 {
                     reservationCreationResponse =  await _reservationCreatorService.CreateReservationWithAutoIDAsync(tableName, userReservationsModel);
-                    emailResponse = await _emailSender.SendConfirmation(userReservationsModel);
+                    //emailResponse = await _emailSender.SendConfirmation(userReservationsModel);
                     if (reservationCreationResponse.HasError)
                     {
                         response.ErrorMessage = "Could not create Reservation.";

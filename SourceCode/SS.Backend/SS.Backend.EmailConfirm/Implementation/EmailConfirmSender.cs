@@ -3,6 +3,7 @@ using SS.Backend.ReservationManagement;
 using SS.Backend.Services.EmailService;
 using System.Net.Mail;
 using MailKit.Security;
+using SS.Backend.Services.LoggingService;
 
 
 
@@ -12,18 +13,20 @@ namespace SS.Backend.EmailConfirm
     {
         private readonly IEmailConfirmService _emailConfirm;
         private readonly IEmailConfirmDAO _emailDao;
+        private readonly ILogger _logger;
 
-        public EmailConfirmSender(IEmailConfirmService emailConfirm, IEmailConfirmDAO emailDao)
+        public EmailConfirmSender(IEmailConfirmService emailConfirm, IEmailConfirmDAO emailDao, ILogger logger)
         {
             _emailConfirm = emailConfirm;
             _emailDao = emailDao;
+            _logger = logger;
         }
 
         public async Task<Response> SendConfirmation (UserReservationsModel reservation)
         {
             int reservationID = (int)reservation.ReservationID;
             Console.WriteLine(reservationID);
-            //string targetEmail = reservation.UserHash;
+            var logResponse = new Response();
             Response emailResponse = await _emailDao.GetUsername(reservation.UserHash);
             string targetEmail = emailResponse.ValuesRead.Rows[0]["username"].ToString();
             (string icsFile, string otp, string body, Response result) = await _emailConfirm.CreateConfirmation(reservationID);
@@ -68,15 +71,42 @@ namespace SS.Backend.EmailConfirm
             {
                 result.ErrorMessage = ex.Message;
             }
+
+            //logging
+            if (result.HasError == false)
+            {
+                LogEntry entry = new LogEntry
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Info",
+                    username = reservation.UserHash,
+                    category = "Data Store",
+                    description = "Confirmation email sent successfully."
+                };
+                //await _logger.SaveData(entry);
+            }
+            else
+            {
+                LogEntry entry = new LogEntry
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = reservation.UserHash,
+                    category = "Data Store",
+                    description = "Confirmation email failed."
+                };
+                //await _logger.SaveData(entry);
+            }
             return result;
         }
 
         public async Task<Response> ResendEmail (UserReservationsModel reservation)
         {
+
             int reservationID = (int)reservation.ReservationID;
             //string targetEmail = reservation.UserHash;
             Response emailResponse = await _emailDao.GetUsername(reservation.UserHash);
-            string targetEmail = emailResponse.ValuesRead.Rows[0]["username"].ToString();
+            string? targetEmail = emailResponse.ValuesRead.Rows[0]["username"].ToString();
             (string icsFile, string otp, string body, Response result) = await _emailConfirm.ResendConfirmation(reservationID);
             if (string.IsNullOrEmpty(body))
             {
@@ -117,6 +147,34 @@ namespace SS.Backend.EmailConfirm
             catch (Exception ex) // Catch any other unexpected exceptions
             {
                 result.ErrorMessage = ex.Message;
+            }
+
+            //logging
+            if (result.HasError == false)
+            {
+                LogEntry entry = new LogEntry()
+
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Info",
+                    username = reservation.UserHash,
+                    category = "Data Store",
+                    description = "Confirmation email resent successfully."
+                };
+                await _logger.SaveData(entry);
+            }
+            else
+            {
+                LogEntry entry = new LogEntry()
+
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = reservation.UserHash,
+                    category = "Data Store",
+                    description = "Resending confirmation email failed."
+                };
+                await _logger.SaveData(entry);
             }
             return result;
         }

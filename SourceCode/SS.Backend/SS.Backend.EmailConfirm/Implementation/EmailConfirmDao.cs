@@ -1,6 +1,8 @@
 using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
 using Microsoft.Data.SqlClient;
+using SS.Backend.ReservationManagement;
+using System.Data;
 
 namespace SS.Backend.EmailConfirm
 {
@@ -20,14 +22,14 @@ namespace SS.Backend.EmailConfirm
 
             var parameters = new Dictionary<string, object>
             {
-                {"reservationID", ReservationID}
+                {"ReservationID", ReservationID}
             };
 
             var cmd = builder.BeginSelect()
-                            .SelectColumns("r.*", "cp.address AS CompanyAddress", "cp.companyName as CompanyName")
-                            .From("Reservations AS r")
-                            .Join("companyProfile AS cp", "r.companyID", "cp.companyID")
-                            .Where("r.ReservationID = reservationID")
+                            .SelectColumns("Reservations.*", "companyProfile.address AS CompanyAddress", "companyProfile.companyName as CompanyName")
+                            .From("Reservations")
+                            .Join("companyProfile", "Reservations.companyID", "companyProfile.companyID")
+                            .Where($"Reservations.reservationID = {ReservationID}")
                             .AddParameters(parameters)
                             .Build();
 
@@ -58,7 +60,7 @@ namespace SS.Backend.EmailConfirm
 
             var cmd = builder.BeginSelectAll()
                             .From("ConfirmReservations")
-                            .Where("reservationID = reservationID")
+                            .Where($"reservationID = {ReservationID}")
                             .AddParameters(parameters)
                             .Build();
 
@@ -151,8 +153,8 @@ namespace SS.Backend.EmailConfirm
 
             var cmd = builder.BeginUpdate("ConfirmReservations")
                             .Set(new Dictionary<string, object>
-                                {{"reservationOTP", "reservationOtp"}})
-                            .Where("reservationID = reservationID")
+                                {{"reservationOTP", "@reservationOtp"}})
+                            .Where("reservationID = @reservationID")
                             .AddParameters(parameters)
                             .Build();
 
@@ -199,6 +201,47 @@ namespace SS.Backend.EmailConfirm
                 response.ErrorMessage = $" -- GetUsername Command: {cmd.CommandText} Failed";
             }
             return response;
+        }
+
+        public async Task<(UserReservationsModel, Response)> GetUserReservationByID (int reservationID)
+        {
+            Response response = new Response();
+            var builder = new CustomSqlCommandBuilder();
+            UserReservationsModel reservation = null;
+
+            response = await GetReservationInfo(reservationID);
+
+            try
+            {
+                if (response.ValuesRead != null && response.ValuesRead.Rows.Count > 0)
+                {
+                    DataRow row = response.ValuesRead.Rows[0];
+                    reservation = new UserReservationsModel
+                    {
+                        ReservationID = Convert.ToInt32(row["reservationID"]),
+                        CompanyID = Convert.ToInt32(row["companyID"]),
+                        FloorPlanID = Convert.ToInt32(row["floorPlanID"]),
+                        SpaceID = row["spaceID"].ToString(),
+                        ReservationStartTime = Convert.ToDateTime(row["reservationStartTime"]),
+                        ReservationEndTime = Convert.ToDateTime(row["reservationEndTime"]),
+                        Status = Enum.Parse<ReservationStatus>(row["status"].ToString(), true),
+                        UserHash = row["userHash"].ToString()
+                    };
+
+                    response.ErrorMessage = $"GetUserReservationByID Command: Successful: {reservation}";
+                }
+                else
+                {
+                    response.HasError = true;
+                    response.ErrorMessage = $"No reservation found with the given ID, {reservationID}.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = "GetUserReservationByID Command Failed: " + ex.Message;
+            }
+            return (reservation, response);
         }
 
     }
