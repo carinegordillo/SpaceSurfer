@@ -48,12 +48,12 @@ namespace SS.Backend.Waitlist
                 result = await _sqldao.ReadSqlResult(getName);
                 string? name = result.ValuesRead?.Rows[0]?["firstName"].ToString();
 
-                string start = info.startTime.ToString("h:mm tt");
-                string end = info.endTime.ToString("h:mm tt");
+                string? start = info.startTime.ToString("h:mm tt");
+                string? end = info.endTime.ToString("h:mm tt");
 
-                string targetEmail = email;
-                string subject = $@"Waitlist Confirmation at {info.companyName}";
-                string msg = $@"
+                string? targetEmail = email;
+                string? subject = $@"Waitlist Confirmation at {info.companyName}";
+                string? msg = $@"
                     Dear {name},
 
                     Thank you for joining the waitlist for Space {info.spaceID} at {info.companyName}.
@@ -126,12 +126,12 @@ namespace SS.Backend.Waitlist
                 result = await _sqldao.ReadSqlResult(getName);
                 string? name = result.ValuesRead?.Rows[0]?["firstName"].ToString();
 
-                string start = info.startTime.ToString("h:mm tt");
-                string end = info.endTime.ToString("h:mm tt");
+                string? start = info.startTime.ToString("h:mm tt");
+                string? end = info.endTime.ToString("h:mm tt");
 
-                string targetEmail = email;
-                string subject = $@"Top of Waitlist at {info.companyName}";
-                string msg = $@"
+                string? targetEmail = email;
+                string? subject = $@"Top of Waitlist at {info.companyName}";
+                string? msg = $@"
                     Dear {name},
 
                     The reservation for Space {info.spaceID} at {info.companyName} has opened up!
@@ -331,7 +331,7 @@ namespace SS.Backend.Waitlist
                 int compId = Convert.ToInt32(result.ValuesRead?.Rows[0]?["companyID"].ToString());
                 var getCompName = builder.GetCompName(compId).Build();
                 result = await _sqldao.ReadSqlResult(getCompName);
-                string companyName = result.ValuesRead?.Rows[0]?["companyName"].ToString();
+                string? companyName = result.ValuesRead?.Rows[0]?["companyName"].ToString();
                 // startTime
                 var getStart = builder
                     .BeginSelectAll()
@@ -453,7 +453,7 @@ namespace SS.Backend.Waitlist
                 int compId = Convert.ToInt32(result.ValuesRead?.Rows[0]?["companyID"].ToString());
                 var getCompName = builder.GetCompName(compId).Build();
                 result = await _sqldao.ReadSqlResult(getCompName);
-                string companyName = result.ValuesRead?.Rows[0]?["companyName"].ToString();
+                string? companyName = result.ValuesRead?.Rows[0]?["companyName"].ToString();
 
                 // startTime
                 var getStart = builder
@@ -680,7 +680,7 @@ namespace SS.Backend.Waitlist
                 .Build();
 
             result = await _sqldao.ReadSqlResult(getCompanyName);
-            string compName = result.ValuesRead?.Rows[0]?["companyName"].ToString();
+            string? compName = result.ValuesRead?.Rows[0]?["companyName"].ToString();
 
             return compName;
         }
