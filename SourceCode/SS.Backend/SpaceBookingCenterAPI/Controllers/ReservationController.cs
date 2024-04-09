@@ -44,6 +44,7 @@ public class ReservationController : ControllerBase
         _reservationModificationManager = reservationModificationManager;
         _reservationReaderManager = reservationReaderManager;
         _availibilityDisplayManager = availibilityDisplayManager;
+        _reservationDeletionManager = reservationDeletionManager;
 
         _authService = authService;
         _config = config;
