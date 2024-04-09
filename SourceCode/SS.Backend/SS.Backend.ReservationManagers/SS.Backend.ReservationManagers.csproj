@@ -10,6 +10,7 @@
     <ProjectReference Include="..\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
     <ProjectReference Include="..\SS.Backend.ReservationManagement\SS.Backend.ReservationManagement.csproj" />
     <ProjectReference Include="..\SS.Backend.SpaceManager\SS.Backend.SpaceManager.csproj" />
+	  <ProjectReference Include="..\SS.Backend.Waitlist\SS.Backend.Waitlist.csproj" />
   </ItemGroup>
 
 </Project>

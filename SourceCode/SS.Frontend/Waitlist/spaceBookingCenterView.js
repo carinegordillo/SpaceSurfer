@@ -1,36 +1,39 @@
-document.getElementById('initAppButton').addEventListener('click', function () {
+document.addEventListener('DOMContentLoaded', function() {
+    
     initSidebar();
-    const formContainer = document.querySelector('.space-form-container');
-    if (formContainer) {
+    
+    const formContainer = document.querySelector('.form-container'); 
+    if (formContainer) { 
         const reservationForm = createReservationForm();
 
-        reservationForm.addEventListener('submit', function (event) {
-            event.preventDefault();
+        reservationForm.addEventListener('submit', function(event) {
+            event.preventDefault(); 
             var accessToken = sessionStorage.getItem('accessToken');
             if (!accessToken) {
                 console.error('Access token is not available.');
                 return;
             }
-            handleReservationCreationFormSubmit(event);
+            handleReservationCreationFormSubmit(event, accessToken);
 
         });
         formContainer.appendChild(reservationForm);
-
+        
     }
-
+    
     var accessToken = sessionStorage.getItem('accessToken');
 
 
-
-
     fetchCompanies();
-    
-    document.getElementById('companiesList').addEventListener('click', function (event) {
+    document.getElementById('companiesList').addEventListener('click', function(event) {
         if (event.target && event.target.nodeName === "LI") {
             const companyID = event.target.getAttribute('data-company-id');
             fetchFloorPlans(companyID);
         }
     });
+
+    document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);
+        
+    
 });
 
 function logout() {
@@ -39,27 +42,17 @@ function logout() {
     document.getElementById("homepageGen").style.display = "none";
     document.getElementById("homepageManager").style.display = "none";
     document.getElementById("sendOTPSection").style.display = "block";
-
-    const existingModal = document.querySelector('.modal-content');
-        if (existingModal) {
-            existingModal.remove();
-        }
-    const modalBackdrop = document.querySelector('.modal-backdrop');
-    if (modalBackdrop) {
-        modalBackdrop.style.display = 'none';
-    }
-
 }
 
 
 
 function initSidebar() {
     const sidebar = document.querySelector('.sidebar');
+
     const buttons = [
         { id: 'loadReservationCenter', text: 'Reserve Now', onClickFunction: () => getReservationCenter() },
         { id: 'loadReservationOverview', text: 'Your Reservations', onClickFunction: () => getReservtionOverview() }
     ];
-
     buttons.forEach(({ id, text, onClickFunction }) => {
         const button = document.createElement('button');
         button.id = id;
@@ -70,11 +63,11 @@ function initSidebar() {
 }
 
 
-
 function initReservationOverviewButtons() {
     
     document.getElementById('reserveNowBtn').addEventListener('click', handleReserveNowClick);
     document.getElementById('yourReservationsBtn').addEventListener('click', handleYourReservationsClick);
+
 }
 
 
@@ -82,93 +75,22 @@ function initReservationOverviewButtons() {
 function getReservationCenter() {
 
     fetchCompanies();
-    document.getElementById('companiesList').addEventListener('click', function (event) {
+    document.getElementById('companiesList').addEventListener('click', function(event) {
         if (event.target && event.target.nodeName === "LI") {
             const companyID = event.target.getAttribute('data-company-id');
             fetchFloorPlans(companyID);
         }
     });
+
+    document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);
+        
     
-    document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);    
-}
-
-function createDeleteReservationForm() {
-    const form = document.createElement('form');
-    form.id = 'deleteReservationForm';
-    form.innerHTML = `
-        <div class="form-group">
-            <label for="reservationIDToDelete">Reservation ID:</label>
-            <input type="number" id="reservationIDToDelete" required>
-        </div>
-        <input type="submit" value="Delete Reservation">
-    `;
-    form.addEventListener('submit', handleDeleteReservationFormSubmit);
-    return form;
-}
-
-
-async function handleDeleteReservationFormSubmit(event) {
-    event.preventDefault();
-
-    const reservationID = document.getElementById('reservationIDToDelete').value;
-    var accessToken = sessionStorage.getItem('accessToken');
-
-    const isTokenValid = await checkTokenExpiration(accessToken);
-    if (!isTokenValid) {
-        logout();
-        return;
-    }
-
-    var idToken = sessionStorage.getItem('idToken');
-
-    var parsedIdToken = JSON.parse(idToken);
-    var userHash = parsedIdToken.Username; 
-
-
-    try {
-        const response = await fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/DeleteReservation`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ userHash, reservationID: parseInt(reservationID, 10) }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const responseData = await response.json();
-        if (responseData.newToken) {
-            accessToken = data.newToken;
-            sessionStorage.setItem('accessToken', accessToken);
-            console.log('New access token stored:', accessToken);
-        }
-        if (responseData.hasError) {
-            console.error(`Reservation deletion error: ${responseData.errorMessage}`);
-            onError(`Reservation deletion error: ${responseData.errorMessage}`);
-        } else {
-            console.log('Reservation deleted successfully');
-            onSuccess('Reservation deleted successfully!');
-            
-        }
-    } catch (error) {
-        console.error('Error deleting reservation:', error);
-        onError(`Error deleting reservation: ${error}`);
-    }
 }
 
 
 function getReservtionOverview() {
     reservationOverviewButtons();
-    const deleteFormContainer = document.querySelector('.space-form-container'); // Adjust the selector as needed
-    if (deleteFormContainer) {
-        const deleteReservationForm = createDeleteReservationForm();
-        deleteFormContainer.appendChild(deleteReservationForm);
-    }
 }
-
 
 
 
@@ -181,12 +103,10 @@ function reservationOverviewButtons() {
     content.innerHTML = ''; 
 
     var accessToken = sessionStorage.getItem('accessToken');
-    var idToken = sessionStorage.getItem('idToken');
-    var parsedIdToken = JSON.parse(idToken);
-    var username = parsedIdToken.Username;
+
     const buttons = [
-        { id: 'loadActiveReservationsBtn', text: 'Active Reservations', onClickFunction: () => getUsersActiveReservations(username) },
-        { id: 'loadAllReservationsBtn', text: 'All Reservations', onClickFunction: () => getUsersReservations(username, accessToken) }
+        { id: 'loadActiveReservationsBtn', text: 'Active Reservations', onClickFunction: () => getUsersActiveReservations('hashed_user3') },
+        { id: 'loadAllReservationsBtn', text: 'All Reservations', onClickFunction: () => getUsersReservations('hashed_user3', accessToken) }
     ];
 
     buttons.forEach(({ id, text, onClickFunction }) => {
@@ -200,16 +120,10 @@ function reservationOverviewButtons() {
 
 
 
-function getUsersActiveReservations(username) {
-
-    var accessToken = sessionStorage.getItem('accessToken');
-    var idToken = sessionStorage.getItem('idToken');
-    var parsedIdToken = JSON.parse(idToken);
-    var username = parsedIdToken.Username;
-
+function getUsersActiveReservations(userName) {
    
    
-    const url = `http://localhost:5005/api/v1/spaceBookingCenter/reservations/ListActiveReservations?userName=${encodeURIComponent(username)}`;
+    const url = `http://localhost:5005/api/v1/spaceBookingCenter/reservations/ListActiveReservations?userName=${encodeURIComponent(userName)}`;
 
     fetch(url, {
         method: 'GET',
@@ -226,6 +140,7 @@ function getUsersActiveReservations(username) {
         return response.json();
     })
     .then(data => {
+
         renderReservations(data, '.reservation-list');
         
     })
@@ -256,6 +171,7 @@ function getUsersReservations(userName, accessToken) {
     .then(data => {
         console.log("in here");
         console.log(data);
+
         renderReservations(data, '.reservation-list');
     })
     .catch(error => {
@@ -314,21 +230,19 @@ function renderReservations(data, containerSelector) {
 
 function attachEventListeners() {
     document.querySelectorAll('.modify-btn').forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', function() {
             const reservationData = JSON.parse(this.getAttribute('data-reservation'));
             showModifyModal(reservationData);
         });
     });
     document.querySelectorAll('.cancel-btn').forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', function() {
             const reservationData = JSON.parse(this.getAttribute('data-reservation'));
             showCancelModal(reservationData);
         });
     });
 }
 function showModifyModal(reservation) {
-
-    
     const existingModal = document.querySelector('.modal-content');
     if (existingModal) {
         existingModal.remove();
@@ -339,7 +253,6 @@ function showModifyModal(reservation) {
 
     const modalContent = document.createElement('div');
     modalContent.classList.add('modal-content');
-    
     modalContent.innerHTML = `
         <h2>Modify Reservation</h2>
         <form id="modifyReservationForm" data-reservation-id="${reservation.reservationID}">
@@ -354,23 +267,26 @@ function showModifyModal(reservation) {
         </form>
     `;
     document.body.appendChild(modalContent);
+
+    var accessToken = sessionStorage.getItem('accessToken');
+    if (accessToken) {
+        document.getElementById('modifyReservationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            submitModification(reservation,accessToken);
+        });
+    }
+    else {
+        console.error('Access token is not available.');
+        return;
+    }
+
+   
     
-    document.getElementById('modifyReservationForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        submitModification(reservation);
-    });
 }
 
-async function submitModification(reservation) {
-
-    var accessToken = sessionStorage.getItem('accessToken', accessToken);
-    var idToken = sessionStorage.getItem('idToken');
-    var parsedIdToken = JSON.parse(idToken);
-    var username = parsedIdToken.Username;
-
+async function submitModification(reservation, accessToken) {
     const tokenExpired = await checkTokenExpiration(accessToken);
-    if (!tokenExpired) {
-        window.alert("Token expired");
+    if (tokenExpired) {
         logout();
         return;
     }
@@ -387,7 +303,7 @@ async function submitModification(reservation) {
         reservationStartTime: newStartTime,
         reservationEndTime: newEndTime,
         status: reservation.status,
-        userHash: username
+        userHash: "hashed_user3"
     };
 
     try {
@@ -414,7 +330,7 @@ async function submitModification(reservation) {
 
         if (responseData.hasError) {
             console.log(`Reservation error: ${responseData.errorMessage}`);
-            onError(`Reservation error: ${responseData.errorMessage}`);
+            onError(responseData.errorMessage);
         } else {
             console.log('Reservation modified successfully');
             onSuccess('Reservation modified successfully!');
@@ -437,7 +353,6 @@ function showCancelModal(reservation) {
 
     const modalContent = document.createElement('div');
     modalContent.classList.add('modal-content');
-    
     modalContent.innerHTML = `
         <h2>Cancel Reservation</h2>
         <h3>Are you sure you want to cancel this reservation?</h3>
@@ -455,10 +370,10 @@ function showCancelModal(reservation) {
 
     var accessToken = sessionStorage.getItem('accessToken');
     if (accessToken) {
-        document.getElementById('confirmCancel').addEventListener('click', function () {
+        document.getElementById('confirmCancel').addEventListener('click', function() {
             submitCancellation(reservation, accessToken);
         });
-        document.getElementById('cancelCancel').addEventListener('click', function () {
+        document.getElementById('cancelCancel').addEventListener('click', function() {
             document.querySelector('.modal-content').remove();
         });
     }
@@ -470,17 +385,12 @@ function showCancelModal(reservation) {
    
 }
 
- async function submitCancellation(reservation, accessToken) {
-    const isTokenValid = await checkTokenExpiration(accessToken);
+ function submitCancellation(reservation, accessToken) {
+    const isTokenValid =  checkTokenExpiration(accessToken);
     if (!isTokenValid) {
         logout();
         return;
     }
-
-    var idToken = sessionStorage.getItem('idToken');
-
-    var parsedIdToken = JSON.parse(idToken);
-    var username = parsedIdToken.Username;
 
     const modificationData = {
         reservationID: reservation.reservationID,
@@ -490,11 +400,11 @@ function showCancelModal(reservation) {
         reservationStartTime: reservation.reservationStartTime,
         reservationEndTime: reservation.reservationEndTime,
         status: reservation.status,
-        userHash: username
+        userHash: "hashed_user3"
     };
 
     try {
-        const response =  await fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/CancelReservation`, {
+        const response =  fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/CancelReservation`, {
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -507,7 +417,7 @@ function showCancelModal(reservation) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data =  await response.json();
+        const data =  response.json();
 
         if (data.newToken) {
             accessToken = data.newToken;
@@ -624,13 +534,6 @@ function createReservationForm() {
     return form;
 }
 function checkAvailability() {
-
-    var accessToken = sessionStorage.getItem('accessToken', accessToken);
-    var idToken = sessionStorage.getItem('idToken');
-    var parsedIdToken = JSON.parse(idToken);
-    var username = parsedIdToken.Username;
-
-
     const companyIdInput = document.getElementById('reservation-companyId').value;
     const startTimeInput = document.getElementById('reservation-startTime').value;
     const endTimeInput = document.getElementById('reservation-endTime').value;
@@ -647,16 +550,8 @@ function checkAvailability() {
         return;
     }
 
-
-
     const apiUrl = `http://localhost:5005/api/v1/spaceBookingCenter/reservations/CheckAvailability?companyId=${companyId}&startTime=${startTime}&endTime=${endTime}`;
-    fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + accessToken,
-            'Accept': 'application/json',
-        }
-    })
+    fetch(apiUrl)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -688,8 +583,17 @@ function updateSpaceAvailabilityUI(data) {
     });
 }
 
+
+
+
+
+
+
+
+
 async function fetchCompanies() {
 
+    
     const accessToken = sessionStorage.getItem('accessToken');
     const isTokenValid = await checkTokenExpiration(accessToken);
     if (!isTokenValid) {
@@ -705,8 +609,10 @@ async function fetchCompanies() {
                 'Content-Type': 'application/json'
             }
         });
+
         const data = await response.json();
         console.log('Received companies data:', data);
+        window.alert("Received companies data:", data);
         if (data.newToken) {
             accessToken = data.newToken;
             sessionStorage.setItem('accessToken', accessToken);
@@ -731,16 +637,21 @@ async function fetchCompanies() {
             li.innerHTML = htmlContent;
             companiesList.appendChild(li);
         });
+
         document.querySelectorAll('.clickable').forEach(item => {
-            item.addEventListener('click', function (event) {
+            item.addEventListener('click', function(event) {
                 const companyID = event.target.getAttribute('data-company-id');
-                fetchFloorPlans(companyID);
+                fetchFloorPlans(companyID, accessToken);
             });
         });
     } catch (error) {
         console.error('Error fetching companies:', error);
     }
 }
+
+
+
+
 
 function formatTime(timeString) {
    
@@ -752,18 +663,18 @@ function formatTime(timeString) {
     return `${formattedHours}:${minutes} ${ampm}`;
 }
 
-async function fetchFloorPlans(companyID) {
+ function fetchFloorPlans(companyID) {
+
     const accessToken = sessionStorage.getItem('accessToken');
-    const isTokenValid = await checkTokenExpiration(accessToken);
-    
+    const isTokenValid =   checkTokenExpiration(accessToken);
     if (!isTokenValid) {
         logout();
         return;
     }
 
     try {
-        const response = await fetch(`http://localhost:5001/api/v1/spaceBookingCenter/companies/FloorPlans/${companyID}`, {
-            method: 'GET',
+        const response =  fetch(`http://localhost:5001/api/v1/spaceBookingCenter/companies/FloorPlans/${companyID}`, {
+            method: 'GET', // Assuming GET is the method since it wasn't specified but commonly used for fetching data
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
                 'Content-Type': 'application/json'
@@ -771,11 +682,10 @@ async function fetchFloorPlans(companyID) {
         });
 
         if (!response.ok) {
-            throw new Error("HTTP error! status: " + response.status);
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        console.log(data);
+        const data =  response.json();
 
         if (data.newToken) {
             accessToken = data.newToken;
@@ -786,7 +696,6 @@ async function fetchFloorPlans(companyID) {
         const floorPlansContent = document.getElementById('floorPlansContent');
         floorPlansContent.innerHTML = '';
 
-        const floorPlansArray = data.floorPlans || data; 
         data.forEach(floorPlan => {
             const floorDiv = document.createElement('div');
             floorDiv.classList.add('floor-plan');
@@ -811,9 +720,10 @@ async function fetchFloorPlans(companyID) {
             floorPlansContent.appendChild(floorDiv);
         });
 
+        // Adding click event listeners to each space
         const clickableSpaces = floorPlansContent.getElementsByClassName('clickable-space');
         Array.from(clickableSpaces).forEach(space => {
-            space.addEventListener('click', function () {
+            space.addEventListener('click', function() {
                 updateReservationForm(
                     space.getAttribute('data-company-id'),
                     space.getAttribute('data-floor-plan-id'),
@@ -826,6 +736,7 @@ async function fetchFloorPlans(companyID) {
     }
 }
 
+
 async function checkTokenExpiration(accessToken) {
     try {
         const response = await fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/checkTokenExp', {
@@ -835,10 +746,13 @@ async function checkTokenExpiration(accessToken) {
                 'Content-Type': 'application/json'
             }
         });
+        
+        if (!response.ok) {
+            throw new Error('Failed to check token expiration');
+        }
 
-
-
-        return response.ok;
+        const data = await response.json();
+        return data;
     } catch (error) {
         console.error('Error:', error);
         return false;
@@ -846,15 +760,11 @@ async function checkTokenExpiration(accessToken) {
 }
 
 
-async function handleReservationCreationFormSubmit(event) {
-    event.preventDefault();
 
-    var accessToken = sessionStorage.getItem('accessToken', accessToken);
-    var idToken = sessionStorage.getItem('idToken');
-    var parsedIdToken = JSON.parse(idToken);
-    var username = parsedIdToken.Username;
+function handleReservationCreationFormSubmit(event, accessToken) {
+    if (event) event.preventDefault();
 
-    const isTokenValid =  await checkTokenExpiration(accessToken);
+    const isTokenValid =  checkTokenExpiration(accessToken);
     if (!isTokenValid) {
         logout();
         return;
@@ -866,13 +776,13 @@ async function handleReservationCreationFormSubmit(event) {
         spaceId: document.getElementById('reservation-spaceId').value,
         reservationStartTime: document.getElementById('reservation-startTime').value,
         reservationEndTime: document.getElementById('reservation-endTime').value,
-        userHash: username
+        userHash: "hashed_user5"
     };
 
     const requestData = JSON.stringify(reservationData);
 
     try {
-        const response =  await fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/CreateReservation', {
+        const response =  fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/CreateReservation', {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -885,7 +795,7 @@ async function handleReservationCreationFormSubmit(event) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data =  await response.json();
+        const data =  response.json();
         if (data.newToken) {
             accessToken = data.newToken;
             sessionStorage.setItem('accessToken', accessToken);
@@ -893,16 +803,15 @@ async function handleReservationCreationFormSubmit(event) {
         }
 
         if (data.hasError) {
-            showWaitlistModal();
             console.log(`Reservation error: ${data.errorMessage}`);
-            //onError(data.errorMessage);
+            onError(data.errorMessage);
         } else {
             console.log('Reservation created successfully');
             onSuccess('Reservation created successfully!');
         }
     } catch (error) {
         console.error('Error creating reservation:', error);
-        //onError("Error creating reservation. Please try again later.");
+        onError("Error creating reservation. Please try again later.");
     }
 }
 
@@ -921,150 +830,8 @@ function updateReservationForm(companyId, floorPlanId, spaceId) {
     companyIdInput.type = 'text';
     floorPlanIdInput.type = 'text';
     spaceIdInput.type = 'text';
-
-    companyIdInput.required = true;
-    floorPlanIdInput.required = true;
-    spaceIdInput.required = true;
 }
 
-////// WAITLIST ////////
-
-function showWaitlistModal() {
-    // Check if the modal container element exists
-    let modal = document.getElementById('reservationConflictModal');
-    if (!modal) {
-        // If it doesn't exist, create it
-        modal = document.createElement('div');
-        modal.id = 'reservationConflictModal';
-        modal.classList.add('modal');
-        document.body.appendChild(modal);
-    }
-
-    // Create modal content
-    let modalContent = document.createElement('div');
-    modalContent.classList.add('modal-content');
-    modalContent.innerHTML = `
-        <span class="close-button">&times;</span>
-        <p>This space is already reserved for this time. Would you like to join the waitlist?</p>
-        <button id="joinWaitlistBtn">Yes</button>
-        <button id="cancelWaitlistBtn">No</button>
-    `;
-
-    // Append modal content to modal container
-    modal.innerHTML = ''; // Clear existing content
-    modal.appendChild(modalContent);
-
-    // Create success message element
-    let successMessage = document.createElement('div');
-    successMessage.id = 'successMessage';
-    successMessage.textContent = 'You have successfully joined the waitlist!';
-    successMessage.style.display = 'none';
-
-    // Append success message to modal container
-    modal.appendChild(successMessage);
-
-    // Create error message element
-    let errorMsg = document.createElement('div');
-    errorMsg.id = 'errorMsg';
-    errorMsg.textContent = 'You have already been added to this waitlist.';
-    errorMsg.style.display = 'none';
-
-    // Append error message to modal container
-    modal.appendChild(errorMsg);
-
-    // Show the modal
-    modal.style.display = 'block';
-
-    const closeButton = modal.querySelector('.close-button');
-    const cancelButton = modal.querySelector('#cancelWaitlistBtn');
-    const joinWaitlistButton = modal.querySelector('#joinWaitlistBtn');
-
-    // Add event listeners
-    closeButton.addEventListener('click', closeModal);
-    cancelButton.addEventListener('click', closeModal);
-    joinWaitlistButton.addEventListener('click', joinWaitlist);
-}
-
-async function joinWaitlist() {
-    console.log('Joining waitlist...');
-    var accessToken = sessionStorage.getItem('accessToken', accessToken);
-    var idToken = sessionStorage.getItem('idToken');
-    var parsedIdToken = JSON.parse(idToken);
-    var username = parsedIdToken.Username;
-
-    const isTokenValid = await checkTokenExpiration(accessToken);
-    if (!isTokenValid) {
-        logout();
-        return;
-    }
-
-    const reservationData = {
-        companyId: parseInt(document.getElementById('reservation-companyId').value, 10),
-        floorPlanId: parseInt(document.getElementById('reservation-floorPlanId').value, 10),
-        spaceId: document.getElementById('reservation-spaceId').value,
-        reservationStartTime: document.getElementById('reservation-startTime').value,
-        reservationEndTime: document.getElementById('reservation-endTime').value,
-        userHash: username
-    };
-
-    const requestData = JSON.stringify(reservationData);
-
-    try {
-        const response = await fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/addToWaitlist', {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + accessToken,
-                'Content-Type': 'application/json'
-            },
-            body: requestData
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        if (data.newToken) {
-            accessToken = data.newToken;
-            sessionStorage.setItem('accessToken', accessToken);
-            console.log('New access token stored:', accessToken);
-        }
-
-        if (data.hasError) {
-            // Show error message
-            const errorMsg = document.getElementById('errorMsg');
-            errorMsg.style.display = 'block';
-
-            setTimeout(() => {
-                closeModal();
-                errorMsg.style.display = 'none';
-            }, 5000);
-
-            console.log(`Joining waitlist error: User already on waitlist`);
-        } else {
-            // Show success message
-            const successMessage = document.getElementById('successMessage');
-            successMessage.style.display = 'block';
-
-            setTimeout(() => {
-                closeModal();
-                successMessage.style.display = 'none';
-            }, 5000);
-
-            console.log('Successfully joined waitlist');
-        }
-    } catch (error) {
-        console.error('Error joining waitlist:', error);
-    }
-}
-
-
-function closeModal() {
-    const modal = document.getElementById('reservationConflictModal');
-    modal.style.display = 'none';
-}
-
-///////////////////////
 
 
 /// modal 
