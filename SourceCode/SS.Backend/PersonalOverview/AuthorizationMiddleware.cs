@@ -1,8 +1,4 @@
-using Microsoft.AspNetCore.Http;
-using System.Linq;
-using System.Threading.Tasks;
-using SS.Backend.Security;
-using System;
+﻿using SS.Backend.Security;
 
 public class AuthorizationMiddleware
 {
@@ -19,7 +15,7 @@ public class AuthorizationMiddleware
 
         if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
         {
-            context.Response.StatusCode = 401; 
+            context.Response.StatusCode = 401;
             await context.Response.WriteAsync("Missing or invalid authentication credentials");//unauthenticated - dont tell them about token
             return;
         }
@@ -47,7 +43,7 @@ public class AuthorizationMiddleware
         {
             // Log exception or handle token validation errors
             context.Response.StatusCode = 500; // Internal server error
-            await context.Response.WriteAsync($"An error occurred during authentication. {ex.Message}"); 
+            await context.Response.WriteAsync($"An error occurred during authentication. {ex.Message}");
         }
         finally
         {

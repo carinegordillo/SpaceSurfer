@@ -17,6 +17,7 @@ namespace SpaceBookingCenterAPI.Controllers;
 
 [ApiController]
 [Route("api/v1/spaceBookingCenter/reservations")]
+
 public class ReservationController : ControllerBase
 {
     private readonly IReservationCreationManager _reservationCreationManager;
@@ -24,6 +25,7 @@ public class ReservationController : ControllerBase
     private readonly IReservationModificationManager _reservationModificationManager;
     private readonly IReservationReaderManager _reservationReaderManager;
     private readonly IAvailibilityDisplayManager _availibilityDisplayManager;
+    private readonly IReservationDeletionManager _reservationDeletionManager;
     private readonly SSAuthService _authService;
     private readonly IConfiguration _config;
 
@@ -32,18 +34,20 @@ public class ReservationController : ControllerBase
                                  IReservationModificationManager reservationModificationManager,
                                  IReservationReaderManager reservationReaderManager,
                                  IAvailibilityDisplayManager availibilityDisplayManager,
+                                 IReservationDeletionManager reservationDeletionManager,
                                  SSAuthService authService, IConfiguration config)
 
     {
+
         _reservationCreationManager = reservationCreationManager;
         _reservationCancellationManager = reservationCancellationManager;
         _reservationModificationManager = reservationModificationManager;
         _reservationReaderManager = reservationReaderManager;
         _availibilityDisplayManager = availibilityDisplayManager;
+        _reservationDeletionManager = reservationDeletionManager;
 
         _authService = authService;
         _config = config;
-
     }
 
     [HttpGet("ListReservations")]
@@ -427,6 +431,67 @@ public class ReservationController : ControllerBase
         }
     }
 
+    [HttpPost("DeleteReservation")]
+    public async Task<IActionResult> DeleteReservation([FromBody] ReservationDeleteRequest request)
+    {
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
+        if (accessToken != null && accessToken.StartsWith("Bearer "))
+        {
+            accessToken = accessToken.Substring("Bearer ".Length).Trim();
+            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+
+            if (claimsJson != null)
+            {
+                var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+
+                if (claims.TryGetValue("Role", out var role) && role == "1" || role == "2" || role == "3" || role == "4" || role == "5")
+                {
+                    bool closeToExpTime = _authService.CheckExpTime(accessToken);
+                    if (closeToExpTime)
+                    {
+                        SSPrincipal principal = new SSPrincipal();
+                        principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                        principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                        var newToken = _authService.CreateJwt(Request, principal);
+                        try
+                        {
+                            var response = await _reservationDeletionManager.DeleteSpaceSurferSpaceReservationAsync(request.UserHash, request.ReservationID);
+                            return Ok(new { response, newToken });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Internal server error: " + ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var response = await _reservationDeletionManager.DeleteSpaceSurferSpaceReservationAsync(request.UserHash, request.ReservationID);
+                            return Ok(response);
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Internal server error: " + ex.Message);
+                        }
+                    }
+                }
+                else
+                {
+                    return BadRequest("Unauthorized role.");
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid token.");
+            }
+        }
+        else
+        {
+            return BadRequest("Unauthorized. Access token is missing or invalid.");
+        }
+    }
+
     [HttpGet("CheckAvailability")]
     public async Task<IActionResult> CheckAvailability(int companyId, DateTime startTime, DateTime endTime)
     {
@@ -440,6 +505,8 @@ public class ReservationController : ControllerBase
             return StatusCode(500, "Internal server error: " + ex.Message);
         }
     }
+
+    
 
 
 

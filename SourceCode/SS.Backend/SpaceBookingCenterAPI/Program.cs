@@ -48,6 +48,7 @@ builder.Services.AddTransient<IReservationModificationService, ReservationModifi
 builder.Services.AddTransient<IReservationReadService, ReservationReadService>();
 builder.Services.AddTransient<IReservationValidationService, ReservationValidationService>();
 builder.Services.AddTransient<IReservationStatusUpdater, ReservationStatusUpdater>();
+builder.Services.AddTransient<IReservationDeletionService, ReservationDeletionService>();
 
 
 //Mangers Setup
@@ -56,6 +57,7 @@ builder.Services.AddTransient<IReservationCancellationManager, ReservationCancel
 builder.Services.AddTransient<IReservationModificationManager, ReservationModificationManager>();
 builder.Services.AddTransient<IReservationReaderManager, ReservationReaderManager>();
 builder.Services.AddTransient<IAvailibilityDisplayManager, AvailabilityDisplayManager>();
+builder.Services.AddTransient<IReservationDeletionManager, ReservationDeletionManager>();
 
 //spaceMAnger setup
 builder.Services.AddTransient<ISpaceManagerDao, SpaceManagerDao>();
@@ -131,7 +133,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseMiddleware<AuthorizationMiddleware>();
+// app.UseMiddleware<AuthorizationMiddleware>();
 
 app.MapControllers();
 
