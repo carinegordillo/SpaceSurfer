@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:5275; img-src 'self' data:;">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="spaceBookingCenter.css">
     <link rel="stylesheet" href="PersonalOverviewStyle.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="script.js"></script>
@@ -94,11 +95,10 @@
             <div style=" border: groove; border-radius: 100px;" id="reservation-list">
             </div>
         </div>
-        <form id="delete-reservation-form" class="delete-form">
-            <label for="lableReservationID">Enter Reservation ID to Delete:</label>
-            <input type="number" id="reservation-id" name="reservation-id-name" required>
+        <div>
             <button id="delete-button">Delete Reservation</button>
-        </form>
+            <div class="space-form-container" id="space-form-container" style="height: 200px;"></div>
+        </div>
 
     </section>
 
@@ -177,6 +177,7 @@
     </template>
 
     <script src="PersonalOverviewFunctions.js"></script>
+    <script src="spaceBookingCenter.js"></script>
 
 </body>
 

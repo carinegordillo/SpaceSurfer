@@ -6,10 +6,10 @@ var reservations = [];
 
 document.getElementById('prev-month').addEventListener('click', () => changeMonth(-1));
 document.getElementById('next-month').addEventListener('click', () => changeMonth(1));
-document.getElementById('calendar-button').addEventListener('click', selectCalendar);
-document.getElementById('list-button').addEventListener('click', selectReservationList);
+document.getElementById('calendar-button').addEventListener('click', calendarView);
+document.getElementById('list-button').addEventListener('click', listView);
 document.getElementById('confirm-button').addEventListener('click', confirmSelection);
-document.getElementById('delete-button').addEventListener('click', fetchReservationDeletion());
+document.getElementById('space-form-container').addEventListener('click', getReservationOverview);
 
 // Function to fetch user reservations from the API
 async function fetchUserReservations(fromDateValue, toDateValue) {
@@ -61,7 +61,7 @@ async function fetchReservationDeletion() {
     var idToken = sessionStorage.getItem('idToken');
     var parsedIdToken = JSON.parse(idToken);
     var username = parsedIdToken.Username;
-    var reservationID = document.getElementById('reservation-id').value;
+    var reservationIDValue = document.getElementById('reservation-id').value;
 
     if (!idToken) {
         console.error('ID token not found.');
@@ -78,7 +78,7 @@ async function fetchReservationDeletion() {
         return;
     }
 
-    const url = `http://localhost:5275/api/v1/PersonalOverview/ReservationDeletion`;
+    const url = `http://localhost:5275/api/v1/PersonalOverview/ReservationDeletion?=${reservationIDValue}`;
 
     try {
         const response = await fetch(url, {
@@ -86,10 +86,7 @@ async function fetchReservationDeletion() {
             headers: {
                 'Authorization': `Bearer ` + accessToken,
                 'Content-Type': "application/json",
-            },
-            body: JSON.stringify({
-                reservationID: reservationID
-            })
+            }
         });
 
         if (!response.ok) {
@@ -105,19 +102,6 @@ async function fetchReservationDeletion() {
 
 }
 
-//async function deleteReservation() {
-//    var reservationIDValue = document.getElementById('reservation-id').value;
-
-//    try
-//    {
-//        reservationDelete = await fetchReservationDeletion(reservationIDValue);
-//    }
-//    catch(error)
-//    {
-//        console.error(error.message);
-//    }
-
-//}
 
     // Function to apply date filter and fetch reservations
 async function applyDateFilter() {
@@ -155,7 +139,7 @@ async function confirmSelection()
 
 
 // Function to switch to calendar view
-function selectCalendar() {
+function calendarView() {
     currentView = 'calendar';
     document.getElementById('calendar-button').classList.add('selected-button');
     document.getElementById('list-button').classList.remove('selected-button');
@@ -163,7 +147,7 @@ function selectCalendar() {
 }
 
 // Function to switch to reservation list view
-function selectReservationList() {
+function listView() {
     currentView = 'list';
     document.getElementById('list-button').classList.add('selected-button');
     document.getElementById('calendar-button').classList.remove('selected-button');
@@ -287,7 +271,7 @@ function createCalendar(year, month) {
 
                     const reservationElement = document.createElement('div');
                     reservationElement.className = 'reservationID';
-                    companyElement.textContent = `ReservationID: ${reservation.reservationID}`;
+                    reservationElement.textContent = `ReservationID: ${reservation.reservationID}`;
                     reservationDetails.appendChild(reservationElement);
 
                     const companyElement = document.createElement('div');
@@ -350,3 +334,79 @@ return (
 );
 }
 
+
+function createDeleteReservationForm() {
+    const form = document.createElement('form');
+    form.id = 'deleteReservationForm';
+    form.innerHTML = `
+        <div class="form-group">
+            <label for="reservationIDToDelete">Reservation ID:</label>
+            <input type="number" id="reservationIDToDelete" required>
+        </div>
+        <input type="submit" value="Delete Reservation">
+    `;
+    form.addEventListener('submit', handleDeleteReservationFormSubmit);
+    return form;
+}
+
+
+async function handleDeleteReservationFormSubmit(event) {
+    event.preventDefault();
+
+    const reservationID = document.getElementById('reservation-id').value;
+    var accessToken = sessionStorage.getItem('accessToken');
+
+    const isTokenValid = await checkTokenExpiration(accessToken);
+    if (!isTokenValid) {
+        logout();
+        return;
+    }
+
+    var idToken = sessionStorage.getItem('idToken');
+
+    var parsedIdToken = JSON.parse(idToken);
+    var userHash = parsedIdToken.Username;
+
+
+    try {
+        const response = await fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/DeleteReservation`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userHash, reservationID: parseInt(reservationID, 10) }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        if (responseData.newToken) {
+            accessToken = data.newToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            console.log('New access token stored:', accessToken);
+        }
+        if (responseData.hasError) {
+            console.error(`Reservation deletion error: ${responseData.errorMessage}`);
+            onError(`Reservation deletion error: ${responseData.errorMessage}`);
+        } else {
+            console.log('Reservation deleted successfully');
+            onSuccess('Reservation deleted successfully!');
+
+        }
+    } catch (error) {
+        console.error('Error deleting reservation:', error);
+        onError(`Error deleting reservation: ${error}`);
+    }
+}
+
+
+function getReservationOverview() {
+    const deleteFormContainer = document.querySelector('.space-form-container');
+    if (deleteFormContainer) {
+        const deleteReservationForm = createDeleteReservationForm();
+        deleteFormContainer.appendChild(deleteReservationForm);
+    }
+}
