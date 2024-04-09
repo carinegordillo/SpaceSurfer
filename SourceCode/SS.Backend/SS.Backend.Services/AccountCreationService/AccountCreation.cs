@@ -10,20 +10,6 @@ namespace SS.Backend.Services.AccountCreationService
 {
     public class AccountCreation : IAccountCreation
     {
-        // Credential temp = Credential.CreateSAUser();
-        // string configFilePath = "../../../Configs/config.local.txt";
-        // var baseDirectory = AppContext.BaseDirectory;
-        // var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-        // var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-        // ConfigService configService = new ConfigService(configFilePath);
-
-        // private readonly UserInfo _userInfo;
-        // private readonly ICustomSqlCommandBuilder _commandBuilder;
-
-        // public AccountCreation(UserInfo userInfo)
-        // {
-        //     _userInfo = userInfo;
-        // }
 
         public bool CheckNullWhiteSpace(string str)
         {
@@ -333,6 +319,58 @@ namespace SS.Backend.Services.AccountCreationService
                 response.ErrorMessage += "- ReadUserTable- command successful -";
             }
           
+            return response;
+
+        }
+
+        public async Task<Response> VerifyAccount(string username)
+        {
+
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            ConfigService configService = new ConfigService(configFilePath);
+            SqlDAO SQLDao = new SqlDAO(configService);
+            Response response = new Response();
+
+            UserPepper userPepper = new UserPepper();
+            AccountCreation accountcreation = new AccountCreation();
+            Hashing hashing = new Hashing();
+
+            
+            var builder = new CustomSqlCommandBuilder();
+            string pepper = "DA06";
+
+
+            var validPepper = new UserPepper
+            {
+                hashedUsername = hashing.HashData(username, pepper)
+            };
+
+            var parameters = new Dictionary<string, object>
+            {
+                {"isActive", "yes"}, 
+                {"hashedUsername", validPepper.hashedUsername} // Use as a parameter for the WHERE clause
+            };
+
+            var updateCommand = builder.BeginUpdate("activeAccount") // Specify the table name
+                                .Set(new Dictionary<string, object> { {"isActive", true} }) // Set the isActive column
+                                .Where("hashedUsername = @hashedUsername") // Specify the condition
+                                .AddParameters(parameters) // Add the parameters
+                                .Build();
+
+            response = await SQLDao.SqlRowsAffected(updateCommand); // Execute the update command
+
+            // Check for errors and handle the response
+            if (response.HasError)
+            {
+                response.ErrorMessage += "Error updating isActive column; ";
+            }
+            else
+            {
+                response.ErrorMessage += "Update isActive operation successful; ";
+            }
+
             return response;
 
         }
