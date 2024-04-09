@@ -680,7 +680,7 @@ namespace SS.Backend.Waitlist
                 .Build();
 
             result = await _sqldao.ReadSqlResult(getCompanyName);
-            string? compName = result.ValuesRead?.Rows[0]?["companyName"].ToString();
+             string compName = result.ValuesRead?.Rows[0]?["companyName"]?.ToString() ?? "Unknown Company";
 
             return compName;
         }
@@ -692,7 +692,7 @@ namespace SS.Backend.Waitlist
         /// <param name="userHash">hashed username</param>
         /// <param name="reservationId">reservation id</param>
         /// <returns>Waitlist entry containing reservation details</returns>
-        public async Task<WaitlistEntry> GetReservationDetails(string resTable, string userHash, int reservationId)
+        public async Task<WaitlistEntry?> GetReservationDetails(string resTable, string userHash, int reservationId)
         {
             var builder = new CustomSqlCommandBuilder();
             var result = new Response();
@@ -714,7 +714,7 @@ namespace SS.Backend.Waitlist
 
                 if (resDetailsResult.ValuesRead.Rows.Count == 0)
                 {
-                    return null;
+                    throw new KeyNotFoundException($"Reservation with ID {reservationId} not found.");
                 }
 
                 // Get position on waitlist for user
@@ -751,6 +751,7 @@ namespace SS.Backend.Waitlist
             }
             catch (Exception ex)
             {
+                result.ErrorMessage = "error"+ ex.Message;
                 return null;
             }
         }

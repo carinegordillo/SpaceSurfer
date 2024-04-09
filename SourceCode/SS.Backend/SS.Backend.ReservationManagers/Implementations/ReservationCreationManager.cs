@@ -99,7 +99,7 @@ namespace SS.Backend.ReservationManagers{
             catch (Exception ex)
             {
                 response.HasError = true;
-                response.ErrorMessage = "Error adding to waitlist";
+                response.ErrorMessage = "Error adding to waitlist" + ex.Message;
             }
 
             return response;
