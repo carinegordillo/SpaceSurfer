@@ -129,4 +129,123 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         _command.CommandText = _commandText.ToString();
         return _command;
     }
+
+    // Waitlist Custom Queries
+    public ICustomSqlCommandBuilder getSid(string tableName, int rid)
+    {
+        ResetBuilder();
+        _commandText.Append($"SELECT* FROM {tableName} WHERE reservationID = @rid");
+        _command.Parameters.AddWithValue("@rid", rid);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder getCid(string compName)
+    {
+        ResetBuilder();
+        _commandText.Append("SELECT* FROM companyProfile WHERE companyName = @name");
+        _command.Parameters.AddWithValue("@name", compName);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder getFloor(int compId, int floorId)
+    {
+        ResetBuilder();
+        _commandText.Append("SELECT * FROM companyFloor WHERE companyID = @cid AND floorPlanID = @fid");
+        _command.Parameters.AddWithValue("@cid", compId);
+        _command.Parameters.AddWithValue("@fid", floorId);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder getFid(string tableName, int compId)
+    {
+        ResetBuilder();
+        _commandText.Append($"SELECT * FROM {tableName} WHERE companyID = @cid");
+        _command.Parameters.AddWithValue("@cid", compId);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder CountWaitlistUsersForReservation(int reservationID)
+    {
+        ResetBuilder();
+        _commandText.Append("SELECT COUNT(*) AS Count FROM Waitlist WHERE ReservationID = @ReservationID");
+        _command.Parameters.AddWithValue("@ReservationID", reservationID);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder UpdatePositionWaitlisted(int resId, int oldPos, int newPos)
+    {
+        ResetBuilder();
+        _commandText.Append("UPDATE Waitlist SET Position = @new WHERE ReservationID = @id AND Position = @old");
+        _command.Parameters.AddWithValue("@id", resId);
+        _command.Parameters.AddWithValue("@old", oldPos);
+        _command.Parameters.AddWithValue("@new", newPos);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder UpdatePosition(int resId, string user, int newPos)
+    {
+        ResetBuilder();
+        _commandText.Append("UPDATE Waitlist SET Position = @new WHERE ReservationID = @id AND Username = @user");
+        _command.Parameters.AddWithValue("@id", resId);
+        _command.Parameters.AddWithValue("@user", user);
+        _command.Parameters.AddWithValue("@new", newPos);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder GetAllWaitlist(int resId)
+    {
+        ResetBuilder();
+        _commandText.Append("SELECT * FROM Waitlist WHERE ReservationID = @id");
+        _command.Parameters.AddWithValue("@id", resId);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder GetCompId(string tableName, int resId)
+    {
+        ResetBuilder();
+        _commandText.Append($"SELECT * FROM {tableName} WHERE reservationID = @id");
+        _command.Parameters.AddWithValue("@id", resId);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder GetCompName(int compId)
+    {
+        ResetBuilder();
+        _commandText.Append("SELECT * FROM companyProfile WHERE companyID = @id");
+        _command.Parameters.AddWithValue("@id", compId);
+        return this;
+    }
+
+    //public ICustomSqlCommandBuilder getResIDWithConflict(string tableName, int cid, int fid, string sid, DateTime s, DateTime e)
+    //{
+    //    ResetBuilder();
+    //    _commandText.Append($"SELECT * FROM {tableName} WHERE companyID = @cid AND floorPlanID = @fid AND spaceID = @sid AND ((reservationStartTime <= @s AND reservationEndTime >= @s) OR (reservationStartTime <= @e AND reservationEndTime >= @e))");
+    //    _command.Parameters.AddWithValue("@cid", cid);
+    //    _command.Parameters.AddWithValue("@fid", fid);
+    //    _command.Parameters.AddWithValue("@sid", sid);
+    //    _command.Parameters.AddWithValue("@s", s);
+    //    _command.Parameters.AddWithValue("@e", e);
+    //    return this;
+    //}
+
+    public ICustomSqlCommandBuilder getResIDWithConflict(string tableName, int cid, int fid, string sid, string s, string e)
+    {
+        ResetBuilder();
+        _commandText.Append($"SELECT * FROM {tableName} WHERE companyID = @cid AND floorPlanID = @fid AND spaceID = @sid AND ((reservationStartTime <= @s AND reservationEndTime >= @s) OR (reservationStartTime <= @e AND reservationEndTime >= @e))");
+        _command.Parameters.AddWithValue("@cid", cid);
+        _command.Parameters.AddWithValue("@fid", fid);
+        _command.Parameters.AddWithValue("@sid", sid);
+        _command.Parameters.AddWithValue("@s", s);
+        _command.Parameters.AddWithValue("@e", e);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder onWaitlist(string user, int rid)
+    {
+        ResetBuilder();
+        _commandText.Append("SELECT * FROM Waitlist WHERE Username = @user AND ReservationID = @rid");
+        _command.Parameters.AddWithValue("@user", user);
+        _command.Parameters.AddWithValue("@rid", rid);
+        return this;
+    }
 }
