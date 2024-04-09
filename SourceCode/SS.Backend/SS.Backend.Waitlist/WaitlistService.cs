@@ -13,12 +13,10 @@ namespace SS.Backend.Waitlist
     public class WaitlistService
     {
         private readonly SqlDAO _sqldao;
-        private readonly Logger log;
 
-        public WaitlistService(SqlDAO sqldao, Logger log)
+        public WaitlistService(SqlDAO sqldao)
         {
             _sqldao = sqldao;
-            this.log = log;
         }
 
         /// <summary>
@@ -83,29 +81,11 @@ namespace SS.Backend.Waitlist
                     // Send email
                     await MailSender.SendEmail(targetEmail, subject, msg);
                     result.HasError = false;
-                    LogEntry entry = new()
-                    {
-                        timestamp = DateTime.UtcNow,
-                        level = "Info",
-                        username = info.userHash,
-                        category = "Business",
-                        description = "Sent waitlist confirmation email to user."
-                    };
-                    await log.SaveData(entry);
                 }
                 catch (Exception ex)
                 {
                     result.HasError = true;
                     result.ErrorMessage = ex.Message;
-                    LogEntry entry = new()
-                    {
-                        timestamp = DateTime.UtcNow,
-                        level = "Error",
-                        username = info.userHash,
-                        category = "Business",
-                        description = "Failed to send waitlist confirmation email to user."
-                    };
-                    await log.SaveData(entry);
                 }
             }
             catch (Exception ex)
@@ -113,15 +93,6 @@ namespace SS.Backend.Waitlist
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
                 throw;
-                LogEntry entry = new()
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Error",
-                    username = info.userHash,
-                    category = "Business",
-                    description = "Failed to send waitlist confirmation email to user."
-                };
-                await log.SaveData(entry);
             }
         }
 
@@ -186,44 +157,17 @@ namespace SS.Backend.Waitlist
                     // Send email
                     await MailSender.SendEmail(targetEmail, subject, msg);
                     result.HasError = false;
-                    LogEntry entry = new()
-                    {
-                        timestamp = DateTime.UtcNow,
-                        level = "Info",
-                        username = info.userHash,
-                        category = "Business",
-                        description = "Sent waitlist notification email to user."
-                    };
-                    await log.SaveData(entry);
                 }
                 catch (Exception ex)
                 {
                     result.HasError = true;
                     result.ErrorMessage = ex.Message;
-                    LogEntry entry = new()
-                    {
-                        timestamp = DateTime.UtcNow,
-                        level = "Info",
-                        username = info.userHash,
-                        category = "Business",
-                        description = "Failed to send waitlist notification email to user."
-                    };
-                    await log.SaveData(entry);
                 }
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                LogEntry entry = new()
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Info",
-                    username = info.userHash,
-                    category = "Business",
-                    description = "Failed to send waitlist notification email to user."
-                };
-                await log.SaveData(entry);
             }
 
         }
@@ -253,29 +197,11 @@ namespace SS.Backend.Waitlist
                     .AddParameters(parameters)
                     .Build();
                 result = await _sqldao.SqlRowsAffected(insertCmd);
-                LogEntry entry = new()
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Info",
-                    username = userHash,
-                    category = "Data Store",
-                    description = "Successfully inserted approved user to the waitlist."
-                };
-                await log.SaveData(entry);
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                LogEntry entry = new()
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Error",
-                    username = userHash,
-                    category = "Data Store",
-                    description = "Failed to insert approved user to the waitlist."
-                };
-                await log.SaveData(entry);
                 throw;
             }
         }
@@ -393,15 +319,6 @@ namespace SS.Backend.Waitlist
                     .AddParameters(parameters)
                     .Build();
                 result = await _sqldao.SqlRowsAffected(insertCmd);
-                LogEntry entry = new()
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Info",
-                    username = userHash,
-                    category = "Data Store",
-                    description = "Successfully inserted waitlisted user to the waitlist."
-                };
-                await log.SaveData(entry);
 
                 // spaceID
                 var getSpaceId = builder.getSid(resTable, resId).Build();
@@ -411,7 +328,7 @@ namespace SS.Backend.Waitlist
                 // companyName
                 var getCompId = builder.GetCompId(resTable, resId).Build();
                 result = await _sqldao.ReadSqlResult(getCompId);
-                int compId = Convert.ToInt32(result.ValuesRead?.Rows[0]?["companyID"].ToString());=
+                int compId = Convert.ToInt32(result.ValuesRead?.Rows[0]?["companyID"].ToString());
                 var getCompName = builder.GetCompName(compId).Build();
                 result = await _sqldao.ReadSqlResult(getCompName);
                 string companyName = result.ValuesRead?.Rows[0]?["companyName"].ToString();
@@ -441,7 +358,7 @@ namespace SS.Backend.Waitlist
                 DateTime endTime = Convert.ToDateTime(result.ValuesRead?.Rows[0]?["reservationEndTime"]);
 
                 // Populate WaitlistEntry with info needed for confirmation email
-                WaitlistEntry entry = new WaitlistEntry
+                WaitlistEntry waitlistentry = new WaitlistEntry
                 {
                     userHash = userHash,
                     spaceID = spaceId,
@@ -450,21 +367,12 @@ namespace SS.Backend.Waitlist
                     endTime = endTime,
                     position = pos
                 };
-                await SendConfirmationEmail(entry);
+                await SendConfirmationEmail(waitlistentry);
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                LogEntry entry = new()
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Error",
-                    username = userHash,
-                    category = "Data Store",
-                    description = "Failed to insert waitlisted user to the waitlist."
-                };
-                await log.SaveData(entry);
                 throw;
             }
 
@@ -502,15 +410,6 @@ namespace SS.Backend.Waitlist
                     })
                     .Build();
                 result = await _sqldao.SqlRowsAffected(deleteUserCmd);
-                LogEntry entry = new()
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Info",
-                    username = user,
-                    category = "Data Store",
-                    description = "Successfully removed approved user from the waitlist."
-                };
-                await log.SaveData(entry);
 
                 // Retrieve all users on the waitlist for the reservation
                 var getUsersCmd = builder.GetAllWaitlist(resId).Build();
@@ -528,15 +427,6 @@ namespace SS.Backend.Waitlist
                             var updateCmd = builder.UpdatePosition(resId, user, newPosition).Build();
                             await _sqldao.SqlRowsAffected(updateCmd);
                         }
-                        LogEntry entry = new()
-                        {
-                            timestamp = DateTime.UtcNow,
-                            level = "Info",
-                            username = user,
-                            category = "Data Store",
-                            description = "Successfully updated waitlist after approved user removed."
-                        };
-                        await log.SaveData(entry);
                     }
                 }
                 else
