@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -10,16 +10,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.0.4" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.2.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.2.2" />
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-	<ProjectReference Include="..\SS.Backend.ReservationManagement\SS.Backend.ReservationManagement.csproj" />
+  <ProjectReference Include="..\SS.Backend.ConsoleApp\SS.Backend.ConsoleApp.csproj" />
+  <ProjectReference Include="..\SS.Backend.ReservationManagement\SS.Backend.ReservationManagement.csproj" />
+  <ProjectReference Include="..\SS.Backend.Security\SS.Backend.Security.csproj" />
+  <ProjectReference Include="..\SS.Backend.Services\SS.Backend.Services.csproj" />
   <ProjectReference Include="..\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
   <ProjectReference Include="..\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj" />
+  <ProjectReference Include="..\SS.Backend.SpaceManager\SS.Backend.SpaceManager.csproj" />
+  <ProjectReference Include="..\SS.Backend.Tests.Logging\SS.Backend.Tests.Logging.csproj" />
   </ItemGroup>
 
 </Project>
