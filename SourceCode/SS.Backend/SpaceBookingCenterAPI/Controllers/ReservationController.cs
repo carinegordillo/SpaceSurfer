@@ -30,7 +30,7 @@ public class ReservationController : ControllerBase
     private readonly ILogger _logger;
     private readonly IEmailConfirmDAO _emailDao;
     private readonly IEmailConfirmService _emailService;
-    private readonly IEmailConfirmSender _emailSender;
+    //private readonly IEmailConfirmSender _emailSender;
 
 
     public ReservationController(IReservationCreationManager reservationCreationManager,
@@ -55,7 +55,7 @@ public class ReservationController : ControllerBase
        _logger = logger;
        _config = config;
        _emailService = emailService;
-       _emailSender = emailSender;
+       //_emailSender = emailSender;
        _emailDao = emailDao;
        
     }
@@ -266,6 +266,70 @@ public class ReservationController : ControllerBase
         }
 
 
+    }
+
+    [HttpPost("SendConfirmation")]
+    public async Task<IActionResult> SendConfirmation([FromBody] UserReservationsModel reservation)
+    {
+ 
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
+        if (accessToken != null && accessToken.StartsWith("Bearer "))
+        {
+            accessToken = accessToken.Substring("Bearer ".Length).Trim();
+            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+
+            if (claimsJson != null)
+            {
+                var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+
+                if (claims.TryGetValue("Role", out var role) && role == "1" || role == "2" || role == "3" || role == "4" || role == "5")
+                {
+                    bool closeToExpTime = _authService.CheckExpTime(accessToken);
+                    if (closeToExpTime)
+                    {
+                        SSPrincipal principal = new SSPrincipal();
+                        principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                        principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                        var newToken = _authService.CreateJwt(Request, principal);
+                        try
+                        {
+                            var response = await _reservationCreationManager.SendConfirmation(reservation)
+                            Console.WriteLine(response.ErrorMessage);
+                            return Ok(new { response, newToken });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Internal server error: " + ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var response = await _reservationCreationManager.SendConfirmation(reservation)
+                            Console.WriteLine(response.ErrorMessage);
+                            return Ok(response);
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Internal server error: " + ex.Message);
+                        }
+                    }
+                }
+                else
+                {
+                    return BadRequest("Unauthorized role.");
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid token.");
+            }
+        }
+        else
+        {
+            return BadRequest("Unauthorized. Access token is missing or invalid.");
+        }
     }
 
     [HttpPut("UpdateReservation")]

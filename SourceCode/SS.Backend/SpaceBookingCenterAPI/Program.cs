@@ -51,7 +51,7 @@ builder.Services.AddTransient<IReservationStatusUpdater, ReservationStatusUpdate
 //email confirmation setup
 builder.Services.AddTransient<IEmailConfirmDAO, EmailConfirmDAO>();
 builder.Services.AddTransient<IEmailConfirmService, EmailConfirmService>();
-builder.Services.AddTransient<IEmailConfirmSender,EmailConfirmSender>();
+//builder.Services.AddTransient<IEmailConfirmSender,EmailConfirmSender>();
 
 //Mangers Setup
 builder.Services.AddTransient<IReservationCreationManager, ReservationCreationManager>();

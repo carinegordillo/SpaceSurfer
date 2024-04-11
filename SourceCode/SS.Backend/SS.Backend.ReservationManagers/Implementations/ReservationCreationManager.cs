@@ -1,6 +1,9 @@
 ﻿using SS.Backend.SharedNamespace;
 using SS.Backend.ReservationManagement;
 using SS.Backend.EmailConfirm;
+using SS.Backend.Services.EmailService;
+using System.Net.Mail;
+using MailKit.Security;
 
 namespace SS.Backend.ReservationManagers{
 
@@ -11,7 +14,7 @@ namespace SS.Backend.ReservationManagers{
         private readonly IReservationValidationService _reservationValidationService;
         private readonly IEmailConfirmDAO _emailDao;
         private readonly IEmailConfirmService _emailService;
-        private readonly IEmailConfirmSender _emailSender;
+        //private readonly IEmailConfirmSender _emailSender;
 
         private readonly IReservationRequirements _reservationRequirements = new SpaceSurferReservationRequirements();
         
@@ -19,7 +22,7 @@ namespace SS.Backend.ReservationManagers{
 
         public ReservationCreationManager(IReservationCreatorService reservationCreatorService, 
                                             IReservationValidationService reservationValidationService, 
-                                            IEmailConfirmSender emailSender,
+                                            //IEmailConfirmSender emailSender,
                                             IEmailConfirmService emailService,
                                             IEmailConfirmDAO emailDao)
         {
@@ -79,6 +82,84 @@ namespace SS.Backend.ReservationManagers{
 
             }
             return response;
+        }
+
+        public async Task<Response> SendConfirmation (UserReservationsModel reservation)
+        {
+            int reservationID = (int)reservation.ReservationID;
+            Console.WriteLine(reservationID);
+            var logResponse = new Response();
+            Response emailResponse = await _emailDao.GetUsername(reservation.UserHash);
+            string targetEmail = emailResponse.ValuesRead.Rows[0]["username"].ToString();
+            (string icsFile, string otp, string body, Response result) = await _emailService.CreateConfirmation(reservationID);
+
+            if (string.IsNullOrEmpty(body))
+            {
+                result.HasError = true;
+                result.ErrorMessage = "Failed to create email confirmation. Body is null";
+            }
+            if (string.IsNullOrEmpty(icsFile))
+            {
+                result.HasError = true;
+                result.ErrorMessage = "Failed to create email confirmation. Ics is null";
+            }
+            if (string.IsNullOrEmpty(otp))
+            {
+                result.HasError = true;
+                result.ErrorMessage = "Failed to create email confirmation. Otp is null";
+            }
+            if (result.HasError)
+            {
+                result.HasError = true;
+                result.ErrorMessage += "Failed to create email confirmation.";
+            }
+            try
+            {
+                await MailSender.SendConfirmEmail(targetEmail, icsFile, body);
+            }
+            catch (SmtpException ex)
+            {
+                result.ErrorMessage = ex.Message;
+            }
+            catch (IOException ex)
+            {
+                result.ErrorMessage = ex.Message;
+            }
+            catch (AuthenticationException ex)
+            {
+                result.ErrorMessage = ex.Message;
+            }
+            catch (Exception ex) // Catch any other unexpected exceptions
+            {
+                result.ErrorMessage = ex.Message;
+            }
+
+            //logging
+            if (result.HasError == false)
+            {
+                LogEntry entry = new LogEntry
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Info",
+                    username = reservation.UserHash,
+                    category = "Data Store",
+                    description = "Confirmation email sent successfully."
+                };
+                //await _logger.SaveData(entry);
+            }
+            else
+            {
+                LogEntry entry = new LogEntry
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = reservation.UserHash,
+                    category = "Data Store",
+                    description = "Confirmation email failed."
+                };
+                //await _logger.SaveData(entry);
+            }
+            return result;
         }
 
 

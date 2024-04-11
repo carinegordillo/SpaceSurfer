@@ -489,7 +489,7 @@ function showCancelModal(reservation) {
     }
 }
 
-////////////////////////////
+//////////////Reservation Confirmation//////////////
 
 function showConfirmationModal(reservation) {
     const reservationID = reservation.reservationID;
@@ -537,7 +537,7 @@ async function confirmReservation(reservation, code, accessToken) {
 
     try{
         
-        const response = await fetch(`http://localhost:5116/api/v1/reservationConfirmation/ConfirmReservation`, {
+        const response = await fetch(`http://localhost:5116/api/v1/reservationConfirmation/ConfirmReservation?reservationID=${reservationID}&otp=${code}`, {
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -578,7 +578,7 @@ async function resendEmail(reservation, accessToken) {
     }
     const reservationID = reservation.reservationID;
     try{
-        const response = await fetch(`http://localhost:5116/api/v1/reservationConfirmation/ResendConfirmation`, {
+        const response = await fetch(`http://localhost:5116/api/v1/reservationConfirmation/ResendConfirmation?reservationID=${reservationID}`, {
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
