@@ -23,7 +23,7 @@ namespace SS.Backend.ReservationManagers{
         public ReservationCreationManager(IReservationCreatorService reservationCreatorService, 
                                             IReservationValidationService reservationValidationService, 
                                             WaitlistService waitlistService, 
-                                            IEmailConfirmSender emailSender,
+                                            //IEmailConfirmSender emailSender,
                                             IEmailConfirmService emailService,
                                             IEmailConfirmDAO emailDao)
         {
@@ -31,7 +31,7 @@ namespace SS.Backend.ReservationManagers{
             _reservationValidationService = reservationValidationService;
             _waitlist = waitlistService;
             _emailService = emailService;
-            _emailSender = emailSender;
+            //_emailSender = emailSender;
             _emailDao = emailDao;
             
         }

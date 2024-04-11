@@ -44,9 +44,9 @@ public class ReservationController : ControllerBase
                                  SSAuthService authService, IConfiguration config,
                                  ILogger logger,
                                  IEmailConfirmService emailService,
-                                 IEmailConfirmSender emailSender,
+                                 //IEmailConfirmSender emailSender,
                                  IEmailConfirmDAO emailDao)
-                                 
+
     {
 
         _reservationCreationManager = reservationCreationManager;
@@ -58,10 +58,10 @@ public class ReservationController : ControllerBase
 
         _authService = authService;
         _logger = logger;
-       _config = config;
-       _emailService = emailService;
-       _emailSender = emailSender;
-       _emailDao = emailDao;
+        _config = config;
+        _emailService = emailService;
+        //_emailSender = emailSender;
+        _emailDao = emailDao;
     }
 
     [HttpGet("ListReservations")]
@@ -536,7 +536,7 @@ public class ReservationController : ControllerBase
         }
     }
 
-    
+
 
 
 
