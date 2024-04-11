@@ -6,7 +6,6 @@ using SS.Backend.ReservationManagement;
 using SS.Backend.ReservationManagers;
 using SS.Backend.DataAccess;
 using SS.Backend.SpaceManager;
-using SS.Backend.Waitlist;
 using SS.Backend.EmailConfirm;
 using SS.Backend.Security;
 using Microsoft.IdentityModel.Tokens;
@@ -48,7 +47,11 @@ builder.Services.AddTransient<IReservationModificationService, ReservationModifi
 builder.Services.AddTransient<IReservationReadService, ReservationReadService>();
 builder.Services.AddTransient<IReservationValidationService, ReservationValidationService>();
 builder.Services.AddTransient<IReservationStatusUpdater, ReservationStatusUpdater>();
-builder.Services.AddTransient<IReservationDeletionService, ReservationDeletionService>();
+
+//email confirmation setup
+builder.Services.AddTransient<IEmailConfirmDAO, EmailConfirmDAO>();
+builder.Services.AddTransient<IEmailConfirmService, EmailConfirmService>();
+builder.Services.AddTransient<IEmailConfirmSender,EmailConfirmSender>();
 
 //Mangers Setup
 builder.Services.AddTransient<IReservationCreationManager, ReservationCreationManager>();
@@ -56,7 +59,6 @@ builder.Services.AddTransient<IReservationCancellationManager, ReservationCancel
 builder.Services.AddTransient<IReservationModificationManager, ReservationModificationManager>();
 builder.Services.AddTransient<IReservationReaderManager, ReservationReaderManager>();
 builder.Services.AddTransient<IAvailibilityDisplayManager, AvailabilityDisplayManager>();
-builder.Services.AddTransient<IReservationDeletionManager, ReservationDeletionManager>();
 
 //spaceMAnger setup
 builder.Services.AddTransient<ISpaceManagerDao, SpaceManagerDao>();
@@ -82,17 +84,6 @@ builder.Services.AddTransient<SSAuthService>(provider =>
     )
 );
 
-//waitlist
-builder.Services.AddTransient<WaitlistService>(provider =>
-    new WaitlistService(
-        provider.GetRequiredService<SqlDAO>()
-    )
-);
-
-//email confirmation setup
-builder.Services.AddTransient<IEmailConfirmDAO, EmailConfirmDAO>();
-builder.Services.AddTransient<IEmailConfirmService, EmailConfirmService>();
-//builder.Services.AddTransient<IEmailConfirmSender,EmailConfirmSender>();
 
 // Learn more about configuring Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
@@ -137,7 +128,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// app.UseMiddleware<AuthorizationMiddleware>();
+app.UseMiddleware<AuthorizationMiddleware>();
 
 app.MapControllers();
 

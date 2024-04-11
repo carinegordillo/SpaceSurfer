@@ -19,9 +19,7 @@
 
     root.myApp = root.myApp || {};
     async function init() {
-        //window.location = "UnAuthnAbout/about.html"
-        window.location = "Index/index.html"
-
+        window.location = "UnAuthnAbout/about.html"
         if (localStorage.length != 0) {
             token = localStorage["accessToken"]
         }

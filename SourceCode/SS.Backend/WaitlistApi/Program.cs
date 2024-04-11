@@ -1,7 +1,6 @@
 using SS.Backend.SpaceManager;
 using SS.Backend.DataAccess;
 using SS.Backend.Security;
-using SS.Backend.Waitlist;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using SS.Backend.Services.LoggingService;
@@ -44,11 +43,7 @@ builder.Services.AddTransient<SSAuthService>(provider =>
         provider.GetRequiredService<Logger>()
     )
 );
-builder.Services.AddTransient<WaitlistService>(provider =>
-    new WaitlistService(
-        provider.GetRequiredService<SqlDAO>()
-    )
-);
+
 
 var app = builder.Build();
 

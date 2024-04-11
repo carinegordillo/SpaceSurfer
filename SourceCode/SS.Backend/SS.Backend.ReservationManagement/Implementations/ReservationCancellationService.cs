@@ -1,5 +1,4 @@
 ﻿using SS.Backend.DataAccess;
-using SS.Backend.Waitlist;
 using SS.Backend.SharedNamespace;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -10,13 +9,11 @@ namespace SS.Backend.ReservationManagement{
 public class ReservationCancellationService : IReservationCancellationService
 {
         private IReservationManagementRepository _reservationManagementRepository;
-        private readonly WaitlistService _waitlist;
 
-        public ReservationCancellationService(IReservationManagementRepository reservationManagementRepository, WaitlistService waitlist)
+        public ReservationCancellationService(IReservationManagementRepository reservationManagementRepository)
         {
             _reservationManagementRepository = reservationManagementRepository;
-            _waitlist = waitlist;
-
+            
         }
 
 
@@ -47,8 +44,6 @@ public class ReservationCancellationService : IReservationCancellationService
             {
                 response.ErrorMessage += $"- CancelReservationAsync - command successful {response.ErrorMessage} -";
                 response.HasError = false;
-
-                await _waitlist.UpdateWaitlist_ApprovedUserLeft(tableName, reservationID);
             }
             else
             {
