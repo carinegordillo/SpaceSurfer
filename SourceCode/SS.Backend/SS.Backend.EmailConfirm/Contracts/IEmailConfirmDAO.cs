@@ -12,6 +12,7 @@ namespace SS.Backend.EmailConfirm
         public Task<Response> UpdateOtp(int reservationID, string otp);
         public Task<Response> GetUsername(string userHash);
         public Task<(UserReservationsModel,Response)> GetUserReservationByID(int reservationID);
+        public Task<Response> GetAllTableInfo (string tableName);
 
     }
 }

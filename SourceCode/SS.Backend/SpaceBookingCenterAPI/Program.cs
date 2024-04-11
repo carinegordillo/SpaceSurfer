@@ -36,6 +36,8 @@ var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local
 builder.Services.AddTransient<ConfigService>(provider =>new ConfigService(configFilePath));
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
+builder.Services.AddTransient<ILogTarget, SqlLogTarget>();
+builder.Services.AddTransient<SS.Backend.Services.LoggingService.ILogger, Logger>();
 
 //Repo Setup
 builder.Services.AddTransient<IReservationManagementRepository, ReservationManagementRepository>();

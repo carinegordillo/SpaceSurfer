@@ -570,6 +570,7 @@ async function confirmReservation(reservation, code, accessToken) {
     }
 }
 
+////////// Resend Email ///////////
 async function resendEmail(reservation, accessToken) {
     const tokenExpired = await checkTokenExpiration(accessToken);
     if (tokenExpired) {
@@ -616,8 +617,6 @@ async function resendEmail(reservation, accessToken) {
 
 
 //////reservtions Center View
-
-
 
 function createLocationsContainer() {
     const locationsContainer = document.createElement('div');
@@ -997,11 +996,41 @@ async function handleReservationCreationFormSubmit(event) {
             onError(data.errorMessage);
         } else {
             console.log('Reservation created successfully');
+            await sendConfirmation(data.reservationId);
             onSuccess('Reservation created successfully!');
         }
     } catch (error) {
         console.error('Error creating reservation:', error);
         onError("Error creating reservation. Please try again later.");
+    }
+}
+
+async function sendConfirmation(reservationId) {
+    var accessToken = sessionStorage.getItem('accessToken');
+    try {
+        const confirmResponse = await fetch(`http://localhost:5116/api/v1/reservationConfirmation/SendConfirmation?ReservationID=${reservationId}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!confirmResponse.ok) {
+            throw new Error(`HTTP error! status: ${confirmResponse.status}`);
+        }
+
+        const confirmData = await confirmResponse.json();
+        if (confirmData.hasError) {
+            console.error(`Confirmation error: ${confirmData.errorMessage}`);
+            onError(confirmData.errorMessage);
+        } else {
+            console.log('Confirmation email sent successfully');
+            onSuccess('Reservation confirmed and email sent!');
+        }
+    } catch (error) {
+        console.error('Error sending confirmation:', error);
+        onError(`Error sending confirmation: ${error}`);
     }
 }
 

@@ -39,7 +39,6 @@ public class ReservationController : ControllerBase
                                  IReservationReaderManager reservationReaderManager,
                                  IAvailibilityDisplayManager availibilityDisplayManager,
                                  SSAuthService authService, IConfiguration config,
-                                 ILogger logger,
                                  IEmailConfirmService emailService,
                                  //IEmailConfirmSender emailSender,
                                  IEmailConfirmDAO emailDao)
@@ -52,7 +51,6 @@ public class ReservationController : ControllerBase
        _availibilityDisplayManager = availibilityDisplayManager;
 
        _authService = authService;
-       _logger = logger;
        _config = config;
        _emailService = emailService;
        //_emailSender = emailSender;
@@ -221,6 +219,11 @@ public class ReservationController : ControllerBase
                             //         return StatusCode(500, $"Failed to send email confirmation {emailResponse.ErrorMessage}");
                             //     }
                             // }
+                            //await _emailSender.SendConfirmation(reservation);
+                            // if (emailResponse.HasError)
+                            // {
+                            //     return StatusCode(500, "Failed to send email confirmation: " + emailResponse.ErrorMessage);
+                            // }
                             return Ok(new { response, newToken });
                         }
                         catch (Exception ex)
@@ -240,6 +243,11 @@ public class ReservationController : ControllerBase
                             //     {
                             //         return StatusCode(500, $"Failed to send email confirmation {emailResponse.ErrorMessage}");
                             //     }
+                            // }
+                            //await _emailSender.SendConfirmation(reservation);
+                            // if (emailResponse.HasError)
+                            // {
+                            //     return StatusCode(500, "Failed to send email confirmation: " + emailResponse.ErrorMessage);
                             // }
                             Console.WriteLine(response.ErrorMessage);
                             return Ok(response);

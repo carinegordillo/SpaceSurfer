@@ -67,7 +67,6 @@ builder.Services.AddTransient<ISpaceManagerDao, SpaceManagerDao>();
 builder.Services.AddTransient<ISpaceReader, SpaceReader>();
 
 //security
-
 builder.Services.AddTransient<GenOTP>();
 builder.Services.AddTransient<Hashing>();
 builder.Services.AddTransient<Response>();
@@ -125,10 +124,6 @@ if (app.Environment.IsDevelopment())
     
 }
 
-
-
-
-app.UseHttpsRedirection();
 
 //app.UseMiddleware<AuthorizationMiddleware>();
 

@@ -244,5 +244,28 @@ namespace SS.Backend.EmailConfirm
             return (reservation, response);
         }
 
+        public async Task<Response> GetAllTableInfo (string tableName)
+        {
+
+            Response response = new Response();
+            var builder = new CustomSqlCommandBuilder();
+
+            var cmd = builder.BeginSelectAll()
+                            .From($"{tableName}")
+                            .Build();
+
+            response = await _sqlDao.ReadSqlResult(cmd);
+
+            if (!response.HasError)
+            {
+                response.ErrorMessage += " -- GetAllTableInfo Command: Successful";
+            }
+            else
+            {
+                response.ErrorMessage += $" -- GetAllTableInfo Command: {cmd.CommandText} Failed";
+            }
+            return response;
+        }
+
     }
 }
