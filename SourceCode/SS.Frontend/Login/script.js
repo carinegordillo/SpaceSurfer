@@ -72,26 +72,39 @@ function logout() {
     document.getElementById("sendOTPSection").style.display = "block";
 }
 
-function waitlistAccess() {
-    var accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Access token is not available.');
-        return;
-    }
+function spaceBookingCenterAccess() {
+    document.getElementById('spaceBookingView').style.display = 'block';
 
-    $.ajax({
-        url: 'http://localhost:5099/api/waitlist/test',
-        type: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + accessToken
-        },
-        contentType: 'application/json',
-        success: function (response) {
-            console.log(response);
-            window.location.href = '../Waitlist/index.html';
-        },
-        error: function (xhr, status, error) {
-            console.error('Error:', error);
-        }
-    });
+    document.getElementById('homepageGen').style.display = 'none';
+    document.getElementById('homepageManager').style.display = 'none';
+    document.getElementById('sendOTPSection').style.display = 'none';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById('failResult').style.display = 'none';
+}
+
+function personalOverviewAccess() {
+    // Show the personalOverviewCenter section
+    document.getElementById('personalOverviewCenter').style.display = 'block';
+
+    document.getElementById('homepageGen').style.display = 'none';
+    document.getElementById('homepageManager').style.display = 'none';
+    document.getElementById('sendOTPSection').style.display = 'none';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById('failResult').style.display = 'none';
+    ocument.getElementById('waitlistView').style.display = 'none';
+}
+    // Hide other sections if needed
+function waitlistAccess() {
+    document.getElementById('waitlistView').style.display = 'block';
+
+    document.getElementById('homepageGen').style.display = 'none';
+    document.getElementById('homepageManager').style.display = 'none';
+    document.getElementById('sendOTPSection').style.display = 'none';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById('failResult').style.display = 'none';
+    document.getElementById('personalOverviewCenter').style.display = 'none';
+
 }

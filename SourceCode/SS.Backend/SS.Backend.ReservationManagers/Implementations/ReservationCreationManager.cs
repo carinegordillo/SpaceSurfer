@@ -1,5 +1,6 @@
 ﻿using SS.Backend.SharedNamespace;
 using SS.Backend.ReservationManagement;
+using SS.Backend.Waitlist;
 
 
 namespace SS.Backend.ReservationManagers{
@@ -11,13 +12,16 @@ namespace SS.Backend.ReservationManagers{
         private readonly IReservationValidationService _reservationValidationService;
 
         private readonly IReservationRequirements _reservationRequirements = new SpaceSurferReservationRequirements();
-        
-    
 
-        public ReservationCreationManager(IReservationCreatorService reservationCreatorService, IReservationValidationService reservationValidationService)
+        private readonly WaitlistService _waitlist;
+
+
+
+        public ReservationCreationManager(IReservationCreatorService reservationCreatorService, IReservationValidationService reservationValidationService, WaitlistService waitlistService)
         {
             _reservationCreatorService = reservationCreatorService;
             _reservationValidationService = reservationValidationService;
+            _waitlist = waitlistService;
             
         }
 
@@ -64,6 +68,42 @@ namespace SS.Backend.ReservationManagers{
             return response;
         }
 
+        public async Task<Response> AddToWaitlist(string tableName, UserReservationsModel userReservationsModel)
+        {
+            Response response = new Response();
+
+            try
+            {
+                int compid = userReservationsModel.CompanyID;
+                int floorid = userReservationsModel.FloorPlanID;
+                string spaceid = userReservationsModel.SpaceID;
+                DateTime start = userReservationsModel.ReservationStartTime;
+                DateTime end = userReservationsModel.ReservationEndTime;
+
+                int resId = await _waitlist.GetReservationID(tableName, compid, floorid, spaceid, start, end);
+
+                bool alreadyOnWaitlist = await _waitlist.IsUserOnWaitlist(userReservationsModel.UserHash, resId);
+
+                if (alreadyOnWaitlist)
+                {
+                    response.HasError = true;
+                    response.ErrorMessage += "Already on waitlist";
+                }
+                else
+                {
+                    response.HasError = false;
+                    response.ErrorMessage += "Added to waitlist";
+                    await _waitlist.InsertWaitlistedUser(tableName, userReservationsModel.UserHash, resId);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = "Error adding to waitlist" + ex.Message;
+            }
+
+            return response;
+        }
 
     }
 }
