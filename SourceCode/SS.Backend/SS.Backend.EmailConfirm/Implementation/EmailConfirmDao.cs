@@ -264,6 +264,7 @@ namespace SS.Backend.EmailConfirm
             {
                 response.ErrorMessage += $" -- GetAllTableInfo Command: {cmd.CommandText} Failed";
             }
+            Console.WriteLine(response.ErrorMessage);
             return response;
         }
 

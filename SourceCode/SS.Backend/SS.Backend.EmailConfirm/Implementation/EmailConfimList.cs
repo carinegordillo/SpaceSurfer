@@ -1,3 +1,9 @@
+using SS.Backend.SharedNamespace;
+using Microsoft.Data.SqlClient;
+using SS.Backend.ReservationManagement;
+using System.Data;
+
+
 namespace SS.Backend.EmailConfirm
 {
     public class EmailConfirmList : IEmailConfirmList
@@ -9,7 +15,7 @@ namespace SS.Backend.EmailConfirm
             _emailDao = emailDao;
         }
 
-         public async Task<IEnumerable<UserReservationsModel>> ListConfirmations (string hashedUsername);
+         public async Task<IEnumerable<UserReservationsModel>> ListConfirmations (string hashedUsername)
          {
             List<UserReservationsModel> confirmations = new List<UserReservationsModel>();
             List<int> reservationIDs = new List<int>();
@@ -46,15 +52,22 @@ namespace SS.Backend.EmailConfirm
                             Console.WriteLine($"Warning: Unknown status value '{statusString}'. Setting default status.");
                         }
                         // check for active status and add to list of reservationIDs
-                        if (reservation.Status.Trim().Equals("Active", StringComparison.OrdinalIgnoreCase)) 
+                        if (reservation.Status.Equals("Active") && reservation.ReservationID.HasValue) 
                         {
-                            reservationIDs.Add(reservation.ReservationID);
+                            reservationIDs.Add(reservation.ReservationID.Value);
                         }
+                        else
+                        {
+                            // Handle the case where ReservationID is null if necessary
+                            // For example, log an error, throw an exception, or continue with default behavior
+                            Console.WriteLine("Reservation ID is null and cannot be added to the list.");
+                        }
+                        
                     }
                 }
                 else
                 {
-                    Console.WriteLine("No data found in Reservations Table.")
+                    Console.WriteLine("No data found in Reservations Table.");
                 }
             }
             else
