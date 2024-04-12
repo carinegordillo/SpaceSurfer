@@ -1,6 +1,7 @@
 using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
 using SS.Backend.Services.LoggingService;
+using SS.Backend.Services.EmailService;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -288,8 +289,36 @@ namespace SS.Backend.Services.AccountCreationService
                 };
                 // await logger.SaveData(entry);
             }
-            return response;
 
+            string? targetEmail = userInfo.username;
+            string? subject = $@"Verify your Space Surfer Account";
+            string? msg = $@"
+                Dear {userInfo.firstname},
+
+                An account with your email has recently been registered within Space Surfer. 
+                In order to enjoy and utilize the application please follow the url below in order to verify your account. 
+
+                http://localhost:3000/verifyAccount
+
+                If you have any questions or need assistance, please don't hesitate to contact us at spacesurfers5@gmail.com.
+
+                Thank you for choosing SpaceSurfer.
+
+                Best regards,
+                SpaceSurfer Team";
+
+            try
+            {
+                // Send email
+                await MailSender.SendEmail(targetEmail, subject, msg);
+                response.HasError = false;
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+            }
+            return response;
         }
 
         public async Task<Response> ReadUserTable(string tableName)
@@ -322,6 +351,8 @@ namespace SS.Backend.Services.AccountCreationService
             return response;
 
         }
+
+
 
         public async Task<Response> VerifyAccount(string username)
         {

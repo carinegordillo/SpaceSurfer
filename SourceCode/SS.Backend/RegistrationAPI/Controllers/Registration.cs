@@ -73,5 +73,22 @@ public class DemoController : ControllerBase
             }
         return Ok(new { message = "Account created successfully!", response });
         }
+
+    [HttpPost]
+    [Route("verifyAccount")]
+    // public async Task<ActionResult<List<UserInfo>>> PostCreateAccount([FromBody] UserInfo userInfo){
+    public async Task<IActionResult> VerifyAccount(string username){
+        Response response = new Response();
+        response.HasError = true;
+
+        if(username != null){
+            response = await _accountCreation.VerifyAccount(username);
+        }
+        if (response.HasError)
+            {
+                return BadRequest(response.ErrorMessage);
+            }
+        return Ok(new { message = "Account verified successfully!", response });
+        }
         
 }  
