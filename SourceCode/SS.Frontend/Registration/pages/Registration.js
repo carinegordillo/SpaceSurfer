@@ -78,7 +78,8 @@ function submitAccountCreationForm() {
         userInfo: userInfo,
         companyInfo: companyInfo
     };
-
+    console.log("THIS IS THE REQUEST", accountCreationRequest)
+    console.log("THIS ISI THE USERINOF ", accountCreationRequest.userInfo)
     fetch('http://localhost:8080/api/registration/postAccount', {
         method: 'POST',
         headers: {

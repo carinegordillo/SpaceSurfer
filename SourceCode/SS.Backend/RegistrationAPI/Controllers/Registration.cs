@@ -63,32 +63,42 @@ public class DemoController : ControllerBase
     public async Task<IActionResult> PostCreateAccount([FromBody] AccountCreationRequest request){
         Response response = new Response();
         response.HasError = true;
-
+        
         if(request.UserInfo != null){
             response = await _accountCreation.CreateUserAccount(request.UserInfo, request.CompanyInfo);
+            Console.WriteLine("is this ERROR: ", request.UserInfo.firstname);
         }
         if (response.HasError)
             {
+                // Console.WriteLine("ERROR: ", response.ErrorMessage);
                 return BadRequest(response.ErrorMessage);
             }
         return Ok(new { message = "Account created successfully!", response });
         }
 
+
+    public class VerifyAccountRequest
+    {
+        public string Username { get; set; }
+    }
     [HttpPost]
     [Route("verifyAccount")]
-    // public async Task<ActionResult<List<UserInfo>>> PostCreateAccount([FromBody] UserInfo userInfo){
-    public async Task<IActionResult> VerifyAccount(string username){
-        Response response = new Response();
-        response.HasError = true;
+    public async Task<IActionResult> VerifyAccount([FromBody] VerifyAccountRequest request)
+    {
+        if (request == null || string.IsNullOrWhiteSpace(request.Username))
+        {
+            return BadRequest("Invalid request");
+        }
 
-        if(username != null){
-            response = await _accountCreation.VerifyAccount(username);
-        }
-        if (response.HasError)
-            {
-                return BadRequest(response.ErrorMessage);
-            }
-        return Ok(new { message = "Account verified successfully!", response });
-        }
+        var response = await _accountCreation.VerifyAccount(request.Username);
         
-}  
+        if (response.HasError)
+        {
+            return BadRequest(response.ErrorMessage);
+        }
+
+        return Ok(new { message = "Account verified successfully!", response });
+    }
+}
+        
+ 

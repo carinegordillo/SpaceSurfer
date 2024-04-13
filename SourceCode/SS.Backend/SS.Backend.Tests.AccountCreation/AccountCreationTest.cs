@@ -104,7 +104,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             //username must be unique in database
             var validUserInfo = new UserInfo
             {
-                username = "employeeaccountsetup@hotmail.com",
+                username = "letstrythisout@hotmail.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "employee",
                 lastname = "setup", 
@@ -130,7 +130,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             Stopwatch timer = new Stopwatch();
 
             timer.Start();
-            var response = await accountCreation.VerifyAccount("employeeaccountsetup@hotmail.com");
+            var response = await accountCreation.VerifyAccount("kay.kayale@student.csulb.edu");
             timer.Stop();
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);

@@ -177,6 +177,7 @@ namespace SS.Backend.Services.AccountCreationService
             {
                 response.HasError = true;
                 response.ErrorMessage = "Invalid User Info entry: " + validationMessage;
+                Console.WriteLine("VALIDATION!!!!! ", response.ErrorMessage);
                 return response;
             }
 
@@ -188,8 +189,6 @@ namespace SS.Backend.Services.AccountCreationService
 
             
             var builder = new CustomSqlCommandBuilder();
-            // SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
-            // string pepper = await pepperDao.ReadPepperAsync();
             string pepper = "DA06";
 
 
@@ -199,14 +198,8 @@ namespace SS.Backend.Services.AccountCreationService
                 hashedUsername = hashing.HashData(userInfo.username, pepper)
             };
 #pragma warning restore CS8604 // Possible null reference argument.
+            Dictionary<string, object> userAccount_success_parameters;
 
-#pragma warning disable CS8604 // Possible null reference argument.
-            var userAccount_success_parameters = new Dictionary<string, object>
-            {
-                { "username", userInfo.username},
-                {"birthDate", userInfo.dob}   
-            };
-#pragma warning restore CS8604 // Possible null reference argument.
 
 #pragma warning disable CS8604 // Possible null reference argument.
             var userProfile_success_parameters = new Dictionary<string, object>
@@ -236,11 +229,20 @@ namespace SS.Backend.Services.AccountCreationService
 
             var tableData = new Dictionary<string, Dictionary<string, object>>
             {
-                { "userAccount", userAccount_success_parameters },
+                // { "userAccount", userAccount_success_parameters },
                 { "userProfile", userProfile_success_parameters },
                 { "activeAccount", activeAccount_success_parameters}, 
                 {"userHash", hashedAccount_success_parameters}
             };
+
+            if (userInfo.role != 4) {
+                userAccount_success_parameters = new Dictionary<string, object>
+                {
+                    { "username", userInfo.username},
+                    {"birthDate", userInfo.dob},
+                };
+                tableData.Add("userAccount", userAccount_success_parameters);
+            } 
 
             if (companyInfo != null)
             {
@@ -262,6 +264,7 @@ namespace SS.Backend.Services.AccountCreationService
 
 
             response  = await InsertIntoMultipleTables(tableData);
+            Console.WriteLine("THIS IS THE REPONSE:::::", response.ErrorMessage);
 
             if (response.HasError == false)
             {
@@ -279,7 +282,6 @@ namespace SS.Backend.Services.AccountCreationService
             else
             {
                 LogEntry entry = new LogEntry()
-
                 {
                     timestamp = DateTime.UtcNow,
                     level = "Error",
@@ -287,7 +289,6 @@ namespace SS.Backend.Services.AccountCreationService
                     category = "Data Store",
                     description = "Error inserting user in data store."
                 };
-                // await logger.SaveData(entry);
             }
 
             string? targetEmail = userInfo.username;
@@ -298,7 +299,7 @@ namespace SS.Backend.Services.AccountCreationService
                 An account with your email has recently been registered within Space Surfer. 
                 In order to enjoy and utilize the application please follow the url below in order to verify your account. 
 
-                http://localhost:3000/verifyAccount
+                http://localhost:3000/VerifyAccount/index.html
 
                 If you have any questions or need assistance, please don't hesitate to contact us at spacesurfers5@gmail.com.
 
@@ -311,52 +312,65 @@ namespace SS.Backend.Services.AccountCreationService
             {
                 // Send email
                 await MailSender.SendEmail(targetEmail, subject, msg);
-                response.HasError = false;
+             
             }
             catch (Exception ex)
             {
                 response.HasError = true;
                 response.ErrorMessage = ex.Message;
             }
+
             return response;
         }
 
-        public async Task<Response> ReadUserTable(string tableName)
-        {
 
-            // var baseDirectory = AppContext.BaseDirectory;
-            // var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-            // var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+        public async Task<Response> getEmployeeCompanyID(UserInfo userInfo, string manager_hashedUsername) {
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
             var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
             ConfigService configService = new ConfigService(configFilePath);
             SqlDAO SQLDao = new SqlDAO(configService);
             Response response = new Response();
-            var commandBuilder = new CustomSqlCommandBuilder();
-            
-            var insertCommand =  commandBuilder.BeginSelectAll()
-                                            .From(tableName)
-                                            .Build();
 
-            response = await SQLDao.ReadSqlResult(insertCommand);
-            if (response.HasError)
-            {
-                response.ErrorMessage += $"{tableName}: error inserting data; ";
-                return response;
-            }else{
-                response.ErrorMessage += "- ReadUserTable- command successful -";
+            try {
+                // Build the SQL query to fetch companyID
+                var builder = new CustomSqlCommandBuilder();
+                var parameters = new Dictionary<string, object> {
+                    {"hashedUsername", manager_hashedUsername}
+                };
+
+                var selectCommand = builder.BeginSelect()
+                                        .SelectColumns("companyID") // Assuming 'companyID' is the column you want to fetch
+                                        .From("companyProfile")
+                                        .Where("hashedUsername = @hashedUsername")
+                                        .AddParameters(parameters) // Safe parameter binding using a dictionary
+                                        .Build();
+
+                // Execute the query
+                var queryResponse = await SQLDao.ReadSqlResult(selectCommand);
+                if (queryResponse.HasError) {
+                    // Handle errors, e.g., no such user or SQL errors
+                    response.HasError = true;
+                    response.ErrorMessage = "Failed to retrieve company ID: " + queryResponse.ErrorMessage;
+                } else if (queryResponse.ValuesRead != null && queryResponse.ValuesRead.Rows.Count > 0) {
+                    // Set the response properties accordingly
+                    response.ValuesRead = queryResponse.ValuesRead;
+                    response.HasError = false;
+                } else {
+                    // Handle the case where no rows were returned
+                    response.HasError = true;
+                    response.ErrorMessage = "No company associated with the provided manager username.";
+                }
+            } catch (Exception ex) {
+                // Exception handling, if something unexpected occurs
+                response.HasError = true;
+                response.ErrorMessage = $"An unexpected error occurred: {ex.Message}";
             }
-          
             return response;
-
         }
-
-
 
         public async Task<Response> VerifyAccount(string username)
         {
-
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
             var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
@@ -392,7 +406,6 @@ namespace SS.Backend.Services.AccountCreationService
 
             response = await SQLDao.SqlRowsAffected(updateCommand); // Execute the update command
 
-            // Check for errors and handle the response
             if (response.HasError)
             {
                 response.ErrorMessage += "Error updating isActive column; ";
@@ -401,7 +414,33 @@ namespace SS.Backend.Services.AccountCreationService
             {
                 response.ErrorMessage += "Update isActive operation successful; ";
             }
+            return response;
+        }
 
+        public async Task<Response> ReadUserTable(string tableName)
+        {
+
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            ConfigService configService = new ConfigService(configFilePath);
+            SqlDAO SQLDao = new SqlDAO(configService);
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+            
+            var insertCommand =  commandBuilder.BeginSelectAll()
+                                            .From(tableName)
+                                            .Build();
+
+            response = await SQLDao.ReadSqlResult(insertCommand);
+            if (response.HasError)
+            {
+                response.ErrorMessage += $"{tableName}: error inserting data; ";
+                return response;
+            }else{
+                response.ErrorMessage += "- ReadUserTable- command successful -";
+            }
+          
             return response;
 
         }
