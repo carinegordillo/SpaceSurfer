@@ -13,6 +13,8 @@ namespace SS.Backend.EmailConfirm
         public Task<Response> GetUsername(string userHash);
         public Task<(UserReservationsModel,Response)> GetUserReservationByID(int reservationID);
         public Task<Response> GetAllTableInfo (string tableName);
+        public Task<Response> CancelConfirmation(int reservationID);
+        public Task<Response> DeleteReservation(string tableName, int reservationID);
 
     }
 }

@@ -190,7 +190,7 @@ namespace SS.Backend.EmailConfirm
                 .Build();
 
             response = await _sqlDao.ReadSqlResult(cmd);
-            string targetEmail = response.ValuesRead.Rows[0]["username"].ToString();
+            string? targetEmail = response.ValuesRead.Rows[0]["username"].ToString();
 
             if (!response.HasError)
             {
@@ -207,7 +207,7 @@ namespace SS.Backend.EmailConfirm
         {
             Response response = new Response();
             var builder = new CustomSqlCommandBuilder();
-            UserReservationsModel reservation = null;
+            UserReservationsModel reservation = new UserReservationsModel();
 
             response = await GetReservationInfo(reservationID);
 
@@ -263,6 +263,66 @@ namespace SS.Backend.EmailConfirm
             else
             {
                 response.ErrorMessage += $" -- GetAllTableInfo Command: {cmd.CommandText} Failed";
+            }
+            Console.WriteLine(response.ErrorMessage);
+            return response;
+        }
+
+        public async Task<Response> CancelConfirmation(int reservationID)
+        {
+            Response response = new Response();
+            var builder = new CustomSqlCommandBuilder();
+
+            var parameters = new Dictionary<string, object>
+            {
+                {"ReservationID", reservationID},
+                {"ConfirmStatus", "no"} 
+            };
+
+            var cmd = builder.BeginUpdate("ConfirmReservations")
+                            .Set(new Dictionary<string, object>
+                                {{"confirmStatus", "@ConfirmStatus"}})
+                            .Where("reservationID = @ReservationID")
+                            .AddParameters(parameters)
+                            .Build();
+
+            response = await _sqlDao.SqlRowsAffected(cmd);
+
+            if (!response.HasError)
+            {
+                response.ErrorMessage += " -- CancelConfirmation Command: Successful";
+            }
+            else
+            {
+                response.ErrorMessage += $" -- CancelConfirmation Command: {cmd.CommandText} Failed";
+            }
+            Console.WriteLine(response.ErrorMessage);
+            return response;
+        }
+        public async Task<Response> DeleteReservation(string tableName, int reservationID)
+        {
+            Response response = new Response();
+            var builder = new CustomSqlCommandBuilder();
+
+            var parameters = new Dictionary<string, object>
+            {
+                {"ReservationID", reservationID}
+            };
+
+            var cmd = builder.BeginDelete($"{tableName}")
+                            .Where($"reservationID = {reservationID}")
+                            .AddParameters(parameters)
+                            .Build();
+
+            response = await _sqlDao.SqlRowsAffected(cmd);
+
+            if (!response.HasError)
+            {
+                response.ErrorMessage += " -- DeleteReservation Command: Successful";
+            }
+            else
+            {
+                response.ErrorMessage += $" -- DeleteReservation Command: {cmd.CommandText} Failed";
             }
             Console.WriteLine(response.ErrorMessage);
             return response;
