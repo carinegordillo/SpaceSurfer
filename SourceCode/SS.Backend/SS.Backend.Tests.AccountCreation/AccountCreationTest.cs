@@ -104,17 +104,33 @@ namespace SS.Backend.Tests.AccountCreationTest
             //username must be unique in database
             var validUserInfo = new UserInfo
             {
-                username = "objectcompanyl@hotmail.com",
+                username = "letstrythisout@hotmail.com",
                 dob = new DateTime(1990, 1, 1),
-                firstname = "OBJECT",
-                lastname = "COMPANY", 
-                role = 1,
-                status = "yes", 
+                firstname = "employee",
+                lastname = "setup", 
+                role = 4,
+                status = "no", 
                 backupEmail = "COMBININGEVERYTHING@backup.com"
             };
 
             timer.Start();
             var response = await accountCreation.CreateUserAccount(validUserInfo, null);
+            timer.Stop();
+
+            Assert.IsFalse(response.HasError, response.ErrorMessage);
+            Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
+            await CleanupTestData().ConfigureAwait(false);
+          
+        }
+
+        [TestMethod]
+        public async Task VerifyAccount_Success()
+        {
+            AccountCreation accountCreation = new AccountCreation();
+            Stopwatch timer = new Stopwatch();
+
+            timer.Start();
+            var response = await accountCreation.VerifyAccount("kay.kayale@student.csulb.edu");
             timer.Stop();
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);

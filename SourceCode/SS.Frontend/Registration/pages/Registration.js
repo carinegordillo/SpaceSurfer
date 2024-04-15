@@ -50,8 +50,8 @@ function submitAccountCreationForm() {
         dob: document.getElementById('dob').value,
         firstname: document.getElementById('firstname').value,
         lastname: document.getElementById('lastname').value,
-        role: document.getElementById('isCompany').checked ? 2 : document.getElementById('isFacility').checked ? 3 : 1,
-        status: "yes",
+        role: document.getElementById('isCompany').checked ? 2 : document.getElementById('isFacility').checked ? 3 : 5,
+        status: "no",
         backupEmail: document.getElementById('backupEmail').value,
     };
 
@@ -78,7 +78,8 @@ function submitAccountCreationForm() {
         userInfo: userInfo,
         companyInfo: companyInfo
     };
-
+    console.log("THIS IS THE REQUEST", accountCreationRequest)
+    console.log("THIS ISI THE USERINOF ", accountCreationRequest.userInfo)
     fetch('http://localhost:8080/api/registration/postAccount', {
         method: 'POST',
         headers: {
