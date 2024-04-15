@@ -17,9 +17,6 @@
     <ProjectReference Include="..\..\SS.Backend\SS.Backend.SpaceManager\SS.Backend.SpaceManager.csproj" />
     <ProjectReference Include="..\..\SS.Backend/SS.Backend.DataAccess/SS.Backend.DataAccess.csproj"/>
 
-
-
-    <ProjectReference Include="..\SS.Backend.Tests.Logging\SS.Backend.Tests.Logging.csproj" />
     <ProjectReference Include="..\SS.Backend.Security.AuthN\SS.Backend.Security.AuthN.csproj" />
 		<ProjectReference Include="..\SS.Backend.Security\SS.Backend.Security.csproj" />
 
@@ -27,3 +24,5 @@
   </ItemGroup>
 
 </Project>
+
+
