@@ -127,7 +127,7 @@ if (app.Environment.IsDevelopment())
 }
 
 
-app.UseMiddleware<AuthorizationMiddleware>();
+//app.UseMiddleware<AuthorizationMiddleware>();
 
 app.MapControllers();
 

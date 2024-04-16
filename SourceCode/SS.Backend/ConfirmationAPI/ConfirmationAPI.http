@@ -1,0 +1,6 @@
+@ConfirmationAPI_HostAddress = http://localhost:5089
+
+GET {{ConfirmationAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
