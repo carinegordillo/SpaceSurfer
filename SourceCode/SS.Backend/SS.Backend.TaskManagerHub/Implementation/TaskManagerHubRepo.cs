@@ -94,17 +94,17 @@ namespace SS.Backend.TaskManagerHub
             // Create a dictionary for the parameters
             var parameters = new Dictionary<string, object>
             {
-                { "hashedUsername", hashedUsername }, // assuming your table also has a 'hashedUsername' column
-                { "title", task.title },
-                { "description", task.description },
-                { "dueDate", task.dueDate ?? (object)DBNull.Value }, // Use DBNull.Value for null
-                { "priority", task.priority },
-                { "notificationSetting", task.notificationSetting ?? (object)DBNull.Value } // Use DBNull.Value for null
+                { "@hashedUsername", hashedUsername }, // Ensure keys include the '@' prefix to match SQL parameter usage
+                { "@title", task.title },
+                { "@description", task.description },
+                { "@dueDate", task.dueDate ?? (object)DBNull.Value }, // Use DBNull.Value for null dates
+                { "@priority", task.priority },
+                { "@notificationSetting", task.notificationSetting ?? (object)DBNull.Value } // Use DBNull.Value for null settings
             };
             
             var insertCommand = builder.BeginInsert("taskHub")
-                .Columns(new List<string>(parameters.Keys)) // Specify columns from the parameters
-                .Values(new List<string>(parameters.Keys.Select(k => $"@{k}"))) // Specify values with "@" prefix
+                .Columns(new List<string>(parameters.Keys.Select(k => k.TrimStart('@')))) // Specify columns without '@'
+                .Values(new List<string>(parameters.Keys)) // Use full parameter names including '@'
                 .AddParameters(parameters) // Add parameters
                 .Build();
 
@@ -120,6 +120,7 @@ namespace SS.Backend.TaskManagerHub
 
             return tablesresponse;
         }
+
 
         public async Task<Response> CreateMultipleTasks(string hashedUsername, List<TaskHub> tasks)
         {
@@ -139,7 +140,7 @@ namespace SS.Backend.TaskManagerHub
                 };
                 
                 var insertCommand = builder.BeginInsert("taskHub")
-                    .Columns(new List<string>(parameters.Keys)) // Specify columns from the parameters
+                    .Columns(new List<string>(parameters.Keys.Select(k => k.TrimStart('@')))) // Specify columns without '@'
                     .Values(new List<string>(parameters.Keys.Select(k => $"@{k}"))) // Specify values with "@" prefix
                     .AddParameters(parameters) // Add parameters
                     .Build();

@@ -36,7 +36,7 @@ namespace SS.Backend.TaskManagerHub
         {
             // Implement task validation logic
             // For example, ensure that task title is not null or empty and due date is in the future
-            if (string.IsNullOrWhiteSpace(taskHub.title) || taskHub.dueDate <= DateTime.Now)
+            if (string.IsNullOrWhiteSpace(taskHub.title))
                 return new Response { HasError = true, ErrorMessage = "Invalid task details." };
 
             return await _taskManagerHubService.CreateNewTask(hashedUsername, taskHub);

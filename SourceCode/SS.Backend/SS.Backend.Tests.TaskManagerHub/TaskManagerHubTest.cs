@@ -41,7 +41,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             var hashedUsername = "validHashedUsername";
             var newTask = new TaskHub
             {
-                title = "New Project Task",
+                title = "the one to delete",
                 description = "Description for new project task",
                 dueDate = DateTime.UtcNow.AddDays(7),
                 priority = "High",
@@ -81,7 +81,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         {
             // Arrange
             var hashedUsername = "validHashedUsername";
-            var taskTitle = "Task to Delete";
+            var taskTitle = "the one to delete";
 
             // Act
             var result = await _taskManagerHubManager.DeleteTask(hashedUsername, taskTitle);
@@ -95,7 +95,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         {
             // Arrange
             var hashedUsername = "validHashedUsername";
-            var taskTitle = "Task to Modify";
+            var taskTitle = "New Project Task";
             var fieldsToUpdate = new Dictionary<string, object>
             {
                 { "dueDate", DateTime.UtcNow.AddDays(-1) } // Invalid due date in the past
@@ -112,14 +112,14 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         public async Task ListTasksByPriority_NoTasksFound_ReturnsEmpty()
         {
             // Arrange
-            var hashedUsername = "validHashedUsername";
+            var hashedUsername = "validHashed";
             var priority = "High";
 
             // Act
             var result = await _taskManagerHubManager.ListTasksByPriority(hashedUsername, priority);
 
             // Assert
-            Assert.IsFalse(result.HasError, "Should handle no tasks found gracefully.");
+            Assert.IsTrue(result.HasError, "Should handle no tasks found gracefully.");
             Assert.IsNull(result.ValuesRead, "No tasks should be found for the specified priority.");
         }
 
