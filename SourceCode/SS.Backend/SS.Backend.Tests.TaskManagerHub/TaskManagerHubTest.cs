@@ -41,7 +41,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             var hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=";
             var newTask = new TaskHub
             {
-                title = "For frontend",
+                title = "This is another task",
                 description = "Description for new project task",
                 dueDate = DateTime.UtcNow.AddDays(7),
                 priority = "High",
@@ -54,6 +54,40 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             // Assert
             Assert.IsFalse(result.HasError, "Task should be created successfully without errors.");
         }
+
+
+        [TestMethod]
+        public async Task CreateMultipleTasks_ValidData_ReturnsSuccess()
+        {
+            // Arrange
+            var hashedUsername = "hashedExampleUsername";
+            var newTasks = new List<TaskHub>
+            {
+                new TaskHub
+                {
+                    title = "Testingggg Multiple againnn Tasks",
+                    description = "Description for new project task",
+                    dueDate = DateTime.UtcNow.AddDays(7), // Future date for validity
+                    priority = "High",
+                    notificationSetting = 1
+                },
+                new TaskHub
+                {
+                    title = "Testingggggggg Multiple AGAIN  New Tasks",
+                    description = "Another description for new project task",
+                    dueDate = DateTime.UtcNow.AddDays(7), // Future date for validity
+                    priority = "High",
+                    notificationSetting = 1
+                }
+            };
+
+            var result = await _taskManagerHubManager.CreateMultipleNewTasks(hashedUsername, newTasks);
+
+            // Assert
+            Assert.IsFalse(result.HasError, "Task should be created successfully without errors.");
+        }
+
+
         [TestMethod]
         public async Task ReadTasks_ReturnsSuccess()
         {
@@ -100,8 +134,8 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         public async Task DeleteTask_ValidTaskTitle_ReturnsSuccess()
         {
             // Arrange
-            var hashedUsername = "validHashedUsername";
-            var taskTitle = "the one to delete";
+            var hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=";
+            var taskTitle = "This is another task";
 
             // Act
             var result = await _taskManagerHubManager.DeleteTask(hashedUsername, taskTitle);

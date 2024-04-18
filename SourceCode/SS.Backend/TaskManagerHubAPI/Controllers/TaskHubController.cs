@@ -161,4 +161,61 @@ public class TaskManagerHubController : ControllerBase
             return BadRequest("Unauthorized. Access token is missing or invalid.");
         }
     }
+
+
+    private bool TryValidateToken(string accessToken, out Dictionary<string, string> claims, out string userName)
+    {
+        claims = null;
+        userName = null;
+        var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+        if (claimsJson != null)
+        {
+            claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+            if (claims.TryGetValue("userName", out userName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    [HttpPost("CreateTask")]
+    public async Task<IActionResult> CreateTask([FromBody] TaskHub task)
+    {
+        // var response = await _taskManagerHubManager.CreateNewTask(userName, task);
+        // return Ok(response);
+        string accessToken = HttpContext.Request.Headers["Authorization"].ToString().Substring("Bearer ".Length).Trim();
+        if (TryValidateToken(accessToken, out var claims, out var userName))
+        {
+            if (claims.TryGetValue("Role", out var role) && new[] {"1", "2", "3", "4", "5"}.Contains(role))
+            {
+                console.WriteLine("this is the username:::  ", userName)
+                var response = await _taskManagerHubManager.CreateNewTask(userName, task);
+                return Ok(response);
+            }
+            return BadRequest("Unauthorized role.");
+        }
+        return BadRequest("Invalid token.");
+    }
+
+
+
+    [HttpPost("CreateMultipleTasks")]
+    public async Task<IActionResult> CreateMultipleTasks(string userName, List<TaskHub> tasks)
+    {
+        var response = await _taskManagerHubManager.CreateMultipleNewTasks(userName, tasks);
+        return Ok(response);
+
+
+        // string accessToken = HttpContext.Request.Headers["Authorization"].ToString().Substring("Bearer ".Length).Trim();
+        // if (TryValidateToken(accessToken, out var claims, out var userName))
+        // {
+        //     if (claims.TryGetValue("Role", out var role) && new[] {"1", "2", "3", "4", "5"}.Contains(role))
+        //     {
+        //         var response = await _taskManagerHubManager.CreateMultipleNewTasks(userName, tasks);
+        //         return Ok(response);
+        //     }
+        //     return BadRequest("Unauthorized role.");
+        // }
+        // return BadRequest("Invalid token.");
+    }
 }

@@ -31,7 +31,7 @@ async function fetchAndDisplayTasks() {
         console.log(data); // Log the full response to see its structure
         displayTasks(data); // Make sure 'tasks' is the correct key
     })
-    .catch(error => console.error('Failed to fetch tasks:', error));
+    .catch(error => console.error('Failed to fetch tasks: this is the username ',userName,  error));
 }
 
 function displayTasks(tasks) {
@@ -41,14 +41,82 @@ function displayTasks(tasks) {
     tasks.forEach(task => {
         const taskItem = document.createElement('div');
         taskItem.classList.add('task-item');
+
+        // Determine the color based on the priority
+        let priorityColor = '';
+        switch (task.priority) {
+            case 'High':
+                priorityColor = 'red';
+                break;
+            case 'Medium':
+                priorityColor = 'orange';
+                break;
+            case 'Low':
+                priorityColor = 'green';
+                break;
+            default:
+                priorityColor = 'grey'; // Default color if priority is undefined or different
+        }
+
+        // Construct the HTML with the due date and colored priority
         taskItem.innerHTML = `
-            <span class="task-title">${task.title}</span>
+            <div><strong>Title:</strong> ${task.title}</div>
+            <div><strong>Description:</strong> ${task.description}</div>
+            <div><strong>Due Date:</strong> ${new Date(task.dueDate).toLocaleDateString()}</div>
+            <div><strong>Priority:</strong> <span style="color: ${priorityColor};">${task.priority}</span></div>
+            <div><strong>Notification Setting:</strong> ${task.notificationSetting}</div>
             <button onclick="modifyTask('${task.id}', '${task.title}')">Modify</button>
             <button onclick="deleteTask('${task.id}')">Delete</button>
         `;
         taskListElement.appendChild(taskItem);
     });
 }
+
+
+
+document.getElementById('createTaskForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // This stops the form from submitting traditionally, which prevents page refresh
+    console.log("Create task form has been submitted");
+
+    const task = {
+        title: document.getElementById('taskTitle').value,
+        description: document.getElementById('taskDescription').value,
+        dueDate: document.getElementById('taskDueDate').value,
+        priority: document.getElementById('taskPriority').value,
+        notificationSetting: parseInt(document.getElementById('taskNotificationSetting').value, 10)
+    };
+
+    createTask(task);
+});
+
+function createTask(task) {
+    const accessToken = sessionStorage.getItem('accessToken'); // Assume token is stored in sessionStorage
+    fetch(`http://localhost:8089/api/v1/taskManagerHub/CreateTask?userName=${encodeURIComponent(userName)}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(task)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to create task');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Task created successfully', data);
+        alert('Task created successfully!');
+        // Optionally clear the form or update the UI here
+        document.getElementById('createTaskForm').reset(); // This resets the form fields after successful submission
+    })
+    .catch(error => {
+        console.error('Failed to create task', error);
+        alert('Failed to create task: ' + error.message);
+    });
+}
+
 
 // async function checkTokenExpiration(accessToken) {
 //     try {

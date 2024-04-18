@@ -57,7 +57,7 @@
 
 <div id = "registerView" class = "form-container"  >
  
-    <form id="accountCreationForm">
+    <div id="accountCreationForm">
         <h2>Task Manager Hub🤙</h2>
         <!-- <input type="text" id="username" name="username" placeholder="Username" required> -->
 
@@ -66,8 +66,37 @@
         <button id="viewTasksBtn" type="button">View List of Tasks</button>
         <ul id="taskList"></ul>
 
+        <form id="createTaskForm">
+            <h2>Create Task</h2>
+            <div>
+                <label for="taskTitle">Title:</label>
+                <input type="text" id="taskTitle" name="title" required>
+            </div>
+            <div>
+                <label for="taskDescription">Description:</label>
+                <textarea id="taskDescription" name="description" required></textarea>
+            </div>
+            <div>
+                <label for="taskDueDate">Due Date:</label>
+                <input type="date" id="taskDueDate" name="dueDate" required>
+            </div>
+            <div>
+                <label for="taskPriority">Priority:</label>
+                <select id="taskPriority" name="priority">
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+            <div>
+                <label for="taskNotificationSetting">Notification Setting:</label>
+                <input type="number" id="taskNotificationSetting" name="notificationSetting" required>
+            </div>
+            <button type="submit" id="createTaskBtn">Create Task</button>
+        </form>
+
         
-    </form>
+    </div>
 
 </div>
 

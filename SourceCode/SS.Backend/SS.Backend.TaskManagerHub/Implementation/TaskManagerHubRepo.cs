@@ -45,7 +45,9 @@ namespace SS.Backend.TaskManagerHub
                     var task = new Dictionary<string, object>();
                     foreach (DataColumn col in response.ValuesRead.Columns)
                     {
+#pragma warning disable CS8601 // Possible null reference assignment.
                         task[col.ColumnName] = row[col] != DBNull.Value ? row[col] : null;
+#pragma warning restore CS8601 // Possible null reference assignment.
                     }
                     response.Values.Add(task);
                 }
@@ -142,26 +144,26 @@ namespace SS.Backend.TaskManagerHub
             {
                 var parameters = new Dictionary<string, object>
                 {
-                    { "hashedUsername", hashedUsername }, // Assuming your table also has a 'hashedUsername' column
+                    { "hashedUsername", hashedUsername },
                     { "title", task.title },
                     { "description", task.description },
-                    { "dueDate", task.dueDate ?? (object)DBNull.Value }, // Use DBNull.Value for null
+                    { "dueDate", task.dueDate ?? (object)DBNull.Value },
                     { "priority", task.priority },
-                    { "notificationSetting", task.notificationSetting ?? (object)DBNull.Value } // Use DBNull.Value for null
+                    { "notificationSetting", task.notificationSetting ?? (object)DBNull.Value }
                 };
                 
-                var insertCommand = builder.BeginInsert("taskHub")
+                 var insertCommand = builder.BeginInsert("taskHub")
                     .Columns(new List<string>(parameters.Keys.Select(k => k.TrimStart('@')))) // Specify columns without '@'
-                    .Values(new List<string>(parameters.Keys.Select(k => $"@{k}"))) // Specify values with "@" prefix
+                    .Values(new List<string>(parameters.Keys)) // Use full parameter names including '@'
                     .AddParameters(parameters) // Add parameters
                     .Build();
+                
 
                 // Execute the INSERT command
                 var response = await _sqldao.SqlRowsAffected(insertCommand);
 
                 if (response.HasError)
                 {
-                    // If any insert fails, add the error message to the overall response
                     overallResponse.HasError = true;
                     overallResponse.ErrorMessage += $"Task {task.title}: error inserting data; {response.ErrorMessage}\n";
                 }
@@ -175,6 +177,7 @@ namespace SS.Backend.TaskManagerHub
 
             return overallResponse;
         }
+
 
         // MODIFY use case: 
         // var fieldsToUpdate = new Dictionary<string, object>
