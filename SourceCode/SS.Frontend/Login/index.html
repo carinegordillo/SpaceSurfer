@@ -27,6 +27,7 @@
             <div class="nav-item" id="navAbout" onclick="window.location.href='../UnAuthnAbout/about.html'">About</div>
             <div class="nav-item" id="navRegister" onclick="window.location.href='../Registration/index.html'">Register</div>
             <div class="nav-item" id="navLogin" onclick="window.location.href='../Login/index.html'">Login</div>
+            <div class="nav-item" id="navHub" onclick="window.location.href='../taskManagerHub/index.html'">Task Manager HUb</div>
         </nav>
     </header>
 
@@ -106,6 +107,7 @@
         <h2>Welcome to SpaceSurfers!</h2>
         <button id="initAppButton">Initialize spaceBookingCenter</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
+        <button type="button" onclick="taskManagerHubAccess()">Task Manager Hub</button>
         <div id="accessTokenContainer"></div>
         <div class="space-booking-center-container">
             <div class="sidebar"></div>
@@ -149,16 +151,33 @@
         </div>
     </section>
 
+    <section id="taskHubView" class="homepage-container" style="display: none;">
+        <h2>Task Manager</h2>
+        <button id="viewTasksBtn">View Tasks</button>
+        <ul id="taskList"></ul>
+
+        <button id="createTaskBtn" onclick="createTaskForm()">Create Task</button>
+        <div id="taskList"></div>
+        <!-- Create Task Form -->
+        <div id="createTaskForm" style="display: none;">
+            <input type="text" id="taskTitle" placeholder="Task Title">
+            <textarea id="taskDescription" placeholder="Task Description"></textarea>
+            <button onclick="submitNewTask()">Submit Task</button>
+        </div>
+    </section>
+
     <!--General Homepage-->
     <section id="homepageGen" class="homepage-container" style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
+        <button type="button" onclick="taskManagerHubAccess()">Task Manager Hub</button>
     </section>
 
     <!--Manager Homepage-->
     <section id="homepageManager" class="homepage-container" style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
+        <button type="button" onclick="taskManagerHubAccess()">Task Manager Hub</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
         <button type="button" onclick="logout()">Logout</button>
     </section>
@@ -201,6 +220,7 @@
 
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
+    <script src="taskManagerHubView.js"></script>
 
 </body>
 

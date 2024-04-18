@@ -1,22 +1,3 @@
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Data;
@@ -35,15 +16,14 @@ using System.Text;
 
 
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
 
 builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 
 
@@ -61,7 +41,7 @@ builder.Services.AddTransient<CustomSqlCommandBuilder>();
 builder.Services.AddTransient<ITaskManagerHubRepo, TaskManagerHubRepo>();
 
 //Services Setup
-builder.Services.AddTransient<ITaskManagerHubService, TaskManagerHubServiceService>();
+builder.Services.AddTransient<ITaskManagerHubService, TaskManagerHubService>();
 builder.Services.AddTransient<ITaskManagerHubManager, TaskManagerHubManager>();
 
 //Mangers Setup
@@ -88,16 +68,6 @@ builder.Services.AddTransient<SSAuthService>(provider =>
     )
 );
 
-// //waitlist
-// builder.Services.AddTransient<WaitlistService>(provider =>
-//     new WaitlistService(
-//         provider.GetRequiredService<SqlDAO>()
-//     )
-// );
-
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 app.Use((context, next) =>

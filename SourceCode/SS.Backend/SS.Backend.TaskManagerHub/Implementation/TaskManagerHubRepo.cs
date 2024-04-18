@@ -2,6 +2,7 @@
 using SS.Backend.SharedNamespace;
 using Microsoft.Data.SqlClient;
 using SS.Backend.TaskManagerHub;
+using System.Data;
 
 
 namespace SS.Backend.TaskManagerHub
@@ -19,7 +20,6 @@ namespace SS.Backend.TaskManagerHub
         public async Task<Response> ViewTasks(string hashedUsername)
         {
             Response response = new Response();
-            // Use CustomSqlCommandBuilder to create SQL commands dynamically
             var commandBuilder = new CustomSqlCommandBuilder();
 
             // Prepare SQL parameters for the query
@@ -30,25 +30,36 @@ namespace SS.Backend.TaskManagerHub
 
             // Build the SELECT SQL command
             var selectCommand = commandBuilder.BeginSelectAll()
-                                            .From("taskHub") 
+                                            .From("dbo.taskHub") 
                                             .Where("hashedUsername = @HashedUsername")
                                             .AddParameters(parameters) 
                                             .Build();
 
             response = await _sqldao.ReadSqlResult(selectCommand);
 
-    
-            if (!response.HasError)
+            if (response.ValuesRead != null)
             {
-                response.ErrorMessage += "- View All Tasks - command successful -";
+                // Convert DataTable to List<Dictionary<string, object>>
+                foreach (DataRow row in response.ValuesRead.Rows)
+                {
+                    var task = new Dictionary<string, object>();
+                    foreach (DataColumn col in response.ValuesRead.Columns)
+                    {
+                        task[col.ColumnName] = row[col] != DBNull.Value ? row[col] : null;
+                    }
+                    response.Values.Add(task);
+                }
+                response.HasError = false;  // Set HasError to false as operation was successful
             }
             else
             {
-                response.ErrorMessage += $"- View All Tasks - command: {selectCommand.CommandText} not successful -";
+                response.HasError = true;
+                response.ErrorMessage = "No tasks found.";
             }
 
             return response;
         }
+
 
         public async Task<Response> ViewTasksByPriority(string hashedUsername, string priority)
         {

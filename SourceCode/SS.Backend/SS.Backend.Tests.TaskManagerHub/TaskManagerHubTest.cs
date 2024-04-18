@@ -38,6 +38,26 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         public async Task CreateTask_ValidData_ReturnsSuccess()
         {
             // Arrange
+            var hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=";
+            var newTask = new TaskHub
+            {
+                title = "For frontend",
+                description = "Description for new project task",
+                dueDate = DateTime.UtcNow.AddDays(7),
+                priority = "High",
+                notificationSetting = 1
+            };
+
+            // Act
+            var result = await _taskManagerHubManager.CreateNewTask(hashedUsername, newTask);
+
+            // Assert
+            Assert.IsFalse(result.HasError, "Task should be created successfully without errors.");
+        }
+        [TestMethod]
+        public async Task ReadTasks_ReturnsSuccess()
+        {
+            // Arrange
             var hashedUsername = "validHashedUsername";
             var newTask = new TaskHub
             {
@@ -49,7 +69,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             };
 
             // Act
-            var result = await _taskManagerHubManager.CreateNewTask(hashedUsername, newTask);
+            var result = await _taskManagerHubManager.ListTasks(hashedUsername);
 
             // Assert
             Assert.IsFalse(result.HasError, "Task should be created successfully without errors.");
