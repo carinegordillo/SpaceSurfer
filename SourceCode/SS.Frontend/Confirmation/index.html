@@ -29,6 +29,31 @@
         </nav>
     </header>
 
+    <!-- <section id="sendOTPSection" class="form-container">
+        <form id="sendOTPForm">
+            <label for="userIdentity">Login to SpaceSurfers</label>
+            <input type="text" id="userIdentity" name="userIdentity" required placeholder="Enter your username">
+            <button type="button" onclick="sendOTP()">Send Verification</button>
+            <a href="#" class="recover-link">Recover an account</a>
+        </form>
+    </section>
+
+    <section id="enterOTPSection" class="form-container" style="display: none;">
+        <form id="enterOTPForm">
+            <label for="otp">Enter Verification Code</label>
+            <input type="text" id="otp" name="otp" required placeholder="Verification code">
+            <button type="button" onclick="authenticateUser()">Login</button>
+        </form>
+    </section>
+
+    <section id="successResult" class="form-container" style="display: none;">
+        <label style="color:#03fc52; font-size: 18px;">Authentication was successful!</label>
+    </section>
+
+    <section id="failResult" class="form-container" style="display: none;">
+        <label style="color: #e33434; font-size: 18px;">Incorrect verification code. Please double-check and try again.</label>
+    </section> -->
+
     <section id="homepageGen" class="homepage-container" style="display: block;">
         <div class="container">
             <div class="reservations-container content-container">
@@ -44,8 +69,39 @@
         </div>
     </section>
 
+    <section id="homepageGen" class="homepage-container" style="display: none;">
+        <h2>Welcome to SpaceSurfers!</h2>
+        <button id="initAppButton">Reservation Confirmations</button>
+        <button type="button" onclick="confirmationsAccess()">PersonalOverview</button>
+        <div id="accessTokenContainer"></div>
+        <div class="confirmations-container">
+            <div class="sidebar"></div>
+            <div class="dynamic-content">
+                <div class="reservation-buttons"></div>
+                <div class="reservation-list"></div>
+            </div>
+        </div>
+        <div>
+            <button type="button" onclick="logout()">Logout</button>
+        </div>
+    </section>
+
+
+    <!--Manager Homepage-->
+    <section id="homepageManager" class="homepage-container" style="display: none;">
+        <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
+        <button type="button" onclick="confirmationsAccess()">Reservation Confirmations</button>
+        <button type="button" onclick="waitlistAccess()">Waitlist</button>
+        <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
+        <button type="button" onclick="logout()">Logout</button>
+    </section>
+
     <footer>
         <p>Designed and Developed by the PixelPals Team</p>
     </footer>
+
+    <script src="confirmedReservations.js"></script>
+    <script src="spaceBookingCenter.js"></script>
+
 </body>
 </html>

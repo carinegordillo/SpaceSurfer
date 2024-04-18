@@ -108,6 +108,11 @@ section {
     margin-bottom: 20px;
 }
 
+.reservation-details {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
 .form-container {
     background-color: #fff;
     border-radius: 5px;

@@ -137,24 +137,51 @@ input {
 }
 
 button {
-    background-color: #4CAF50;
+    background-color: #066cdacf;
     border: none;
+    display: flex;
+    flex-direction: row;
+    margin-left: 2px;
+    margin-right: 2px;
     color: #fff;
     cursor: pointer;
     border-radius: 5px;
-    font-size: 16px;
-    padding: 10px;
+    font-size: 14px;
+    padding: 8px;
     margin-top: 10px;
+    margin-bottom: 10px;
+    gap: 10px;   
 }
 
-    button:hover {
-        background-color: #2F7232;
-    }
+button:hover {
+    background-color: #1963b1;
+}
+
+.button-container {
+    display: flex;         /* Use flexbox to layout children */
+    justify-content: space-evenly;  /* Align children to the end (right side) of the container */
+}
 
 .container {
     display: flex;
     flex-direction: row;
     margin: 0 20px;
+}
+
+.nav-items {
+    display: flex;
+    margin-right: 30px;
+}
+
+.nav-item {
+    margin-left: 40px; /* Adds space between navigation items */
+    color: white; /* Change font color */
+    font-weight: bold; /* Make text bold */
+    font-family: Arial, sans-serif; /* Set the font, with a fallback */
+    margin-top: 0px;
+    font-size: 20px;
+    cursor: pointer;
+
 }
 
 .reservations-container {
@@ -163,23 +190,31 @@ button {
     margin-left: 20px;
 }
 
+.reservation-details {
+    font-size: 12px;
+    margin-top: 5px;
+    padding: auto;
+}
+
 .reservation-details-container {
     width: 70%;
-    margin-right: 20px;
-    margin-left: 10px;
+    margin-right: 10px;
+    margin-left: 100px;
+    margin-top: 10px;
+    display:inline-block;
     /* border-color: #495EA8; */
     text-align: center;
     background-color: #d6d0e9;
     color: black;
     box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    padding: 10px;
 }
 
 .content-container {
     background-color: #d6d0e9;
     border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
     color: black;
-    text-align: center;
+    text-align:left;
 }
