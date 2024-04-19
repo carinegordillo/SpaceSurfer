@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275; img-src 'self' data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275 http://localhost:8089; img-src 'self' data:;">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="spaceBookingCenter.css">
     <link rel="stylesheet" href="PersonalOverviewStyle.css">
     <link rel="stylesheet" href="/Waitlist/style.css">
+    <!-- <script src="taskManagerHubView.js"></script> -->
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 
@@ -152,18 +154,52 @@
     </section>
 
     <section id="taskHubView" class="homepage-container" style="display: none;">
-        <h2>Task Manager</h2>
-        <button id="viewTasksBtn">View Tasks</button>
-        <ul id="taskList"></ul>
 
-        <button id="createTaskBtn" onclick="createTaskForm()">Create Task</button>
-        <div id="taskList"></div>
-        <!-- Create Task Form -->
-        <div id="createTaskForm" style="display: none;">
-            <input type="text" id="taskTitle" placeholder="Task Title">
-            <textarea id="taskDescription" placeholder="Task Description"></textarea>
-            <button onclick="submitNewTask()">Submit Task</button>
+        <div id = "registerView" class = "form-container"  >
+ 
+            <div id="accountCreationForm">
+                <h2>Task Manager Hub🤙</h2>
+                <!-- <input type="text" id="username" name="username" placeholder="Username" required> -->
+        
+        
+                <!-- <button id="postAccount" type="submit">Create Account</button> -->
+                <button id="viewTasksBtn" type="button">View List of Tasks</button>
+                <ul id="taskList"></ul>
+        
+                <form id="createTaskForm">
+                    <h2>Create Task</h2>
+                    <div>
+                        <label for="taskTitle">Title:</label>
+                        <input type="text" id="taskTitle" name="title" required>
+                    </div>
+                    <div>
+                        <label for="taskDescription">Description:</label>
+                        <textarea id="taskDescription" name="description" required></textarea>
+                    </div>
+                    <div>
+                        <label for="taskDueDate">Due Date:</label>
+                        <input type="date" id="taskDueDate" name="dueDate" required>
+                    </div>
+                    <div>
+                        <label for="taskPriority">Priority:</label>
+                        <select id="taskPriority" name="priority">
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="taskNotificationSetting">Notification Setting:</label>
+                        <input type="number" id="taskNotificationSetting" name="notificationSetting" required>
+                    </div>
+                    <!-- <button type="submit" id="createTaskBtn">Create Task</button> -->
+                </form>
+        
+                
+            </div>
+        
         </div>
+        
     </section>
 
     <!--General Homepage-->
@@ -220,7 +256,7 @@
 
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
-    <script src="taskManagerHubView.js"></script>
+    <!-- <script src="taskManagerHubView.js"></script> -->
 
 </body>
 

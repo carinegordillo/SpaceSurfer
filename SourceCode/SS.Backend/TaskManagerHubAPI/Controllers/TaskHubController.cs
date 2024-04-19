@@ -8,6 +8,8 @@ using SS.Backend.TaskManagerHub;
 using SS.Backend.DataAccess;
 using SS.Backend.Security;
 using System.Text.Json;
+// using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace TaskManagerHubAPI.Controllers;
 
@@ -308,17 +310,57 @@ public class TaskManagerHubController : ControllerBase
     }
 
 
-    public class ModifyRequest
+    public class ModifyTaskRequest
     {
-        public TaskHub task { get; set; }
-
-        public Dictionary<string, object> fieldsToUpdate { get; set; }
+        public string UserName { get; set; }
+        public string TaskTitle { get; set; }
+        public string FieldsToUpdateJson { get; set; } 
+    }
+    private object ConvertJsonElement(JsonElement element)
+    {
+        switch (element.ValueKind)
+        {
+            case JsonValueKind.String:
+                return element.GetString();
+            case JsonValueKind.Number:
+                return element.TryGetInt64(out long l) ? l : (object)element.GetDouble();
+            case JsonValueKind.True:
+            case JsonValueKind.False:
+                return element.GetBoolean();
+            case JsonValueKind.Undefined:
+            case JsonValueKind.Null:
+                return null;
+            default:
+                throw new InvalidOperationException("Unsupported JsonValueKind: " + element.ValueKind);
+        }
     }
 
     [HttpPost("ModifyTask")]
-    public async Task<IActionResult> ModifyTask([FromBody] ModifyRequest task)    {
-        var tasks = await _taskManagerHubManager.ModifyTasks(task.task, task.fieldsToUpdate);
-        return Ok(new { tasks});
+    public async Task<IActionResult> ModifyTask([FromBody] ModifyTaskRequest request)
+    {
+        try
+        {
+            // Assuming request.FieldsToUpdateJson is properly formatted JSON string
+            var fieldsToUpdateJson = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(request.FieldsToUpdateJson);
+            var fieldsToUpdate = fieldsToUpdateJson.ToDictionary(
+                kvp => kvp.Key,
+                kvp => ConvertJsonElement(kvp.Value));
+
+            var task = new TaskHub { hashedUsername = request.UserName, title = request.TaskTitle };
+            var response = await _taskManagerHubManager.ModifyTasks(task, fieldsToUpdate);
+
+            return Ok(new { response });
+        }
+        catch (JsonException ex)
+        {
+            return BadRequest("JSON format error: " + ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Internal server error: " + ex.Message);
+        }
+    
+
         // string? accessToken = HttpContext.Request.Headers["Authorization"];
         // if (accessToken != null && accessToken.StartsWith("Bearer "))
         // {

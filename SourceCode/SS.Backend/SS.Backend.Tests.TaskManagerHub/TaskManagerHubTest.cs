@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using System.Text.Json;
 
 namespace SS.Backend.Tests.TaskManagerHubTests
 {
@@ -174,6 +175,46 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             Assert.IsFalse(response.HasError, "Task should be deleted successfully.");
 
         }
+
+
+        [TestMethod]
+        public async Task UpdatesSuccessfully_ReturnsSuccessMessage()
+        {
+            // Arrange
+            var task = new TaskHub
+            {
+                hashedUsername = "hashedExampleUsername",
+                title = "Multiple Tasks"
+            };
+
+            var jsonString = "{\"description\":\"JSON Updated description\", \"dueDate\":\"2025-12-31\"}";
+            var fieldsToUpdateJson = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(jsonString);
+            var fieldsToUpdate = fieldsToUpdateJson.ToDictionary(
+                kvp => kvp.Key, 
+                kvp => ConvertJsonElement(kvp.Value));
+
+            var response = await _taskManagerHubManager.ModifyTasks(task, fieldsToUpdate);
+            Assert.IsFalse(response.HasError, "Task should be updated successfully.");
+        }
+        private object ConvertJsonElement(JsonElement element)
+        {
+            switch (element.ValueKind)
+            {
+                case JsonValueKind.String:
+                    return element.GetString();
+                case JsonValueKind.Number:
+                    return element.TryGetInt64(out long l) ? l : (object)element.GetDouble();
+                case JsonValueKind.True:
+                case JsonValueKind.False:
+                    return element.GetBoolean();
+                case JsonValueKind.Undefined:
+                case JsonValueKind.Null:
+                    return null;
+                default:
+                    throw new InvalidOperationException("Unsupported JsonValueKind: " + element.ValueKind);
+            }
+        }
+
 
         [TestMethod]
         public async Task ModifyTask_InvalidField_ReturnsError()

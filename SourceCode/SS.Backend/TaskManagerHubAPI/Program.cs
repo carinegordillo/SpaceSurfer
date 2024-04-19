@@ -4,6 +4,7 @@ using System.Data;
 using SS.Backend.SharedNamespace;
 using SS.Backend.DataAccess;
 using SS.Backend.TaskManagerHub;
+// using System.Text.Json.Serialization;
 // using SS.Backend.ReservationManagers;
 
 
@@ -25,7 +26,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+// builder.Services.AddControllers().AddJsonOptions(options =>
+// {
+//     options.JsonSerializerOptions.PropertyNamingPolicy = null;
+//     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+// });
 
 var baseDirectory = AppContext.BaseDirectory;
 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
