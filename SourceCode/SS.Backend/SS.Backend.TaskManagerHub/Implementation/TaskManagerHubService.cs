@@ -74,9 +74,9 @@ namespace SS.Backend.TaskManagerHub
 
         }
 
-        public async Task<Response> CreateNewTask(string hashedUsername, TaskHub taskHub){
+        public async Task<Response> CreateNewTask(TaskHub taskHub){
             try{
-                var response = await _taskManagerHubRepo.CreateTask(hashedUsername, taskHub);
+                var response = await _taskManagerHubRepo.CreateTask(taskHub);
                 if (!response.HasError){
                     response.ErrorMessage += "Successful task creation in database!";
                 }
@@ -112,14 +112,14 @@ namespace SS.Backend.TaskManagerHub
             }
         }
     
-        public async Task<Response> ModifyTasks(string hashedUsername, string title, Dictionary<string, object> fieldsToUpdate){
+        public async Task<Response> ModifyTasks(TaskHub task, Dictionary<string, object> fieldsToUpdate){
             try{
-                var response = await _taskManagerHubRepo.ModifyTaskFields(hashedUsername, title, fieldsToUpdate);
+                var response = await _taskManagerHubRepo.ModifyTaskFields(task, fieldsToUpdate);
                 if (!response.HasError){
-                    response.ErrorMessage += $"Successfully modified {fieldsToUpdate} in task {title}";
+                    response.ErrorMessage += $"Successfully modified {fieldsToUpdate} in task {task.title}";
 
                 }else{
-                    response.ErrorMessage += $"Unable to modify {fieldsToUpdate} in task {title} - ErrorMessage {response.ErrorMessage}";
+                    response.ErrorMessage += $"Unable to modify {fieldsToUpdate} in task {task.title} - ErrorMessage {response.ErrorMessage}";
                 }
                 return response;
                 
@@ -132,13 +132,13 @@ namespace SS.Backend.TaskManagerHub
             }
         }
 
-        public async Task<Response> DeleteTask(string hashedUsername, string taskTitle){
+        public async Task<Response> DeleteTask(TaskHub task){
             try{
-                var response = await _taskManagerHubRepo.DeleteTask(hashedUsername, taskTitle);
+                var response = await _taskManagerHubRepo.DeleteTask(task);
                 if (!response.HasError){
-                    response.ErrorMessage += $"Successfully deleted {taskTitle}";
+                    response.ErrorMessage += $"Successfully deleted {task}";
                 }else{
-                    response.ErrorMessage += $"Unable to delete {taskTitle} - ErrorMessage {response.ErrorMessage}";
+                    response.ErrorMessage += $"Unable to delete {task} - ErrorMessage {response.ErrorMessage}";
                 }
                 return response;
             }catch(Exception ex){

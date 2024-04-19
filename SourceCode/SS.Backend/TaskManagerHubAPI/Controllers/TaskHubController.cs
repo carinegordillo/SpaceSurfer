@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Data;
+using System.Web;
 using SS.Backend.SharedNamespace;
 using SS.Backend.TaskManagerHub;
 // using SS.Backend.ReservationManagers;
@@ -167,35 +168,215 @@ public class TaskManagerHubController : ControllerBase
     {
         claims = null;
         userName = null;
-        var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
-        if (claimsJson != null)
+        try
         {
-            claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
-            if (claims.TryGetValue("userName", out userName)) {
-                return true;
+            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+            if (!string.IsNullOrEmpty(claimsJson))
+            {
+                claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+                return claims.TryGetValue("sub", out userName); // commonly 'sub' is used for subject which represents the user
             }
+        }
+        catch (JsonException ex)
+        {
+            // Log or handle the error as needed
+            Console.WriteLine($"Error deserializing token claims: {ex.Message}");
         }
         return false;
     }
 
     [HttpPost("CreateTask")]
-    public async Task<IActionResult> CreateTask([FromBody] TaskHub task)
-    {
-        // var response = await _taskManagerHubManager.CreateNewTask(userName, task);
-        // return Ok(response);
-        string accessToken = HttpContext.Request.Headers["Authorization"].ToString().Substring("Bearer ".Length).Trim();
-        if (TryValidateToken(accessToken, out var claims, out var userName))
+    // public async Task<IActionResult> CreateTask([FromBody] TaskHub task)
+    public async Task<IActionResult> CreateTask([FromBody] TaskHub task)    {
+        // userName = HttpUtility.UrlDecode(userName);
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
+        if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
-            if (claims.TryGetValue("Role", out var role) && new[] {"1", "2", "3", "4", "5"}.Contains(role))
+            accessToken = accessToken.Substring("Bearer ".Length).Trim();
+            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+
+            if (claimsJson != null)
             {
-                console.WriteLine("this is the username:::  ", userName)
-                var response = await _taskManagerHubManager.CreateNewTask(userName, task);
-                return Ok(response);
+                var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+
+                if (claims.TryGetValue("Role", out var role) && role == "1" || role == "2" || role == "3" || role == "4" || role == "5")
+                {
+                    bool closeToExpTime = _authService.CheckExpTime(accessToken);
+                    if (closeToExpTime)
+                    {
+                        SSPrincipal principal = new SSPrincipal();
+                        principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                        principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                        var newToken = _authService.CreateJwt(Request, principal);
+                        try
+                        {
+                            var tasks = await _taskManagerHubManager.CreateNewTask(task);
+                            return Ok(new { tasks, newToken });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Internal server error: " + ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var tasks = await _taskManagerHubManager.CreateNewTask(task);
+                            return Ok(tasks);
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Internal server error: " + ex.Message);
+                        }
+                    }
+                }
+                else
+                {
+                    return BadRequest("Unauthorized role.");
+                }
             }
-            return BadRequest("Unauthorized role.");
+            else
+            {
+                return BadRequest("Invalid token.");
+            }
         }
-        return BadRequest("Invalid token.");
+        else
+        {
+            return BadRequest("Unauthorized. Access token is missing or invalid.");
+        }
     }
+
+    [HttpPost("DeleteTask")]
+    public async Task<IActionResult> DeleteTask([FromBody] TaskHub task)    {
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
+        if (accessToken != null && accessToken.StartsWith("Bearer "))
+        {
+            accessToken = accessToken.Substring("Bearer ".Length).Trim();
+            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+
+            if (claimsJson != null)
+            {
+                var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+
+                if (claims.TryGetValue("Role", out var role) && role == "1" || role == "2" || role == "3" || role == "4" || role == "5")
+                {
+                    bool closeToExpTime = _authService.CheckExpTime(accessToken);
+                    if (closeToExpTime)
+                    {
+                        SSPrincipal principal = new SSPrincipal();
+                        principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                        principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                        var newToken = _authService.CreateJwt(Request, principal);
+                        try
+                        {
+                            var tasks = await _taskManagerHubManager.DeleteTask(task);
+                            return Ok(new { tasks, newToken });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Internal server error: " + ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var tasks = await _taskManagerHubManager.DeleteTask(task);
+                            return Ok(tasks);
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Internal server error: " + ex.Message);
+                        }
+                    }
+                }
+                else
+                {
+                    return BadRequest("Unauthorized role.");
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid token.");
+            }
+        }
+        else
+        {
+            return BadRequest("Unauthorized. Access token is missing or invalid.");
+        }
+    }
+
+
+    public class ModifyRequest
+    {
+        public TaskHub task { get; set; }
+
+        public Dictionary<string, object> fieldsToUpdate { get; set; }
+    }
+
+    [HttpPost("ModifyTask")]
+    public async Task<IActionResult> ModifyTask([FromBody] ModifyRequest task)    {
+        var tasks = await _taskManagerHubManager.ModifyTasks(task.task, task.fieldsToUpdate);
+        return Ok(new { tasks});
+        // string? accessToken = HttpContext.Request.Headers["Authorization"];
+        // if (accessToken != null && accessToken.StartsWith("Bearer "))
+        // {
+        //     accessToken = accessToken.Substring("Bearer ".Length).Trim();
+        //     var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+
+        //     if (claimsJson != null)
+        //     {
+        //         var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+
+        //         if (claims.TryGetValue("Role", out var role) && role == "1" || role == "2" || role == "3" || role == "4" || role == "5")
+        //         {
+        //             bool closeToExpTime = _authService.CheckExpTime(accessToken);
+        //             if (closeToExpTime)
+        //             {
+        //                 SSPrincipal principal = new SSPrincipal();
+        //                 principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+        //                 principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+        //                 var newToken = _authService.CreateJwt(Request, principal);
+        //                 try
+        //                 {
+        //                     var tasks = await _taskManagerHubManager.ModifyTasks(task.task, task.fieldsToUpdate);
+        //                     return Ok(new { tasks, newToken });
+        //                 }
+        //                 catch (Exception ex)
+        //                 {
+        //                     return StatusCode(500, "Internal server error: " + ex.Message);
+        //                 }
+        //             }
+        //             else
+        //             {
+        //                 try
+        //                 {
+        //                     var tasks = await _taskManagerHubManager.ModifyTasks(task.task, task.fieldsToUpdate);
+        //                     return Ok(tasks);
+        //                 }
+        //                 catch (Exception ex)
+        //                 {
+        //                     return StatusCode(500, "Internal server error: " + ex.Message);
+        //                 }
+        //             }
+        //         }
+        //         else
+        //         {
+        //             return BadRequest("Unauthorized role.");
+        //         }
+        //     }
+        //     else
+        //     {
+        //         return BadRequest("Invalid token.");
+        //     }
+        // }
+        // else
+        // {
+        //     return BadRequest("Unauthorized. Access token is missing or invalid.");
+        // }
+    }
+
 
 
 

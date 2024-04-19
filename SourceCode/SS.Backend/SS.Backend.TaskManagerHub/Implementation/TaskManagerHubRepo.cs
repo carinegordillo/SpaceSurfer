@@ -98,7 +98,7 @@ namespace SS.Backend.TaskManagerHub
             return response;
         }
 
-        public async Task<Response> CreateTask(string hashedUsername, TaskHub task)
+        public async Task<Response> CreateTask(TaskHub task)
         {   
             // Use CustomSqlCommandBuilder to create SQL commands dynamically
             var builder = new CustomSqlCommandBuilder();
@@ -107,7 +107,7 @@ namespace SS.Backend.TaskManagerHub
             // Create a dictionary for the parameters
             var parameters = new Dictionary<string, object>
             {
-                { "@hashedUsername", hashedUsername }, // Ensure keys include the '@' prefix to match SQL parameter usage
+                { "@hashedUsername", task.hashedUsername }, // Ensure keys include the '@' prefix to match SQL parameter usage
                 { "@title", task.title },
                 { "@description", task.description },
                 { "@dueDate", task.dueDate ?? (object)DBNull.Value }, // Use DBNull.Value for null dates
@@ -157,7 +157,7 @@ namespace SS.Backend.TaskManagerHub
                     .Values(new List<string>(parameters.Keys)) // Use full parameter names including '@'
                     .AddParameters(parameters) // Add parameters
                     .Build();
-                
+
 
                 // Execute the INSERT command
                 var response = await _sqldao.SqlRowsAffected(insertCommand);
@@ -187,7 +187,7 @@ namespace SS.Backend.TaskManagerHub
         //     { "dueDate", new DateTime(2022, 12, 31) },
         // };
         // var response = await ModifyTaskFields("hashedUsernameExample", 123, fieldsToUpdate);
-        public async Task<Response> ModifyTaskFields(string hashedUsername, string title, Dictionary<string, object> fieldsToUpdate)
+        public async Task<Response> ModifyTaskFields(TaskHub task, Dictionary<string, object> fieldsToUpdate)
         {
             var builder = new CustomSqlCommandBuilder();
             Response response = new Response();
@@ -197,8 +197,8 @@ namespace SS.Backend.TaskManagerHub
                                     .Where("hashedUsername = @hashedUsername AND title = @title") 
                                     .AddParameters(new Dictionary<string, object>
                                     {
-                                        { "hashedUsername", hashedUsername },
-                                        { "taskId", title }
+                                        { "hashedUsername", task.hashedUsername },
+                                        { "title", task.title }
                                     }) // Add conditions parameters
                                     .AddParameters(fieldsToUpdate) 
                                     .Build();
@@ -218,7 +218,7 @@ namespace SS.Backend.TaskManagerHub
             return response;
         }
 
-        public async Task<Response> DeleteTask(string hashedUsername, string taskTitle)
+        public async Task<Response> DeleteTask(TaskHub task)
         {
             var builder = new CustomSqlCommandBuilder();
             Response response = new Response();
@@ -228,8 +228,8 @@ namespace SS.Backend.TaskManagerHub
                                     .Where("hashedUsername = @hashedUsername AND title = @title")
                                     .AddParameters(new Dictionary<string, object>
                                     {
-                                        { "hashedUsername", hashedUsername },
-                                        { "title", taskTitle }
+                                        { "hashedUsername", task.hashedUsername },
+                                        { "title", task.title}
                                     })
                                     .Build();
 

@@ -32,14 +32,14 @@ namespace SS.Backend.TaskManagerHub
             return await _taskManagerHubService.ListTasksByPriority(hashedUsername, priority);
         }
 
-        public async Task<Response> CreateNewTask(string hashedUsername, TaskHub taskHub)
+        public async Task<Response> CreateNewTask(TaskHub taskHub)
         {
             // Implement task validation logic
             // For example, ensure that task title is not null or empty and due date is in the future
             if (string.IsNullOrWhiteSpace(taskHub.title))
                 return new Response { HasError = true, ErrorMessage = "Invalid task details." };
 
-            return await _taskManagerHubService.CreateNewTask(hashedUsername, taskHub);
+            return await _taskManagerHubService.CreateNewTask(taskHub);
         }
 
         public async Task<Response> CreateMultipleNewTasks(string hashedUsername, List<TaskHub> tasks)
@@ -58,24 +58,24 @@ namespace SS.Backend.TaskManagerHub
             return await _taskManagerHubService.CreateMultipleNewTasks(hashedUsername, tasks);
         }
 
-        public async Task<Response> ModifyTasks(string hashedUsername, string title, Dictionary<string, object> fieldsToUpdate)
+        public async Task<Response> ModifyTasks(TaskHub task, Dictionary<string, object> fieldsToUpdate)
         {
             // Validate input data
-            if (string.IsNullOrWhiteSpace(hashedUsername) || string.IsNullOrWhiteSpace(title) || fieldsToUpdate == null)
+            if (string.IsNullOrWhiteSpace(task.hashedUsername) || string.IsNullOrWhiteSpace(task.title) || fieldsToUpdate == null)
                 return new Response { HasError = true, ErrorMessage = "Invalid input for task modification." };
 
 
-            return await _taskManagerHubService.ModifyTasks(hashedUsername, title, fieldsToUpdate);
+            return await _taskManagerHubService.ModifyTasks(task, fieldsToUpdate);
         }
 
-        public async Task<Response> DeleteTask(string hashedUsername, string taskTitle)
+        public async Task<Response> DeleteTask(TaskHub task)
         {
             // Validate that the username and task title are not empty
-            if (string.IsNullOrWhiteSpace(hashedUsername) || string.IsNullOrWhiteSpace(taskTitle))
+            if (string.IsNullOrWhiteSpace(task.hashedUsername) || string.IsNullOrWhiteSpace(task.title))
                 return new Response { HasError = true, ErrorMessage = "Username or task title is invalid." };
 
 
-            return await _taskManagerHubService.DeleteTask(hashedUsername, taskTitle);
+            return await _taskManagerHubService.DeleteTask(task);
         }
     }
 }

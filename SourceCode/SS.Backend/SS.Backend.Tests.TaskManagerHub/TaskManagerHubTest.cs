@@ -38,9 +38,10 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         public async Task CreateTask_ValidData_ReturnsSuccess()
         {
             // Arrange
-            var hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=";
+            // var hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=";
             var newTask = new TaskHub
             {
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=",
                 title = "This is another task",
                 description = "Description for new project task",
                 dueDate = DateTime.UtcNow.AddDays(7),
@@ -49,7 +50,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             };
 
             // Act
-            var result = await _taskManagerHubManager.CreateNewTask(hashedUsername, newTask);
+            var result = await _taskManagerHubManager.CreateNewTask(newTask);
 
             // Assert
             Assert.IsFalse(result.HasError, "Task should be created successfully without errors.");
@@ -113,9 +114,10 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         public async Task CreateTask_DuplicateTitle_ReturnsError()
         {
             // Arrange
-            var hashedUsername = "validHashedUsername";
+            // var hashedUsername = "validHashedUsername";
             var newTask = new TaskHub
             {
+                hashedUsername = "validHashedUsername",
                 title = "New Project Task",
                 description = "This task has a duplicate title",
                 dueDate = DateTime.UtcNow.AddDays(10),
@@ -124,7 +126,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             };
 
             // Act
-            var result = await _taskManagerHubManager.CreateNewTask(hashedUsername, newTask);
+            var result = await _taskManagerHubManager.CreateNewTask(newTask);
 
             // Assert
             Assert.IsTrue(result.HasError, "Task should not be created due to duplicate title.");
@@ -134,29 +136,61 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         public async Task DeleteTask_ValidTaskTitle_ReturnsSuccess()
         {
             // Arrange
-            var hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=";
-            var taskTitle = "This is another task";
+            
+            var newTask = new TaskHub
+            {
+               hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=",
+               title = "This is another task"
+            };
+
 
             // Act
-            var result = await _taskManagerHubManager.DeleteTask(hashedUsername, taskTitle);
+            var result = await _taskManagerHubManager.DeleteTask(newTask);
 
             // Assert
             Assert.IsFalse(result.HasError, "Task should be deleted successfully.");
+        }
+
+
+        [TestMethod]
+        public async Task ModifyTaskFields_UpdatesSuccessfully_ReturnsSuccessMessage()
+        {
+            // Arrange
+            var task = new TaskHub
+            {
+                hashedUsername = "hashedExampleUsername",
+                title = "Multiple Tasks"
+            };
+            var fieldsToUpdate = new Dictionary<string, object>
+            {
+                { "description", "Updated description" },
+                { "dueDate", "2024-12-31" }
+            };
+            // var expectedResponse = new Response { HasError = false, ErrorMessage = "Task updated successfully." };
+
+           
+            var response = await _taskManagerHubManager.ModifyTasks(task, fieldsToUpdate);
+
+            Assert.IsFalse(response.HasError, "Task should be deleted successfully.");
+
         }
 
         [TestMethod]
         public async Task ModifyTask_InvalidField_ReturnsError()
         {
             // Arrange
-            var hashedUsername = "validHashedUsername";
-            var taskTitle = "New Project Task";
+            var newTask = new TaskHub
+            {
+               hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=",
+               title = "This is another task"
+            };
             var fieldsToUpdate = new Dictionary<string, object>
             {
                 { "dueDate", DateTime.UtcNow.AddDays(-1) } // Invalid due date in the past
             };
 
             // Act
-            var result = await _taskManagerHubManager.ModifyTasks(hashedUsername, taskTitle, fieldsToUpdate);
+            var result = await _taskManagerHubManager.ModifyTasks(newTask, fieldsToUpdate);
 
             // Assert
             Assert.IsTrue(result.HasError, "Modification should fail due to invalid due date.");

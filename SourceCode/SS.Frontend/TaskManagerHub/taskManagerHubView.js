@@ -37,28 +37,14 @@ async function fetchAndDisplayTasks() {
 function displayTasks(tasks) {
     const taskListElement = document.getElementById('taskList');
     taskListElement.innerHTML = ''; // Clear current list
+    const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
 
     tasks.forEach(task => {
         const taskItem = document.createElement('div');
         taskItem.classList.add('task-item');
 
-        // Determine the color based on the priority
-        let priorityColor = '';
-        switch (task.priority) {
-            case 'High':
-                priorityColor = 'red';
-                break;
-            case 'Medium':
-                priorityColor = 'orange';
-                break;
-            case 'Low':
-                priorityColor = 'green';
-                break;
-            default:
-                priorityColor = 'grey'; // Default color if priority is undefined or different
-        }
+        let priorityColor = getPriorityColor(task.priority);
 
-        // Construct the HTML with the due date and colored priority
         taskItem.innerHTML = `
             <div><strong>Title:</strong> ${task.title}</div>
             <div><strong>Description:</strong> ${task.description}</div>
@@ -66,10 +52,19 @@ function displayTasks(tasks) {
             <div><strong>Priority:</strong> <span style="color: ${priorityColor};">${task.priority}</span></div>
             <div><strong>Notification Setting:</strong> ${task.notificationSetting}</div>
             <button onclick="modifyTask('${task.id}', '${task.title}')">Modify</button>
-            <button onclick="deleteTask('${task.id}')">Delete</button>
+            <button onclick="deleteTask('${task.title}', '${userName}')">Delete</button>
         `;
         taskListElement.appendChild(taskItem);
     });
+}
+
+function getPriorityColor(priority) {
+    switch (priority) {
+        case 'High': return 'red';
+        case 'Medium': return 'orange';
+        case 'Low': return 'green';
+        default: return 'grey';
+    }
 }
 
 
@@ -79,19 +74,22 @@ document.getElementById('createTaskForm').addEventListener('submit', function(ev
     console.log("Create task form has been submitted");
 
     const task = {
+        hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,
         title: document.getElementById('taskTitle').value,
         description: document.getElementById('taskDescription').value,
         dueDate: document.getElementById('taskDueDate').value,
         priority: document.getElementById('taskPriority').value,
         notificationSetting: parseInt(document.getElementById('taskNotificationSetting').value, 10)
     };
+    // const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
 
     createTask(task);
+    fetchAndDisplayTasks();
 });
 
 function createTask(task) {
     const accessToken = sessionStorage.getItem('accessToken'); // Assume token is stored in sessionStorage
-    fetch(`http://localhost:8089/api/v1/taskManagerHub/CreateTask?userName=${encodeURIComponent(userName)}`, {
+    fetch('http://localhost:8089/api/v1/taskManagerHub/CreateTask', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -101,19 +99,47 @@ function createTask(task) {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Failed to create task');
+            return response.json().then(data => Promise.reject(data));
         }
         return response.json();
     })
     .then(data => {
         console.log('Task created successfully', data);
         alert('Task created successfully!');
-        // Optionally clear the form or update the UI here
-        document.getElementById('createTaskForm').reset(); // This resets the form fields after successful submission
     })
     .catch(error => {
         console.error('Failed to create task', error);
-        alert('Failed to create task: ' + error.message);
+        alert('Failed to create task: ' + (error.message || JSON.stringify(error)));
+    });
+}
+
+function deleteTask(taskTitle, userName) {
+    const task = {
+        hashedUsername: userName,
+        title: taskTitle
+    };
+    const accessToken = sessionStorage.getItem('accessToken'); // Assume token is stored in sessionStorage
+    fetch(`http://localhost:8089/api/v1/taskManagerHub/DeleteTask`, {
+        method: 'POST', // Change to 'DELETE' if your server supports it
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(task)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to delete task');
+        }
+        return response.json();
+    })
+    .then(() => {
+        alert('Task deleted successfully!');
+        fetchAndDisplayTasks(); // Refresh the task list after deletion
+    })
+    .catch(error => {
+        console.error('Failed to delete task', error);
+        alert('Failed to delete task: ' + error.message);
     });
 }
 
