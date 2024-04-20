@@ -87,16 +87,14 @@ function spaceBookingCenterAccess() {
 function taskHubAccess() {
     document.getElementById('taskManagerView').style.display = 'block';
     document.getElementById('waitlistView').style.display = 'none';
-
-    document.getElementById('homepageGen').style.display = 'none';
+// do an if user role is whatever then display the manager page 
+    document.getElementById('homepageGen').style.display = 'block';
     document.getElementById('homepageManager').style.display = 'none';
     document.getElementById('sendOTPSection').style.display = 'none';
     document.getElementById('enterOTPSection').style.display = 'none';
     document.getElementById('successResult').style.display = 'none';
     document.getElementById('failResult').style.display = 'none';
     document.getElementById('personalOverviewCenter').style.display = 'none';
-
-
 }
 
 function personalOverviewAccess() {

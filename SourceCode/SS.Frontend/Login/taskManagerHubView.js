@@ -4,7 +4,7 @@ document.getElementById('viewTasksBtn').addEventListener('click', function(event
     fetchAndDisplayTasks();
 });
 
-async function fetchAndDisplayTasks() {
+function fetchAndDisplayTasks() {
     const accessToken = sessionStorage.getItem('accessToken');
     // if (!accessToken || !(await checkTokenExpiration(accessToken))) {
     //     console.error('Token expired or invalid');
@@ -85,6 +85,8 @@ document.getElementById('createTaskForm').addEventListener('submit', function(ev
 
     createTask(task);
     fetchAndDisplayTasks();
+    document.getElementById('createTaskForm').reset();
+
 });
 
 function createTask(task) {
@@ -157,6 +159,7 @@ function showModifyForm(title, description, dueDate, priority, notificationSetti
     document.getElementById('modifyTaskForm').addEventListener('submit', function(event) {
         event.preventDefault();
         modifyTask(title, userName);
+        document.getElementById('modifyTaskFormContainer').style.display = 'none';
     });
 }
 
