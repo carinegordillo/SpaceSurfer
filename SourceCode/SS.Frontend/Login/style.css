@@ -1,8 +1,40 @@
-html, body {
-    height: 100%;
-    margin: 0;
+body, html {
+    min-height: 100vh; /* Ensure body stretches to full viewport height */
+    font-family: 'Arial', sans-serif;
+    /* background-image: linear-gradient(to bottom, rgba(12, 39, 138, 0.754), rgba(39, 20, 58, 0.404)); */
+    background-image: url(AIfire_transparent.png);
+    background-size: cover; /* Scale the background image as large as possible */
+    background-repeat: no-repeat; /* Prevent the background image from repeating */
     padding: 0;
+    margin: 0;
+    display: flex; /* Make the body a flex container */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: space-between; /* Push content to the top and bottom */
 }
+
+.background-image {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    /* overflow: hidden; */
+    height: auto;
+  }
+  
+  .background-image::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* background-image: url('skystar.jpg'); */
+    
+    background-size: cover;
+    background-position: center;
+    opacity: 0.5; /* Adjust the opacity as needed */
+    z-index: -1;
+  }
+
 
 .header-content {
     display: flex;
@@ -11,6 +43,14 @@ html, body {
 
 .flipped-image {
     transform: scaleX(-1);
+}
+
+
+header, footer {
+    background-color: #0d092cb5;
+    color: white;
+    text-align: center;
+    padding: 5px 0;
 }
 
 h1 {
@@ -29,12 +69,12 @@ body {
     flex-direction: column;
 }
 
-header {
+/* header {
     padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
+} */
 
 .header-logo {
     width: 150px;
@@ -124,6 +164,8 @@ section {
     text-align: center;
 }
 
+
+
 form {
     display: flex;
     flex-direction: column;
@@ -136,13 +178,14 @@ form {
     margin-top: 20px;
 }
 
-label {
+
+/* label {
     color: black;
     margin-bottom: 10px;
     font-weight: bold;
     font-size: 20px;
     padding: 10px;
-}
+} */
 
 input {
     margin-bottom: 15px;
@@ -150,7 +193,7 @@ input {
     font-size: 16px;
 }
 
-button {
+/* button {
     background-color: #4CAF50;
     border: none;
     color: #fff;
@@ -163,8 +206,74 @@ button {
 
     button:hover {
         background-color: #2F7232;
-    }
+    } */
 
 #enterOTPSection {
     display: none;
+}
+
+
+
+.homepage-container {
+    background: #f4f4f4;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 80%;
+    margin: 20px auto;
+}
+
+.task-container {
+    background: rgb(205, 216, 247);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+#accountCreationForm h2 {
+    color: #333;
+    font-size: 24px;
+}
+
+form div {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+textarea,
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Adds padding inside the box */
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#modifyTaskFormContainer {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
 }

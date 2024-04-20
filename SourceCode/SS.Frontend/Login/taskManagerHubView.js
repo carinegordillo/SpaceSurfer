@@ -51,7 +51,7 @@ function displayTasks(tasks) {
             <div><strong>Due Date:</strong> ${new Date(task.dueDate).toLocaleDateString()}</div>
             <div><strong>Priority:</strong> <span style="color: ${priorityColor};">${task.priority}</span></div>
             <div><strong>Notification Setting:</strong> ${task.notificationSetting}</div>
-            <button onclick="modifyTask('${task.id}', '${task.title}')">Modify</button>
+            <button onclick="showModifyForm('${task.title}', '${task.description}', '${task.dueDate}', '${task.priority}', '${task.notificationSetting}', '${userName}')">Modify</button>
             <button onclick="deleteTask('${task.title}', '${userName}')">Delete</button>
         `;
         taskListElement.appendChild(taskItem);
@@ -142,6 +142,64 @@ function deleteTask(taskTitle, userName) {
         alert('Failed to delete task: ' + error.message);
     });
 }
+
+
+function showModifyForm(title, description, dueDate, priority, notificationSetting, userName) {
+    console.log("Showing modify form for: " + title);
+    document.getElementById('modTitle').textContent = title; // Set the title in the span
+    document.getElementById('modDescription').value = description;
+    document.getElementById('modDueDate').value = dueDate.split('T')[0]; // Assuming dueDate is in ISO format
+    document.getElementById('modPriority').value = priority;
+    document.getElementById('modNotificationSetting').value = notificationSetting;
+
+    // Show the modify form
+    document.getElementById('modifyTaskFormContainer').style.display = 'block';
+    document.getElementById('modifyTaskForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        modifyTask(title, userName);
+    });
+}
+
+function modifyTask(originalTitle, userName) {
+    const task = {
+        description: document.getElementById('modDescription').value,
+        dueDate: document.getElementById('modDueDate').value,
+        priority: document.getElementById('modPriority').value,
+        notificationSetting: parseInt(document.getElementById('modNotificationSetting').value, 10)
+    };
+
+    const fieldsToUpdateJson = JSON.stringify(task);
+    const modifyRequest = {
+        UserName: userName,
+        TaskTitle: originalTitle,
+        FieldsToUpdateJson: fieldsToUpdateJson
+    };
+
+    fetch('http://localhost:8089/api/v1/taskManagerHub/ModifyTask', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+        },
+        body: JSON.stringify(modifyRequest)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to modify task');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Task modified successfully', data);
+        alert('Task modified successfully!');
+        fetchAndDisplayTasks(); // Refresh task list
+    })
+    .catch(error => {
+        console.error('Failed to modify task', error);
+        alert('Failed to modify task: ' + error.message);
+    });
+}
+
 
 
 // async function checkTokenExpiration(accessToken) {

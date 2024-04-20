@@ -149,21 +149,16 @@
     </section>
 
     <section id="taskManagerView" class="homepage-container" style="display: none;">
-        <!-- <link rel="stylesheet" href="Registration.css"> -->
-
-        <div id="registerView" class="form-container">
-
+        <div id="registerView" class="task-container">
             <div id="accountCreationForm">
                 <h2>Task Manager Hub🤙</h2>
-                <!-- <input type="text" id="username" name="username" placeholder="Username" required> -->
-                <!-- <button id="postAccount" type="submit">Create Account</button> -->
                 <button id="viewTasksBtn" type="button">View List of Tasks</button>
                 <ul id="taskList"></ul>
-
+    
                 <form id="createTaskForm">
                     <h2>Create Task</h2>
                     <div>
-                        <label for="taskTitle">Title:</label>
+                        <label for="taskTitle">Task:</label>
                         <input type="text" id="taskTitle" name="title" required>
                     </div>
                     <div>
@@ -189,6 +184,37 @@
                     <button type="submit" id="createTaskBtn">Create Task</button>
                 </form>
 
+                Modify Task Form Container
+                <div id="modifyTaskFormContainer" style="display: none;">
+                    <h2>Modify Task</h2>
+                    <form id="modifyTaskForm">
+                        <div>
+                            <strong style="font-size: 25px;">Editing Task: </strong> <span id="modTitle" style="font-size: 25px;"></span>
+                        </div>
+                        <div>
+                            <label for="modDescription">Description:</label>
+                            <textarea id="modDescription"></textarea>
+                        </div>
+                        <div>
+                            <label for="modDueDate">Due Date:</label>
+                            <input type="date" id="modDueDate" required>
+                        </div>
+                        <div>
+                            <label for="modPriority">Priority:</label>
+                            <select id="modPriority">
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="modNotificationSetting">Notification Setting:</label>
+                            <input type="number" id="modNotificationSetting" required>
+                        </div>
+                        <button type="submit">Submit Changes</button>
+                    </form>
+                </div>
+                
 
             </div>
 
@@ -304,11 +330,12 @@
     </template>
 
     <script src="script.js"></script>
+    <script src="taskManagerHubView.js"></script>
     <script src="waitlistScript.js"></script>
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
     <!--<script src="../SpaceManager/pages/SpaceManager.js"></script>-->
-    <script src="taskManagerHubView.js"></script>
+    
 
 </body>
 
