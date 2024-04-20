@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275; img-src 'self' data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8081 http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275; img-src 'self' data:;">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="spaceBookingCenter.css">
     <link rel="stylesheet" href="PersonalOverviewStyle.css">
@@ -102,8 +102,7 @@
 
     </section>
 
-    <section id="homepageGen" class="homepage-container" style="display: none;">
-        <h2>Welcome to SpaceSurfers!</h2>
+    <section id="spaceBookingView" class="homepage-container" style="display: none;">
         <button id="initAppButton">Initialize spaceBookingCenter</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
         <div id="accessTokenContainer"></div>
@@ -149,10 +148,18 @@
         </div>
     </section>
 
+    <!--CPRA View-->
+    <section id="cpraView" class="homepage-container" style="display: none;">
+        <div id="contentContainer"></div>
+    </section>
+
     <!--General Homepage-->
     <section id="homepageGen" class="homepage-container" style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
+        <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
+        <button type="button" onclick="cpraAccess()">User Data Protection Manager</button>
+        <button type="button" onclick="logout()">Logout</button>
     </section>
 
     <!--Manager Homepage-->
@@ -160,7 +167,9 @@
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
+        <button type="button" onclick="cpraAccess()">User Data Protection Manager</button>
         <button type="button" onclick="logout()">Logout</button>
+
     </section>
 
     <footer>
@@ -199,8 +208,11 @@
         <br>
     </template>
 
+    <script src="waitlistScript.js"></script>
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
+    <script src="cpraScript.js"></script>
+    <script src="script.js"></script>
 
 </body>
 

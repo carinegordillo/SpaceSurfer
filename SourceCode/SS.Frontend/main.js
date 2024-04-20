@@ -19,8 +19,8 @@
 
     root.myApp = root.myApp || {};
     async function init() {
-        //window.location = "UnAuthnAbout/about.html"
-        window.location = "Index/index.html"
+        window.location = "UnAuthnAbout/about.html"
+        //window.location = "SpaceManager/index.html"
 
         if (localStorage.length != 0) {
             token = localStorage["accessToken"]
@@ -29,7 +29,7 @@
         if (!token) {
             window.location = "UnAuthnAbout/about.html"
         } else {
-            window.location = "SpaceManager/index.html"
+            window.location = "UnAuthnAbout/about.html"
         }
     }
 

@@ -1,179 +1,451 @@
-//using Microsoft.AspNetCore.Mvc;
-//using System.Data;
-//// using SS.Backend.Services;
-//using SS.Backend.SpaceManager;
-//using SS.Backend.SharedNamespace;
-//using SS.Backend.Security;
-//using Microsoft.IdentityModel.JsonWebTokens;
-//using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.AspNetCore.Mvc;
+using System.Data;
+using SS.Backend.Services;
+using SS.Backend.SpaceManager;
+using SS.Backend.SharedNamespace;
+using SS.Backend.Security;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.HttpResults;
 
-//namespace demoAPI.Controllers;
+namespace demoAPI.Controllers;
 
-//[ApiController]
-//[Route("api/SpaceManager")]
-//public class DemoController : ControllerBase
-//{
+[ApiController]
+[Route("api/SpaceManager")]
+public class DemoController : ControllerBase
+{
 
-//    private readonly ISpaceCreation _spaceCreation;
-//    private readonly ISpaceModification _spaceModification;
-//    private readonly SSAuthService _authService;
+    private readonly ISpaceCreation _spaceCreation;
+    private readonly ISpaceModification _spaceModification;
+    private readonly SSAuthService _authService;
 
-//    public DemoController(ISpaceCreation SpaceCreation, ISpaceModification spaceModification, SSAuthService authService)
-//    {
-//        _spaceCreation = SpaceCreation;
-//        _spaceModification = spaceModification;
-//        _authService = authService;
-//    }
+    public DemoController(ISpaceCreation SpaceCreation, ISpaceModification spaceModification, SSAuthService authService)
+    {
+        _spaceCreation = SpaceCreation;
+        _spaceModification = spaceModification;
+        _authService = authService;
+    }
 
-//    // }  
-//    [HttpPost]
-//    [Route("postSpace")]
-//    public async Task<IActionResult> PostCreateSpace([FromBody] CompanyFloor companyFloor)
-//    {
-//        // Extract the bearer token from the Authorization header
-//        var authorizationHeader = HttpContext.Request.Headers["Authorization"].ToString();
-//        if (string.IsNullOrWhiteSpace(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
-//        {
-//            return Unauthorized("Authorization header is missing or not valid.");
-//        }
+    // }  
+    [HttpPost]
+    [Route("postSpace")]
+    public async Task<IActionResult> PostCreateSpace([FromBody] CompanyFloor data, string userHash)
+    {
+        var response = new Response();
+        string message = "";
+        //string? accessToken = HttpContext.Request.Headers["Authorization"];
+        //if (accessToken != null && accessToken.StartsWith("Bearer "))
+        //{
+        //    accessToken = accessToken.Substring("Bearer ".Length).Trim();
+        //    var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
 
-//        // Remove the 'Bearer ' prefix to get the actual token
-//        var accessToken = authorizationHeader.Substring("Bearer ".Length).Trim();
+        //    if (claimsJson != null)
+        //    {
+        //        var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
 
-//        // Now you can use the token as before
-//        string userHash = _authService.GetSubjectFromToken(accessToken);
+        //        if (claims.TryGetValue("Role", out var role) && (role == "1" || role == "2" || role == "3" || role == "4" || role == "5"))
+        //        {
+        //            bool closeToExpTime = _authService.CheckExpTime(accessToken);
+        //            if (closeToExpTime)
+        //            {
+        //                SSPrincipal principal = new SSPrincipal();
+        //                principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+        //                principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+        //                var newToken = _authService.CreateJwt(Request, principal);
 
-//        var response = await _spaceCreation.CreateSpace(userHash, companyFloor);
-//        if (response.HasError)
-//        {
-//            return BadRequest(response.ErrorMessage);
-//        }
-//        return Ok(new { message = "SPACE created successfully!" + response });
-//    }
+        //                try
+        //                {
+        //                    if (response.HasError)
+        //                    {
+        //                        return BadRequest(response.ErrorMessage);
+        //                    }
+        //                    message = "SPACE created successfully!";
+        //                    return Ok(new { message , response , newToken});
+        //                    response = await _spaceCreation.CreateSpace(userHash, data);
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    return StatusCode(500, ex.Message);
+        //                }
+        //            }
+        //            else
+        //            {
+        try
+                        {
+                            if (response.HasError)
+                            {
+                                return BadRequest(response.ErrorMessage);
+                            }
+                            message = "SPACE created successfully!";
+                            return Ok(new { message, response });
+                            response = await _spaceCreation.CreateSpace(userHash, data);
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, ex.Message);
+                        }
 
-//    [HttpPost]
-//    [Route("modifyTimeLimits")]
-//    public async Task<IActionResult> ModifyTimeLimits([FromBody] Dictionary<string, int> spaceTimeLimits)
-//    {
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return BadRequest("Unauthorized role.");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("Invalid token.");
+        //    }
+        //}
+        //else
+        //{
+        //    return BadRequest("Unauthorized. Access token is missing or invalid.");
+        //}
+    }
 
-//        var authorizationHeader = HttpContext.Request.Headers["Authorization"].ToString();
-//        if (string.IsNullOrWhiteSpace(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
-//        {
-//            return Unauthorized("Authorization header is missing or not valid.");
-//        }
-//        var accessToken = authorizationHeader.Substring("Bearer ".Length).Trim();
-//        string userHash = _authService.GetSubjectFromToken(accessToken);
+    [HttpPost]
+    [Route("modifyTimeLimits")]
+    public async Task<IActionResult> ModifyTimeLimits([FromBody] Dictionary<string, int> data, string userHash)
+    {
+        var response = new Response();
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
+        if (accessToken != null && accessToken.StartsWith("Bearer "))
+        {
+            accessToken = accessToken.Substring("Bearer ".Length).Trim();
+            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
 
-//        List<string> messages = new List<string>();
+            if (claimsJson != null)
+            {
+                var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
 
-//        foreach (var entry in spaceTimeLimits)
-//        {
-//            var spaceID = entry.Key;
-//            var newTimeLimit = entry.Value;
+                if (claims.TryGetValue("Role", out var role) && (role == "1" || role == "2" || role == "3" || role == "4" || role == "5"))
+                {
+                    bool closeToExpTime = _authService.CheckExpTime(accessToken);
+                    if (closeToExpTime)
+                    {
+                        SSPrincipal principal = new SSPrincipal();
+                        principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                        principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                        var newToken = _authService.CreateJwt(Request, principal);
 
-//            var response = await _spaceModification.ModifyTimeLimit(userHash, spaceID, newTimeLimit);
-//            if (response.HasError)
-//            {
-//                return BadRequest($"Error modifying time limit for space ID {spaceID}: {response.ErrorMessage}");
-//            }
-//            else
-//            {
-//                messages.Add($"Timelimit for space ID {spaceID} modified successfully!");
-//            }
-//        }
-//        return Ok(new { messages = messages });
-//    }
+                        try
+                        {
+                            List<string> messages = new List<string>();
+
+                            foreach (var entry in data)
+                            {
+                                var spaceID = entry.Key;
+                                var newTimeLimit = entry.Value;
+
+                                response = await _spaceModification.ModifyTimeLimit(userHash, spaceID, newTimeLimit);
+                                if (response.HasError)
+                                {
+                                    return BadRequest($"Error modifying time limit for space ID {spaceID}: {response.ErrorMessage}");
+                                }
+                                else
+                                {
+                                    messages.Add($"Timelimit for space ID {spaceID} modified successfully!");
+                                }
+                            }
+                            return Ok(new { messages , newToken });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            List<string> messages = new List<string>();
+
+                            foreach (var entry in data)
+                            {
+                                var spaceID = entry.Key;
+                                var newTimeLimit = entry.Value;
+
+                                response = await _spaceModification.ModifyTimeLimit(userHash, spaceID, newTimeLimit);
+                                if (response.HasError)
+                                {
+                                    return BadRequest($"Error modifying time limit for space ID {spaceID}: {response.ErrorMessage}");
+                                }
+                                else
+                                {
+                                    messages.Add($"Timelimit for space ID {spaceID} modified successfully!");
+                                }
+                            }
+                            return Ok(new { messages });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, ex.Message);
+                        }
+
+                    }
+                }
+                else
+                {
+                    return BadRequest("Unauthorized role.");
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid token.");
+            }
+        }
+        else
+        {
+            return BadRequest("Unauthorized. Access token is missing or invalid.");
+        }
+    }
 
 
-//    //edit floor plan image 
-//    public class FloorPlanUpdateRequest
-//    {
-//        public required string FloorPlanName { get; set; }
-//        public required byte[] NewFloorPlanImage { get; set; }
-//    }
+    //edit floor plan image 
+    public class FloorPlanUpdateRequest
+    {
+        public required string FloorPlanName { get; set; }
+        public required byte[] NewFloorPlanImage { get; set; }
+    }
 
-//    [HttpPost]
-//    [Route("modifyFloorPlan")]
-//    public async Task<IActionResult> ModifyFloorImage([FromBody] FloorPlanUpdateRequest request)
-//    {
-//        // Extract the bearer token from the Authorization header
-//        var authorizationHeader = HttpContext.Request.Headers["Authorization"].ToString();
-//        if (string.IsNullOrWhiteSpace(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
-//        {
-//            return Unauthorized("Authorization header is missing or not valid.");
-//        }
+    [HttpPost]
+    [Route("modifyFloorPlan")]
+    public async Task<IActionResult> ModifyFloorImage([FromBody] FloorPlanUpdateRequest data, string userHash)
+    {
+        var response = new Response();
+        string message = "";
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
+        if (accessToken != null && accessToken.StartsWith("Bearer "))
+        {
+            accessToken = accessToken.Substring("Bearer ".Length).Trim();
+            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
 
-//        // Remove the 'Bearer ' prefix to get the actual token
-//        var accessToken = authorizationHeader.Substring("Bearer ".Length).Trim();
-//        // Extract user hash or other relevant data from the token
-//        string userHash = _authService.GetSubjectFromToken(accessToken);
+            if (claimsJson != null)
+            {
+                var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
 
-//        // Proceed with modifying the floor plan using the extracted user hash
-//        var response = await _spaceModification.ModifyFloorImage(userHash, request.FloorPlanName, request.NewFloorPlanImage);
-//        if (response.HasError)
-//        {
-//            return BadRequest($"Error modifying floor plan image for floor plan {request.FloorPlanName}: {response.ErrorMessage}");
-//        }
-//        return Ok(new { message = "Floor Plan replaced successfully!" + response });
-//    }
-//    //delete space 
+                if (claims.TryGetValue("Role", out var role) && (role == "1" || role == "2" || role == "3" || role == "4" || role == "5"))
+                {
+                    bool closeToExpTime = _authService.CheckExpTime(accessToken);
+                    if (closeToExpTime)
+                    {
+                        SSPrincipal principal = new SSPrincipal();
+                        principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                        principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                        var newToken = _authService.CreateJwt(Request, principal);
 
-//    public class SpaceIdModel
-//    {
-//        public required string SpaceID { get; set; }
-//    }
+                        try
+                        {
+                            response = await _spaceModification.ModifyFloorImage(userHash, data.FloorPlanName, data.NewFloorPlanImage);
+                            if (response.HasError)
+                            {
+                                return BadRequest($"Error modifying floor plan image for floor plan {data.FloorPlanName}: {response.ErrorMessage}");
+                            }
+                            message = "Floor Plan replaced successfully!";
+                            return Ok(new { message, response , newToken });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            response = await _spaceModification.ModifyFloorImage(userHash, data.FloorPlanName, data.NewFloorPlanImage);
+                            if (response.HasError)
+                            {
+                                return BadRequest($"Error modifying floor plan image for floor plan {data.FloorPlanName}: {response.ErrorMessage}");
+                            }
+                            message = "Floor Plan replaced successfully!";
+                            return Ok(new { message, response });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, ex.Message);
+                        }
 
-//    [HttpPost]
-//    [Route("deleteSpace")]
-//    public async Task<IActionResult> DeleteSpaceID([FromBody] SpaceIdModel model)
-//    {
-//        // Assuming dummyCompanyID is fetched or defined elsewhere
-//        var authorizationHeader = HttpContext.Request.Headers["Authorization"].ToString();
-//        if (string.IsNullOrWhiteSpace(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
-//        {
-//            return Unauthorized("Authorization header is missing or not valid.");
-//        }
+                    }
+                }
+                else
+                {
+                    return BadRequest("Unauthorized role.");
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid token.");
+            }
+        }
+        else
+        {
+            return BadRequest("Unauthorized. Access token is missing or invalid.");
+        }
+    }
+    //delete space 
 
-//        // Remove the 'Bearer ' prefix to get the actual token
-//        var accessToken = authorizationHeader.Substring("Bearer ".Length).Trim();
-//        // Extract user hash or other relevant data from the token
-//        string userHash = _authService.GetSubjectFromToken(accessToken);
+    public class SpaceIdModel
+    {
+        public required string SpaceID { get; set; }
+    }
 
-//        var response = await _spaceModification.DeleteSpace(userHash, model.SpaceID);
-//        if (response.HasError)
-//        {
-//            return BadRequest($"Error Deleting Space for spaceID {model.SpaceID}: {response.ErrorMessage}");
-//        }
+    [HttpPost]
+    [Route("deleteSpace")]
+    public async Task<IActionResult> DeleteSpaceID([FromBody] SpaceIdModel data, string userHash)
+    {
+        var response = new Response();
+        string message = "";
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
+        if (accessToken != null && accessToken.StartsWith("Bearer "))
+        {
+            accessToken = accessToken.Substring("Bearer ".Length).Trim();
+            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
 
-//        return Ok(new { message = "SpaceID deleted successfully!" + response });
-//    }
+            if (claimsJson != null)
+            {
+                var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
 
-//    public class FloorPlanModel
-//    {
-//        public required string FloorPlanName { get; set; }
-//    }
+                if (claims.TryGetValue("Role", out var role) && (role == "1" || role == "2" || role == "3" || role == "4" || role == "5"))
+                {
+                    bool closeToExpTime = _authService.CheckExpTime(accessToken);
+                    if (closeToExpTime)
+                    {
+                        SSPrincipal principal = new SSPrincipal();
+                        principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                        principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                        var newToken = _authService.CreateJwt(Request, principal);
 
-//    [HttpPost]
-//    [Route("deleteFloor")]
-//    public async Task<IActionResult> DeleteFloor([FromBody] FloorPlanModel model)
-//    {
-//        var authorizationHeader = HttpContext.Request.Headers["Authorization"].ToString();
-//        if (string.IsNullOrWhiteSpace(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
-//        {
-//            return Unauthorized("Authorization header is missing or not valid.");
-//        }
+                        try
+                        {
+                            response = await _spaceModification.DeleteSpace(userHash, data.SpaceID);
+                            if (response.HasError)
+                            {
+                                return BadRequest($"Error Deleting Space for spaceID {data.SpaceID}: {response.ErrorMessage}");
+                            }
+                            message = "SpaceID deleted successfully!";
+                            return Ok(new { message, response , newToken });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            response = await _spaceModification.DeleteSpace(userHash, data.SpaceID);
+                            if (response.HasError)
+                            {
+                                return BadRequest($"Error Deleting Space for spaceID {data.SpaceID}: {response.ErrorMessage}");
+                            }
+                            message = "SpaceID deleted successfully!";
+                            return Ok(new { message, response });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, ex.Message);
+                        }
 
-//        // Remove the 'Bearer ' prefix to get the actual token
-//        var accessToken = authorizationHeader.Substring("Bearer ".Length).Trim();
-//        // Extract user hash or other relevant data from the token
-//        string userHash = _authService.GetSubjectFromToken(accessToken);
+                    }
+                }
+                else
+                {
+                    return BadRequest("Unauthorized role.");
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid token.");
+            }
+        }
+        else
+        {
+            return BadRequest("Unauthorized. Access token is missing or invalid.");
+        }
+    }
 
-//        var response = await _spaceModification.DeleteFloor(userHash, model.FloorPlanName);
-//        if (response.HasError)
-//        {
-//            return BadRequest($"Error Deleting Space for spaceID {model.FloorPlanName}: {response.ErrorMessage}");
-//        }
+    public class FloorPlanModel
+    {
+        public required string FloorPlanName { get; set; }
+    }
 
-//        return Ok(new { message = "SpaceID deleted successfully!" + response });
-//    }
-//}
+    [HttpPost]
+    [Route("deleteFloor")]
+    public async Task<IActionResult> DeleteFloor([FromBody] FloorPlanModel data, string userHash)
+    {
+        var response = new Response();
+        string message = "";
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
+        if (accessToken != null && accessToken.StartsWith("Bearer "))
+        {
+            accessToken = accessToken.Substring("Bearer ".Length).Trim();
+            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+
+            if (claimsJson != null)
+            {
+                var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+
+                if (claims.TryGetValue("Role", out var role) && (role == "1" || role == "2" || role == "3" || role == "4" || role == "5"))
+                {
+                    bool closeToExpTime = _authService.CheckExpTime(accessToken);
+                    if (closeToExpTime)
+                    {
+                        SSPrincipal principal = new SSPrincipal();
+                        principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                        principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                        var newToken = _authService.CreateJwt(Request, principal);
+
+                        try
+                        {
+                            response = await _spaceModification.DeleteFloor(userHash, data.FloorPlanName);
+                            if (response.HasError)
+                            {
+                                return BadRequest($"Error Deleting Space for spaceID {data.FloorPlanName}: {response.ErrorMessage}");
+                            }
+                        message = "SpaceID deleted successfully!";
+                            return Ok(new { message, response , newToken });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            response = await _spaceModification.DeleteFloor(userHash, data.FloorPlanName);
+                            if (response.HasError)
+                            {
+                                return BadRequest($"Error Deleting Space for spaceID {data.FloorPlanName}: {response.ErrorMessage}");
+                            }
+                            message = "SpaceID deleted successfully!";
+                            return Ok(new { message, response });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, ex.Message);
+                        }
+
+                    }
+                }
+                else
+                {
+                    return BadRequest("Unauthorized role.");
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid token.");
+            }
+        }
+        else
+        {
+            return BadRequest("Unauthorized. Access token is missing or invalid.");
+        }
+    }
+}

@@ -25,7 +25,6 @@ namespace WaitlistApi.Controllers
         [HttpGet("getFloorplan")]
         public async Task<IActionResult> GetCompanyFloorPlans(int cid, int fid)
         {
-            Console.WriteLine("Test");
             string? accessToken = HttpContext.Request.Headers["Authorization"];
             if (accessToken != null && accessToken.StartsWith("Bearer "))
             {

@@ -3,6 +3,24 @@ function logout() {
     window.location.href = '../UnAuthnAbout/about.html';
 }
 
+function checkTokenExpiration(accessToken) {
+    try {
+        var response = fetch('http://localhost:5099/api/waitlist/checkTokenExp', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response.ok;
+
+    } catch (error) {
+        console.error('Error:', error);
+        return false;
+    }
+}
+
 document.getElementById('replaceImage').addEventListener('change', function(event) {
     var fileModify = event.target.files[0];
     if (!fileModify) {
@@ -161,43 +179,43 @@ document.querySelectorAll('.accordion').forEach(function(button) {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    if (!localStorage.getItem('accessToken')) {
-        // Redirect if accessToken not found
-        window.location.href = '../UnAuthnAbout/about.html';
-        return; 
-    }
-    document.getElementById('loadRequestsButton').addEventListener('click', function() {
-        fetch('http://localhost:8081/api/SpaceManager/createSpace')
-            .then(response => response.json())
-            .then(data => {
-                const recoveryRequestsList = document.getElementById('recoveryRequestsList');
-                recoveryRequestsList.innerHTML = '';
-                data.forEach(function(request) {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = `Name: ${request.floorPlanName}, Spaces: ${request.spaceList}`;
-                    if(request.resolveDate) {
-                        listItem.textContent += `, Resolve Date: ${request.resolveDate}`;
-                    }
-                    recoveryRequestsList.appendChild(listItem);
-                });
-            })
-            .catch(error => console.error('Error:', error));
+    //if (!localStorage.getItem('accessToken')) {
+    //    // Redirect if accessToken not found
+    //    window.location.href = '../UnAuthnAbout/about.html';
+    //    return; 
+    //}
+    document.getElementById('loadRequestsButton').addEventListener('click', function () {
+        //fetch('http://localhost:8081/api/SpaceManager/createSpace')
+        //    .then(response => response.json())
+        //    .then(data => {
+        //        const recoveryRequestsList = document.getElementById('recoveryRequestsList');
+        //        recoveryRequestsList.innerHTML = '';
+        //        data.forEach(function(request) {
+        //            const listItem = document.createElement('li');
+        //            listItem.textContent = `Name: ${request.floorPlanName}, Spaces: ${request.spaceList}`;
+        //            if(request.resolveDate) {
+        //                listItem.textContent += `, Resolve Date: ${request.resolveDate}`;
+        //            }
+        //            recoveryRequestsList.appendChild(listItem);
+        //        });
+        //    })
+        //    .catch(error => console.error('Error:', error));
     });
 
-    document.getElementById('accountCreationForm').addEventListener('submit', function(e) {
+    document.getElementById('spaceCreationForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const companyFloor = {
             FloorPlanName: document.getElementById('floorPlanName').value,
             FloorPlanImage: document.getElementById('imageBase64').value,
             FloorSpaces: collectSpacesAndTimeLimits()
         };
-        sendData('http://localhost:8081/api/SpaceManager/postSpace', companyFloor, 'accessToken');
+        sendData('http://localhost:8081/api/SpaceManager/postSpace', companyFloor);
     });
 
     document.getElementById('modifySpaceForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const spacesToModify = collectSpacesAndTimeLimitsToModify();
-        sendData('http://localhost:8081/api/SpaceManager/modifyTimeLimits', spacesToModify, 'accessToken');
+        sendData('http://localhost:8081/api/SpaceManager/modifyTimeLimits', spacesToModify);
     });
 
     document.getElementById('modifyImage').addEventListener('click', function() {
@@ -205,41 +223,85 @@ document.addEventListener('DOMContentLoaded', function() {
             FloorPlanName: document.getElementById('modifyFloorPlanName').value,
             NewFloorPlanImage: document.getElementById('modifyImageBase64').value
         };
-        sendData('http://localhost:8081/api/SpaceManager/modifyFloorPlan', newFloor, 'accessToken');
+        sendData('http://localhost:8081/api/SpaceManager/modifyFloorPlan', newFloor);
     });
 
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('deleteSpace')) {
             const spaceID = e.target.closest('.spaceRowModify').querySelector('.modifySpaceID').value;
-            sendData('http://localhost:8081/api/SpaceManager/deleteSpace', { spaceID: spaceID }, 'accessToken');
+            sendData('http://localhost:8081/api/SpaceManager/deleteSpace', { spaceID: spaceID });
         }
     });
 
     document.getElementById('deleteFloor').addEventListener('click', function() {
         const FloorPlanName = document.getElementById('modifyFloorPlanName').value;
-        sendData('http://localhost:8081/api/SpaceManager/deleteFloor', { FloorPlanName: FloorPlanName }, 'accessToken');
+        sendData('http://localhost:8081/api/SpaceManager/deleteFloor', { FloorPlanName: FloorPlanName });
     });
 });
 
-function sendData(url, data, tokenKey) {
-    const token = localStorage.getItem(tokenKey);
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:', data);
-        alert('Operation successful!');
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-    });
+//function sendData(url, data, tokenKey) {
+//    const token = localStorage.getItem(tokenKey);
+//    fetch(url, {
+//        method: 'POST',
+//        headers: {
+//            'Content-Type': 'application/json',
+//            'Authorization': `Bearer ${token}`
+//        },
+//        body: JSON.stringify(data)
+//    })
+//    .then(response => response.json())
+//    .then(data => {
+//        console.log('Success:', data);
+//        alert('Operation successful!');
+//    })
+//    .catch((error) => {
+//        console.error('Error:', error);
+//        alert('An error occurred. Please try again.');
+//    });
+//}
+
+async function sendData(url, data) {
+    var accessToken = sessionStorage.getItem('accessToken');
+    var idToken = sessionStorage.getItem('idToken');
+    var parsedIdToken = JSON.parse(idToken);
+    var username = parsedIdToken.Username;
+
+    //const isTokenExp = checkTokenExpiration(accessToken);
+    //if (!isTokenExp) {
+    //    logout();
+    //    return;
+    //}
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ data: data, userHash: username })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        var data = await response.json();
+
+        if (data.newToken) {
+            accessToken = data.newToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            console.log('New access token stored:', accessToken);
+        }
+
+        if (data) {
+            console.log('Success:', data);
+            alert('Operation successful!');
+        }
+
+    } catch (error) {
+        console.error('Error sending data:', error);
+    }
 }
 
 
