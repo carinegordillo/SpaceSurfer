@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275 http://localhost:8089; img-src 'self' data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8081 http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275 http://localhost:8089; img-src 'self' data:;">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="spaceBookingCenter.css">
     <link rel="stylesheet" href="PersonalOverviewStyle.css">
     <link rel="stylesheet" href="/Waitlist/style.css">
-    <!-- <script src="taskManagerHubView.js"></script> -->
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 
@@ -29,7 +27,6 @@
             <div class="nav-item" id="navAbout" onclick="window.location.href='../UnAuthnAbout/about.html'">About</div>
             <div class="nav-item" id="navRegister" onclick="window.location.href='../Registration/index.html'">Register</div>
             <div class="nav-item" id="navLogin" onclick="window.location.href='../Login/index.html'">Login</div>
-            <div class="nav-item" id="navHub" onclick="window.location.href='../taskManagerHub/index.html'">Task Manager HUb</div>
         </nav>
     </header>
 
@@ -105,11 +102,9 @@
 
     </section>
 
-    <section id="homepageGen" class="homepage-container" style="display: none;">
-        <h2>Welcome to SpaceSurfers!</h2>
+    <section id="spaceBookingView" class="homepage-container" style="display: none;">
         <button id="initAppButton">Initialize spaceBookingCenter</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
-        <button type="button" onclick="taskManagerHubAccess()">Task Manager Hub</button>
         <div id="accessTokenContainer"></div>
         <div class="space-booking-center-container">
             <div class="sidebar"></div>
@@ -153,19 +148,18 @@
         </div>
     </section>
 
-    <section id="taskHubView" class="homepage-container" style="display: none;">
+    <section id="taskManagerView" class="homepage-container" style="display: none;">
+        <!-- <link rel="stylesheet" href="Registration.css"> -->
 
-        <div id = "registerView" class = "form-container"  >
- 
+        <div id="registerView" class="form-container">
+
             <div id="accountCreationForm">
                 <h2>Task Manager Hub🤙</h2>
                 <!-- <input type="text" id="username" name="username" placeholder="Username" required> -->
-        
-        
                 <!-- <button id="postAccount" type="submit">Create Account</button> -->
                 <button id="viewTasksBtn" type="button">View List of Tasks</button>
                 <ul id="taskList"></ul>
-        
+
                 <form id="createTaskForm">
                     <h2>Create Task</h2>
                     <div>
@@ -192,30 +186,85 @@
                         <label for="taskNotificationSetting">Notification Setting:</label>
                         <input type="number" id="taskNotificationSetting" name="notificationSetting" required>
                     </div>
-                    <!-- <button type="submit" id="createTaskBtn">Create Task</button> -->
+                    <button type="submit" id="createTaskBtn">Create Task</button>
                 </form>
-        
-                
+
+
             </div>
-        
+
         </div>
-        
     </section>
 
     <!--General Homepage-->
     <section id="homepageGen" class="homepage-container" style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
-        <button type="button" onclick="taskManagerHubAccess()">Task Manager Hub</button>
+        <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
+        <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
+        <button type="button" onclick="logout()">Logout</button>
     </section>
 
     <!--Manager Homepage-->
     <section id="homepageManager" class="homepage-container" style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
-        <button type="button" onclick="taskManagerHubAccess()">Task Manager Hub</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
+        <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
         <button type="button" onclick="logout()">Logout</button>
+
+        <!--<div class="uplaodSection">-->
+        <!-- Space Manager -->
+        <!--<button class="accordion">Upload Space</button>
+        <div class="form-container" style="display:none;">
+            <form id="spaceCreationForm">
+                <div class="spaceRow">
+                    <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
+                    <small>Max file size: 5MB</small>
+                    <input type="text" id="floorPlanName" name="floorPlanName" placeholder="Floor Plan Name" required><br />
+                    <input type="hidden" id="imageBase64" name="imageBase64">
+                </div>
+                <div id="imagePreviewContainer"></div><br>
+                <button type="button" id="addSpace">Add Space ID</button><br />
+                <div id="spacesContainer">
+                    <div class="spaceRow">
+                        <input type="text" class="spaceID" name="spaceID[]" placeholder="Space ID">
+                        <input type="text" class="timeLimit" name="timeLimit[]" placeholder="Time Limit">
+                    </div>
+                </div>
+
+                <button id="postSpace" type="submit">Create Space</button>
+                <button id="loadRequestsButton" type="button">Load Requests</button>
+                <ul id="recoveryRequestsList"></ul>
+            </form>
+        </div>
+    </div>-->
+        <!--<div class="modifySection">
+        <button class="accordion">Modify Space</button>
+        <div class="form-container" style="display:none;">
+            <form id="modifySpaceForm">
+                <h3>Warning: CANNOT Modify Space if an existing Reservation Associated Exists</h3>
+                <div class="spaceRowModify">
+                    <input type="text" id="modifyFloorPlanName" name="floorPlanName" placeholder="Floor Plan Name"><br />
+                    <input type="file" id="replaceImage" name="replaceImage" accept="image/*">
+                    <button id="modifyImage" type="button" class="btn btn-modify">Replace Floor Plan Image - Max file size: 5MB</button>
+                    <input type="hidden" id="modifyImageBase64" name="modifyImageBase64">
+                    <button id="deleteFloor" type="button" class="btn btn-danger">Delete Floor</button>
+                </div>
+                <div id="modifyImagePreviewContainer"></div><br>
+                <button type="button" id="addSpaceModify" class="btn btn-add-space">Add Space ID</button><br />
+                <div id="spacesModificationContainer">
+                    <div class="spaceRowModify">
+                        <input type="text" class="modifySpaceID" name="spaceID[]" placeholder="Space ID">
+                        <input type="text" class="modifyTimeLimit" name="modifytimeLimit[]" placeholder="Modify Time Limit">
+                        <button id="deleteSpace" type="button" class="btn btn-danger">Delete Space</button>
+                    </div>
+                </div>
+
+                <button id="modifyTimeLimits" type="submit" class="btn btn-modify">Modify Time Limits</button>
+            </form>
+        </div>
+    </div>-->
+
     </section>
 
     <footer>
@@ -254,9 +303,12 @@
         <br>
     </template>
 
+    <script src="script.js"></script>
+    <script src="waitlistScript.js"></script>
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
-    <!-- <script src="taskManagerHubView.js"></script> -->
+    <!--<script src="../SpaceManager/pages/SpaceManager.js"></script>-->
+    <script src="taskManagerHubView.js"></script>
 
 </body>
 

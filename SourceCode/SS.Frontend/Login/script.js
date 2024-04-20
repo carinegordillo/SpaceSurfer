@@ -84,8 +84,9 @@ function spaceBookingCenterAccess() {
     document.getElementById('failResult').style.display = 'none';
 }
 
-function taskManagerHubAccess() {
-    document.getElementById('taskHubView').style.display = 'block';
+function taskHubAccess() {
+    document.getElementById('taskManagerView').style.display = 'block';
+    document.getElementById('waitlistView').style.display = 'none';
 
     document.getElementById('homepageGen').style.display = 'none';
     document.getElementById('homepageManager').style.display = 'none';
@@ -93,6 +94,9 @@ function taskManagerHubAccess() {
     document.getElementById('enterOTPSection').style.display = 'none';
     document.getElementById('successResult').style.display = 'none';
     document.getElementById('failResult').style.display = 'none';
+    document.getElementById('personalOverviewCenter').style.display = 'none';
+
+
 }
 
 function personalOverviewAccess() {
