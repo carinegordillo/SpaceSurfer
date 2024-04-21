@@ -115,7 +115,7 @@ namespace SS.Backend.Waitlist
                     .Build();
                 result = await _sqldao.ReadSqlResult(getEmail);
                 string? email = result.ValuesRead?.Rows[0]?["username"].ToString();
-                Console.WriteLine(email);
+                Console.WriteLine("Sending notification email to: " + email);
 
                 // Get first name from DB
                 var getName = builder
@@ -130,6 +130,7 @@ namespace SS.Backend.Waitlist
                 string? end = info.endTime.ToString("h:mm tt");
 
                 string? targetEmail = email;
+                Console.WriteLine("Target email for notification email: " + targetEmail);
                 string? subject = $@"Top of Waitlist at {info.companyName}";
                 string? msg = $@"
                     Dear {name},
@@ -481,10 +482,17 @@ namespace SS.Backend.Waitlist
                 result = await _sqldao.ReadSqlResult(getEnd);
                 DateTime endTime = Convert.ToDateTime(result.ValuesRead?.Rows[0]?["reservationEndTime"]);
 
+                // nextUser
+                var getNext = builder.getNext(resId).Build();
+                result = await _sqldao.ReadSqlResult(getNext);
+                var nextUser = result.ValuesRead?.Rows[0]?["Username"].ToString();
+
+                Console.WriteLine("UserHash for next user on the waitlist after top leaves: " + nextUser);
+
                 // Populate WaitlistEntry with info needed for notification email
                 WaitlistEntry entry = new WaitlistEntry
                 {
-                    userHash = user,
+                    userHash = nextUser,
                     spaceID = spaceId,
                     companyName = companyName,
                     startTime = startTime,
@@ -492,7 +500,7 @@ namespace SS.Backend.Waitlist
                     position = 0
                 };
 
-                Console.WriteLine("Sending email");
+                Console.WriteLine("Sending notification email (inside waitlistService 507)");
                 await SendNotificationEmail(entry);
             }
             catch (Exception ex)

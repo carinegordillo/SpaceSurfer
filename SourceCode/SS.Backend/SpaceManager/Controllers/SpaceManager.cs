@@ -35,74 +35,76 @@ public class DemoController : ControllerBase
     {
         var response = new Response();
         string message = "";
-        //string? accessToken = HttpContext.Request.Headers["Authorization"];
-        //if (accessToken != null && accessToken.StartsWith("Bearer "))
-        //{
-        //    accessToken = accessToken.Substring("Bearer ".Length).Trim();
-        //    var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
+        if (accessToken != null && accessToken.StartsWith("Bearer "))
+        {
+            accessToken = accessToken.Substring("Bearer ".Length).Trim();
+            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
 
-        //    if (claimsJson != null)
-        //    {
-        //        var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+            if (claimsJson != null)
+            {
+                var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
 
-        //        if (claims.TryGetValue("Role", out var role) && (role == "1" || role == "2" || role == "3" || role == "4" || role == "5"))
-        //        {
-        //            bool closeToExpTime = _authService.CheckExpTime(accessToken);
-        //            if (closeToExpTime)
-        //            {
-        //                SSPrincipal principal = new SSPrincipal();
-        //                principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
-        //                principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
-        //                var newToken = _authService.CreateJwt(Request, principal);
+                if (claims.TryGetValue("Role", out var role) && (role == "1" || role == "2" || role == "3" || role == "4" || role == "5"))
+                {
+                    bool closeToExpTime = _authService.CheckExpTime(accessToken);
+                    if (closeToExpTime)
+                    {
+                        SSPrincipal principal = new SSPrincipal();
+                        principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                        principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                        var newToken = _authService.CreateJwt(Request, principal);
 
-        //                try
-        //                {
-        //                    if (response.HasError)
-        //                    {
-        //                        return BadRequest(response.ErrorMessage);
-        //                    }
-        //                    message = "SPACE created successfully!";
-        //                    return Ok(new { message , response , newToken});
-        //                    response = await _spaceCreation.CreateSpace(userHash, data);
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    return StatusCode(500, ex.Message);
-        //                }
-        //            }
-        //            else
-        //            {
-        try
+                        try
                         {
                             if (response.HasError)
                             {
                                 return BadRequest(response.ErrorMessage);
                             }
                             message = "SPACE created successfully!";
-                            return Ok(new { message, response });
                             response = await _spaceCreation.CreateSpace(userHash, data);
+                            return Ok(new { message, response, newToken });
+                            
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            if (response.HasError)
+                            {
+                                return BadRequest(response.ErrorMessage);
+                            }
+                            message = "SPACE created successfully!";
+                            response = await _spaceCreation.CreateSpace(userHash, data);
+                            return Ok(new { message, response });
+                            
                         }
                         catch (Exception ex)
                         {
                             return StatusCode(500, ex.Message);
                         }
 
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return BadRequest("Unauthorized role.");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return BadRequest("Invalid token.");
-        //    }
-        //}
-        //else
-        //{
-        //    return BadRequest("Unauthorized. Access token is missing or invalid.");
-        //}
+                    }
+                }
+                else
+                {
+                    return BadRequest("Unauthorized role.");
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid token.");
+            }
+        }
+        else
+        {
+            return BadRequest("Unauthorized. Access token is missing or invalid.");
+        }
     }
 
     [HttpPost]
