@@ -1,0 +1,108 @@
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Registration.css"> </head>
+<body>
+
+    <div id="taskManagerApp">
+        <button id="viewTasksBtn">View List of Tasks</button>
+        <button id="createTaskBtn">Create Task</button>
+        <div id="taskList"></div> 
+    </div>
+
+    <script src="taskManagerHubView.js"></script>
+</body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager Hub!</title>
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> -->
+
+
+    <!-- <script src="pages/Registration.js"></script> -->
+    
+
+    <!-- <script src="node_modules/htmx.org/dist/htmx.js"></script> -->
+    <link rel="stylesheet" href="pages/Registration.css">
+    <link rel="icon" type="image/x-icon" href="pages/favicon.ico">
+</head>
+<body class="background-image">
+    <nav>
+        <div class="logo-container">
+            <img src="pages/astroSurf.png" alt="Company Logo" width="160" height="150" style="padding-left: 5px;">
+            <img src="pages/ssName.png" alt="Company Name" width="440" height="80" style="padding: 25px 15px 0px 0px;">
+        </div>
+        <div class="nav-items">
+            <div class="nav-item" id="navAbout" onclick="window.location.href='../UnAuthnAbout/about.html'">About</div>
+            <div class="nav-item" id="navRegister" onclick="window.location.href='../Registration/index.html'">Register</div>
+            <div class="nav-item" id="navRegister" onclick="window.location.href='../EmployeeAccountSetup/index.html'">Employee Account Setup</div>
+
+            <!-- <div class="nav-item" id="navSpaceManager" onclick="window.location.href='../SpaceManager/index.html'">Space Manager</div> -->
+
+            <div class="nav-item" id="navLogin" onclick="window.location.href='../Login/index.html'">Login</div>
+        </div>
+    </nav>
+
+
+<div id = "registerView" class = "form-container"  >
+ 
+    <div id="accountCreationForm">
+        <h2>Task Manager Hub🤙</h2>
+        <!-- <input type="text" id="username" name="username" placeholder="Username" required> -->
+
+
+        <!-- <button id="postAccount" type="submit">Create Account</button> -->
+        <button id="viewTasksBtn" type="button">View List of Tasks</button>
+        <ul id="taskList"></ul>
+
+        <form id="createTaskForm">
+            <h2>Create Task</h2>
+            <div>
+                <label for="taskTitle">Title:</label>
+                <input type="text" id="taskTitle" name="title" required>
+            </div>
+            <div>
+                <label for="taskDescription">Description:</label>
+                <textarea id="taskDescription" name="description" required></textarea>
+            </div>
+            <div>
+                <label for="taskDueDate">Due Date:</label>
+                <input type="date" id="taskDueDate" name="dueDate" required>
+            </div>
+            <div>
+                <label for="taskPriority">Priority:</label>
+                <select id="taskPriority" name="priority">
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+            <div>
+                <label for="taskNotificationSetting">Notification Setting:</label>
+                <input type="number" id="taskNotificationSetting" name="notificationSetting" required>
+            </div>
+            <!-- <button type="submit" id="createTaskBtn">Create Task</button> -->
+        </form>
+
+        
+    </div>
+
+</div>
+
+<footer>
+    Designed and Developed by the PixelPals Team
+</footer>
+<script src="taskManagerHubView.js"></script>
+</body>
+</html>
