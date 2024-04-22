@@ -24,3 +24,4 @@ killProcess("CompanyAPI",5279);
 killProcess("SpaceBookingCenterAPI",5005);
 killProcess("RegistrationAPI",8080);
 killProcess("LoginAPI",5270);
+killProcess("userProfileAPI",5048);
