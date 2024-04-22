@@ -92,11 +92,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Login", "Login", "{95C970DB
 		..\SS.Frontend\Login\index.html = ..\SS.Frontend\Login\index.html
 		..\SS.Frontend\Login\PersonalOverviewFunctions.js = ..\SS.Frontend\Login\PersonalOverviewFunctions.js
 		..\SS.Frontend\Login\PersonalOverviewStyle.css = ..\SS.Frontend\Login\PersonalOverviewStyle.css
+		..\SS.Frontend\Login\Registration.css = ..\SS.Frontend\Login\Registration.css
 		..\SS.Frontend\Login\script.js = ..\SS.Frontend\Login\script.js
 		..\SS.Frontend\Login\spaceBookingCenter.css = ..\SS.Frontend\Login\spaceBookingCenter.css
 		..\SS.Frontend\Login\spaceBookingCenter.js = ..\SS.Frontend\Login\spaceBookingCenter.js
 		..\SS.Frontend\Login\style.css = ..\SS.Frontend\Login\style.css
+		..\SS.Frontend\Login\taskManagerHubView.js = ..\SS.Frontend\Login\taskManagerHubView.js
 		..\SS.Frontend\Login\test.js = ..\SS.Frontend\Login\test.js
+		..\SS.Frontend\Login\waitlistScript.js = ..\SS.Frontend\Login\waitlistScript.js
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnAuthnAbout", "UnAuthnAbout", "{62862134-F400-4325-A07F-0FDB3512CF42}"
@@ -163,11 +166,27 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaitlistApi", "WaitlistApi\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.PersonalOverviewService", "SS.Backend.Tests.PersonalOverview\SS.Backend.Tests.PersonalOverviewService.csproj", "{9574EBE3-960D-479B-848C-C8E64E6D8B29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.TaskManagerHub", "SS.Backend.TaskManagerHub\SS.Backend.TaskManagerHub.csproj", "{F01931E1-F0DB-4198-9B44-4E9ADDC2AE69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.TaskManagerHub", "SS.Backend.TaskManagerHub\SS.Backend.TaskManagerHub.csproj", "{F01931E1-F0DB-4198-9B44-4E9ADDC2AE69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Waitlist", "SS.Backend.Waitlist\SS.Backend.Waitlist.csproj", "{BADD4D86-F724-4B3C-BA34-F39B9F5F1C3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Waitlist", "SS.Backend.Waitlist\SS.Backend.Waitlist.csproj", "{BADD4D86-F724-4B3C-BA34-F39B9F5F1C3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.TaskManagerHub", "SS.Backend.Tests.TaskManagerHub\SS.Backend.Tests.TaskManagerHub.csproj", "{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.TaskManagerHub", "SS.Backend.Tests.TaskManagerHub\SS.Backend.Tests.TaskManagerHub.csproj", "{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Waitlist", "Waitlist", "{D5EF9858-E711-45A1-8ACF-3DE740D76129}"
+	ProjectSection(SolutionItems) = preProject
+		..\SS.Frontend\Login\Waitlist\script.js = ..\SS.Frontend\Login\Waitlist\script.js
+		..\SS.Frontend\Login\Waitlist\style.css = ..\SS.Frontend\Login\Waitlist\style.css
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{A5D1B6AD-0AFD-4886-B8E1-AF641BD60EC4}"
+	ProjectSection(SolutionItems) = preProject
+		..\SS.Frontend\Login\images\sslogo.png = ..\SS.Frontend\Login\images\sslogo.png
+		..\SS.Frontend\Login\images\ssname.png = ..\SS.Frontend\Login\images\ssname.png
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "userProfileAPI", "..\..\..\..\GitHub\SpaceSurfer\SourceCode\SS.Backend\userProfileAPI\userProfileAPI.csproj", "{A3B74007-4E87-4D60-BA07-FF733D3C9216}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SecurityAPI", "..\..\..\..\GitHub\SpaceSurfer\SourceCode\SS.Backend\SecurityAPI\SecurityAPI.csproj", "{C67660ED-F0BC-439B-A753-9B099BE56B24}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -319,6 +338,14 @@ Global
 		{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3B74007-4E87-4D60-BA07-FF733D3C9216}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3B74007-4E87-4D60-BA07-FF733D3C9216}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3B74007-4E87-4D60-BA07-FF733D3C9216}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3B74007-4E87-4D60-BA07-FF733D3C9216}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C67660ED-F0BC-439B-A753-9B099BE56B24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C67660ED-F0BC-439B-A753-9B099BE56B24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C67660ED-F0BC-439B-A753-9B099BE56B24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C67660ED-F0BC-439B-A753-9B099BE56B24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -364,6 +391,10 @@ Global
 		{CFE2013A-3569-475F-BC99-86007EDBDE8A} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{C7FACCEB-FCF7-441E-9302-96567CE0E7FD} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{9574EBE3-960D-479B-848C-C8E64E6D8B29} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{D5EF9858-E711-45A1-8ACF-3DE740D76129} = {95C970DB-0341-4652-8C2D-8BA668EC39E0}
+		{A5D1B6AD-0AFD-4886-B8E1-AF641BD60EC4} = {95C970DB-0341-4652-8C2D-8BA668EC39E0}
+		{A3B74007-4E87-4D60-BA07-FF733D3C9216} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{C67660ED-F0BC-439B-A753-9B099BE56B24} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {27FF35A7-BBB6-414D-87FC-32255A9F675F}
