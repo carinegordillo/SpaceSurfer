@@ -1,7 +1,6 @@
 
 
 function sendOTP() {
-    console.log("otp is sending")
     var userIdentity = document.getElementById("userIdentity").value;
     console.log(userIdentity);
 
@@ -73,20 +72,6 @@ function logout() {
     document.getElementById("sendOTPSection").style.display = "block";
 }
 
-function getUserProfile(){
-
-    console.log("get userprofile clicked  clicked");
-    document.getElementById('userProfileView').style.display = 'block';
-
-    document.getElementById('homepageGen').style.display = 'none';
-    document.getElementById('homepageManager').style.display = 'none';
-    document.getElementById('sendOTPSection').style.display = 'none';
-    document.getElementById('enterOTPSection').style.display = 'none';
-    document.getElementById('successResult').style.display = 'none';
-    document.getElementById('failResult').style.display = 'none';
-
-}
-
 function spaceBookingCenterAccess() {
     document.getElementById('spaceBookingView').style.display = 'block';
 
@@ -96,19 +81,6 @@ function spaceBookingCenterAccess() {
     document.getElementById('enterOTPSection').style.display = 'none';
     document.getElementById('successResult').style.display = 'none';
     document.getElementById('failResult').style.display = 'none';
-}
-
-function taskHubAccess() {
-    document.getElementById('taskManagerView').style.display = 'block';
-    document.getElementById('waitlistView').style.display = 'none';
-// do an if user role is whatever then display the manager page 
-    document.getElementById('homepageGen').style.display = 'block';
-    document.getElementById('homepageManager').style.display = 'none';
-    document.getElementById('sendOTPSection').style.display = 'none';
-    document.getElementById('enterOTPSection').style.display = 'none';
-    document.getElementById('successResult').style.display = 'none';
-    document.getElementById('failResult').style.display = 'none';
-    document.getElementById('personalOverviewCenter').style.display = 'none';
 }
 
 function personalOverviewAccess() {
@@ -121,7 +93,7 @@ function personalOverviewAccess() {
     document.getElementById('enterOTPSection').style.display = 'none';
     document.getElementById('successResult').style.display = 'none';
     document.getElementById('failResult').style.display = 'none';
-    document.getElementById('waitlistView').style.display = 'none';
+    ocument.getElementById('waitlistView').style.display = 'none';
 }
     // Hide other sections if needed
 function waitlistAccess() {
