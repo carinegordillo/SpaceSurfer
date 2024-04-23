@@ -1,7 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using SS.Backend.UserManagement;
+using System.Data;
 using SS.Backend.DataAccess;
+using SS.Backend.Security;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
+using SS.Backend.Services.LoggingService;
+using SS.Backend.SharedNamespace;
+using System.Text;
 
 namespace userProfileAPI.Controllers;
 
