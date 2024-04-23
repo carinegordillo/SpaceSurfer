@@ -249,6 +249,50 @@ namespace SS.Backend.TaskManagerHub
             return response;
         }
 
+        public async Task<Response> AllTasks(string hashedUsername){
+             Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+
+            // Prepare SQL parameters for the query
+            var parameters = new Dictionary<string, object>
+            {
+                { "HashedUsername", hashedUsername }
+            };
+
+            // Build the SELECT SQL command
+            var selectCommand = commandBuilder.BeginSelectAll()
+                                            .From("dbo.taskHub") 
+                                            .Where("hashedUsername = @HashedUsername")
+                                            .AddParameters(parameters) 
+                                            .Build();
+
+            response = await _sqldao.ReadSqlResult(selectCommand);
+
+            if (response.ValuesRead != null)
+            {
+                // Convert DataTable to List<Dictionary<string, object>>
+                foreach (DataRow row in response.ValuesRead.Rows)
+                {
+                    var task = new Dictionary<string, object>();
+                    foreach (DataColumn col in response.ValuesRead.Columns)
+                    {
+#pragma warning disable CS8601 // Possible null reference assignment.
+                        task[col.ColumnName] = row[col] != DBNull.Value ? row[col] : null;
+#pragma warning restore CS8601 // Possible null reference assignment.
+                    }
+                    response.Values.Add(task);
+                }
+                response.HasError = false;  // Set HasError to false as operation was successful
+            }
+            else
+            {
+                response.HasError = true;
+                response.ErrorMessage = "No tasks found.";
+            }
+
+            return response;
+        }
+
 
 
 

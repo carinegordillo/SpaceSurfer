@@ -74,6 +74,73 @@ namespace SS.Backend.TaskManagerHub
 
         }
 
+        private List<TaskHub> ScoreAndSortTasks(List<TaskHub> tasks)
+        {
+            var currentDate = DateTime.Now;
+
+            // First, calculate and store scores in each task object, assuming TaskHub has a Score property
+            foreach (var task in tasks)
+            {
+                if (task.dueDate < currentDate.AddDays(30)) // within 30 
+                {
+                    task.score = 2;
+                }
+                else if (task.dueDate < currentDate.AddDays(14)) // within 2 week 
+                {
+                    task.score = 4;
+                }
+                else if (task.dueDate < currentDate.AddDays(7)) // within 1 week
+                {
+                    task.score = 8;
+                }
+                else if (task.dueDate < currentDate.AddDays(3))
+                {
+                    task.score = 16;
+                }
+                else
+                {
+                    task.score = 0;
+                }
+                switch (task.priority.ToLower())
+                {
+                    case "high":
+                        task.score = task.score * 3; // Assuming BaseScore holds the original score
+                        break;
+                    case "medium":
+                        task.score = task.score * 1;
+                        break;
+                    case "low":
+                        task.score = task.score * 0.5;
+                        break;
+                }
+            
+            }
+
+            // Now sort the list based on the Score property
+            tasks = tasks.OrderByDescending(task => task.score).ToList();
+
+            return tasks;
+        }
+
+        public async Task<Response> ScoreTasks(string hashedUsername)
+        {
+            try
+            {
+                var viewTasksResponse = await _taskManagerHubRepo.AllTasks(hashedUsername);
+                if (viewTasksResponse.HasError)
+                {
+                    return new Response { HasError = true, ErrorMessage = viewTasksResponse.ErrorMessage };
+                }
+
+                // Score and sort tasks, then convert to list if necessary
+                var sortedTasks = ScoreAndSortTasks(viewTasksResponse.ValuesRead).ToList();
+                return new Response { HasError = false, Data = sortedTasks };
+            }
+            catch (Exception ex)
+            {
+                return new Response { HasError = true, ErrorMessage = $"Failed to score tasks: {ex.Message}" };
+            }
+        }
         public async Task<Response> CreateNewTask(TaskHub taskHub){
             try{
                 var response = await _taskManagerHubRepo.CreateTask(taskHub);
