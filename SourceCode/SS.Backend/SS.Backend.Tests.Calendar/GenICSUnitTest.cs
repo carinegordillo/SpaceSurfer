@@ -10,9 +10,7 @@ namespace SS.Backend.Tests.Calendar
         public async Task GenICS_Success()
         {
             // Arrange
-            var baseDirectory = AppContext.BaseDirectory;
-            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-            var tempFilePath = Path.Combine(projectRootDirectory, "CalendarFiles", "SSReservation.ics");
+            var tempFilePath = Path.GetTempFileName();
             var reservationInfo = new ReservationInfo
             {
                 filePath = tempFilePath,
@@ -32,13 +30,13 @@ namespace SS.Backend.Tests.Calendar
             Assert.IsTrue(File.Exists(tempFilePath), "The ICS file was not created.");
 
             string fileContents = File.ReadAllText(tempFilePath);
-            
             Console.WriteLine("Contents of the ICS file:");
             Console.WriteLine(fileContents);
-            Console.WriteLine($"ICS file created at {Path.GetFullPath(reservationInfo.filePath)}");
+
+            // Additional assertions can go here...
 
             // Cleanup
-            //File.Delete(tempFilePath);
+            File.Delete(tempFilePath);
         }
     }
 }

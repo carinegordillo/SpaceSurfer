@@ -137,6 +137,12 @@ h1, h2 {
     color: #fff;
 }
 
+h3 {
+    font-family: 'Tahoma';
+    font-size:40px;
+    color: #000000;
+}
+
 footer {
     background-color: #0d092cb5;
     color: white;
@@ -146,11 +152,6 @@ footer {
 
 section {
     margin-bottom: 20px;
-}
-
-.reservation-details {
-    font-size: 12px;
-    margin-top: 5px;
 }
 
 .form-container {

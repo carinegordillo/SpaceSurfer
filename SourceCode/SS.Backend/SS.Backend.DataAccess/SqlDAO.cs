@@ -95,27 +95,6 @@ namespace SS.Backend.DataAccess
             return result;
         }
 
-        public async Task<T> ExecuteScalarAsync<T>(string commandText, Dictionary<string, object> parameters)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                await connection.OpenAsync();
-                using (SqlCommand command = new SqlCommand(commandText, connection))
-                {
-                    // Add parameters to the command
-                    foreach (var param in parameters)
-                    {
-                        command.Parameters.AddWithValue(param.Key, param.Value ?? DBNull.Value);
-                    }
-
-                    // Execute the command and return the result
-                    object result = await command.ExecuteScalarAsync();
-                    return (T)result;
-                }
-            }
-        }
-
-
 
     }
 }

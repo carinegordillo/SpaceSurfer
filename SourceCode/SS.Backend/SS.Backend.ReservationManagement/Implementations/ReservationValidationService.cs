@@ -276,7 +276,7 @@ namespace SS.Backend.ReservationManagement{
             }
             else if (reservation.Status == ReservationStatus.Passed)
             {
-                return new Response { HasError = false, ErrorMessage = "Reservation date has passed" };
+                return new Response { HasError = true, ErrorMessage = "Reservation date has passed" };
             }
             else
             {
