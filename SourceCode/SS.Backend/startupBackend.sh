@@ -28,5 +28,9 @@ dotnet run --project ../SS.Backend/userProfileAPI/userProfileAPI.csproj &
 pid7=$!
 
 
-wait $pid1 $pid2 $pid3 $pid4 $pid5 $pid6 $pid7
+dotnet run --project ../SS.Backend/TaskManagerHubAPI/TaskManagerHubAPI.csproj &
+pid8=$!
+
+
+wait $pid1 $pid2 $pid3 $pid4 $pid5 $pid6 $pid7 $pid8
 disown
