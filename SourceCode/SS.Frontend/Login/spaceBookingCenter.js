@@ -788,7 +788,7 @@ async function fetchCompanies() {
     }
 
     try {
-        const response = await fetch('http://localhost:5279/api/v1/spaceBookingCenter/companies/ListCompanies', {
+        const response = await fetch('http://localhost:5001/api/v1/spaceBookingCenter/companies/ListCompanies', {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -857,7 +857,7 @@ async function fetchFloorPlans(companyID) {
     }
 
     try {
-        const response = await fetch(`http://localhost:5279/api/v1/spaceBookingCenter/companies/FloorPlans/${companyID}`, {
+        const response = await fetch(`http://localhost:5001/api/v1/spaceBookingCenter/companies/FloorPlans/${companyID}`, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
