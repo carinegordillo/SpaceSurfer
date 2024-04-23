@@ -74,6 +74,30 @@ namespace SS.Backend.TaskManagerHub
 
         }
 
+        private List<TaskHub> DataTableToList(DataTable dataTable)
+        {
+            var taskList = new List<TaskHub>();
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                var task = new TaskHub
+                {
+                    // Assuming the presence of these columns in your DataTable
+                    hashedUsername = row["hashedUsername"].ToString(),
+                    title = row["title"].ToString(),
+                    description = row["description"].ToString(),
+                    priority = row["priority"].ToString(),
+                    dueDate = Convert.ToDateTime(row["dueDate"]), 
+                    notificationSetting = Convert.ToInt32(row["notificationSetting"]),
+                    score = 0
+                    // Add other necessary fields
+                };
+                
+                taskList.Add(task);
+            }
+            return taskList;
+        }
+
         private List<TaskHub> ScoreAndSortTasks(List<TaskHub> tasks)
         {
             var currentDate = DateTime.Now;
@@ -104,10 +128,10 @@ namespace SS.Backend.TaskManagerHub
                 switch (task.priority.ToLower())
                 {
                     case "high":
-                        task.score = task.score * 3; // Assuming BaseScore holds the original score
+                        task.score = task.score * 5; // Assuming BaseScore holds the original score
                         break;
                     case "medium":
-                        task.score = task.score * 1;
+                        task.score = task.score * 2;
                         break;
                     case "low":
                         task.score = task.score * 0.5;
@@ -122,6 +146,45 @@ namespace SS.Backend.TaskManagerHub
             return tasks;
         }
 
+
+        public DataTable ListToDataTable(List<TaskHub> tasks)
+        {
+            // Create a new DataTable.
+            DataTable table = new DataTable("Tasks");
+        
+            // Define columns
+            table.Columns.Add("hashedUsername", typeof(string));
+            table.Columns.Add("title", typeof(string));
+            table.Columns.Add("description", typeof(string));
+            table.Columns.Add("priority", typeof(string));
+            table.Columns.Add("dueDate", typeof(DateTime));
+            table.Columns.Add("notificationSetting", typeof(int));
+            table.Columns.Add("score", typeof(double));
+            
+
+            // Iterate through all tasks
+            foreach (TaskHub task in tasks)
+            {
+                // Create a new DataRow.
+                DataRow row = table.NewRow();
+                
+                // Set column values
+                row["hashedUsername"] = task.hashedUsername;
+                row["title"] = task.title;
+                row["description"] = task.description;
+                row["priority"] = task.priority;
+                row["dueDate"] = task.dueDate;
+                row["notificationSetting"] = task.notificationSetting;
+                row["score"] = task.score;
+                
+
+                // Add the row to the DataTable.
+                table.Rows.Add(row);
+            }
+
+            return table;
+        }
+
         public async Task<Response> ScoreTasks(string hashedUsername)
         {
             try
@@ -132,9 +195,19 @@ namespace SS.Backend.TaskManagerHub
                     return new Response { HasError = true, ErrorMessage = viewTasksResponse.ErrorMessage };
                 }
 
-                // Score and sort tasks, then convert to list if necessary
-                var sortedTasks = ScoreAndSortTasks(viewTasksResponse.ValuesRead).ToList();
-                return new Response { HasError = false, Data = sortedTasks };
+                // Convert DataTable to List<TaskHub>
+                var tasks = DataTableToList(viewTasksResponse.ValuesRead);
+
+                // Score and sort tasks
+                var sortedTasks = ScoreAndSortTasks(tasks);
+
+                // Create new Response to return sorted tasks
+                // Assuming you have a way to convert List<TaskHub> back to DataTable or similar structure as needed
+                return new Response
+                {
+                    HasError = false,
+                    ValuesRead = ListToDataTable(sortedTasks) 
+                };
             }
             catch (Exception ex)
             {

@@ -42,11 +42,11 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             // var hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=";
             var newTask = new TaskHub
             {
-                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=",
-                title = "This is another task",
+                hashedUsername = "validHashedUsername",
+                title = "MIDDLE",
                 description = "Description for new project task",
-                dueDate = DateTime.UtcNow.AddDays(7),
-                priority = "High",
+                dueDate = DateTime.UtcNow.AddDays(14),
+                priority = "Medium",
                 notificationSetting = 1
             };
 
@@ -57,6 +57,27 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             Assert.IsFalse(result.HasError, "Task should be created successfully without errors.");
         }
 
+        [TestMethod]
+        public async Task Viewtasks_ValidData_ReturnsSuccess()
+        {
+            // Arrange
+            // var hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=";
+            var newTask = new TaskHub
+            {
+                hashedUsername = "validHashedUsername",
+                title = "This should be middle",
+                description = "Description for new project task",
+                dueDate = DateTime.UtcNow.AddDays(1),
+                priority = "High",
+                notificationSetting = 1
+            };
+
+            // Act
+            var result = await _taskManagerHubService.ScoreTasks("validHashedUsername");
+
+            // Assert
+            Assert.IsFalse(result.HasError, "Task should be created successfully without errors.");
+        }
 
         [TestMethod]
         public async Task CreateMultipleTasks_ValidData_ReturnsSuccess()
@@ -140,8 +161,8 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             
             var newTask = new TaskHub
             {
-               hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=",
-               title = "This is another task"
+               hashedUsername = "validHashedUsername",
+               title = "This should go last "
             };
 
 
