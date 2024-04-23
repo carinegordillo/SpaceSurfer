@@ -23,10 +23,6 @@ pid5=$!
 dotnet run --project ../SS.Backend/PersonalOverview/PersonalOverviewAPI.csproj &
 pid6=$!
 
-# Start userProfileAPI
-dotnet run --project ../SS.Backend/userProfileAPI/userProfileAPI.csproj &
-pid7=$!
 
-
-wait $pid1 $pid2 $pid3 $pid4 $pid5 $pid6 $pid7
+wait $pid1 $pid2 $pid3 $pid4 $pid5 $pid6
 disown
