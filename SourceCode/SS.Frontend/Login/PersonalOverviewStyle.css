@@ -1,0 +1,168 @@
+﻿#reservation-details {
+    font-family: Arial, sans-serif;
+}
+
+.companyName, .companyAddress, .company-id, .plan-id, .space-id, .reservation-date, .reservation-start, .reservation-end {
+    font-weight: bold !important;
+    color: #000000 !important;
+}
+
+.company-Name, .company-ID, .company-address, .floor-plan-ID, .Space-ID, .reservation-date-class, .reservation-time-start, .reservation-time-end {
+    color: #0094ff !important;
+}
+
+.reservation-status {
+    color: #ff0000 !important;
+}
+
+#calendar-container {
+    text-align: center;
+    background: linear-gradient(to bottom, white, dimgray);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#calendar-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.selected-button {
+    background-color: lightblue; /* Change this to the desired color */
+}
+
+#prev-month,
+#next-month {
+    cursor: pointer;
+    color: white;
+    background: dimgray;
+    padding: 10px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    width: 20px;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+    transition: background-color 0.3s;
+}
+
+    #prev-month:hover,
+    #next-month:hover {
+        background-color: #9869c8;
+    }
+
+#month-info-container {
+    background: dimgray;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 20px;
+    width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 auto; /* Center horizontally */
+}
+
+#calendar {
+    width: 100%; /* Take up all available width */
+    display: none; /* Hide by default */
+}
+
+#reservation-list {
+    width: 100%; /* Take up all available width */
+    border-radius: 0px !important; /* Remove border-radius to make it square */
+    display: none; /* Hide by default */
+}
+
+table {
+    width: 100%; /* Set the table width to 100% */
+    margin: 0 auto; /* Center the table horizontally */
+}
+
+th{
+    padding: 3px;
+    border: 1px solid #ddd;
+    height: 50px;
+    text-align: center; /* Center the content of table cells */
+}
+
+td {
+    padding: 3px;
+    border: 1px solid #ddd;
+    height: 50px;
+    text-align: center;
+    position:relative;
+}
+
+.day-number {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 12px;
+    color: #000000;
+}
+
+
+th {
+    background-color: #9869c8;
+}
+
+.reservation-details {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.place,
+.time {
+    margin-bottom: 5px;
+}
+
+.current-date {
+    background-color: darkgreen;
+}
+
+/* Style for scrollable list */
+#reservation-list {
+    overflow-y: auto;
+    border: solid;
+    max-height: 600px; /* Adjust the maximum height as needed */
+    padding: 10px; /* Add padding around the list */
+    margin-top: 10px; /* Add margin at the top */
+}
+
+.reservation-item {
+    border: 1px solid #ccc; /* Add border around each reservation item */
+    border-radius: 5px; /* Add border radius for rounded corners */
+    padding: 10px; /* Add padding inside each reservation item */
+    margin-bottom: 10px; /* Add margin between each reservation item */
+}
+
+.delete-form {
+    margin-top: 20px;
+    text-align: center; /* Center align the form */
+    align-content:center;
+    align-items:center;
+}
+
+    .delete-form label {
+        font-size: 16px;
+    }
+
+    .delete-form input[type="number"] {
+
+        text-align: center;
+        width:120px;
+    }
+
+    .delete-form button {
+        font-size: 14px;
+        padding: 8px 15px;
+        width:120px; 
+    }
+

@@ -1,16 +1,11 @@
-
-
-
-document.getElementById('initAppButton').addEventListener('click', function() {
-    
+document.getElementById('initAppButton').addEventListener('click', function () {
     initSidebar();
-    
-    const formContainer = document.querySelector('.space-form-container'); 
-    if (formContainer) { 
+    const formContainer = document.querySelector('.space-form-container');
+    if (formContainer) {
         const reservationForm = createReservationForm();
 
-        reservationForm.addEventListener('submit', function(event) {
-            event.preventDefault(); 
+        reservationForm.addEventListener('submit', function (event) {
+            event.preventDefault();
             var accessToken = sessionStorage.getItem('accessToken');
             if (!accessToken) {
                 console.error('Access token is not available.');
@@ -20,23 +15,22 @@ document.getElementById('initAppButton').addEventListener('click', function() {
 
         });
         formContainer.appendChild(reservationForm);
-        
+
     }
-    
+
     var accessToken = sessionStorage.getItem('accessToken');
 
 
 
 
-        fetchCompanies();
-        document.getElementById('companiesList').addEventListener('click', function(event) {
-            if (event.target && event.target.nodeName === "LI") {
-                const companyID = event.target.getAttribute('data-company-id');
-                fetchFloorPlans(companyID);
-            }
-        });
+    fetchCompanies();
     
-        
+    document.getElementById('companiesList').addEventListener('click', function (event) {
+        if (event.target && event.target.nodeName === "LI") {
+            const companyID = event.target.getAttribute('data-company-id');
+            fetchFloorPlans(companyID);
+        }
+    });
 });
 
 function logout() {
@@ -61,11 +55,11 @@ function logout() {
 
 function initSidebar() {
     const sidebar = document.querySelector('.sidebar');
-
     const buttons = [
         { id: 'loadReservationCenter', text: 'Reserve Now', onClickFunction: () => getReservationCenter() },
         { id: 'loadReservationOverview', text: 'Your Reservations', onClickFunction: () => getReservtionOverview() }
     ];
+
     buttons.forEach(({ id, text, onClickFunction }) => {
         const button = document.createElement('button');
         button.id = id;
@@ -76,33 +70,105 @@ function initSidebar() {
 }
 
 
+
 function initReservationOverviewButtons() {
     
     document.getElementById('reserveNowBtn').addEventListener('click', handleReserveNowClick);
     document.getElementById('yourReservationsBtn').addEventListener('click', handleYourReservationsClick);
-
 }
 
 
 
 function getReservationCenter() {
 
-        fetchCompanies();
-        document.getElementById('companiesList').addEventListener('click', function(event) {
-            if (event.target && event.target.nodeName === "LI") {
-                const companyID = event.target.getAttribute('data-company-id');
-                fetchFloorPlans(companyID);
-            }
-        });
+    fetchCompanies();
+    document.getElementById('companiesList').addEventListener('click', function (event) {
+        if (event.target && event.target.nodeName === "LI") {
+            const companyID = event.target.getAttribute('data-company-id');
+            fetchFloorPlans(companyID);
+        }
+    });
     
-        document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);
-        
+    document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);    
+}
+
+function createDeleteReservationForm() {
+    const form = document.createElement('form');
+    form.id = 'deleteReservationForm';
+    form.innerHTML = `
+        <div class="form-group">
+            <label for="reservationIDToDelete">Reservation ID:</label>
+            <input type="number" id="reservationIDToDelete" required>
+        </div>
+        <input type="submit" value="Delete Reservation">
+    `;
+    form.addEventListener('submit', handleDeleteReservationFormSubmit);
+    return form;
+}
+
+
+async function handleDeleteReservationFormSubmit(event) {
+    event.preventDefault();
+
+    const reservationID = document.getElementById('reservationIDToDelete').value;
+    var accessToken = sessionStorage.getItem('accessToken');
+
+    const isTokenValid = await checkTokenExpiration(accessToken);
+    if (!isTokenValid) {
+        logout();
+        return;
+    }
+
+    var idToken = sessionStorage.getItem('idToken');
+
+    var parsedIdToken = JSON.parse(idToken);
+    var userHash = parsedIdToken.Username; 
+
+
+    try {
+        const response = await fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/DeleteReservation`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userHash, reservationID: parseInt(reservationID, 10) }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        if (responseData.newToken) {
+            accessToken = data.newToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            console.log('New access token stored:', accessToken);
+        }
+        if (responseData.hasError) {
+            console.error(`Reservation deletion error: ${responseData.errorMessage}`);
+            onError(`Reservation deletion error: ${responseData.errorMessage}`);
+        } else {
+            console.log('Reservation deleted successfully');
+            onSuccess('Reservation deleted successfully!');
+            
+        }
+    } catch (error) {
+        console.error('Error deleting reservation:', error);
+        onError(`Error deleting reservation: ${error}`);
+    }
 }
 
 
 function getReservtionOverview() {
     reservationOverviewButtons();
+    const deleteFormContainer = document.querySelector('.space-form-container'); // Adjust the selector as needed
+    if (deleteFormContainer) {
+        const deleteReservationForm = createDeleteReservationForm();
+        deleteFormContainer.appendChild(deleteReservationForm);
+    }
 }
+
 
 
 
@@ -160,7 +226,6 @@ function getUsersActiveReservations(username) {
         return response.json();
     })
     .then(data => {
-
         renderReservations(data, '.reservation-list');
         
     })
@@ -191,7 +256,6 @@ function getUsersReservations(userName, accessToken) {
     .then(data => {
         console.log("in here");
         console.log(data);
-
         renderReservations(data, '.reservation-list');
     })
     .catch(error => {
@@ -214,8 +278,6 @@ function renderReservations(data, containerSelector) {
             buttonsHtml = `
             <button class="modify-btn" data-reservation='${JSON.stringify(reservation)}'>Modify</button>
             <button class="cancel-btn" data-reservation='${JSON.stringify(reservation)}'>Cancel</button>
-            <button class="confirm-btn" data-reservation-id="${reservation.reservationID}">Confirm</button>
-            <button class="resend-confirm-btn" data-reservation-id="${reservation.reservationID}">Resend Email</button>
         `;
             break;
         case 1: 
@@ -252,34 +314,15 @@ function renderReservations(data, containerSelector) {
 
 function attachEventListeners() {
     document.querySelectorAll('.modify-btn').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             const reservationData = JSON.parse(this.getAttribute('data-reservation'));
             showModifyModal(reservationData);
         });
     });
     document.querySelectorAll('.cancel-btn').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             const reservationData = JSON.parse(this.getAttribute('data-reservation'));
             showCancelModal(reservationData);
-        });
-    });
-    document.querySelectorAll('.confirm-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const reservationData = JSON.parse(this.getAttribute('data-reservation'));
-            showConfirmationModal(reservationData);
-        });
-    });
-    document.querySelectorAll('.resend-email-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const reservationData = JSON.parse(this.getAttribute('data-reservation'));
-            var accessToken = sessionStorage.getItem('accessToken');
-            if (accessToken){
-                resendEmail(reservationData, accessToken);
-            }
-            else {
-                console.error('Access token is not available.');
-                return;
-            }
         });
     });
 }
@@ -296,6 +339,7 @@ function showModifyModal(reservation) {
 
     const modalContent = document.createElement('div');
     modalContent.classList.add('modal-content');
+    
     modalContent.innerHTML = `
         <h2>Modify Reservation</h2>
         <form id="modifyReservationForm" data-reservation-id="${reservation.reservationID}">
@@ -310,16 +354,11 @@ function showModifyModal(reservation) {
         </form>
     `;
     document.body.appendChild(modalContent);
-
     
-    document.getElementById('modifyReservationForm').addEventListener('submit', function(event) {
+    document.getElementById('modifyReservationForm').addEventListener('submit', function (event) {
         event.preventDefault();
         submitModification(reservation);
     });
-    
-
-   
-    
 }
 
 async function submitModification(reservation) {
@@ -335,7 +374,6 @@ async function submitModification(reservation) {
         logout();
         return;
     }
-
 
     const form = document.getElementById('modifyReservationForm');
     const newStartTime = form.querySelector('#newStartTime').value;
@@ -399,6 +437,7 @@ function showCancelModal(reservation) {
 
     const modalContent = document.createElement('div');
     modalContent.classList.add('modal-content');
+    
     modalContent.innerHTML = `
         <h2>Cancel Reservation</h2>
         <h3>Are you sure you want to cancel this reservation?</h3>
@@ -416,10 +455,10 @@ function showCancelModal(reservation) {
 
     var accessToken = sessionStorage.getItem('accessToken');
     if (accessToken) {
-        document.getElementById('confirmCancel').addEventListener('click', function() {
+        document.getElementById('confirmCancel').addEventListener('click', function () {
             submitCancellation(reservation, accessToken);
         });
-        document.getElementById('cancelCancel').addEventListener('click', function() {
+        document.getElementById('cancelCancel').addEventListener('click', function () {
             document.querySelector('.modal-content').remove();
         });
     }
@@ -489,134 +528,13 @@ function showCancelModal(reservation) {
     }
 }
 
-//////////////Reservation Confirmation//////////////
-
-function showConfirmationModal(reservation) {
-    const reservationID = reservation.reservationID;
-
-    const existingModal = document.querySelector('.modal-content');
-    if (existingModal) {
-        existingModal.remove();
-    }
-
-    const modalContent = document.createElement('div');
-    modalContent.classList.add('modal-content');
-    modalContent.innerHTML = `
-        <h2>Confirm Reservation</h2>
-        <h3>Confirm Reservation ${reservation.reservationID}</h3>
-        <input type="text" id="confirmationCodeInput" placeholder="Enter confirmation code" />
-        <button id="confirmCode">Submit</button>
-    `;
-    document.body.appendChild(modalContent);
-
-    var accessToken = sessionStorage.getItem('accessToken');
-    if (accessToken) {
-        document.getElementById('confirmCode').addEventListener('click', function() {
-            const code = document.getElementById('confirmationCodeInput').value.trim();
-            if (code) {
-                confirmReservation(reservationID, code, accessToken);
-            } else {
-                console.error("You must enter a confirmation code.");
-            }
-        });
-    }
-    else {
-        console.error('Access token is not available.');
-        return;
-    }
-}
-
-async function confirmReservation(reservation, code, accessToken) {
-    const tokenExpired = await checkTokenExpiration(accessToken);
-    if (tokenExpired) {
-        logout();
-        return;
-    }
-
-    const reservationID = reservation.reservationID;
-
-    try{
-        
-        const response = await fetch(`http://localhost:5116/api/v1/reservationConfirmation/ConfirmReservation?reservationID=${reservationID}&otp=${code}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': 'Bearer ' + accessToken,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ reservationID, code }),
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const responseData = await response.json();
-
-        if (responseData.newToken) {
-            accessToken = responseData.newToken;
-            sessionStorage.setItem('accessToken', accessToken);
-            console.log('New access token stored:', accessToken);
-        }
-
-        if (responseData.hasError) {
-            console.log(`Reservation error: ${responseData.errorMessage}. Failed to confirm reservation. Please check your code and try again.`);
-            onError(responseData.errorMessage);
-        } else {
-            console.log('Reservation confirmed successfully');
-            onSuccess('Reservation confirmed successfully!');
-        }
-    }catch(error) {
-        console.error('Error confirming reservation:', error);
-        onError(`Error confirming reservation: ${error}`);
-    }
-}
-
-////////// Resend Email ///////////
-async function resendEmail(reservation, accessToken) {
-    const tokenExpired = await checkTokenExpiration(accessToken);
-    if (tokenExpired) {
-        logout();
-        return;
-    }
-    const reservationID = reservation.reservationID;
-    try{
-        const response = await fetch(`http://localhost:5116/api/v1/reservationConfirmation/ResendConfirmation?reservationID=${reservationID}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': 'Bearer ' + accessToken,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ reservationID, code }),
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const responseData = await response.json();
-
-        if (responseData.newToken) {
-            accessToken = responseData.newToken;
-            sessionStorage.setItem('accessToken', accessToken);
-            console.log('New access token stored:', accessToken);
-        }
-
-        if (responseData.hasError) {
-            console.log(`Reservation error: ${responseData.errorMessage}. Failed to resend confirmation. Please check your confirmation status and try again.`);
-            onError(responseData.errorMessage);
-        } else {
-            console.log('Confirmation resentsuccessfully');
-            onSuccess('Confirmation resent successfully!');
-        }
-    }catch(error) {
-        console.error('Error resending confirmation:', error);
-        onError(`Error resending confirmation: ${error}`);
-    }
-}
-
 
 
 
 
 //////reservtions Center View
+
+
 
 function createLocationsContainer() {
     const locationsContainer = document.createElement('div');
@@ -770,14 +688,6 @@ function updateSpaceAvailabilityUI(data) {
     });
 }
 
-
-
-
-
-
-
-
-
 async function fetchCompanies() {
 
     const accessToken = sessionStorage.getItem('accessToken');
@@ -821,9 +731,8 @@ async function fetchCompanies() {
             li.innerHTML = htmlContent;
             companiesList.appendChild(li);
         });
-
         document.querySelectorAll('.clickable').forEach(item => {
-            item.addEventListener('click', function(event) {
+            item.addEventListener('click', function (event) {
                 const companyID = event.target.getAttribute('data-company-id');
                 fetchFloorPlans(companyID);
             });
@@ -832,10 +741,6 @@ async function fetchCompanies() {
         console.error('Error fetching companies:', error);
     }
 }
-
-
-
-
 
 function formatTime(timeString) {
    
@@ -908,7 +813,7 @@ async function fetchFloorPlans(companyID) {
 
         const clickableSpaces = floorPlansContent.getElementsByClassName('clickable-space');
         Array.from(clickableSpaces).forEach(space => {
-            space.addEventListener('click', function() {
+            space.addEventListener('click', function () {
                 updateReservationForm(
                     space.getAttribute('data-company-id'),
                     space.getAttribute('data-floor-plan-id'),
@@ -920,9 +825,6 @@ async function fetchFloorPlans(companyID) {
         console.error('Error fetching floor plans:', error);
     }
 }
-
-
-
 
 async function checkTokenExpiration(accessToken) {
     try {
@@ -942,7 +844,6 @@ async function checkTokenExpiration(accessToken) {
         return false;
     }
 }
-
 
 
 async function handleReservationCreationFormSubmit(event) {
@@ -992,45 +893,16 @@ async function handleReservationCreationFormSubmit(event) {
         }
 
         if (data.hasError) {
+            showWaitlistModal();
             console.log(`Reservation error: ${data.errorMessage}`);
-            onError(data.errorMessage);
+            //onError(data.errorMessage);
         } else {
             console.log('Reservation created successfully');
-            await sendConfirmation(data.reservationId);
             onSuccess('Reservation created successfully!');
         }
     } catch (error) {
         console.error('Error creating reservation:', error);
-        onError("Error creating reservation. Please try again later.");
-    }
-}
-
-async function sendConfirmation(reservationId) {
-    var accessToken = sessionStorage.getItem('accessToken');
-    try {
-        const confirmResponse = await fetch(`http://localhost:5116/api/v1/reservationConfirmation/SendConfirmation?ReservationID=${reservationId}`, {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + accessToken,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!confirmResponse.ok) {
-            throw new Error(`HTTP error! status: ${confirmResponse.status}`);
-        }
-
-        const confirmData = await confirmResponse.json();
-        if (confirmData.hasError) {
-            console.error(`Confirmation error: ${confirmData.errorMessage}`);
-            onError(confirmData.errorMessage);
-        } else {
-            console.log('Confirmation email sent successfully');
-            onSuccess('Reservation confirmed and email sent!');
-        }
-    } catch (error) {
-        console.error('Error sending confirmation:', error);
-        onError(`Error sending confirmation: ${error}`);
+        //onError("Error creating reservation. Please try again later.");
     }
 }
 
@@ -1055,6 +927,144 @@ function updateReservationForm(companyId, floorPlanId, spaceId) {
     spaceIdInput.required = true;
 }
 
+////// WAITLIST ////////
+
+function showWaitlistModal() {
+    // Check if the modal container element exists
+    let modal = document.getElementById('reservationConflictModal');
+    if (!modal) {
+        // If it doesn't exist, create it
+        modal = document.createElement('div');
+        modal.id = 'reservationConflictModal';
+        modal.classList.add('modal');
+        document.body.appendChild(modal);
+    }
+
+    // Create modal content
+    let modalContent = document.createElement('div');
+    modalContent.classList.add('modal-content');
+    modalContent.innerHTML = `
+        <span class="close-button">&times;</span>
+        <p>This space is already reserved for this time. Would you like to join the waitlist?</p>
+        <button id="joinWaitlistBtn">Yes</button>
+        <button id="cancelWaitlistBtn">No</button>
+    `;
+
+    // Append modal content to modal container
+    modal.innerHTML = ''; // Clear existing content
+    modal.appendChild(modalContent);
+
+    // Create success message element
+    let successMessage = document.createElement('div');
+    successMessage.id = 'successMessage';
+    successMessage.textContent = 'You have successfully joined the waitlist!';
+    successMessage.style.display = 'none';
+
+    // Append success message to modal container
+    modal.appendChild(successMessage);
+
+    // Create error message element
+    let errorMsg = document.createElement('div');
+    errorMsg.id = 'errorMsg';
+    errorMsg.textContent = 'You have already been added to this waitlist.';
+    errorMsg.style.display = 'none';
+
+    // Append error message to modal container
+    modal.appendChild(errorMsg);
+
+    // Show the modal
+    modal.style.display = 'block';
+
+    const closeButton = modal.querySelector('.close-button');
+    const cancelButton = modal.querySelector('#cancelWaitlistBtn');
+    const joinWaitlistButton = modal.querySelector('#joinWaitlistBtn');
+
+    // Add event listeners
+    closeButton.addEventListener('click', closeModal);
+    cancelButton.addEventListener('click', closeModal);
+    joinWaitlistButton.addEventListener('click', joinWaitlist);
+}
+
+async function joinWaitlist() {
+    console.log('Joining waitlist...');
+    var accessToken = sessionStorage.getItem('accessToken', accessToken);
+    var idToken = sessionStorage.getItem('idToken');
+    var parsedIdToken = JSON.parse(idToken);
+    var username = parsedIdToken.Username;
+
+    const isTokenValid = await checkTokenExpiration(accessToken);
+    if (!isTokenValid) {
+        logout();
+        return;
+    }
+
+    const reservationData = {
+        companyId: parseInt(document.getElementById('reservation-companyId').value, 10),
+        floorPlanId: parseInt(document.getElementById('reservation-floorPlanId').value, 10),
+        spaceId: document.getElementById('reservation-spaceId').value,
+        reservationStartTime: document.getElementById('reservation-startTime').value,
+        reservationEndTime: document.getElementById('reservation-endTime').value,
+        userHash: username
+    };
+
+    const requestData = JSON.stringify(reservationData);
+
+    try {
+        const response = await fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/addToWaitlist', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json'
+            },
+            body: requestData
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data.newToken) {
+            accessToken = data.newToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            console.log('New access token stored:', accessToken);
+        }
+
+        if (data.hasError) {
+            // Show error message
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.style.display = 'block';
+
+            setTimeout(() => {
+                closeModal();
+                errorMsg.style.display = 'none';
+            }, 5000);
+
+            console.log(`Joining waitlist error: User already on waitlist`);
+        } else {
+            // Show success message
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+
+            setTimeout(() => {
+                closeModal();
+                successMessage.style.display = 'none';
+            }, 5000);
+
+            console.log('Successfully joined waitlist');
+        }
+    } catch (error) {
+        console.error('Error joining waitlist:', error);
+    }
+}
+
+
+function closeModal() {
+    const modal = document.getElementById('reservationConflictModal');
+    modal.style.display = 'none';
+}
+
+///////////////////////
 
 
 /// modal 

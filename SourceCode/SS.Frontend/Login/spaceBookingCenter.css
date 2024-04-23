@@ -57,7 +57,6 @@ body, html {
     color: white;
 }
 
-
 .location {
     background-color: #fff8e1;
     padding: 1rem;
@@ -72,8 +71,6 @@ body, html {
 .location p {
     color: #666;
 }
-
-
 
 .reservation-container-1{
     display:flex;
@@ -103,9 +100,6 @@ body, html {
     font-size: 14px;
 }
 
-
-
-
 .space-booking-center-container {
 
     max-height: 500px;
@@ -118,26 +112,23 @@ body, html {
 
 }
 .space-form-container {
-
-    height : 500px;
+    height: 500px;
     overflow-y: auto;
     background-color: #f2f0ec;
-    border-radius: 8px; 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     padding: 1rem;
     justify-content: center;
     align-items: center;
-
-
 }
 
 .company-info {
     width: 80%;
-    max-height: 500px; 
+    max-height: 500px;
     overflow-y: auto;
     background-color: #f2f0ec;
-    border-radius: 8px; 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     padding: 1rem;
     max-width: 500px;
 }
@@ -165,7 +156,7 @@ button:hover {
     filter: brightness(85%);
 }
 
-/* REservtaions stuff */
+/* Reservtaions stuff */
 
 .reservation-card {
     border: 1px solid #ddd;
@@ -229,20 +220,6 @@ button:hover {
     color: black;
     text-decoration: none;
     cursor: pointer;
-}
-
-.modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1050;
-    display: none;
 }
 
 .modal-content {
