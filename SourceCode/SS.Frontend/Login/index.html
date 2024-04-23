@@ -63,7 +63,7 @@
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
-        <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
+        <button type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</button>
         <button type="button" onclick="logout()">Logout</button>
     </section>
 
@@ -177,7 +177,7 @@
                     <form id="createTaskForm">
                         <div>
                             <label for="taskTitle">Task:</label>
-                            <input type="text" id="taskTitle" name="title" required>
+                            <input type="text" id="taskTitle" name="title" required data-testid="task-title-input">
                         </div>
                         <div>
                             <label for="taskDescription">Description:</label>
@@ -199,7 +199,7 @@
                             <label for="taskNotificationSetting">Notification Setting:</label>
                             <input type="number" id="taskNotificationSetting" name="notificationSetting" required>
                         </div>
-                        <button type="submit" id="createTaskBtn">Create Task</button>
+                        <button type="submit" id="createTaskBtn" data-testid="submit-task-button">Create Task</button>
                     </form>
 
                     <div id="modifyTaskFormContainer" style="display: none;">
