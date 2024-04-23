@@ -42,8 +42,18 @@ namespace SS.Backend.TaskManagerHub
         public async Task<Response> CreateNewTask(TaskHub taskHub)
         {
             
-            if (string.IsNullOrWhiteSpace(taskHub.title))
-                return new Response { HasError = true, ErrorMessage = "Invalid task details." };
+            if (string.IsNullOrWhiteSpace(taskHub.title) || taskHub.title.Length > 20)
+                return new Response { HasError = true, ErrorMessage = "Invalid task title." };
+
+            if (taskHub.dueDate < DateTime.Today)
+                return new Response { HasError = true, ErrorMessage = "Due date cannot be in the past." };
+
+            var validPriorities = new HashSet<string> { "low", "medium", "high" };
+            if (!validPriorities.Contains(taskHub.priority.ToLower()))
+                return new Response { HasError = true, ErrorMessage = "Invalid task priority." };
+
+            if (string.IsNullOrWhiteSpace(taskHub.description))
+                return new Response { HasError = true, ErrorMessage = "Invalid task description." };
 
             return await _taskManagerHubService.CreateNewTask(taskHub);
         }
@@ -69,8 +79,28 @@ namespace SS.Backend.TaskManagerHub
             // Validate input data
             if (string.IsNullOrWhiteSpace(task.hashedUsername) || string.IsNullOrWhiteSpace(task.title) || fieldsToUpdate == null)
                 return new Response { HasError = true, ErrorMessage = "Invalid input for task modification." };
+            
+            if (fieldsToUpdate.ContainsKey("dueDate") && fieldsToUpdate["dueDate"] is DateTime newDueDate)
+            {
+                if (newDueDate < DateTime.Today)
+                    return new Response { HasError = true, ErrorMessage = "Due date cannot be in the past." };
+            }
 
+            if (fieldsToUpdate.ContainsKey("description"))
+            {
+                var newDescription = fieldsToUpdate["description"].ToString();
+                if (string.IsNullOrWhiteSpace(newDescription))
+                    return new Response { HasError = true, ErrorMessage = "Description invalid. Please provide more details." };
+            }
 
+            if (fieldsToUpdate.ContainsKey("priority"))
+            {
+                var newPriority = fieldsToUpdate["priority"].ToString().ToLower();
+                var validPriorities = new HashSet<string> { "low", "medium", "high" };
+                if (!validPriorities.Contains(newPriority.ToLower()))
+                    return new Response { HasError = true, ErrorMessage = "Invalid task priority." };
+            }
+           
             return await _taskManagerHubService.ModifyTasks(task, fieldsToUpdate);
         }
 
@@ -79,7 +109,7 @@ namespace SS.Backend.TaskManagerHub
             // Validate that the username and task title are not empty
             if (string.IsNullOrWhiteSpace(task.hashedUsername) || string.IsNullOrWhiteSpace(task.title))
                 return new Response { HasError = true, ErrorMessage = "Username or task title is invalid." };
-                
+
             return await _taskManagerHubService.DeleteTask(task);
         }
     }
