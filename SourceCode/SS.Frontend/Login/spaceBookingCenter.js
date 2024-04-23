@@ -489,7 +489,11 @@ function showCancelModal(reservation) {
     }
 }
 
+<<<<<<< Updated upstream
 //////////////Reservation Confirmation//////////////
+=======
+////////////////////////////
+>>>>>>> Stashed changes
 
 function showConfirmationModal(reservation) {
     const reservationID = reservation.reservationID;
@@ -537,7 +541,11 @@ async function confirmReservation(reservation, code, accessToken) {
 
     try{
         
+<<<<<<< Updated upstream
         const response = await fetch(`http://localhost:5116/api/v1/reservationConfirmation/ConfirmReservation?reservationID=${reservationID}&otp=${code}`, {
+=======
+        const response = await fetch(`http://localhost:5116/api/v1/reservationConfirmation/ConfirmReservation`, {
+>>>>>>> Stashed changes
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -570,7 +578,10 @@ async function confirmReservation(reservation, code, accessToken) {
     }
 }
 
+<<<<<<< Updated upstream
 ////////// Resend Email ///////////
+=======
+>>>>>>> Stashed changes
 async function resendEmail(reservation, accessToken) {
     const tokenExpired = await checkTokenExpiration(accessToken);
     if (tokenExpired) {
@@ -579,7 +590,11 @@ async function resendEmail(reservation, accessToken) {
     }
     const reservationID = reservation.reservationID;
     try{
+<<<<<<< Updated upstream
         const response = await fetch(`http://localhost:5116/api/v1/reservationConfirmation/ResendConfirmation?reservationID=${reservationID}`, {
+=======
+        const response = await fetch(`http://localhost:5116/api/v1/reservationConfirmation/ResendConfirmation`, {
+>>>>>>> Stashed changes
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -611,7 +626,10 @@ async function resendEmail(reservation, accessToken) {
         onError(`Error resending confirmation: ${error}`);
     }
 }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 
 
 

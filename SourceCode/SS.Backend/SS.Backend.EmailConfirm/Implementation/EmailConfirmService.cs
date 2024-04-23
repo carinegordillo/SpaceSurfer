@@ -35,7 +35,37 @@ namespace SS.Backend.EmailConfirm
                 DataRow row = infoResponse.ValuesRead.Rows[0];
                 StringBuilder rowAsString = new StringBuilder();
 
+<<<<<<< Updated upstream
                 foreach (DataColumn column in row.Table.Columns)
+=======
+                var getOtp = new GenOTP();
+                otp = getOtp.generateOTP();
+
+                //extract reservation info
+                // int resID = infoResponse.ValuesRead.Columns.Contains("reservationID") && row["reservationID"] != DBNull.Value
+                //             ? Convert.ToInt32(row["reservationID"])
+                //             : -1; // or any other default value you choose
+
+                reservationinfo.location = infoResponse.ValuesRead.Columns.Contains("CompanyAddress") ? row["CompanyAddress"].ToString() : null;
+                var spaceID = infoResponse.ValuesRead.Columns.Contains("spaceID") ? row["spaceID"].ToString() : null;
+                var companyName = infoResponse.ValuesRead.Columns.Contains("CompanyName") ? row["CompanyName"].ToString() : null;
+                //extract and handle reservation date and time 
+                reservationinfo.start = row.Table.Columns.Contains("reservationStartTime") ? DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationStartTime"].ToString()) : null;
+                reservationinfo.end = row.Table.Columns.Contains("reservationEndTime") ? DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationEndTime"].ToString()) : null;
+                reservationinfo.dateTime = reservationinfo.start.Value.Date;
+                
+                if (reservationinfo.location == null) response.ErrorMessage = "The 'address' data was not found.";
+                if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
+                //if (resID == null) response.ErrorMessage = "The 'reservationID' data was not found.";
+                if (companyName == null) response.ErrorMessage = "The 'CompanyName' data was not found.";
+                if (reservationinfo.dateTime == null) response.ErrorMessage = "The 'reservationDate' data was not found.";
+                if (reservationinfo.start == null) response.ErrorMessage = "The 'reservationStartTime' data was not found.";
+                if (reservationinfo.end == null) response.ErrorMessage = "The 'reservationEndTime' data was not found.";
+                
+
+                //calendar ics creator
+                var reservationInfo = new ReservationInfo
+>>>>>>> Stashed changes
                 {
                     rowAsString.Append(row[column].ToString());
                     rowAsString.Append(" "); // Add a space or another delimiter if needed
@@ -61,6 +91,7 @@ namespace SS.Backend.EmailConfirm
                     var spaceID = infoResponse.ValuesRead.Rows[0]["spaceID"].ToString();
                     var companyName = infoResponse.ValuesRead.Rows[0]["CompanyName"].ToString();
                     //extract and handle reservation date and time 
+<<<<<<< Updated upstream
                     DateTime? start = null;
                     if (row.Table.Columns.Contains("reservationStartTime") && row["reservationStartTime"] != DBNull.Value)
                     {
@@ -71,6 +102,11 @@ namespace SS.Backend.EmailConfirm
                     {
                         end = DateTime.Parse(row["reservationEndTime"].ToString());
                     }
+=======
+                    reservationinfo.start = row.Table.Columns.Contains("reservationStartTime") ? DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationStartTime"].ToString()) : null;
+                    reservationinfo.end = row.Table.Columns.Contains("reservationEndTime") ? DateTime.Parse(reservationinfo.dateTime?.ToShortDateString() + " " + row["reservationEndTime"].ToString()) : null;
+                    reservationinfo.dateTime = reservationinfo.start.Value.Date;
+>>>>>>> Stashed changes
 
                     DateTime? date = start.Value;
 
