@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8081 http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275 http://localhost:8089 http://localhost:5279; img-src 'self' data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8081 http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275 http://localhost:8089 http://localhost:5279 http://localhost:5048; img-src 'self' data:;">
     <!-- <link rel="stylesheet" href="spaceBookingCenter.css"> -->
     <link rel="stylesheet" href="style.css">
     <!-- <link rel="stylesheet" href="PersonalOverviewStyle.css">
     <link rel="stylesheet" href="/Waitlist/style.css"> -->
+    <script src="UserProfile.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 
@@ -60,11 +61,26 @@
     </section>
     <!--General Homepage-->
     <section id="homepageGen" class="homepage-container" style="display: none;">
+        <button class="initProfileButton" type="button" onclick="getUserProfile()">Profile</button>
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
         <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
         <button type="button" onclick="logout()">Logout</button>
+    </section>
+
+    <section id="userProfileView" class="homepage-container" style="display: none;">
+        <div class="userProfileContainer">
+            <div class="profile">
+                <div id="leftPanel" class="left-panel">
+                </div>
+                <div class="right-panel">
+                    <button class="edit-button" onclick="toggleEdit()">Edit Profile</button>
+                    <div id="accountDetails" class="account-details">
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!--Personal Overview Center View-->
@@ -165,11 +181,7 @@
         </div>
     </section>
 
-    <!--General Homepage-->
-    <section id="homepageGen" class="homepage-container" style="display: none;">
-        <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
-        <button type="button" onclick="waitlistAccess()">Waitlist</button>
-        <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
+    <!--Task Manager View-->>
     <section id="taskManagerView" class="homepage-container" style="display: none;">
         <div id="registerView" class="task-container">
             <div id="accountCreationForm" class="flex-container">
