@@ -120,7 +120,6 @@ namespace SS.Backend.TaskManagerHub
                 }
             }
 
-            // Sort by score descending
             return tasks.OrderByDescending(t => t.score).ToList();
         }
 

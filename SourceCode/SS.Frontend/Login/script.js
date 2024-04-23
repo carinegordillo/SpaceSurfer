@@ -22,6 +22,7 @@ function sendOTP() {
 function authenticateUser() {
     var otp = document.getElementById("otp").value;
     var userIdentity = document.getElementById("userIdentity").value;
+    
 
     $.ajax({
         url: 'http://localhost:5270/api/auth/authenticate',
@@ -47,9 +48,14 @@ function authenticateUser() {
                     if (response === "2" || response === "3") {
                         document.getElementById("homepageManager").style.display = "block";
                         document.getElementById("homepageGen").style.display = "none";
+                        sessionStorage.setItem('userIdentity', userIdentity);
+                        document.getElementById("identity").style.display = "block";
+                        document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
                     }
                     else {
                         document.getElementById("homepageGen").style.display = "block";
+                        sessionStorage.setItem('userIdentity', userIdentity);
+                        document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
                      }
                 },
                 error: function (xhr, status, error) {
@@ -66,8 +72,18 @@ function authenticateUser() {
 }
 
 function logout() {
+    console.log("logout cliced")
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('idToken');
+    sessionStorage.removeItem('userIdentity')
+    var identityDiv = document.getElementById("identity");
+    if (identityDiv) {
+        console.log("Identity element found, current display:", identityDiv.style.display);
+        identityDiv.style.display = "none";
+        console.log("Identity should now be hidden, new display:", identityDiv.style.display);
+    } else {
+        console.log("Identity element not found");
+    }
     document.getElementById("homepageGen").style.display = "none";
     document.getElementById("homepageManager").style.display = "none";
     document.getElementById("sendOTPSection").style.display = "block";

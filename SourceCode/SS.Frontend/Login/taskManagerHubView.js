@@ -143,11 +143,13 @@ function createTask(task) {
     })
     .then(data => {
         console.log('Task created successfully', data);
-        alert('Task created successfully!');
+        // alert('Task created successfully!');
+        showModal('Task created successfully!');
     })
     .catch(error => {
         console.error('Failed to create task', error);
-        alert('Failed to create task: ' + (error.message || JSON.stringify(error)));
+        // alert('Failed to create task: ' + (error.message || JSON.stringify(error)));
+        showModal('Failed to create task: ' + (error.message || JSON.stringify(error)));
     });
 }
 
@@ -172,12 +174,14 @@ function deleteTask(taskTitle, userName) {
         return response.json();
     })
     .then(() => {
-        alert('Task deleted successfully!');
+        // alert('Task deleted successfully!');
+        showModal('Task deleted successfully!');
         fetchAndDisplayTasks(); // Refresh the task list after deletion
     })
     .catch(error => {
         console.error('Failed to delete task', error);
-        alert('Failed to delete task: ' + error.message);
+        showModal('Failed to delete task'+ error.message);
+        // alert('Failed to delete task: ' + error.message);
     });
 }
 
@@ -230,15 +234,27 @@ function modifyTask(originalTitle, userName) {
     })
     .then(data => {
         console.log('Task modified successfully', data);
-        alert('Task modified successfully!');
+        // alert('Task modified successfully!');
+        showModal('Task modified successfully!');
         fetchAndDisplayTasks(); // Refresh task list
     })
     .catch(error => {
         console.error('Failed to modify task', error);
-        alert('Failed to modify task: ' + error.message);
+        showModal('Failed to modify task: ' + error.message);
+        // alert('Failed to modify task: ' + error.message);
     });
 }
+function showModal(message) {
+    var modal = document.getElementById('modal');
+    var modalMessage = document.getElementById('modal-message');
+    modalMessage.textContent = message;
+    modal.style.display = 'block';
 
+    var closeButton = document.querySelector('.close-button');
+    closeButton.onclick = function() {
+        modal.style.display = 'none';
+    };
+}
 
 
 // async function checkTokenExpiration(accessToken) {
@@ -263,8 +279,18 @@ function modifyTask(originalTitle, userName) {
 //     window.location.href = 'login.html'; // Adjust to your login page URL
 // }
 function logout() {
+    console.log("logout cliced")
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('idToken');
+    sessionStorage.removeItem('userIdentity')
+    var identityDiv = document.getElementById("identity");
+    if (identityDiv) {
+        console.log("Identity element found, current display:", identityDiv.style.display);
+        identityDiv.style.display = "none";
+        console.log("Identity should now be hidden, new display:", identityDiv.style.display);
+    } else {
+        console.log("Identity element not found");
+    }
     document.getElementById("homepageGen").style.display = "none";
     document.getElementById("homepageManager").style.display = "none";
     document.getElementById("sendOTPSection").style.display = "block";
