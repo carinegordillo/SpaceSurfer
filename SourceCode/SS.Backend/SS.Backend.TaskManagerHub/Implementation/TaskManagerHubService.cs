@@ -80,49 +80,36 @@ namespace SS.Backend.TaskManagerHub
 
             foreach (var task in tasks)
             {
-                // Calculate score based on due date proximity
-                if (task.dueDate < currentDate.AddDays(1)){
-                    task.score = 20;
-                }
-                else if (task.dueDate < currentDate.AddDays(3))
+                if (task.dueDate.HasValue)
                 {
-                    task.score = 16;
-                }
-                else if (task.dueDate < currentDate.AddDays(7))
-                {
-                    task.score = 8;
-                }
-                else if (task.dueDate < currentDate.AddDays(14))
-                {
-                    task.score = 4;
-                }
-                else if (task.dueDate < currentDate.AddDays(30))
-                {
-                    task.score = 2;
+                    //calculate the difference in days from now to the due date
+                    TimeSpan timeUntilDue = task.dueDate.Value - currentDate;
+                    int daysUntilDue = timeUntilDue.Days;
+
+                    //calculate score based on days until due, where the score decreases as the number of days increases
+                   task.score = daysUntilDue > 30 ? 0 : daysUntilDue < 0 ? 40 + Math.Abs(daysUntilDue) : 30 - daysUntilDue;
+
+                    // multiply by priority multiplier
+                    switch (task.priority.ToLower())
+                    {
+                        case "high":
+                            task.score *= 3;
+                            break;
+                        case "medium":
+                            task.score *= 2;
+                            break;
+                        case "low":
+                            task.score *= 1;
+                            break;
+                    }
                 }
                 else
                 {
-                    task.score = 0;
-                }
-
-                // Adjust score based on priority
-                switch (task.priority.ToLower())
-                {
-                    case "high":
-                        task.score *= 10;
-                        break;
-                    case "medium":
-                        task.score *= 5;
-                        break;
-                    case "low":
-                        task.score *= 2;
-                        break;
+                    task.score = 0; 
                 }
             }
-
             return tasks.OrderByDescending(t => t.score).ToList();
         }
-
 
         private List<TaskHub> ConvertDictionariesToTaskHubs(List<Dictionary<string, object>> dictionaries)
         {
@@ -244,15 +231,6 @@ namespace SS.Backend.TaskManagerHub
                 var response = await _taskManagerHubRepo.ModifyTaskFields(task, fieldsToUpdate);
                 if (!response.HasError){
                     response.ErrorMessage += $"Successfully modified {fieldsToUpdate} in task {task.title}";
-                    if (fieldsToUpdate.ContainsKey("dueDate") || fieldsToUpdate.ContainsKey("notificationSetting"))
-                    {
-                        var notifyResponse = await NotifyUser(task);
-                        if (notifyResponse.HasError)
-                        {
-                            response.HasError = true; // Propagate error status
-                            response.ErrorMessage += " Notification update failed: " + notifyResponse.ErrorMessage;
-                        }
-                    }
 
                 }else{
                     response.ErrorMessage += $"Unable to modify {fieldsToUpdate} in task {task.title} - ErrorMessage {response.ErrorMessage}";
@@ -349,8 +327,6 @@ namespace SS.Backend.TaskManagerHub
                 };
             }
         }
-
-
 
     }
 }
