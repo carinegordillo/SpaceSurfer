@@ -71,6 +71,7 @@ function logout() {
     document.getElementById("homepageGen").style.display = "none";
     document.getElementById("homepageManager").style.display = "none";
     document.getElementById("sendOTPSection").style.display = "block";
+    document.getElementById("taskManagerView").style.display = "none";
 }
 
 function getUserProfile(){

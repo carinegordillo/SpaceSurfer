@@ -201,7 +201,9 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             switch (element.ValueKind)
             {
                 case JsonValueKind.String:
+#pragma warning disable CS8603 // Possible null reference return.
                     return element.GetString();
+#pragma warning restore CS8603 // Possible null reference return.
                 case JsonValueKind.Number:
                     return element.TryGetInt64(out long l) ? l : (object)element.GetDouble();
                 case JsonValueKind.True:
@@ -209,7 +211,9 @@ namespace SS.Backend.Tests.TaskManagerHubTests
                     return element.GetBoolean();
                 case JsonValueKind.Undefined:
                 case JsonValueKind.Null:
+#pragma warning disable CS8603 // Possible null reference return.
                     return null;
+#pragma warning restore CS8603 // Possible null reference return.
                 default:
                     throw new InvalidOperationException("Unsupported JsonValueKind: " + element.ValueKind);
             }
