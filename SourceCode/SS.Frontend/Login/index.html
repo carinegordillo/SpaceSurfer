@@ -88,6 +88,7 @@
         </div>
     </section>
 
+    <!--Personal Overview Center View-->
     <section id="personalOverviewCenter" class="homepage-container" style="display: none;">
         <h2>Welcome to SpaceSurfers!</h2>
         <div id="calendar-container">
@@ -129,8 +130,12 @@
             </div>
         </div>
         <div>
-            <button id="delete-button">Delete Reservation</button>
-            <div class="space-form-container" id="space-form-container" style="height: 200px;"></div>
+            <form id="delete-reservation-form" class="delete-form">
+                <label for="reservation-id">Enter Reservation ID to Delete:</label>
+                <input type="number" id="reservation-id" name="reservation-id" required>
+                <button type="button" id="reservation-delete-button">Delete Reservation</button>
+            </form>
+
         </div>
 
     </section>
@@ -181,6 +186,7 @@
         </div>
     </section>
 
+    <!--Task Manager View-->>
     <section id="taskManagerView" class="homepage-container" style="display: none;">
         <div id="registerView" class="task-container">
             <div id="accountCreationForm" class="flex-container">
@@ -345,7 +351,7 @@
         <p>Designed and Developed by the PixelPals Team</p>
     </footer>
 
-    <template id="reservation-details">
+    <template id="reservation-detail-template">
         <label class="reservationID">ReservationID:</label>
         <label id="labelReservationID" class="reservation-ID"></label>
         <br>
