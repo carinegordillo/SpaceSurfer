@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//SpaceSurfer//Reservation Confirmation//EN
+BEGIN:VEVENT
+UID:0a2e3d6e-3a04-49f0-ac08-4037e23fcdbf@gmail.com
+DTSTAMP:20240405T120000
+DTSTART:20240405T120000
+DTEND:20240405T140000
+SUMMARY:SpaceSurfer Reservation
+DESCRIPTION:Reservation at: Orbital Logistics Corp ReservationID: 4 SpaceID: SPACE002  
+LOCATION:1001 Launchpad Rd, Cape Canaveral, FL             
+END:VEVENT
+END:VCALENDAR

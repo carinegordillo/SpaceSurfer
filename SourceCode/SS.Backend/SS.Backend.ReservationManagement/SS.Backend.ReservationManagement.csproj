@@ -8,9 +8,8 @@
 
 
     <ItemGroup>
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
     <ProjectReference Include="..\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj" />
-	<ProjectReference Include="..\SS.Backend.Waitlist\SS.Backend.Waitlist.csproj" />
     <ProjectReference Include="..\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
   </ItemGroup>
 
