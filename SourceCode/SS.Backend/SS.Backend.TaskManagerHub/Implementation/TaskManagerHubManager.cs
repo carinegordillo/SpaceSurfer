@@ -41,8 +41,7 @@ namespace SS.Backend.TaskManagerHub
 
         public async Task<Response> CreateNewTask(TaskHub taskHub)
         {
-            // Implement task validation logic
-            // For example, ensure that task title is not null or empty and due date is in the future
+            
             if (string.IsNullOrWhiteSpace(taskHub.title))
                 return new Response { HasError = true, ErrorMessage = "Invalid task details." };
 
@@ -80,8 +79,7 @@ namespace SS.Backend.TaskManagerHub
             // Validate that the username and task title are not empty
             if (string.IsNullOrWhiteSpace(task.hashedUsername) || string.IsNullOrWhiteSpace(task.title))
                 return new Response { HasError = true, ErrorMessage = "Username or task title is invalid." };
-
-
+                
             return await _taskManagerHubService.DeleteTask(task);
         }
     }

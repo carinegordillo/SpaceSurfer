@@ -1,10 +1,22 @@
 document.getElementById('viewTasksBtn').addEventListener('click', function(event) {
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+        console.error('Token expired or invalid');
+        logout();
+        return;
+    }
     event.preventDefault();
     console.log("This button has been clicked");
     fetchAndDisplayTasks();
 });
 
 document.getElementById('ScoreTasks').addEventListener('click', function(event) {
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+        console.error('Token expired or invalid');
+        logout();
+        return;
+    }
     event.preventDefault();
     console.log("This score tasks button has been clicked");
     fetchAndScoreTasks();
@@ -12,11 +24,11 @@ document.getElementById('ScoreTasks').addEventListener('click', function(event) 
 
 function fetchAndDisplayTasks() {
     const accessToken = sessionStorage.getItem('accessToken');
-    // if (!accessToken || !(await checkTokenExpiration(accessToken))) {
-    //     console.error('Token expired or invalid');
-    //     logout();
-    //     return;
-    // }
+    if (!accessToken) {
+        console.error('Token expired or invalid');
+        logout();
+        return;
+    }
 
     const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
 
@@ -42,11 +54,11 @@ function fetchAndDisplayTasks() {
 
 function fetchAndScoreTasks() {
     const accessToken = sessionStorage.getItem('accessToken');
-    // if (!accessToken || !(await checkTokenExpiration(accessToken))) {
-    //     console.error('Token expired or invalid');
-    //     logout();
-    //     return;
-    // }
+    if (!accessToken) {
+        console.error('Token expired or invalid');
+        logout();
+        return;
+    }
 
     const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
 
@@ -71,6 +83,12 @@ function fetchAndScoreTasks() {
 }
 
 function displayTasks(tasks) {
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+        console.error('Token expired or invalid');
+        logout();
+        return;
+    }
     const taskListElement = document.getElementById('taskList');
     taskListElement.innerHTML = ''; 
     const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
@@ -106,7 +124,13 @@ function getPriorityColor(priority) {
 
 
 document.getElementById('createTaskForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // This stops the form from submitting traditionally, which prevents page refresh
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+        console.error('Token expired or invalid');
+        logout();
+        return;
+    }
+    event.preventDefault(); 
     console.log("Create task form has been submitted");
 
     const task = {
@@ -118,7 +142,6 @@ document.getElementById('createTaskForm').addEventListener('submit', function(ev
         // notificationSetting: parseInt(document.getElementById('taskNotificationSetting').value, 10)
     };
     // const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
-
     createTask(task);
     fetchAndDisplayTasks();
     document.getElementById('createTaskForm').reset();
@@ -126,7 +149,12 @@ document.getElementById('createTaskForm').addEventListener('submit', function(ev
 });
 
 function createTask(task) {
-    const accessToken = sessionStorage.getItem('accessToken'); // Assume token is stored in sessionStorage
+    const accessToken = sessionStorage.getItem('accessToken'); 
+    if (!accessToken) {
+        console.error('Token expired or invalid');
+        logout();
+        return;
+    }
     fetch('http://localhost:8089/api/v1/taskManagerHub/CreateTask', {
         method: 'POST',
         headers: {
@@ -158,7 +186,12 @@ function deleteTask(taskTitle, userName) {
         hashedUsername: userName,
         title: taskTitle
     };
-    const accessToken = sessionStorage.getItem('accessToken'); // Assume token is stored in sessionStorage
+    const accessToken = sessionStorage.getItem('accessToken'); 
+    if (!accessToken) {
+        console.error('Token expired or invalid');
+        logout();
+        return;
+    }
     fetch(`http://localhost:8089/api/v1/taskManagerHub/DeleteTask`, {
         method: 'POST', // Change to 'DELETE' if your server supports it
         headers: {
@@ -204,6 +237,12 @@ function showModifyForm(title, description, dueDate, priority, userName) {
 }
 
 function modifyTask(originalTitle, userName) {
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+        console.error('Token expired or invalid');
+        logout();
+        return;
+    }
     const task = {
         description: document.getElementById('modDescription').value,
         dueDate: document.getElementById('modDueDate').value,
@@ -257,27 +296,21 @@ function showModal(message) {
 }
 
 
-// async function checkTokenExpiration(accessToken) {
-//     try {
-//         const response = await fetch('http://localhost:5099/api/auth/checkTokenExp', {
-//             headers: {
-//                 'Authorization': `Bearer ${accessToken}`
-//             }
-//         });
-//         const data = await response.json();
-//         return data.isTokenValid; // assuming API returns { isTokenValid: true/false }
-//     } catch (error) {
-//         console.error('Error checking token expiration:', error);
-//         return false;
-//     }
-// }
+async function checkTokenExpiration(accessToken) {
+    try {
+        const response = await fetch('http://localhost:5099/api/auth/checkTokenExp', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+        const data = await response.json();
+        return data.isTokenValid; // assuming API returns { isTokenValid: true/false }
+    } catch (error) {
+        console.error('Error checking token expiration:', error);
+        return false;
+    }
+}
 
-// function logout() {
-//     sessionStorage.removeItem('accessToken');
-//     sessionStorage.removeItem('idToken');
-//     alert('Session expired. Please login again.');
-//     window.location.href = 'login.html'; // Adjust to your login page URL
-// }
 function logout() {
     console.log("logout cliced")
     sessionStorage.removeItem('accessToken');
