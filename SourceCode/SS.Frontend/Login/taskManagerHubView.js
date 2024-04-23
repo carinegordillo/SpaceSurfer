@@ -4,6 +4,12 @@ document.getElementById('viewTasksBtn').addEventListener('click', function(event
     fetchAndDisplayTasks();
 });
 
+document.getElementById('ScoreTasks').addEventListener('click', function(event) {
+    event.preventDefault();
+    console.log("This score tasks button has been clicked");
+    fetchAndScoreTasks();
+});
+
 function fetchAndDisplayTasks() {
     const accessToken = sessionStorage.getItem('accessToken');
     // if (!accessToken || !(await checkTokenExpiration(accessToken))) {
@@ -34,9 +40,39 @@ function fetchAndDisplayTasks() {
     .catch(error => console.error('Failed to fetch tasks: this is the username ',userName,  error));
 }
 
+function fetchAndScoreTasks() {
+    const accessToken = sessionStorage.getItem('accessToken');
+    // if (!accessToken || !(await checkTokenExpiration(accessToken))) {
+    //     console.error('Token expired or invalid');
+    //     logout();
+    //     return;
+    // }
+
+    const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
+
+    fetch(`http://localhost:8089/api/v1/taskManagerHub/ScoreTasks?userName=${encodeURIComponent(userName)}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data); 
+        displayTasks(data); 
+    })
+    .catch(error => console.error('Failed to score tasks: this is the username ',userName,  error));
+}
+
 function displayTasks(tasks) {
     const taskListElement = document.getElementById('taskList');
-    taskListElement.innerHTML = ''; // Clear current list
+    taskListElement.innerHTML = ''; 
     const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
 
     tasks.forEach(task => {
@@ -226,3 +262,11 @@ function modifyTask(originalTitle, userName) {
 //     alert('Session expired. Please login again.');
 //     window.location.href = 'login.html'; // Adjust to your login page URL
 // }
+function logout() {
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('idToken');
+    document.getElementById("homepageGen").style.display = "none";
+    document.getElementById("homepageManager").style.display = "none";
+    document.getElementById("sendOTPSection").style.display = "block";
+    document.getElementById("taskManagerView").style.display = "none";
+}

@@ -23,6 +23,13 @@ namespace SS.Backend.TaskManagerHub
             return await _taskManagerHubService.ListTasks(hashedUsername);
         }
 
+        public async Task<Response> ScoreTasks(string hashedUsername){
+            if (string.IsNullOrWhiteSpace(hashedUsername))
+                return new Response { HasError = true, ErrorMessage = "Invalid username." };
+
+            return await _taskManagerHubService.ScoreTasks(hashedUsername);
+        }
+
         public async Task<Response> ListTasksByPriority(string hashedUsername, string priority)
         {
             // Implement priority validation logic if necessary

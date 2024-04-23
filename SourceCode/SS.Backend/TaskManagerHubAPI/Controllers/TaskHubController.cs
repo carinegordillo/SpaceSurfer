@@ -104,6 +104,68 @@ public class TaskManagerHubController : ControllerBase
             return BadRequest("Unauthorized. Access token is missing or invalid.");
         }
     }
+
+
+    [HttpGet("ScoreTasks")]
+    public async Task<IActionResult> ScoreTasks(string userName)
+    {
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
+        if (accessToken != null && accessToken.StartsWith("Bearer "))
+        {
+            accessToken = accessToken.Substring("Bearer ".Length).Trim();
+            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+
+            if (claimsJson != null)
+            {
+                var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+
+                if (claims.TryGetValue("Role", out var role) && role == "1" || role == "2" || role == "3" || role == "4" || role == "5")
+                {
+                    bool closeToExpTime = _authService.CheckExpTime(accessToken);
+                    if (closeToExpTime)
+                    {
+                        SSPrincipal principal = new SSPrincipal();
+                        principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                        principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                        var newToken = _authService.CreateJwt(Request, principal);
+                        try
+                        {
+                            var tasks = await _taskManagerHubManager.ScoreTasks(userName);
+                            return Ok(new { tasks.Values, newToken });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Internal server error: " + ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var tasks = await _taskManagerHubManager.ScoreTasks(userName);
+                            return Ok(tasks.Values);
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Internal server error: " + ex.Message);
+                        }
+                    }
+                }
+                else
+                {
+                    return BadRequest("Unauthorized role.");
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid token.");
+            }
+        }
+        else
+        {
+            return BadRequest("Unauthorized. Access token is missing or invalid.");
+        }
+    }
     [HttpGet("ListTasksByPriority")]
     public async Task<IActionResult> ListTasksByPriority(string userName, string priority)
     {

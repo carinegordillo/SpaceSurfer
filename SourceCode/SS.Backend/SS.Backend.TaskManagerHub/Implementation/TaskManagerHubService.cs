@@ -74,115 +74,86 @@ namespace SS.Backend.TaskManagerHub
 
         }
 
-        private List<TaskHub> DataTableToList(DataTable dataTable)
-        {
-            var taskList = new List<TaskHub>();
-
-            foreach (DataRow row in dataTable.Rows)
-            {
-                var task = new TaskHub
-                {
-                    // Assuming the presence of these columns in your DataTable
-                    hashedUsername = row["hashedUsername"].ToString(),
-                    title = row["title"].ToString(),
-                    description = row["description"].ToString(),
-                    priority = row["priority"].ToString(),
-                    dueDate = Convert.ToDateTime(row["dueDate"]), 
-                    notificationSetting = Convert.ToInt32(row["notificationSetting"]),
-                    score = 0
-                    // Add other necessary fields
-                };
-                
-                taskList.Add(task);
-            }
-            return taskList;
-        }
-
         private List<TaskHub> ScoreAndSortTasks(List<TaskHub> tasks)
         {
             var currentDate = DateTime.Now;
 
-            // First, calculate and store scores in each task object, assuming TaskHub has a Score property
             foreach (var task in tasks)
             {
-                if (task.dueDate < currentDate.AddDays(30)) // within 30 
-                {
-                    task.score = 2;
-                }
-                else if (task.dueDate < currentDate.AddDays(14)) // within 2 week 
-                {
-                    task.score = 4;
-                }
-                else if (task.dueDate < currentDate.AddDays(7)) // within 1 week
-                {
-                    task.score = 8;
+                // Calculate score based on due date proximity
+                if (task.dueDate < currentDate.AddDays(1)){
+                    task.score = 20;
                 }
                 else if (task.dueDate < currentDate.AddDays(3))
                 {
                     task.score = 16;
                 }
+                else if (task.dueDate < currentDate.AddDays(7))
+                {
+                    task.score = 8;
+                }
+                else if (task.dueDate < currentDate.AddDays(14))
+                {
+                    task.score = 4;
+                }
+                else if (task.dueDate < currentDate.AddDays(30))
+                {
+                    task.score = 2;
+                }
                 else
                 {
                     task.score = 0;
                 }
+
+                // Adjust score based on priority
                 switch (task.priority.ToLower())
                 {
                     case "high":
-                        task.score = task.score * 5; // Assuming BaseScore holds the original score
+                        task.score *= 10;
                         break;
                     case "medium":
-                        task.score = task.score * 2;
+                        task.score *= 5;
                         break;
                     case "low":
-                        task.score = task.score * 0.5;
+                        task.score *= 2;
                         break;
                 }
-            
             }
 
-            // Now sort the list based on the Score property
-            tasks = tasks.OrderByDescending(task => task.score).ToList();
-
-            return tasks;
+            // Sort by score descending
+            return tasks.OrderByDescending(t => t.score).ToList();
         }
 
 
-        public DataTable ListToDataTable(List<TaskHub> tasks)
+        private List<TaskHub> ConvertDictionariesToTaskHubs(List<Dictionary<string, object>> dictionaries)
         {
-            // Create a new DataTable.
-            DataTable table = new DataTable("Tasks");
-        
-            // Define columns
-            table.Columns.Add("hashedUsername", typeof(string));
-            table.Columns.Add("title", typeof(string));
-            table.Columns.Add("description", typeof(string));
-            table.Columns.Add("priority", typeof(string));
-            table.Columns.Add("dueDate", typeof(DateTime));
-            table.Columns.Add("notificationSetting", typeof(int));
-            table.Columns.Add("score", typeof(double));
-            
+            var taskList = new List<TaskHub>();
 
-            // Iterate through all tasks
-            foreach (TaskHub task in tasks)
+            foreach (var dict in dictionaries)
             {
-                // Create a new DataRow.
-                DataRow row = table.NewRow();
-                
-                // Set column values
-                row["hashedUsername"] = task.hashedUsername;
-                row["title"] = task.title;
-                row["description"] = task.description;
-                row["priority"] = task.priority;
-                row["dueDate"] = task.dueDate;
-                row["notificationSetting"] = task.notificationSetting;
-                row["score"] = task.score;
-                
-
-                // Add the row to the DataTable.
-                table.Rows.Add(row);
+                try
+                {
+                    var task = new TaskHub
+                    {
+                        hashedUsername = dict.TryGetValue("hashedUsername", out var hashedUsername) ? (string)hashedUsername : default,
+                        title = dict.TryGetValue("title", out var title) ? (string)title : default,
+                        description = dict.TryGetValue("description", out var description) ? (string)description : default,
+                        dueDate = dict.TryGetValue("dueDate", out var dueDate) ? Convert.ToDateTime(dueDate) : default,
+                        priority = dict.TryGetValue("priority", out var priority) ? (string)priority : default,
+                        notificationSetting = dict.TryGetValue("notificationSetting", out var notificationSetting) ? Convert.ToInt32(notificationSetting) : default,
+                        score = dict.TryGetValue("score", out var score) ? Convert.ToDouble(score) : default
+                    };
+                    taskList.Add(task);
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception or handle it accordingly
+                    // Optionally continue to the next dictionary or handle the error based on your application's needs
+                    Console.WriteLine($"Error converting dictionary to TaskHub: {ex.Message}");
+                }
             }
 
-            return table;
+            return taskList;
         }
 
         public async Task<Response> ScoreTasks(string hashedUsername)
@@ -195,18 +166,28 @@ namespace SS.Backend.TaskManagerHub
                     return new Response { HasError = true, ErrorMessage = viewTasksResponse.ErrorMessage };
                 }
 
-                // Convert DataTable to List<TaskHub>
-                var tasks = DataTableToList(viewTasksResponse.ValuesRead);
+                // Convert dictionaries to TaskHub objects (assuming conversion from DataTable or similar structure)
+                var tasks = ConvertDictionariesToTaskHubs(viewTasksResponse.Values);
 
                 // Score and sort tasks
                 var sortedTasks = ScoreAndSortTasks(tasks);
 
-                // Create new Response to return sorted tasks
-                // Assuming you have a way to convert List<TaskHub> back to DataTable or similar structure as needed
+                // Convert sorted TaskHub list back to List<Dictionary<string, object>>
+                var taskDictionaries = sortedTasks.Select(task => new Dictionary<string, object>
+                {
+                    {"hashedUsername", task.hashedUsername},
+                    {"title", task.title},
+                    {"description", task.description},
+                    {"dueDate", task.dueDate.ToString()},
+                    {"priority", task.priority},
+                    {"notificationSetting", task.notificationSetting},
+                    {"score", task.score}
+                }).ToList();
+
                 return new Response
                 {
                     HasError = false,
-                    ValuesRead = ListToDataTable(sortedTasks) 
+                    Values = taskDictionaries
                 };
             }
             catch (Exception ex)
@@ -214,6 +195,7 @@ namespace SS.Backend.TaskManagerHub
                 return new Response { HasError = true, ErrorMessage = $"Failed to score tasks: {ex.Message}" };
             }
         }
+
         public async Task<Response> CreateNewTask(TaskHub taskHub){
             try{
                 var response = await _taskManagerHubRepo.CreateTask(taskHub);
