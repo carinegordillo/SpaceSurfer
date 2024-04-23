@@ -18,6 +18,7 @@ namespace SS.Backend.TaskManagerHub
         public Task<Response> CreateMultipleTasks(string hashedUsername, List<TaskHub> tasks);
         public Task<Response> ModifyTaskFields(TaskHub task, Dictionary<string, object> fieldsToUpdate);
         public Task<Response> DeleteTask(TaskHub task);
+        public Task<Response> GetEmailByHash(string hashedUsername);
 
 
         public Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData);

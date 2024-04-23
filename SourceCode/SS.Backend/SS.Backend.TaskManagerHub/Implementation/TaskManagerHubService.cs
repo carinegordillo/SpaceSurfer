@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
-
+using SS.Backend.Services.EmailService;
 
 namespace SS.Backend.TaskManagerHub
 {
@@ -200,6 +200,12 @@ namespace SS.Backend.TaskManagerHub
                 var response = await _taskManagerHubRepo.CreateTask(taskHub);
                 if (!response.HasError){
                     response.ErrorMessage += "Successful task creation in database!";
+                    var notifyResponse = await NotifyUser(taskHub);
+                    if (notifyResponse.HasError)
+                    {
+                        response.HasError = true; // Propagate error status
+                        response.ErrorMessage += " Notification failed: " + notifyResponse.ErrorMessage;
+                    }
                 }
                 else{
                     response.ErrorMessage += $"New task did not insert in database - ErrorMessage {response.ErrorMessage}";
@@ -238,6 +244,15 @@ namespace SS.Backend.TaskManagerHub
                 var response = await _taskManagerHubRepo.ModifyTaskFields(task, fieldsToUpdate);
                 if (!response.HasError){
                     response.ErrorMessage += $"Successfully modified {fieldsToUpdate} in task {task.title}";
+                    if (fieldsToUpdate.ContainsKey("dueDate") || fieldsToUpdate.ContainsKey("notificationSetting"))
+                    {
+                        var notifyResponse = await NotifyUser(task);
+                        if (notifyResponse.HasError)
+                        {
+                            response.HasError = true; // Propagate error status
+                            response.ErrorMessage += " Notification update failed: " + notifyResponse.ErrorMessage;
+                        }
+                    }
 
                 }else{
                     response.ErrorMessage += $"Unable to modify {fieldsToUpdate} in task {task.title} - ErrorMessage {response.ErrorMessage}";
@@ -269,6 +284,73 @@ namespace SS.Backend.TaskManagerHub
                 };
             }
         }
+
+        public async Task<Response> NotifyUser(TaskHub task)
+        {
+            try
+            {
+                var emailResponse = await _taskManagerHubRepo.GetEmailByHash(task.hashedUsername);
+                if (emailResponse.HasError || emailResponse.ValuesRead == null || emailResponse.ValuesRead.Rows.Count == 0)
+                {
+                    return new Response
+                    {
+                        HasError = true,
+                        ErrorMessage = "Failed to retrieve email: " + (emailResponse.ErrorMessage ?? "No additional information")
+                    };
+                }
+
+                // Extract email from the first DataRow
+                 DataRow targetEmail= emailResponse.ValuesRead.Rows[0];
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+                string userEmail = Convert.ToString(targetEmail["username"]);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+                if (string.IsNullOrEmpty(userEmail))
+                {
+                    return new Response
+                    {
+                        HasError = true,
+                        ErrorMessage = "Email address not found."
+                    };
+                }
+
+                string subject = $"Reminder: Task '{task.title}'";
+                string messageBody = $@"
+                Hello,
+
+                You have created a task titled '{task.title}'.
+
+                Task details:
+                {task.description}
+
+                Due Date: {task.dueDate:yyyy-MM-dd}
+
+                If you have any questions or need assistance, please don't hesitate to contact us at spacesurfers5@gmail.com.
+
+                Thank you for choosing SpaceSurfer.
+
+                Best regards,
+                SpaceSurfer Team";
+
+                // Send email immediately
+                await MailSender.SendEmail(userEmail, subject, messageBody);
+
+                return new Response
+                {
+                    HasError = false,
+                    ErrorMessage = "Email notification sent successfully."
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    HasError = true,
+                    ErrorMessage = $"An unexpected error occurred while attempting to send notification: {ex.Message}"
+                };
+            }
+        }
+
+
 
     }
 }

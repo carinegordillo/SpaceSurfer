@@ -42,10 +42,10 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             // var hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=";
             var newTask = new TaskHub
             {
-                hashedUsername = "validHashedUsername",
-                title = "MIDDLE",
-                description = "Description for new project task",
-                dueDate = DateTime.UtcNow.AddDays(14),
+                hashedUsername = "bMD1R8mgG/GZTzRiEFbV4kV3gHizGh1kqWPypTdtU98=",
+                title = "please email",
+                description = "this should sen me an email",
+                dueDate = DateTime.UtcNow.AddDays(1),
                 priority = "Medium",
                 notificationSetting = 1
             };

@@ -15,5 +15,6 @@ namespace SS.Backend.TaskManagerHub
         public Task<Response> ModifyTasks(TaskHub task, Dictionary<string, object> fieldsToUpdate);
 
         public Task<Response> DeleteTask(TaskHub task);
+
     }
 }

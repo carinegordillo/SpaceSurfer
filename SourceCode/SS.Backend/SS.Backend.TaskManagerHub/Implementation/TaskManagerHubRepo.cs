@@ -293,6 +293,28 @@ namespace SS.Backend.TaskManagerHub
             return response;
         }
 
+        public async Task<Response> GetEmailByHash(string hashedUsername)
+        {
+            Response tablesresponse = new Response();
+            var builder = new CustomSqlCommandBuilder();
+            var command = builder.BeginSelect()
+                                .SelectColumns("username")
+                                .From("dbo.userHash")
+                                .Where("hashedUsername = @HashedUsername")
+                                .AddParameters(new Dictionary<string, object>
+                                {
+                                    { "HashedUsername", hashedUsername}
+                                })
+                                .Build();
+
+            var username = await _sqldao.ReadSqlResult(command);
+            if (username.HasError)
+            {
+                tablesresponse.ErrorMessage += $"Error selecting USERNAME; ";
+            }
+            return username;
+        }
+
 
 
 

@@ -645,7 +645,9 @@ namespace SS.Backend.Waitlist
 
                     if (resDetailsResult != null && resDetailsResult.ValuesRead != null && resDetailsResult.ValuesRead.Rows.Count > 0)
                     {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                         string compName = await GetCompanyName(compId);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
                         var entry = new WaitlistEntry
                         {
                             userHash = userHash,

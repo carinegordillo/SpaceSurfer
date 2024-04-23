@@ -86,13 +86,13 @@ function displayTasks(tasks) {
             <div><strong>Description:</strong> ${task.description}</div>
             <div><strong>Due Date:</strong> ${new Date(task.dueDate).toLocaleDateString()}</div>
             <div><strong>Priority:</strong> <span style="color: ${priorityColor};">${task.priority}</span></div>
-            <div><strong>Notification Setting:</strong> ${task.notificationSetting}</div>
-            <button onclick="showModifyForm('${task.title}', '${task.description}', '${task.dueDate}', '${task.priority}', '${task.notificationSetting}', '${userName}')">Modify</button>
+            <button onclick="showModifyForm('${task.title}', '${task.description}', '${task.dueDate}', '${task.priority}', '${userName}')">Modify</button>
             <button onclick="deleteTask('${task.title}', '${userName}')">Delete</button>
         `;
         taskListElement.appendChild(taskItem);
     });
 }
+{/* <div><strong>Notification Setting:</strong> ${task.notificationSetting}</div> */}
 
 function getPriorityColor(priority) {
     switch (priority) {
@@ -115,7 +115,7 @@ document.getElementById('createTaskForm').addEventListener('submit', function(ev
         description: document.getElementById('taskDescription').value,
         dueDate: document.getElementById('taskDueDate').value,
         priority: document.getElementById('taskPriority').value,
-        notificationSetting: parseInt(document.getElementById('taskNotificationSetting').value, 10)
+        // notificationSetting: parseInt(document.getElementById('taskNotificationSetting').value, 10)
     };
     // const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
 
@@ -186,13 +186,13 @@ function deleteTask(taskTitle, userName) {
 }
 
 
-function showModifyForm(title, description, dueDate, priority, notificationSetting, userName) {
+function showModifyForm(title, description, dueDate, priority, userName) {
     console.log("Showing modify form for: " + title);
     document.getElementById('modTitle').textContent = title; // Set the title in the span
     document.getElementById('modDescription').value = description;
     document.getElementById('modDueDate').value = dueDate.split('T')[0]; // Assuming dueDate is in ISO format
     document.getElementById('modPriority').value = priority;
-    document.getElementById('modNotificationSetting').value = notificationSetting;
+    // document.getElementById('modNotificationSetting').value = notificationSetting;
 
     // Show the modify form
     document.getElementById('modifyTaskFormContainer').style.display = 'block';
@@ -208,7 +208,7 @@ function modifyTask(originalTitle, userName) {
         description: document.getElementById('modDescription').value,
         dueDate: document.getElementById('modDueDate').value,
         priority: document.getElementById('modPriority').value,
-        notificationSetting: parseInt(document.getElementById('modNotificationSetting').value, 10)
+        // notificationSetting: parseInt(document.getElementById('modNotificationSetting').value, 10)
     };
 
     const fieldsToUpdateJson = JSON.stringify(task);
