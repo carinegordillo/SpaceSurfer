@@ -15,10 +15,10 @@ namespace SS.Backend.Tests.TaskManagerHubTests
     public class TaskManagerHubManagerTests
     {
         private TaskManagerHubManager _taskManagerHubManager;
-       private ConfigService _configService;
-       private TaskManagerHubService  _taskManagerHubService;
+        private ConfigService _configService;
+        private TaskManagerHubService  _taskManagerHubService;
 
-       private TaskManagerHubRepo _taskManagerHubRepo;
+        private TaskManagerHubRepo _taskManagerHubRepo;
         private SqlDAO _sqlDao;
 
         [TestInitialize]

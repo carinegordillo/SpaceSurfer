@@ -133,13 +133,38 @@ document.getElementById('createTaskForm').addEventListener('submit', function(ev
     event.preventDefault(); 
     console.log("Create task form has been submitted");
 
+    const title = document.getElementById('taskTitle').value.trim();
+    const description = document.getElementById('taskDescription').value.trim();
+    const dueDate = new Date(document.getElementById('taskDueDate').value);
+    const priority = document.getElementById('taskPriority').value;
+
+    // Validation
+    if (!title || !description || !dueDate || !priority) {
+        showModal('All fields must be filled out correctly.');
+        return;
+    }
+
+    if(title.length > 20){
+        showModal('Task title is too long');
+        return;
+    }
+
+    if (dueDate < new Date()) {
+        showModal('Due date cannot be in the past.');
+        return;
+    }
+
+    if (!['High', 'Medium', 'Low'].includes(priority)) {
+        showModal('Invalid priority selected.');
+        return;
+    }
+
     const task = {
         hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,
-        title: document.getElementById('taskTitle').value,
-        description: document.getElementById('taskDescription').value,
-        dueDate: document.getElementById('taskDueDate').value,
-        priority: document.getElementById('taskPriority').value,
-        // notificationSetting: parseInt(document.getElementById('taskNotificationSetting').value, 10)
+        title: title,
+        description: description,
+        dueDate: dueDate,
+        priority: priority,
     };
     // const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
     createTask(task);
@@ -231,6 +256,15 @@ function showModifyForm(title, description, dueDate, priority, userName) {
     document.getElementById('modifyTaskFormContainer').style.display = 'block';
     document.getElementById('modifyTaskForm').addEventListener('submit', function(event) {
         event.preventDefault();
+        const updatedDescription = document.getElementById('modDescription').value.trim();
+        const updatedDueDate = new Date(document.getElementById('modDueDate').value);
+        const updatedPriority = document.getElementById('modPriority').value;
+
+        // Perform front-end validation before sending the request
+        if (!updatedDescription || updatedDueDate < new Date() || !['High', 'Medium', 'Low'].includes(updatedPriority)) {
+            showModal('Please ensure all fields are correctly filled and valid.');
+            return;
+        }
         modifyTask(title, userName);
         document.getElementById('modifyTaskFormContainer').style.display = 'none';
     });
