@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.Data.SqlClient;
-using System.Text;
 using System.Data;
+using System.Text;
 
 namespace SS.Backend.DataAccess;
 public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
@@ -46,6 +46,13 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
     {
         _commandText.Clear();
         _commandText.Append("SELECT ");
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder BeginSelectString(string statement)
+    {
+        _commandText.Clear();
+        _commandText.Append($"SELECT {statement}");
         return this;
     }
 
@@ -97,7 +104,7 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
     public ICustomSqlCommandBuilder BeginDelete(string tableName)
     {
         ResetBuilder();
-        _commandText.Append($"DELETE FROM {tableName} ");
+        _commandText.Append($"DELETE FROM {tableName}");
         return this;
     }
 
@@ -112,9 +119,15 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
 
     public ICustomSqlCommandBuilder BeginStoredProcedure(string storedProcedureName)
     {
-        ResetBuilder(); 
+        ResetBuilder();
         _command.CommandType = CommandType.StoredProcedure;
-        _commandText.Append(storedProcedureName); 
+        _commandText.Append(storedProcedureName);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder OrderBy(string tableName)
+    {
+        _commandText.Append($" ORDER BY {tableName} ");
         return this;
     }
 
