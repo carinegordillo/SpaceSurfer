@@ -129,8 +129,8 @@ function displayTasks(tasks) {
             <div><strong>Description:</strong> ${task.description}</div>
             <div><strong>Due Date:</strong> ${new Date(task.dueDate).toLocaleDateString()}</div>
             <div><strong>Priority:</strong> <span style="color: ${priorityColor};">${task.priority}</span></div>
-            <button onclick="showModifyForm('${task.title}', '${task.description}', '${task.dueDate}', '${task.priority}', '${userName}')">Modify</button>
-            <button onclick="deleteTask('${task.title}', '${userName}')">Delete</button>
+            <button data-test-id='edit-${encodeURIComponent(task.title)}' onclick="showModifyForm('${task.title}', '${task.description}', '${task.dueDate}', '${task.priority}', '${userName}')">Modify</button>
+            <button data-test-id='delete-${encodeURIComponent(task.title)}' onclick="deleteTask('${task.title}', '${userName}')">Delete</button>
         `;
 
         if (completedTasks[task.title]) {
