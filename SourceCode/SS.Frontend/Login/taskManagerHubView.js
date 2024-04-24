@@ -22,6 +22,7 @@ document.getElementById('ScoreTasks').addEventListener('click', function(event) 
     fetchAndScoreTasks();
 });
 
+let allTasks = [];
 function fetchAndDisplayTasks() {
     const accessToken = sessionStorage.getItem('accessToken');
     if (!accessToken) {
@@ -46,12 +47,24 @@ function fetchAndDisplayTasks() {
         return response.json();
     })
     .then(data => {
+        allTasks = data;
         console.log(data); // Log the full response to see its structure
         displayTasks(data); // Make sure 'tasks' is the correct key
     })
     .catch(error => console.error('Failed to fetch tasks: this is the username ',userName,  error));
 }
+function filterTasksByPriority() {
+    const selectedPriority = document.getElementById('priorityFilter').value;
+    const filteredTasks = allTasks.filter(task => {
+        return selectedPriority === 'all' || task.priority.toLowerCase() === selectedPriority;
+    });
+    displayTasks(filteredTasks);
+}
 
+document.getElementById('filterTasksBtn').addEventListener('click', function(event) {
+    event.preventDefault();
+    filterTasksByPriority();
+});
 function fetchAndScoreTasks() {
     const accessToken = sessionStorage.getItem('accessToken');
     if (!accessToken) {

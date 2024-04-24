@@ -226,27 +226,6 @@ public class TaskManagerHubController : ControllerBase
         }
     }
 
-    private bool TryValidateToken(string accessToken, out Dictionary<string, string> claims, out string userName)
-    {
-        claims = null;
-        userName = null;
-        try
-        {
-            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
-            if (!string.IsNullOrEmpty(claimsJson))
-            {
-                claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
-                return claims.TryGetValue("sub", out userName); // commonly 'sub' is used for subject which represents the user
-            }
-        }
-        catch (JsonException ex)
-        {
-            // Log or handle the error as needed
-            Console.WriteLine($"Error deserializing token claims: {ex.Message}");
-        }
-        return false;
-    }
-
     [HttpPost("CreateTask")]
     // public async Task<IActionResult> CreateTask([FromBody] TaskHub task)
     public async Task<IActionResult> CreateTask([FromBody] TaskHub task)    {
@@ -399,7 +378,9 @@ public class TaskManagerHubController : ControllerBase
                                 kvp => ConvertJsonElement(kvp.Value));
 
                             var task = new TaskHub { hashedUsername = request.UserName, title = request.TaskTitle };
+                            #pragma warning disable CS8620  // Disable the CS8620 warning
                             var response = await _taskManagerHubManager.ModifyTasks(task, fieldsToUpdate);
+                            #pragma warning restore CS8620
 
                             return Ok(new { response });
                         }
@@ -418,7 +399,9 @@ public class TaskManagerHubController : ControllerBase
                                 kvp => ConvertJsonElement(kvp.Value));
 
                             var task = new TaskHub { hashedUsername = request.UserName, title = request.TaskTitle };
+                            #pragma warning disable CS8620  // Disable the CS8620 warning
                             var response = await _taskManagerHubManager.ModifyTasks(task, fieldsToUpdate);
+                            #pragma warning restore CS8620
 
                             return Ok(new { response });
                         }
@@ -450,7 +433,7 @@ public class TaskManagerHubController : ControllerBase
         public string TaskTitle { get; set; }
         public string FieldsToUpdateJson { get; set; } 
     }
-    private object ConvertJsonElement(JsonElement element)
+    private object? ConvertJsonElement(JsonElement element)
     {
         switch (element.ValueKind)
         {
