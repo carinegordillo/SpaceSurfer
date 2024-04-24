@@ -6,6 +6,6 @@ namespace SS.Backend.ReservationManagers
     public interface IReservationCreationManager
     {
         Task<Response> CreateSpaceSurferSpaceReservationAsync(UserReservationsModel userReservationsModel, string? tableNameOverride = null);
-        Task<Response> SendConfirmation(UserReservationsModel reservation);
+        Task<Response> AddToWaitlist(string tableName, UserReservationsModel userReservationsModel);
     }
 }

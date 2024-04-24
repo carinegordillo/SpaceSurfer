@@ -1,6 +1,6 @@
-namespace PersonalOverview
+namespace AuthAPI
 {
-    public class ReservationInformation
+    public class WeatherForecast
     {
         public DateOnly Date { get; set; }
 

@@ -243,7 +243,7 @@ namespace SS.Backend.Services.AccountCreationService
             var hashedAccount_success_parameters = new Dictionary<string, object>
             {
                 {"hashedUsername", validPepper.hashedUsername},
-                {"username", userInfo.username}
+                {"username", userInfo.username},
             };
 
 

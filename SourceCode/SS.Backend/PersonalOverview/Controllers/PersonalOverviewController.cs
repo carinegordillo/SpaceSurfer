@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
+using SS.Backend.Security;
+using SS.Backend.Services.PersonalOverviewService;
+using System.Text.Json;
 
-namespace PersonalOverview.Controllers
-namespace PersonalOverview.Controllers
+
+
+namespace PersonalOverviewAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    [Route("[controller]")]
+    [Route("api/v1/PersonalOverview")]
     public class PersonalOverviewController : ControllerBase
     {
         private readonly IPersonalOverview _personalOverviewService;
@@ -73,7 +76,7 @@ namespace PersonalOverview.Controllers
         }
 
         [HttpPost("ReservationDeletion")]
-        public async Task<IActionResult> DeleteReservations([FromQuery(Name = "ReservationID")] int reservationID)
+        public async Task<IActionResult> DeleteReservations([FromQuery] int reservationID)
         {
 
             string? accessToken = HttpContext.Request.Headers["Authorization"];

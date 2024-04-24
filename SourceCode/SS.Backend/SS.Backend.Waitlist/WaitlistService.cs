@@ -115,7 +115,7 @@ namespace SS.Backend.Waitlist
                     .Build();
                 result = await _sqldao.ReadSqlResult(getEmail);
                 string? email = result.ValuesRead?.Rows[0]?["username"].ToString();
-                Console.WriteLine("Sending notification email to: " + email);
+                Console.WriteLine(email);
 
                 // Get first name from DB
                 var getName = builder
@@ -130,7 +130,6 @@ namespace SS.Backend.Waitlist
                 string? end = info.endTime.ToString("h:mm tt");
 
                 string? targetEmail = email;
-                Console.WriteLine("Target email for notification email: " + targetEmail);
                 string? subject = $@"Top of Waitlist at {info.companyName}";
                 string? msg = $@"
                     Dear {name},
@@ -482,17 +481,10 @@ namespace SS.Backend.Waitlist
                 result = await _sqldao.ReadSqlResult(getEnd);
                 DateTime endTime = Convert.ToDateTime(result.ValuesRead?.Rows[0]?["reservationEndTime"]);
 
-                // nextUser
-                var getNext = builder.getNext(resId).Build();
-                result = await _sqldao.ReadSqlResult(getNext);
-                var nextUser = result.ValuesRead?.Rows[0]?["Username"].ToString();
-
-                Console.WriteLine("UserHash for next user on the waitlist after top leaves: " + nextUser);
-
                 // Populate WaitlistEntry with info needed for notification email
                 WaitlistEntry entry = new WaitlistEntry
                 {
-                    userHash = nextUser,
+                    userHash = user,
                     spaceID = spaceId,
                     companyName = companyName,
                     startTime = startTime,
@@ -500,7 +492,7 @@ namespace SS.Backend.Waitlist
                     position = 0
                 };
 
-                Console.WriteLine("Sending notification email (inside waitlistService 507)");
+                Console.WriteLine("Sending email");
                 await SendNotificationEmail(entry);
             }
             catch (Exception ex)
@@ -671,7 +663,7 @@ namespace SS.Backend.Waitlist
         /// </summary>
         /// <param name="cid">company id</param>
         /// <returns>the company name based on the company id</returns>
-        public async Task<string?> GetCompanyName(int cid)
+        public async Task<string> GetCompanyName(int cid)
         {
             var builder = new CustomSqlCommandBuilder();
             var result = new Response();
@@ -688,7 +680,7 @@ namespace SS.Backend.Waitlist
                 .Build();
 
             result = await _sqldao.ReadSqlResult(getCompanyName);
-            string compName = result.ValuesRead?.Rows[0]?["companyName"]?.ToString() ?? "Unknown Company";
+             string compName = result.ValuesRead?.Rows[0]?["companyName"]?.ToString() ?? "Unknown Company";
 
             return compName;
         }
@@ -759,10 +751,9 @@ namespace SS.Backend.Waitlist
             }
             catch (Exception ex)
             {
-                result.ErrorMessage = "error" + ex.Message;
+                result.ErrorMessage = "error"+ ex.Message;
                 return null;
             }
-
         }
 
         /// <summary>
