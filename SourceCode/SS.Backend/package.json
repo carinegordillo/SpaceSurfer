@@ -12,9 +12,7 @@
   "main": "index.js",
   "name": "SS.Backend",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "startBackend": "chmod +x ./startupBackend.sh && ./startupBackend.sh",
-    "stopBackend": "node shutdownBackend.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "version": "1.0.0"
 }

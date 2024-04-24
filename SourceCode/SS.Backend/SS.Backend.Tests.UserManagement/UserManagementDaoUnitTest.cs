@@ -14,9 +14,6 @@ namespace SS.Backend.Tests.UserManagement;
         private SqlDAO _sqlDao;
         private ConfigService _configService;
 
-        string userHash1 = "Yu86Ho6KDmtOeP687I/AHNE4rhxoCzZDs9v/Mpe+SZw=";
-        string userHash2 = "MaKM/H0KYHLGJPn4alLS1BpbvakoB3RjXLmbbJI4PE4=";
-
 
         
         
@@ -42,7 +39,7 @@ namespace SS.Backend.Tests.UserManagement;
             
             // Arrange
             var column = "hashedUsername";  
-            var value = userHash1;
+            var value = "user8hash";
             var columnToModify = "isActive";
             var newValue = "no";
             var tableName = "dbo.activeAccount";
@@ -75,7 +72,7 @@ namespace SS.Backend.Tests.UserManagement;
         {
             // Arrange
             var column = "hashedUsername";  
-            var value = userHash1;
+            var value = "testUsername";
             var columnToModify = "isActive";
             var newValue = "no";
             var tableName = "nonExistentTable";
@@ -92,7 +89,7 @@ namespace SS.Backend.Tests.UserManagement;
         {
             // Arrange
             var column = "nonExistentColumn";  
-            var value = userHash1;
+            var value = "testUsername";
             var columnToModify = "isActive";
             var newValue = "no";
             var tableName = "dbo.activeAccount";
@@ -125,7 +122,7 @@ namespace SS.Backend.Tests.UserManagement;
             // Arrange
             var userRequest = new UserRequestModel
             {
-                UserHash = userHash2,
+                UserHash = "testUserHash",
                 RequestDate = DateTime.UtcNow,
                 Status = "Pending",
                 RequestType = "Recovery",
@@ -148,7 +145,7 @@ namespace SS.Backend.Tests.UserManagement;
         {
             // Arrange
             var whereClause = "hashedUsername";
-            var whereClauseVal = userHash2;
+            var whereClauseVal = "user7hash";
             var tableName = "dbo.userProfile";
 
             // Act

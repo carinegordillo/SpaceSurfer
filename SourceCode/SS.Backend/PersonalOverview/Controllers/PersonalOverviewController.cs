@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 
 namespace PersonalOverview.Controllers
+namespace PersonalOverview.Controllers
 {
     [ApiController]
+    [Route("[controller]")]
     [Route("[controller]")]
     public class PersonalOverviewController : ControllerBase
     {

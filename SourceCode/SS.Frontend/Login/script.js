@@ -1,7 +1,6 @@
 
 
 function sendOTP() {
-    console.log("otp is sending")
     var userIdentity = document.getElementById("userIdentity").value;
     console.log(userIdentity);
 
@@ -124,7 +123,29 @@ function personalOverviewAccess() {
     document.getElementById('waitlistView').style.display = 'none';
 }
     // Hide other sections if needed
+>>>>>>> parent of 48dc8bd (Merge branch 'main' into Sarah-S)
 function waitlistAccess() {
+    var accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+        console.error('Access token is not available.');
+        return;
+    }
+
+    $.ajax({
+        url: 'http://localhost:5099/api/waitlist/test',
+        type: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        },
+        contentType: 'application/json',
+        success: function (response) {
+            console.log(response);
+            window.location.href = '../Waitlist/index.html';
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
     var accessToken = sessionStorage.getItem('accessToken');
     if (!accessToken) {
         console.error('Access token is not available.');
