@@ -45,7 +45,7 @@ namespace SS.Backend.TaskManagerHub
             if (string.IsNullOrWhiteSpace(taskHub.title) || taskHub.title.Length > 20)
                 return new Response { HasError = true, ErrorMessage = "Invalid task title." };
 
-            if (taskHub.dueDate < DateTime.Today)
+            if (taskHub.dueDate < DateTime.UtcNow)
                 return new Response { HasError = true, ErrorMessage = "Due date cannot be in the past." };
 
             var validPriorities = new HashSet<string> { "low", "medium", "high" };
@@ -82,7 +82,7 @@ namespace SS.Backend.TaskManagerHub
             
             if (fieldsToUpdate.ContainsKey("dueDate") && fieldsToUpdate["dueDate"] is DateTime newDueDate)
             {
-                if (newDueDate < DateTime.Today)
+                if (newDueDate < DateTime.UtcNow)
                     return new Response { HasError = true, ErrorMessage = "Due date cannot be in the past." };
             }
 

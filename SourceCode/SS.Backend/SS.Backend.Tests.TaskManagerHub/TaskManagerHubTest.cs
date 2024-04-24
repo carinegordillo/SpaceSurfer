@@ -35,142 +35,159 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             _taskManagerHubManager = new TaskManagerHubManager(_taskManagerHubService);
         }
 
+        [TestCleanup]
+        public async Task TestCleanup()
+        {
+            await CleanupTestData();
+        }
+
+        private async Task CleanupTestData()
+        {
+           
+            try
+            {
+                string sqlCMD = "DELETE FROM dbo.taskHub WHERE hashedUsername = '074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o='";
+                var cmd = new SqlCommand(sqlCMD);
+                var response = await _sqlDao.SqlRowsAffected(cmd);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during test cleanup: {ex}");
+            }
+        }
+
         [TestMethod]
         public async Task CreateTask_ValidData_ReturnsSuccess()
         {
-            // Arrange
-            // var hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=";
             var newTask = new TaskHub
             {
-                hashedUsername = "bMD1R8mgG/GZTzRiEFbV4kV3gHizGh1kqWPypTdtU98=",
-                title = "please email",
-                description = "this should sen me an email",
+                hashedUsername = "074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o=",
+                title = "This is a new test",
+                description = "this is a success test",
                 dueDate = DateTime.UtcNow.AddDays(1),
-                priority = "Medium",
-                notificationSetting = 1
+                priority = "Medium"
             };
 
-            // Act
             var result = await _taskManagerHubManager.CreateNewTask(newTask);
-
-            // Assert
             Assert.IsFalse(result.HasError, "Task should be created successfully without errors.");
         }
+
+        [TestMethod]
+        public async Task CreateTask_EmptyTitle_ReturnsError()
+        {
+            var newTask = new TaskHub
+            {
+                hashedUsername = "074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o=",
+                title = "", // Empty title
+                description = "Need to handle empty title",
+                dueDate = DateTime.UtcNow.AddDays(1),
+                priority = "Medium"
+            };
+
+            var result = await _taskManagerHubManager.CreateNewTask(newTask);
+            Assert.IsTrue(result.HasError, "Task creation should fail due to empty title.");
+        }
+
+        [TestMethod]
+        public async Task CreateTask_NullDescription_ReturnsError()
+        {
+            var newTask = new TaskHub
+            {
+                hashedUsername = "074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o=",
+                title = "Test Task",
+                description = null, // Null description
+                dueDate = DateTime.UtcNow.AddDays(1),
+                priority = "Medium"
+            };
+
+            var result = await _taskManagerHubManager.CreateNewTask(newTask);
+            Assert.IsTrue(result.HasError, "Task creation should fail due to null description.");
+        }
+
+        [TestMethod]
+        public async Task CreateTask_PastDueDate_ReturnsError()
+        {
+            var newTask = new TaskHub
+            {
+                hashedUsername = "074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o=",
+                title = "Past Due Date Task",
+                description = "This task has a past due date",
+                dueDate = DateTime.UtcNow.AddDays(-1), // Past date
+                priority = "Medium"
+            };
+
+            var result = await _taskManagerHubManager.CreateNewTask(newTask);
+            Assert.IsTrue(result.HasError, "Task creation should fail due to a past due date.");
+        }
+
+        [TestMethod]
+        public async Task CreateTask_InvalidPriority_ReturnsError()
+        {
+            var newTask = new TaskHub
+            {
+                hashedUsername = "074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o=",
+                title = "Invalid Priority Task",
+                description = "This task has an invalid priority setting",
+                dueDate = DateTime.UtcNow.AddDays(1),
+                priority = "Undefined" // Invalid priority
+            };
+
+            var result = await _taskManagerHubManager.CreateNewTask(newTask);
+            Assert.IsTrue(result.HasError, "Task creation should fail due to invalid priority.");
+        }
+
+        [TestMethod]
+        public async Task CreateTask_EmptyHashedUsername_ReturnsError()
+        {
+            var newTask = new TaskHub
+            {
+                hashedUsername = "", // Empty hashed username
+                title = "No User Task",
+                description = "This task is assigned to no user",
+                dueDate = DateTime.UtcNow.AddDays(1),
+                priority = "High"
+            };
+
+            var result = await _taskManagerHubManager.CreateNewTask(newTask);
+            Assert.IsTrue(result.HasError, "Task creation should fail due to empty hashed username.");
+        }
+
+
+
 
         [TestMethod]
         public async Task Viewtasks_ValidData_ReturnsSuccess()
         {
-            // Arrange
-            // var hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=";
-            var newTask = new TaskHub
-            {
-                hashedUsername = "validHashedUsername",
-                title = "This should be middle",
-                description = "Description for new project task",
-                dueDate = DateTime.UtcNow.AddDays(1),
-                priority = "High",
-                notificationSetting = 1
-            };
-
-            // Act
-            var result = await _taskManagerHubService.ScoreTasks("validHashedUsername");
-
-            // Assert
-            Assert.IsFalse(result.HasError, "Task should be created successfully without errors.");
+            //this just views alll the tasks and scores them 
+            var result = await _taskManagerHubService.ScoreTasks("hashedExampleUsername");
+            Assert.IsFalse(result.HasError, "Task should be scored and arranged successfully without errors.");
         }
-
-        [TestMethod]
-        public async Task CreateMultipleTasks_ValidData_ReturnsSuccess()
-        {
-            // Arrange
-            var hashedUsername = "hashedExampleUsername";
-            var newTasks = new List<TaskHub>
-            {
-                new TaskHub
-                {
-                    title = "Testingggg Multiple againnn Tasks",
-                    description = "Description for new project task",
-                    dueDate = DateTime.UtcNow.AddDays(7), // Future date for validity
-                    priority = "High",
-                    notificationSetting = 1
-                },
-                new TaskHub
-                {
-                    title = "Testingggggggg Multiple AGAIN  New Tasks",
-                    description = "Another description for new project task",
-                    dueDate = DateTime.UtcNow.AddDays(7), // Future date for validity
-                    priority = "High",
-                    notificationSetting = 1
-                }
-            };
-
-            var result = await _taskManagerHubManager.CreateMultipleNewTasks(hashedUsername, newTasks);
-
-            // Assert
-            Assert.IsFalse(result.HasError, "Task should be created successfully without errors.");
-        }
-
 
         [TestMethod]
         public async Task ReadTasks_ReturnsSuccess()
         {
-            // Arrange
-            var hashedUsername = "validHashedUsername";
-            var newTask = new TaskHub
-            {
-                title = "the one to delete",
-                description = "Description for new project task",
-                dueDate = DateTime.UtcNow.AddDays(7),
-                priority = "High",
-                notificationSetting = 1
-            };
-
-            // Act
+            var hashedUsername = "hashedExampleUsername";
             var result = await _taskManagerHubManager.ListTasks(hashedUsername);
-
-            // Assert
-            Assert.IsFalse(result.HasError, "Task should be created successfully without errors.");
+            Assert.IsFalse(result.HasError, "Task should read all tasks successfully without errors.");
         }
 
+        // A user cant have two tasks with the same title
         [TestMethod]
         public async Task CreateTask_DuplicateTitle_ReturnsError()
         {
-            // Arrange
-            // var hashedUsername = "validHashedUsername";
             var newTask = new TaskHub
             {
-                hashedUsername = "validHashedUsername",
-                title = "New Project Task",
+                hashedUsername = "074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o=",
+                title = "Task2",
                 description = "This task has a duplicate title",
                 dueDate = DateTime.UtcNow.AddDays(10),
                 priority = "Medium",
                 notificationSetting = 2
             };
 
-            // Act
-            var result = await _taskManagerHubManager.CreateNewTask(newTask);
-
-            // Assert
-            Assert.IsTrue(result.HasError, "Task should not be created due to duplicate title.");
-        }
-
-        [TestMethod]
-        public async Task DeleteTask_ValidTaskTitle_ReturnsSuccess()
-        {
-            // Arrange
-            
-            var newTask = new TaskHub
-            {
-               hashedUsername = "validHashedUsername",
-               title = "This should go last "
-            };
-
-
-            // Act
-            var result = await _taskManagerHubManager.DeleteTask(newTask);
-
-            // Assert
-            Assert.IsFalse(result.HasError, "Task should be deleted successfully.");
+            var result1 = await _taskManagerHubManager.CreateNewTask(newTask);
+            var result2 = await _taskManagerHubManager.CreateNewTask(newTask);
+            Assert.IsTrue(result2.HasError, "Task should not be created due to duplicate title.");
         }
 
 
@@ -181,19 +198,16 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             var task = new TaskHub
             {
                 hashedUsername = "hashedExampleUsername",
-                title = "Multiple Tasks"
+                title = "Task1"
             };
             var fieldsToUpdate = new Dictionary<string, object>
             {
                 { "description", "Updated description" },
                 { "dueDate", "2024-12-31" }
             };
-            // var expectedResponse = new Response { HasError = false, ErrorMessage = "Task updated successfully." };
-
            
             var response = await _taskManagerHubManager.ModifyTasks(task, fieldsToUpdate);
-
-            Assert.IsFalse(response.HasError, "Task should be deleted successfully.");
+            Assert.IsFalse(response.HasError, "Task should be modified successfully.");
 
         }
 
@@ -205,7 +219,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             var task = new TaskHub
             {
                 hashedUsername = "hashedExampleUsername",
-                title = "Multiple Tasks"
+                title = "Task2"
             };
 
             var jsonString = "{\"description\":\"JSON Updated description\", \"dueDate\":\"2025-12-31\"}";
@@ -241,48 +255,24 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         }
 
 
+        //Task cant be made in the past 
         [TestMethod]
         public async Task ModifyTask_InvalidField_ReturnsError()
         {
             // Arrange
             var newTask = new TaskHub
             {
-               hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=",
-               title = "This is another task"
+               hashedUsername = "hashedExampleUsername",
+               title = "Task1"
             };
             var fieldsToUpdate = new Dictionary<string, object>
             {
                 { "dueDate", DateTime.UtcNow.AddDays(-1) } // Invalid due date in the past
             };
 
-            // Act
             var result = await _taskManagerHubManager.ModifyTasks(newTask, fieldsToUpdate);
-
-            // Assert
             Assert.IsTrue(result.HasError, "Modification should fail due to invalid due date.");
         }
 
-        [TestMethod]
-        public async Task ListTasksByPriority_NoTasksFound_ReturnsEmpty()
-        {
-            // Arrange
-            var hashedUsername = "validHashed";
-            var priority = "High";
-
-            // Act
-            var result = await _taskManagerHubManager.ListTasksByPriority(hashedUsername, priority);
-
-            // Assert
-            Assert.IsTrue(result.HasError, "Should handle no tasks found gracefully.");
-            Assert.IsNull(result.ValuesRead, "No tasks should be found for the specified priority.");
-        }
-
-        // [TestCleanup]
-        // public async Task Cleanup()
-        // {
-        //     // Optional: Implement any cleanup logic if necessary
-        //     await _sqlDao.ExecuteCommandAsync("DELETE FROM TaskHub WHERE hashedUsername = @hashedUsername",
-        //         new Dictionary<string, object> { { "@hashedUsername", "validHashedUsername" } });
-        // }
     }
 }

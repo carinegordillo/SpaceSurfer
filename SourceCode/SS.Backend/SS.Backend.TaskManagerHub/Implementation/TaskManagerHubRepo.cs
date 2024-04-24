@@ -111,8 +111,7 @@ namespace SS.Backend.TaskManagerHub
                 { "@title", task.title },
                 { "@description", task.description },
                 { "@dueDate", task.dueDate ?? (object)DBNull.Value }, // Use DBNull.Value for null dates
-                { "@priority", task.priority },
-                { "@notificationSetting", task.notificationSetting ?? (object)DBNull.Value } // Use DBNull.Value for null settings
+                { "@priority", task.priority }
             };
             
             var insertCommand = builder.BeginInsert("taskHub")
@@ -148,8 +147,7 @@ namespace SS.Backend.TaskManagerHub
                     { "title", task.title },
                     { "description", task.description },
                     { "dueDate", task.dueDate ?? (object)DBNull.Value },
-                    { "priority", task.priority },
-                    { "notificationSetting", task.notificationSetting ?? (object)DBNull.Value }
+                    { "priority", task.priority }
                 };
                 
                  var insertCommand = builder.BeginInsert("taskHub")
