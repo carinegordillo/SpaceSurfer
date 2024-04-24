@@ -453,6 +453,12 @@ button:hover {
     transition: background-color 0.3s ease;
 }
 
+.task-list-section h3 {
+    color: #333;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+
 .task-list-section button:hover {
     background-color: #0056b3; /* Darker blue */
 }
@@ -476,4 +482,25 @@ button:hover {
     padding: 10px;
     border-radius: 5px;
     margin-top: 10px;
+}
+.task-item.completed {
+    background-color: #e0e0e0; 
+    text-decoration: line-through; 
+}
+
+.task-header {
+    display: flex;
+    align-items: center;
+}
+
+.task-header strong {
+    margin-left: 8px;
+}
+
+input[type="checkbox"] {
+    margin-right: 10px;
+}
+.completed {
+    text-decoration: line-through;
+    color: grey;
 }
