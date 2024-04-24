@@ -9,7 +9,7 @@ document.getElementById('next-month').addEventListener('click', () => changeMont
 document.getElementById('calendar-button').addEventListener('click', calendarView);
 document.getElementById('list-button').addEventListener('click', listView);
 document.getElementById('confirm-button').addEventListener('click', confirmSelection);
-document.getElementById('space-form-container').addEventListener('click', getReservationOverview);
+// document.getElementById('space-form-container').addEventListener('click', getReservationOverview);
 document.getElementById('reservation-delete-button').addEventListener('click', fetchReservationDeletion);
 
 // Function to fetch user reservations from the API

@@ -46,8 +46,8 @@ function authenticateUser() {
                 data: accessToken,
                 success: function (response) {
                     if (response === "2" || response === "3") {
-                        document.getElementById("homepageManager").style.display = "block";
-                        document.getElementById("homepageGen").style.display = "none";
+                        // document.getElementById("homepageManager").style.display = "block";
+                        document.getElementById("homepageGen").style.display = "block";
                         sessionStorage.setItem('userIdentity', userIdentity);
                         document.getElementById("identity").style.display = "block";
                         document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
