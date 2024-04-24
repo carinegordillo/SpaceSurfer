@@ -106,24 +106,53 @@ function displayTasks(tasks) {
     taskListElement.innerHTML = ''; 
     const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
 
-    tasks.forEach(task => {
-        const taskItem = document.createElement('div');
-        taskItem.classList.add('task-item');
+    const taskListActive = document.getElementById('taskListActive');
+    const taskListCompleted = document.getElementById('taskListCompleted');
 
+    taskListActive.innerHTML = '';
+    taskListCompleted.innerHTML = '';
+
+    tasks.forEach(task => {
+        const taskItem = document.createElement('li');
+        taskItem.classList.add('task-item');
         let priorityColor = getPriorityColor(task.priority);
 
+        // Check if the task is completed
+        let completedTasks = JSON.parse(localStorage.getItem('completedTasks') || '{}');
+        let isChecked = completedTasks[task.title] ? 'checked' : '';
+
         taskItem.innerHTML = `
-            <div><strong>Title:</strong> ${task.title}</div>
+            <div class="task-header">
+                <input type="checkbox" ${isChecked} onchange="toggleTaskCompletion('${task.title}', this.checked)">
+                <strong>Title:</strong> ${task.title}
+            </div>
             <div><strong>Description:</strong> ${task.description}</div>
             <div><strong>Due Date:</strong> ${new Date(task.dueDate).toLocaleDateString()}</div>
             <div><strong>Priority:</strong> <span style="color: ${priorityColor};">${task.priority}</span></div>
             <button onclick="showModifyForm('${task.title}', '${task.description}', '${task.dueDate}', '${task.priority}', '${userName}')">Modify</button>
             <button onclick="deleteTask('${task.title}', '${userName}')">Delete</button>
         `;
-        taskListElement.appendChild(taskItem);
+
+        if (completedTasks[task.title]) {
+            taskItem.classList.add('completed');
+            taskListCompleted.appendChild(taskItem);
+        } else {
+            taskListActive.appendChild(taskItem);
+        }
     });
 }
-{/* <div><strong>Notification Setting:</strong> ${task.notificationSetting}</div> */}
+
+function toggleTaskCompletion(taskTitle, completed) {
+    let completedTasks = JSON.parse(localStorage.getItem('completedTasks') || '{}');
+    if (completed) {
+        completedTasks[taskTitle] = true;
+    } else {
+        delete completedTasks[taskTitle];
+    }
+    localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
+    displayTasks(allTasks); // Assuming you have a way to retrieve all tasks, like a global variable or function
+}
+
 
 function getPriorityColor(priority) {
     switch (priority) {
@@ -259,77 +288,78 @@ function deleteTask(taskTitle, userName) {
 
 function showModifyForm(title, description, dueDate, priority, userName) {
     console.log("Showing modify form for: " + title);
-    document.getElementById('modTitle').textContent = title; // Set the title in the span
-    document.getElementById('modDescription').value = description;
-    document.getElementById('modDueDate').value = dueDate.split('T')[0]; // Assuming dueDate is in ISO format
-    document.getElementById('modPriority').value = priority;
-    // document.getElementById('modNotificationSetting').value = notificationSetting;
+    const modifyForm = document.getElementById('modifyTaskForm'); 
+    const formContainer = document.getElementById('modifyTaskFormContainer');
 
-    // Show the modify form
-    document.getElementById('modifyTaskFormContainer').style.display = 'block';
-    document.getElementById('modifyTaskForm').addEventListener('submit', function(event) {
+    const newForm = modifyForm.cloneNode(true);
+    modifyForm.parentNode.replaceChild(newForm, modifyForm);
+    
+    document.getElementById('modTitle').textContent = title;
+    document.getElementById('modDescription').value = description;
+    document.getElementById('modDueDate').value = dueDate.split('T')[0];
+    document.getElementById('modPriority').value = priority;
+
+    formContainer.style.display = 'block';
+
+    // Add an event listener to the new form
+    newForm.addEventListener('submit', function(event) {
         event.preventDefault();
+
         const updatedDescription = document.getElementById('modDescription').value.trim();
         const updatedDueDate = new Date(document.getElementById('modDueDate').value);
         const updatedPriority = document.getElementById('modPriority').value;
 
-        // Perform front-end validation before sending the request
+        // Validation before sending the request
         if (!updatedDescription || updatedDueDate < new Date() || !['High', 'Medium', 'Low'].includes(updatedPriority)) {
             showModal('Please ensure all fields are correctly filled and valid.');
             return;
         }
-        modifyTask(title, userName);
-        document.getElementById('modifyTaskFormContainer').style.display = 'none';
+
+        // Call the modifyTask function with updated fields
+        modifyTask(title, userName, {
+            description: updatedDescription,
+            dueDate: updatedDueDate,
+            priority: updatedPriority
+        });
+
+        formContainer.style.display = 'none';
     });
 }
 
-function modifyTask(originalTitle, userName) {
+function modifyTask(originalTitle, userName, updatedFields) {
     const accessToken = sessionStorage.getItem('accessToken');
     if (!accessToken) {
         console.error('Token expired or invalid');
         logout();
         return;
     }
-    const task = {
-        description: document.getElementById('modDescription').value,
-        dueDate: document.getElementById('modDueDate').value,
-        priority: document.getElementById('modPriority').value,
-        // notificationSetting: parseInt(document.getElementById('modNotificationSetting').value, 10)
-    };
 
-    const fieldsToUpdateJson = JSON.stringify(task);
     const modifyRequest = {
         UserName: userName,
         TaskTitle: originalTitle,
-        FieldsToUpdateJson: fieldsToUpdateJson
+        FieldsToUpdateJson: JSON.stringify(updatedFields)
     };
 
     fetch('http://localhost:8089/api/v1/taskManagerHub/ModifyTask', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+            'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify(modifyRequest)
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to modify task');
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
         console.log('Task modified successfully', data);
-        // alert('Task modified successfully!');
         showModal('Task modified successfully!');
-        fetchAndDisplayTasks(); // Refresh task list
+        fetchAndDisplayTasks(); // Assuming this is a function that refreshes the task list
     })
     .catch(error => {
         console.error('Failed to modify task', error);
         showModal('Failed to modify task: ' + error.message);
-        // alert('Failed to modify task: ' + error.message);
     });
 }
+
 function showModal(message) {
     var modal = document.getElementById('modal');
     var modalMessage = document.getElementById('modal-message');
