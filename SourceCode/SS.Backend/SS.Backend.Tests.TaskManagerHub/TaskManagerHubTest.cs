@@ -15,10 +15,10 @@ namespace SS.Backend.Tests.TaskManagerHubTests
     public class TaskManagerHubManagerTests
     {
         private TaskManagerHubManager _taskManagerHubManager;
-       private ConfigService _configService;
-       private TaskManagerHubService  _taskManagerHubService;
+        private ConfigService _configService;
+        private TaskManagerHubService  _taskManagerHubService;
 
-       private TaskManagerHubRepo _taskManagerHubRepo;
+        private TaskManagerHubRepo _taskManagerHubRepo;
         private SqlDAO _sqlDao;
 
         [TestInitialize]
@@ -42,11 +42,11 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             // var hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=";
             var newTask = new TaskHub
             {
-                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=",
-                title = "This is another task",
-                description = "Description for new project task",
-                dueDate = DateTime.UtcNow.AddDays(7),
-                priority = "High",
+                hashedUsername = "bMD1R8mgG/GZTzRiEFbV4kV3gHizGh1kqWPypTdtU98=",
+                title = "please email",
+                description = "this should sen me an email",
+                dueDate = DateTime.UtcNow.AddDays(1),
+                priority = "Medium",
                 notificationSetting = 1
             };
 
@@ -57,6 +57,27 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             Assert.IsFalse(result.HasError, "Task should be created successfully without errors.");
         }
 
+        [TestMethod]
+        public async Task Viewtasks_ValidData_ReturnsSuccess()
+        {
+            // Arrange
+            // var hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=";
+            var newTask = new TaskHub
+            {
+                hashedUsername = "validHashedUsername",
+                title = "This should be middle",
+                description = "Description for new project task",
+                dueDate = DateTime.UtcNow.AddDays(1),
+                priority = "High",
+                notificationSetting = 1
+            };
+
+            // Act
+            var result = await _taskManagerHubService.ScoreTasks("validHashedUsername");
+
+            // Assert
+            Assert.IsFalse(result.HasError, "Task should be created successfully without errors.");
+        }
 
         [TestMethod]
         public async Task CreateMultipleTasks_ValidData_ReturnsSuccess()
@@ -140,8 +161,8 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             
             var newTask = new TaskHub
             {
-               hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=",
-               title = "This is another task"
+               hashedUsername = "validHashedUsername",
+               title = "This should go last "
             };
 
 
@@ -201,7 +222,9 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             switch (element.ValueKind)
             {
                 case JsonValueKind.String:
+#pragma warning disable CS8603 // Possible null reference return.
                     return element.GetString();
+#pragma warning restore CS8603 // Possible null reference return.
                 case JsonValueKind.Number:
                     return element.TryGetInt64(out long l) ? l : (object)element.GetDouble();
                 case JsonValueKind.True:
@@ -209,7 +232,9 @@ namespace SS.Backend.Tests.TaskManagerHubTests
                     return element.GetBoolean();
                 case JsonValueKind.Undefined:
                 case JsonValueKind.Null:
+#pragma warning disable CS8603 // Possible null reference return.
                     return null;
+#pragma warning restore CS8603 // Possible null reference return.
                 default:
                     throw new InvalidOperationException("Unsupported JsonValueKind: " + element.ValueKind);
             }

@@ -165,3 +165,12 @@ function deleteTask(taskTitle, userName) {
 //     alert('Session expired. Please login again.');
 //     window.location.href = 'login.html'; // Adjust to your login page URL
 // }
+
+function logout() {
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('idToken');
+    document.getElementById("homepageGen").style.display = "none";
+    document.getElementById("homepageManager").style.display = "none";
+    document.getElementById("sendOTPSection").style.display = "block";
+    document.getElementById("taskManagerView").style.display = "none";
+}

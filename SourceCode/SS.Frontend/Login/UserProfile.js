@@ -76,6 +76,7 @@ function toggleEdit() {
 }
 
 function logout() {
+    console.log('USERPROFILE LOGOUT')
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('idToken');
     document.getElementById("homepageGen").style.display = "none";
