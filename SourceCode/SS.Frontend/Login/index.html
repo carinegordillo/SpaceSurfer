@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8081 http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8089 http://localhost:5279; img-src 'self' data:;">
+=======
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8081 http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275 http://localhost:8089 http://localhost:5279 http://localhost:5048; img-src 'self' data:;">
+>>>>>>> main
     <!-- <link rel="stylesheet" href="spaceBookingCenter.css"> -->
     <link rel="stylesheet" href="style.css">
     <!-- <link rel="stylesheet" href="PersonalOverviewStyle.css">
     <link rel="stylesheet" href="/Waitlist/style.css"> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
+    <script src="script.js"></script>
 
 </head>
 
@@ -68,9 +72,72 @@
         <button type="button" onclick="logout()">Logout</button>
     </section>
 
+<<<<<<< HEAD
+=======
+    <section id="userProfileView" class="homepage-container" style="display: none;">
+        <div class="userProfileContainer">
+            <div class="profile">
+                <div id="leftPanel" class="left-panel">
+                </div>
+                <div class="right-panel">
+                    <button class="edit-button" onclick="toggleEdit()">Edit Profile</button>
+                    <div id="accountDetails" class="account-details">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="personalOverviewCenter" class="homepage-container" style="display: none;">
+        <h2>Welcome to SpaceSurfers!</h2>
+        <div id="calendar-container">
+            <h3 id="POC">Personal Overview Center</h3>
+            <div id="calendar-header">
+                <button id="calendar-button">Calendar</button>
+                <button id="list-button">List</button>
+            </div>
+            <div id="date-filter">
+                <label for="from-date">From:</label>
+                <input type="date" id="from-date">
+                <label for="to-date">To:</label>
+                <input type="date" id="to-date">
+            </div>
+            <button id="confirm-button">Confirm Selection</button>
+
+            <div id="calendar">
+                <div id="month-info-container">
+                    <div id="prev-month">&lt;</div>
+                    <div id="month-year"></div>
+                    <div id="next-month">&gt;</div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sun</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div style=" border: groove; border-radius: 100px;" id="reservation-list">
+            </div>
+        </div>
+        <div>
+            <button id="delete-button">Delete Reservation</button>
+            <div class="space-form-container" id="space-form-container" style="height: 200px;"></div>
+        </div>
+
+    </section>
+
+>>>>>>> main
     <section id="spaceBookingView" class="homepage-container" style="display: none;">
         <button id="initAppButton">Initialize spaceBookingCenter</button>
-        <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
         <div id="accessTokenContainer"></div>
         <div class="space-booking-center-container">
             <div class="sidebar"></div>
@@ -218,9 +285,19 @@
 
     
 
-    <!--Manager Homepage-->
+    
+
+
+
+
+
+
+    
+
     <section id="homepageManager" class="homepage-container" style="display: none;">
-        <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
+        <h2>Welcome to SpaceSurfers!</h2>
+        <button type="button" onclick="window.location.href='../SpaceManager/index.html'">Space Manager</button>
+        <button type="button" onclick="displayReservations()">Confirmations</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
         <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
@@ -281,6 +358,8 @@
 
     </section>
 
+    <div id="reservation-details"></div>
+
     <footer>
         <p>Designed and Developed by the PixelPals Team</p>
     </footer>
@@ -324,8 +403,5 @@
     <script src="spaceBookingCenter.js"></script>
     <!--<script src="../SpaceManager/pages/SpaceManager.js"></script>-->
     
-
 </body>
-
 </html>
-

@@ -47,16 +47,5 @@ namespace SS.Backend.ReservationManagement{
             }
             return response;
         }
-
-        public async Task<Response> GetReservationByID(string tableName, int reservationID){
-            Response response = new Response();
-
-            response = await _reservationManagementRepository.ReadReservationsTable("reservationID", reservationID, tableName);
-
-            if (response.HasError == true){
-                response.ErrorMessage += $"- GetReservationByID - command : not successful - ";
-            }
-            return response;
-        }
     }
 }
