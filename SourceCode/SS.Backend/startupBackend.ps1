@@ -1,3 +1,7 @@
+# Run using the command below:
+
+#   powershell -ExecutionPolicy Bypass -File .\startupBackend.ps1
+
 # Array of relative paths to your WebAPI directories
 $apiDirectories = @(
     "LoginAPI",
