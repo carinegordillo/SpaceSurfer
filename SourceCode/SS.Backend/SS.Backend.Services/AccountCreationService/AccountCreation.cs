@@ -224,7 +224,6 @@ namespace SS.Backend.Services.AccountCreationService
             {
                 {"hashedUsername", validPepper.hashedUsername},
                 {"username", userInfo.username},
-                {"user_id", 1}
             };
 
 

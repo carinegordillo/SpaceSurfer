@@ -9,8 +9,7 @@ document.getElementById('next-month').addEventListener('click', () => changeMont
 document.getElementById('calendar-button').addEventListener('click', calendarView);
 document.getElementById('list-button').addEventListener('click', listView);
 document.getElementById('confirm-button').addEventListener('click', confirmSelection);
-// document.getElementById('space-form-container').addEventListener('click', getReservationOverview);
-document.getElementById('reservation-delete-button').addEventListener('click', fetchReservationDeletion);
+document.getElementById('space-form-container').addEventListener('click', getReservationOverview);
 
 // Function to fetch user reservations from the API
 async function fetchUserReservations(fromDateValue, toDateValue) {
@@ -79,7 +78,7 @@ async function fetchReservationDeletion() {
         return;
     }
 
-    const url = `http://localhost:5275/api/v1/PersonalOverview/ReservationDeletion?ReservationID=${reservationIDValue}`;
+    const url = `http://localhost:5275/api/v1/PersonalOverview/ReservationDeletion?=${reservationIDValue}`;
 
     try {
         const response = await fetch(url, {
@@ -104,12 +103,13 @@ async function fetchReservationDeletion() {
 }
 
 
-// Function to apply date filter and fetch reservations
+    // Function to apply date filter and fetch reservations
 async function applyDateFilter() {
     var fromDateValue = document.getElementById('from-date').value;
     var toDateValue = document.getElementById('to-date').value;
 
-    try {
+    try 
+    {
         reservations = await fetchUserReservations(fromDateValue, toDateValue);
 
     } catch (error) {
@@ -119,8 +119,9 @@ async function applyDateFilter() {
 }
 
 // Function to handle user selection and trigger reservation fetching
-async function confirmSelection() {
-    // Handle user selection
+async function confirmSelection()
+{
+// Handle user selection
     await applyDateFilter();
 
     if (currentView === 'list') {
@@ -132,7 +133,7 @@ async function confirmSelection() {
         createCalendar(currentDate.getFullYear(), currentDate.getMonth());
         document.getElementById('reservation-list').style.display = 'none';
         document.getElementById('calendar').style.display = 'block';
-    }
+}
 }
 
 
@@ -162,54 +163,51 @@ function displayReservationList() {
         container.appendChild(listItem);
         addReservation(reservation, listItem)
 
-    });
+});
+
 }
 
-function addReservation(reservation, div) {
-    // Get the template element
-    const template = document.getElementById("reservation-detail-template");
+function addReservation(reservation, div)
+{
+    const template = document.querySelector("#reservation-details");
 
-    // Clone the template's content
-    const reservationItem = template.content.cloneNode(true);
+    var reservationItem = template.content.cloneNode(true);
 
-    // Access elements inside the clone
-    const reservationIDLabel = reservationItem.querySelector("#labelReservationID");
-    reservationIDLabel.textContent = reservation.reservationID;
+    var reservationIDLabel = reservationItem.querySelector("#labelReservationID");
+    reservationIDLabel.innerHTML = reservation.reservationID;
 
-    const companyLabel = reservationItem.querySelector("#labelCompany");
-    companyLabel.textContent = reservation.companyName;
+    var companyLabel = reservationItem.querySelector("#labelCompany");
+    companyLabel.innerHTML = reservation.companyName;
 
-    const companyIDLabel = reservationItem.querySelector("#labelCompanyID");
-    companyIDLabel.textContent = reservation.companyID;
+    var companyIDLabel = reservationItem.querySelector("#labelCompanyID");
+    companyIDLabel.innerHTML = reservation.companyID;
 
-    const addressLabel = reservationItem.querySelector("#labelAddress");
-    addressLabel.textContent = reservation.address;
+    var addressLabel = reservationItem.querySelector("#labelAddress");
+    addressLabel.innerHTML = reservation.address;
 
-    const FloorPlanIDLabel = reservationItem.querySelector("#labelFloorPlanID");
-    FloorPlanIDLabel.textContent = reservation.floorPlanID;
+    var FloorPlanIDLabel = reservationItem.querySelector("#labelFloorPlanID");
+    FloorPlanIDLabel.innerHTML = reservation.floorPlanID;
 
-    const SpaceIDLabel = reservationItem.querySelector("#labelSpaceID");
-    SpaceIDLabel.textContent = reservation.spaceID;
+    var SpaceIDLabel = reservationItem.querySelector("#labelSpaceID");
+    SpaceIDLabel.innerHTML = reservation.spaceID;
 
-    const ReservationDateLabel = reservationItem.querySelector("#labelReservationDate");
-    ReservationDateLabel.textContent = reservation.reservationDate;
+    var ReservationDateLabel = reservationItem.querySelector("#labelReservationDate");
+    ReservationDateLabel.innerHTML = reservation.reservationDate;
 
     const startTimeFormatted = convertTo12HourFormat(reservation.reservationStartTime);
     const endTimeFormatted = convertTo12HourFormat(reservation.reservationEndTime);
 
-    const ReservationStartTimeLabel = reservationItem.querySelector("#labelReservationTimeStart");
-    ReservationStartTimeLabel.textContent = startTimeFormatted;
+    var ReservationStartTimeLabel = reservationItem.querySelector("#labelReservationTimeStart");
+    ReservationStartTimeLabel.innerHTML = startTimeFormatted;
 
-    const ReservationEndTimeLabel = reservationItem.querySelector("#labelReservationTimeEnd");
-    ReservationEndTimeLabel.textContent = endTimeFormatted;
+    var ReservationEndTimeLabel = reservationItem.querySelector("#labelReservationTimeEnd");
+    ReservationEndTimeLabel.innerHTML = endTimeFormatted;
 
-    const StatusLabel = reservationItem.querySelector("#labelStatus");
-    StatusLabel.textContent = reservation.status;
+    var StatusLabel = reservationItem.querySelector("#labelStatus");
+    StatusLabel.innerHTML = reservation.status;
 
-    // Append the cloned content to the specified div
     div.appendChild(reservationItem);
 }
-
 
 function changeMonth(offset) {
     currentDate.setMonth(currentDate.getMonth() + offset);
@@ -329,86 +327,86 @@ function reservationDateFromString(dateString) {
 
 // Function to check if two dates are the same day
 function isSameDay(date1, date2) {
-    return (
-        date1.getFullYear() === date2.getFullYear() &&
-        date1.getMonth() === date2.getMonth() &&
-        date1.getDate() === date2.getDate()
-    );
+return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+);
 }
 
 
-//function createDeleteReservationForm() {
-//    const form = document.createElement('form');
-//    form.id = 'deleteReservationForm';
-//    form.innerHTML = `
-//        <div class="form-group">
-//            <label for="reservationIDToDelete">Reservation ID:</label>
-//            <input type="number" id="reservationIDToDelete" required>
-//        </div>
-//        <input type="submit" value="Delete Reservation">
-//    `;
-//    form.addEventListener('submit', handleDeleteReservationFormSubmit);
-//    return form;
-//}
+function createDeleteReservationForm() {
+    const form = document.createElement('form');
+    form.id = 'deleteReservationForm';
+    form.innerHTML = `
+        <div class="form-group">
+            <label for="reservationIDToDelete">Reservation ID:</label>
+            <input type="number" id="reservationIDToDelete" required>
+        </div>
+        <input type="submit" value="Delete Reservation">
+    `;
+    form.addEventListener('submit', handleDeleteReservationFormSubmit);
+    return form;
+}
 
 
-//async function handleDeleteReservationFormSubmit(event) {
-//    event.preventDefault();
+async function handleDeleteReservationFormSubmit(event) {
+    event.preventDefault();
 
-//    const reservationID = document.getElementById('reservation-id').value;
-//    var accessToken = sessionStorage.getItem('accessToken');
+    const reservationID = document.getElementById('reservation-id').value;
+    var accessToken = sessionStorage.getItem('accessToken');
 
-//    const isTokenValid = await checkTokenExpiration(accessToken);
-//    if (!isTokenValid) {
-//        logout();
-//        return;
-//    }
+    const isTokenValid = await checkTokenExpiration(accessToken);
+    if (!isTokenValid) {
+        logout();
+        return;
+    }
 
-//    var idToken = sessionStorage.getItem('idToken');
+    var idToken = sessionStorage.getItem('idToken');
 
-//    var parsedIdToken = JSON.parse(idToken);
-//    var userHash = parsedIdToken.Username;
-
-
-//    try {
-//        const response = await fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/DeleteReservation`, {
-//            method: 'POST',
-//            headers: {
-//                'Authorization': `Bearer ${accessToken}`,
-//                'Content-Type': 'application/json',
-//            },
-//            body: JSON.stringify({ userHash, reservationID: parseInt(reservationID, 10) }),
-//        });
-
-//        if (!response.ok) {
-//            throw new Error(`HTTP error! status: ${response.status}`);
-//        }
-
-//        const responseData = await response.json();
-//        if (responseData.newToken) {
-//            accessToken = data.newToken;
-//            sessionStorage.setItem('accessToken', accessToken);
-//            console.log('New access token stored:', accessToken);
-//        }
-//        if (responseData.hasError) {
-//            console.error(`Reservation deletion error: ${responseData.errorMessage}`);
-//            onError(`Reservation deletion error: ${responseData.errorMessage}`);
-//        } else {
-//            console.log('Reservation deleted successfully');
-//            onSuccess('Reservation deleted successfully!');
-
-//        }
-//    } catch (error) {
-//        console.error('Error deleting reservation:', error);
-//        onError(`Error deleting reservation: ${error}`);
-//    }
-//}
+    var parsedIdToken = JSON.parse(idToken);
+    var userHash = parsedIdToken.Username;
 
 
-//function getReservationOverview() {
-//    const deleteFormContainer = document.querySelector('.space-form-container');
-//    if (deleteFormContainer) {
-//        const deleteReservationForm = createDeleteReservationForm();
-//        deleteFormContainer.appendChild(deleteReservationForm);
-//    }
-//}
+    try {
+        const response = await fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/DeleteReservation`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userHash, reservationID: parseInt(reservationID, 10) }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        if (responseData.newToken) {
+            accessToken = data.newToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            console.log('New access token stored:', accessToken);
+        }
+        if (responseData.hasError) {
+            console.error(`Reservation deletion error: ${responseData.errorMessage}`);
+            onError(`Reservation deletion error: ${responseData.errorMessage}`);
+        } else {
+            console.log('Reservation deleted successfully');
+            onSuccess('Reservation deleted successfully!');
+
+        }
+    } catch (error) {
+        console.error('Error deleting reservation:', error);
+        onError(`Error deleting reservation: ${error}`);
+    }
+}
+
+
+function getReservationOverview() {
+    const deleteFormContainer = document.querySelector('.space-form-container');
+    if (deleteFormContainer) {
+        const deleteReservationForm = createDeleteReservationForm();
+        deleteFormContainer.appendChild(deleteReservationForm);
+    }
+}

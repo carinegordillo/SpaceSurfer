@@ -76,7 +76,7 @@ namespace PersonalOverviewAPI.Controllers
         }
 
         [HttpPost("ReservationDeletion")]
-        public async Task<IActionResult> DeleteReservations([FromQuery(Name = "ReservationID")] int reservationID)
+        public async Task<IActionResult> DeleteReservations([FromQuery] int reservationID)
         {
 
             string? accessToken = HttpContext.Request.Headers["Authorization"];
