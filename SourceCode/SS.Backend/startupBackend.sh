@@ -23,9 +23,6 @@ pid5=$!
 dotnet run --project ../SS.Backend/PersonalOverview/PersonalOverviewAPI.csproj &
 pid6=$!
 
-# Start userProfileAPI
-dotnet run --project ../SS.Backend/userProfileAPI/userProfileAPI.csproj &
-pid7=$!
 
 
 dotnet run --project ../SS.Backend/TaskManagerHubAPI/TaskManagerHubAPI.csproj &

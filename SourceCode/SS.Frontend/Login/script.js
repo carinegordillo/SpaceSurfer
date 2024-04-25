@@ -90,20 +90,6 @@ function logout() {
     document.getElementById("taskManagerView").style.display = "none";
 }
 
-function getUserProfile(){
-
-    console.log("get userprofile clicked  clicked");
-    document.getElementById('userProfileView').style.display = 'block';
-
-    document.getElementById('homepageGen').style.display = 'none';
-    document.getElementById('homepageManager').style.display = 'none';
-    document.getElementById('sendOTPSection').style.display = 'none';
-    document.getElementById('enterOTPSection').style.display = 'none';
-    document.getElementById('successResult').style.display = 'none';
-    document.getElementById('failResult').style.display = 'none';
-
-}
-
 function spaceBookingCenterAccess() {
     document.getElementById('spaceBookingView').style.display = 'block';
 
