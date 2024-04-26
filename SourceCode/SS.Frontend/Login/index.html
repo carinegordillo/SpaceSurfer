@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8081 http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275 http://localhost:8089 http://localhost:5279 http://localhost:5048; img-src 'self' data:;">
-    <!-- <link rel="stylesheet" href="spaceBookingCenter.css"> -->
+     <link rel="stylesheet" href="spaceBookingCenter.css"> 
     <link rel="stylesheet" href="style.css">
      <link rel="stylesheet" href="PersonalOverviewStyle.css">
     <!--<link rel="stylesheet" href="/Waitlist/style.css"> -->
->>>>>>> parent of 48dc8bd (Merge branch 'main' into Sarah-S)
     <script src="UserProfile.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -17,18 +16,23 @@
 
 <body>
     <header>
-        <div class="header-content">
-            <div>
-                <img src="images/sslogo.png" alt="Logo" class="header-logo flipped-image">
-            </div>
-            <div>
-                <img src="images/ssname.png" alt="Title" class="header-title">
-            </div>
-        </div>
+        
         <nav>
-            <div class="nav-item" id="navAbout" onclick="window.location.href='../UnAuthnAbout/about.html'">About</div>
-            <div class="nav-item" id="navRegister" onclick="window.location.href='../Registration/index.html'">Register</div>
-            <div class="nav-item" id="navLogin" onclick="window.location.href='../Login/index.html'">Login</div>
+            <div class="header-content">
+                <div>
+                    <img src="images/sslogo.png" alt="Logo" class="header-logo flipped-image">
+                </div>
+                <div>
+                    <img src="images/ssname.png" alt="Title" class="header-title">
+                </div>
+            </div>
+            <div class="nav-items">
+                <div class="nav-item" id="identity" style="display: none;" >Logged in as: </div>
+                <div class="nav-item" id="navAbout" onclick="window.location.href='../UnAuthnAbout/about.html'">About</div>
+                <div class="nav-item" id="navRegister" onclick="window.location.href='../Registration/index.html'">Register</div>
+                <!-- <div class="nav-item" id="navRegister" onclick="window.location.href='../EmployeeAccountSetup/index.html'">Employee Account Setup</div>     -->
+                <div class="nav-item" id="navLogin" onclick="window.location.href='../Login/index.html'">Login</div>
+            </div>
         </nav>
     </header>
 
@@ -56,13 +60,13 @@
     <section id="failResult" class="form-container" style="display: none;">
         <label style="color: #e33434; font-size: 18px;">Incorrect verification code. Please double-check and try again.</label>
     </section>
-
+    <!--General Homepage-->
     <section id="homepageGen" class="homepage-container" style="display: none;">
         <button class="initProfileButton" type="button" onclick="getUserProfile()">Profile</button>
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
-        <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
+        <button type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</button>
         <button type="button" onclick="logout()">Logout</button>
     </section>
 
@@ -132,8 +136,15 @@
 
     </section>
 
+    <div id="modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <!-- <h2>Message</h2> -->
+            <p id="modal-message">Your message goes here.</p>
+        </div>
+    </div>
+
     <section id="spaceBookingView" class="homepage-container" style="display: none;">
->>>>>>> parent of 48dc8bd (Merge branch 'main' into Sarah-S)
         <button id="initAppButton">Initialize spaceBookingCenter</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
         <div id="accessTokenContainer"></div>
@@ -179,7 +190,21 @@
         </div>
     </section>
 
-    <!--Task Manager View-->>
+    <!--Confirmation View-->
+    <section id="confirmationView" class="homepage-container" style="display: none;">
+        <div class="reservations-container content-container">
+            <h2>Confirmed Reservations</h2>
+            <ul id="reservations-list">
+            </ul>
+        </div>
+        <div class="reservation-details-container content-container">
+            <h2>Reservation Details</h2>
+            <div id="reservation-details">
+            </div>
+        </div>
+    </section>
+
+    <!--Task Manager View-->
     <section id="taskManagerView" class="homepage-container" style="display: none;">
         <div id="registerView" class="task-container">
             <div id="accountCreationForm" class="flex-container">
@@ -188,8 +213,26 @@
                 <div class="task-list-section">
                     <h2>Task Manager Hub🤙</h2>
                     <button id="viewTasksBtn" type="button">View Tasks</button>
+                    <button id="ScoreTasks" type="button">View Tasks By Priority</button>
+                    <select id="priorityFilter">
+                        <option value="all">All Priorities</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                    <button id="filterTasksBtn" type="button">Filter Tasks</button>
                     <ul id="taskList"></ul>
+                    <div id="activeTasks" class="task-list-section">
+                        <h4>Active Tasks</h4>
+                        <ul id="taskListActive"></ul>
+                    </div>
+                    <div id="completedTasks" class="task-list-section">
+                        <h4>Completed Tasks</h4>
+                        <ul id="taskListCompleted"></ul>
+                    </div>
                 </div>
+                
+                
     
                 <!-- Task Creation Form -->
                 <div class="task-form-section">
@@ -197,7 +240,7 @@
                     <form id="createTaskForm">
                         <div>
                             <label for="taskTitle">Task:</label>
-                            <input type="text" id="taskTitle" name="title" required>
+                            <input type="text" id="taskTitle" name="title" required data-testid="task-title-input">
                         </div>
                         <div>
                             <label for="taskDescription">Description:</label>
@@ -215,11 +258,11 @@
                                 <option value="Low">Low</option>
                             </select>
                         </div>
-                        <div>
+                        <!-- <div>
                             <label for="taskNotificationSetting">Notification Setting:</label>
                             <input type="number" id="taskNotificationSetting" name="notificationSetting" required>
-                        </div>
-                        <button type="submit" id="createTaskBtn">Create Task</button>
+                        </div> -->
+                        <button type="submit" id="createTaskBtn" data-testid="submit-task-button">Create Task</button>
                     </form>
 
                     <div id="modifyTaskFormContainer" style="display: none;">
@@ -244,10 +287,10 @@
                                     <option value="Low">Low</option>
                                 </select>
                             </div>
-                            <div>
+                            <!-- <div>
                                 <label for="modNotificationSetting">Notification Setting:</label>
                                 <input type="number" id="modNotificationSetting" required>
-                            </div>
+                            </div> -->
                             <button type="submit">Submit Changes</button>
                         </form>
                     </div>
@@ -269,7 +312,63 @@
     <section id="homepageManager" class="homepage-container" style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
+        <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
+        <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
         <button type="button" onclick="logout()">Logout</button>
+
+        <!--<div class="uplaodSection">-->
+        <!-- Space Manager -->
+        <!--<button class="accordion">Upload Space</button>
+        <div class="form-container" style="display:none;">
+            <form id="spaceCreationForm">
+                <div class="spaceRow">
+                    <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
+                    <small>Max file size: 5MB</small>
+                    <input type="text" id="floorPlanName" name="floorPlanName" placeholder="Floor Plan Name" required><br />
+                    <input type="hidden" id="imageBase64" name="imageBase64">
+                </div>
+                <div id="imagePreviewContainer"></div><br>
+                <button type="button" id="addSpace">Add Space ID</button><br />
+                <div id="spacesContainer">
+                    <div class="spaceRow">
+                        <input type="text" class="spaceID" name="spaceID[]" placeholder="Space ID">
+                        <input type="text" class="timeLimit" name="timeLimit[]" placeholder="Time Limit">
+                    </div>
+                </div>
+
+                <button id="postSpace" type="submit">Create Space</button>
+                <button id="loadRequestsButton" type="button">Load Requests</button>
+                <ul id="recoveryRequestsList"></ul>
+            </form>
+        </div>
+    </div>-->
+        <!--<div class="modifySection">
+        <button class="accordion">Modify Space</button>
+        <div class="form-container" style="display:none;">
+            <form id="modifySpaceForm">
+                <h3>Warning: CANNOT Modify Space if an existing Reservation Associated Exists</h3>
+                <div class="spaceRowModify">
+                    <input type="text" id="modifyFloorPlanName" name="floorPlanName" placeholder="Floor Plan Name"><br />
+                    <input type="file" id="replaceImage" name="replaceImage" accept="image/*">
+                    <button id="modifyImage" type="button" class="btn btn-modify">Replace Floor Plan Image - Max file size: 5MB</button>
+                    <input type="hidden" id="modifyImageBase64" name="modifyImageBase64">
+                    <button id="deleteFloor" type="button" class="btn btn-danger">Delete Floor</button>
+                </div>
+                <div id="modifyImagePreviewContainer"></div><br>
+                <button type="button" id="addSpaceModify" class="btn btn-add-space">Add Space ID</button><br />
+                <div id="spacesModificationContainer">
+                    <div class="spaceRowModify">
+                        <input type="text" class="modifySpaceID" name="spaceID[]" placeholder="Space ID">
+                        <input type="text" class="modifyTimeLimit" name="modifytimeLimit[]" placeholder="Modify Time Limit">
+                        <button id="deleteSpace" type="button" class="btn btn-danger">Delete Space</button>
+                    </div>
+                </div>
+
+                <button id="modifyTimeLimits" type="submit" class="btn btn-modify">Modify Time Limits</button>
+            </form>
+        </div>
+    </div>-->
+
     </section>
 
     <footer>
@@ -309,9 +408,9 @@
     </template>
 
     <script src="script.js"></script>
+    <script src="confirmedReservations.js"></script>
     <script src="taskManagerHubView.js"></script>
     <script src="waitlistScript.js"></script>
-    <script src="confirmedReservations.js"></script>
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
     <!--<script src="../SpaceManager/pages/SpaceManager.js"></script>-->
@@ -320,4 +419,3 @@
 </body>
 
 </html>
-

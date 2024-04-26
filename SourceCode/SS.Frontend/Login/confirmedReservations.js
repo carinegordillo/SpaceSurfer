@@ -271,16 +271,15 @@ async function listConfirmations() {
 
         data.forEach(reservation => {
             const div = document.createElement('div');
-            div.className = 'reservation-entry';
+            div.className = 'reservation-entry'; // This class should have corresponding styles in style.css
             div.innerHTML = `
                 <h3>Reservation ID: ${reservation.reservationID}</h3>
                 <p>Start Time: ${new Date(reservation.reservationStartTime).toLocaleString()}</p>
                 <p>End Time: ${new Date(reservation.reservationEndTime).toLocaleString()}</p>
-                <button onclick="sendConfirmation(${reservation.reservationID})">Send Confirmation</button>
-                <button onclick="resendConfirmation(${reservation.reservationID})">Resend Confirmation</button>
-                <button onclick="confirmReservation(${reservation.reservationID}, 'your-otp-here')">Confirm Reservation</button>
-                <button onclick="deleteConfirmation(${reservation.reservationID})">Delete Confirmation</button>
-                <button onclick="cancelConfirmation('${username}', ${reservation.reservationID})">Cancel Confirmation</button>
+                <div class="button-group">
+                    <button onclick="deleteConfirmation(${reservation.reservationID})">Delete Confirmation</button>
+                    <button onclick="cancelConfirmation('${username}', ${reservation.reservationID})">Cancel Confirmation</button>
+                </div>
             `;
             detailsContainer.appendChild(div);
         });
@@ -512,3 +511,9 @@ function deleteConfirmation(reservationID) {
 
 // Load and display reservations when the page loads or a button is clicked
 //window.onload = displayReservations;
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('initConfirmationsButton').addEventListener('click', () => {
+        displayWaitlistedReservations();
+    });
+});
