@@ -8,6 +8,7 @@ using SS.Backend.DataAccess;
 using SS.Backend.SpaceManager;
 using SS.Backend.EmailConfirm;
 using SS.Backend.Security;
+using SS.Backend.Waitlist;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using SS.Backend.Services.LoggingService;

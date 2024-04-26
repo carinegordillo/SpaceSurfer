@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using SS.Backend.Services.LoggingService;
 using System.Text;
+using SS.Backend.Waitlist;
 
 
 
@@ -50,12 +51,23 @@ builder.Services.AddTransient<IReservationReadService, ReservationReadService>()
 builder.Services.AddTransient<IReservationValidationService, ReservationValidationService>();
 builder.Services.AddTransient<IReservationStatusUpdater, ReservationStatusUpdater>();
 
+// builder.AddTransient<WaitlistService>();
+// builder.AddTransient<IReservationCreatorService, ReservationCreatorService>();
+// builder.AddTransient<IReservationCancellationService, ReservationCancellationService>();
+
 //email confirmation setup
 builder.Services.AddTransient<IEmailConfirmDAO, EmailConfirmDAO>();
 builder.Services.AddTransient<IEmailConfirmService, EmailConfirmService>();
 builder.Services.AddTransient<IEmailConfirmSender,EmailConfirmSender>();
 builder.Services.AddTransient<IEmailConfirmList,EmailConfirmList>();
 builder.Services.AddTransient<IConfirmationDeletion,ConfirmationDeletion>();
+
+//waitlist
+builder.Services.AddTransient<WaitlistService>(provider =>
+    new WaitlistService(
+        provider.GetRequiredService<SqlDAO>()
+    )
+);
 
 //Mangers Setup
 builder.Services.AddTransient<IReservationCreationManager, ReservationCreationManager>();
