@@ -1,4 +1,27 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (accessToken) {
+        // Assuming accessToken is sufficient to determine logged in state
+        displayHomePage();
+    } else {
+        // No valid token, show login
+        document.getElementById("sendOTPSection").style.display = "block";
+    }
+});
 
+function displayHomePage() {
+    document.getElementById("homepageGen").style.display = "block";
+    document.getElementById("sendOTPSection").style.display = "none";
+    document.getElementById("enterOTPSection").style.display = "none";
+    // Hide other sections that shouldn't be visible right after login
+    document.getElementById("homepageManager").style.display = "none";
+    document.getElementById("taskManagerView").style.display = "none";
+
+    // sessionStorage.setItem('userIdentity', userIdentity);
+    document.getElementById("identity").style.display = "block";
+    document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
+    // Additional setup as necessary
+}
 
 function sendOTP() {
     console.log("otp is sending")
@@ -113,6 +136,7 @@ function spaceBookingCenterAccess() {
     document.getElementById('enterOTPSection').style.display = 'none';
     document.getElementById('successResult').style.display = 'none';
     document.getElementById('failResult').style.display = 'none';
+    document.getElementById("taskManagerView").style.display = "none";
 }
 
 function taskHubAccess() {
@@ -139,6 +163,7 @@ function personalOverviewAccess() {
     document.getElementById('successResult').style.display = 'none';
     document.getElementById('failResult').style.display = 'none';
     document.getElementById('waitlistView').style.display = 'none';
+    document.getElementById("taskManagerView").style.display = "none";
 }
     // Hide other sections if needed
 function waitlistAccess() {
@@ -151,5 +176,6 @@ function waitlistAccess() {
     document.getElementById('successResult').style.display = 'none';
     document.getElementById('failResult').style.display = 'none';
     document.getElementById('personalOverviewCenter').style.display = 'none';
+    document.getElementById("taskManagerView").style.display = "none";
 
 }
