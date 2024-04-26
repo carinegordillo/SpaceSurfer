@@ -1,19 +1,37 @@
-﻿#reservation-details {
+﻿#reservation-details-template {
     font-family: Arial, sans-serif;
 }
 
-.companyName, .companyAddress, .company-id, .plan-id, .space-id, .reservation-date, .reservation-start, .reservation-end {
+.reservationID, .companyName, .companyAddress, .company-id, .plan-id, .space-id, .reservation-date, .reservation-start, .reservation-end {
     font-weight: bold !important;
     color: #000000 !important;
 }
-
-.company-Name, .company-ID, .company-address, .floor-plan-ID, .Space-ID, .reservation-date-class, .reservation-time-start, .reservation-time-end {
-    color: #0094ff !important;
+.reservation-ID
+{
+    font-weight: bold !important;
+    color: #006a79 !important;
 }
 
-.reservation-status {
+.reservation-ID, .company-Name, .company-ID, .company-address, .floor-plan-ID, .Space-ID, .reservation-date-class, .reservation-time-start, .reservation-time-end {
+    color: #8002fe !important;
+}
+
+/* Define different classes for each status color */
+.reservation-status.active {
+    color: #00ff28 !important;
+}
+
+.reservation-status.cancelled {
+    color: #d20202 !important;
+}
+
+.reservation-status.passed {
+    color: #ffcb00 !important;
+}
+
+/*.reservation-status {
     color: #ff0000 !important;
-}
+}*/
 
 #calendar-container {
     text-align: center;
@@ -76,6 +94,7 @@
 
 #reservation-list {
     width: 100%; /* Take up all available width */
+    border: 1px solid black;
     border-radius: 0px !important; /* Remove border-radius to make it square */
     display: none; /* Hide by default */
 }

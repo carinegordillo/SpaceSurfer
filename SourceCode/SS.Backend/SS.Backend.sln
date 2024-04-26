@@ -49,6 +49,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SS.Backend", "SS.Backend", 
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B01F06E3-7BFC-4E7C-BD5B-33065115F025}"
+	ProjectSection(SolutionItems) = preProject
+		shutdownBackend.js = shutdownBackend.js
+		startupBackend.ps1 = startupBackend.ps1
+		startupBackend.sh = startupBackend.sh
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.UserManagement", "SS.Backend.UserManagement\SS.Backend.UserManagement.csproj", "{2F6B7963-623D-4D58-B7B6-4704DC3805FD}"
 EndProject
@@ -163,11 +168,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaitlistApi", "WaitlistApi\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.PersonalOverviewService", "SS.Backend.Tests.PersonalOverview\SS.Backend.Tests.PersonalOverviewService.csproj", "{9574EBE3-960D-479B-848C-C8E64E6D8B29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.TaskManagerHub", "SS.Backend.TaskManagerHub\SS.Backend.TaskManagerHub.csproj", "{F01931E1-F0DB-4198-9B44-4E9ADDC2AE69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.TaskManagerHub", "SS.Backend.TaskManagerHub\SS.Backend.TaskManagerHub.csproj", "{F01931E1-F0DB-4198-9B44-4E9ADDC2AE69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Waitlist", "SS.Backend.Waitlist\SS.Backend.Waitlist.csproj", "{BADD4D86-F724-4B3C-BA34-F39B9F5F1C3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Waitlist", "SS.Backend.Waitlist\SS.Backend.Waitlist.csproj", "{BADD4D86-F724-4B3C-BA34-F39B9F5F1C3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.TaskManagerHub", "SS.Backend.Tests.TaskManagerHub\SS.Backend.Tests.TaskManagerHub.csproj", "{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.TaskManagerHub", "SS.Backend.Tests.TaskManagerHub\SS.Backend.Tests.TaskManagerHub.csproj", "{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

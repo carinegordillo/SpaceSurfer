@@ -9,7 +9,6 @@ document.getElementById('next-month').addEventListener('click', () => changeMont
 document.getElementById('calendar-button').addEventListener('click', calendarView);
 document.getElementById('list-button').addEventListener('click', listView);
 document.getElementById('confirm-button').addEventListener('click', confirmSelection);
-document.getElementById('space-form-container').addEventListener('click', getReservationOverview);
 document.getElementById('reservation-delete-button').addEventListener('click', fetchReservationDeletion);
 
 // Function to fetch user reservations from the API
@@ -206,6 +205,15 @@ function addReservation(reservation, div) {
     const StatusLabel = reservationItem.querySelector("#labelStatus");
     StatusLabel.textContent = reservation.status;
 
+    // Add the appropriate class based on the status value
+    if (reservation.status === "Active") {
+        StatusLabel.classList.add("active");
+    } else if (reservation.status === "Cancelled") {
+        StatusLabel.classList.add("cancelled");
+    } else if (reservation.status === "Passed") {
+        StatusLabel.classList.add("passed");
+    }
+
     // Append the cloned content to the specified div
     div.appendChild(reservationItem);
 }
@@ -335,80 +343,3 @@ function isSameDay(date1, date2) {
         date1.getDate() === date2.getDate()
     );
 }
-
-
-//function createDeleteReservationForm() {
-//    const form = document.createElement('form');
-//    form.id = 'deleteReservationForm';
-//    form.innerHTML = `
-//        <div class="form-group">
-//            <label for="reservationIDToDelete">Reservation ID:</label>
-//            <input type="number" id="reservationIDToDelete" required>
-//        </div>
-//        <input type="submit" value="Delete Reservation">
-//    `;
-//    form.addEventListener('submit', handleDeleteReservationFormSubmit);
-//    return form;
-//}
-
-
-//async function handleDeleteReservationFormSubmit(event) {
-//    event.preventDefault();
-
-//    const reservationID = document.getElementById('reservation-id').value;
-//    var accessToken = sessionStorage.getItem('accessToken');
-
-//    const isTokenValid = await checkTokenExpiration(accessToken);
-//    if (!isTokenValid) {
-//        logout();
-//        return;
-//    }
-
-//    var idToken = sessionStorage.getItem('idToken');
-
-//    var parsedIdToken = JSON.parse(idToken);
-//    var userHash = parsedIdToken.Username;
-
-
-//    try {
-//        const response = await fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/DeleteReservation`, {
-//            method: 'POST',
-//            headers: {
-//                'Authorization': `Bearer ${accessToken}`,
-//                'Content-Type': 'application/json',
-//            },
-//            body: JSON.stringify({ userHash, reservationID: parseInt(reservationID, 10) }),
-//        });
-
-//        if (!response.ok) {
-//            throw new Error(`HTTP error! status: ${response.status}`);
-//        }
-
-//        const responseData = await response.json();
-//        if (responseData.newToken) {
-//            accessToken = data.newToken;
-//            sessionStorage.setItem('accessToken', accessToken);
-//            console.log('New access token stored:', accessToken);
-//        }
-//        if (responseData.hasError) {
-//            console.error(`Reservation deletion error: ${responseData.errorMessage}`);
-//            onError(`Reservation deletion error: ${responseData.errorMessage}`);
-//        } else {
-//            console.log('Reservation deleted successfully');
-//            onSuccess('Reservation deleted successfully!');
-
-//        }
-//    } catch (error) {
-//        console.error('Error deleting reservation:', error);
-//        onError(`Error deleting reservation: ${error}`);
-//    }
-//}
-
-
-//function getReservationOverview() {
-//    const deleteFormContainer = document.querySelector('.space-form-container');
-//    if (deleteFormContainer) {
-//        const deleteReservationForm = createDeleteReservationForm();
-//        deleteFormContainer.appendChild(deleteReservationForm);
-//    }
-//}

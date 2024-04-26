@@ -5,8 +5,10 @@ function sendOTP() {
     var userIdentity = document.getElementById("userIdentity").value;
     console.log(userIdentity);
 
+    var baseUrl = window.location.hostname === "localhost" ? "http://localhost:5270" : "http://13.52.79.219:5270";
+
     $.ajax({
-        url: 'http://13.52.79.219:5270/api/auth/sendOTP',
+        url: baseUrl + '/api/auth/sendOTP',
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ userIdentity: userIdentity }),
@@ -19,12 +21,15 @@ function sendOTP() {
         }
     });
 }
+
 function authenticateUser() {
     var otp = document.getElementById("otp").value;
     var userIdentity = document.getElementById("userIdentity").value;
 
+    var baseUrl = window.location.hostname === "localhost" ? "http://localhost:5270" : "http://13.52.79.219:5270";
+
     $.ajax({
-        url: 'http://13.52.79.219:5270/api/auth/authenticate',
+        url: baseUrl + '/api/auth/authenticate',
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ userIdentity: userIdentity, proof: otp }),
@@ -39,7 +44,7 @@ function authenticateUser() {
             var accessToken = sessionStorage.getItem('accessToken');
 
             $.ajax({
-                url: 'http://13.52.79.219:5270/api/auth/getRole',
+                url: baseUrl + '/api/auth/getRole',
                 type: 'POST',
                 contentType: 'application/json',
                 data: accessToken,
@@ -50,7 +55,7 @@ function authenticateUser() {
                     }
                     else {
                         document.getElementById("homepageGen").style.display = "block";
-                     }
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.error('Error fetching role:', error);
