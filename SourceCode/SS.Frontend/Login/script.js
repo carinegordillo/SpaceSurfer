@@ -6,7 +6,7 @@ function sendOTP() {
     console.log(userIdentity);
 
     $.ajax({
-        url: 'http://localhost:5270/api/auth/sendOTP',
+        url: 'http://13.52.79.219:5270/api/auth/sendOTP',
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ userIdentity: userIdentity }),
@@ -24,7 +24,7 @@ function authenticateUser() {
     var userIdentity = document.getElementById("userIdentity").value;
 
     $.ajax({
-        url: 'http://localhost:5270/api/auth/authenticate',
+        url: 'http://13.52.79.219:5270/api/auth/authenticate',
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ userIdentity: userIdentity, proof: otp }),
@@ -39,7 +39,7 @@ function authenticateUser() {
             var accessToken = sessionStorage.getItem('accessToken');
 
             $.ajax({
-                url: 'http://localhost:5270/api/auth/getRole',
+                url: 'http://13.52.79.219:5270/api/auth/getRole',
                 type: 'POST',
                 contentType: 'application/json',
                 data: accessToken,

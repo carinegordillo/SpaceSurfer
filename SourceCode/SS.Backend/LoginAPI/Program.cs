@@ -50,7 +50,7 @@ app.Use(async (context, next) =>
     // Get the origin header from the request
     var origin = context.Request.Headers[HeaderNames.Origin].ToString();
 
-    var allowedOrigins = new[] { "http://localhost:3000" };
+    var allowedOrigins = new[] { "http://13.52.79.219" };
 
 
     if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
