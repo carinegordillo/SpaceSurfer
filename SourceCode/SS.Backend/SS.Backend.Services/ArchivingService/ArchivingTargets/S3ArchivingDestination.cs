@@ -36,6 +36,17 @@ namespace SS.Backend.Services.ArchivingService
                     Console.WriteLine("Uploading file to S3 bucket " + bucketName);
                     await transferUtility.UploadAsync(uploadRequest);
                     Console.WriteLine("File uploaded successfully to bucket " + bucketName);
+
+                    // After successful upload, delete the local file
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                        Console.WriteLine("Temporary file deleted successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No file to delete.");
+                    }
                 }
                 catch (AmazonS3Exception e)
                 {

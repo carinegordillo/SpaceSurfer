@@ -12,14 +12,14 @@ namespace SS.Backend.Services.ArchivingService
         private bool _isRunning = true;
 
 
-        // public MonthlyArchivingService(ITargetArchivingDestination archivingTarget)
-        // {
-        //     _archivingTarget = archivingTarget;
-        // }
-
+        public MonthlyArchivingService(ITargetArchivingDestination archivingTarget)
+        {
+            _archivingTarget = archivingTarget;
+        }
 
           public void Start()
         {
+            PerformScheduledTask();
             _thread = new Thread(new ThreadStart(Run));
             _thread.Start();
         }
@@ -30,7 +30,7 @@ namespace SS.Backend.Services.ArchivingService
             if (_thread.IsAlive) {
                 _thread.Interrupt();
             }
-            _thread.Join(); // Ensure the thread finishes cleanly
+            _thread.Join(); 
         }
         
         private void Run()
@@ -62,10 +62,41 @@ namespace SS.Backend.Services.ArchivingService
             return new DateTime(nextMonth.Year, nextMonth.Month, 1);
         }
 
-        private void PerformScheduledTask()
+        private async void PerformScheduledTask()
         {
-            Console.WriteLine("Performing scheduled task..."+ DateTime.Now);
-            
+            Response tableReaderResponse = new Response();
+
+
+
+            ReadTableTarget tableReader = new ReadTableTarget();
+
+            try
+            {
+                tableReaderResponse = await tableReader.ReadSqlTable("dbo.Logs");
+                if (tableReaderResponse.HasError == true)
+                {
+                    Console.WriteLine("Error reading table: " + tableReaderResponse.ErrorMessage);
+                }
+                else
+                {
+                    var tempFilePath = ArchivingFormats.SaveToTextFile(tableReaderResponse.ValuesRead);
+
+
+                    ArchivesModel s3Info = new ArchivesModel();
+                    s3Info.destination = "space-surfer-archivestest";
+                    s3Info.filePath = tempFilePath;
+                    
+                    string dateTimeNow = DateTime.Now.ToString("yyyyMMdd_HHmmss"); 
+                    s3Info.fileName = $"SpaceSurferLogs_{dateTimeNow}.txt";
+
+                    Console.WriteLine("Performing scheduled task..."+ DateTime.Now);
+                    _archivingTarget.UploadFileAsync(s3Info);
+                }
+            }
+            catch (Exception e){
+                Console.WriteLine("Error reading table: " + e.Message);
+            }
+
         }
     }
 
