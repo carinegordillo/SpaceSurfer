@@ -8,8 +8,8 @@ namespace SS.Backend.Services.ArchivingService
 {
     public class S3ArchivingDestination : ITargetArchivingDestination
     {
-               private string accessKey = "AKIAZI2LD4MHH4SYIMWE";
-        private string secretKey = "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";
+        private string accessKey = "accessKey";
+        private string secretKey = "secretKey";
 
         public async Task<Response> UploadFileAsync(ArchivesModel archiveInfo)
         {
