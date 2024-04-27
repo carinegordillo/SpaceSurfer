@@ -23,7 +23,7 @@
                     <img src="images/sslogo.png" alt="Logo" class="header-logo flipped-image">
                 </div>
                 <div>
-                    <img src="images/ssname.png" alt="Title" class="header-title">
+                    <img src="images/orangeSS.png" alt="Title" class="header-title">
                 </div>
             </div>
             <div class="nav-items">
@@ -36,13 +36,22 @@
         </nav>
     </header>
 
-    <section id="sendOTPSection" class="form-container">
-        <form id="sendOTPForm">
-            <label for="userIdentity">Login to SpaceSurfers</label>
-            <input type="text" id="userIdentity" name="userIdentity" required placeholder="Enter your username">
-            <button type="button" onclick="sendOTP()">Send Verification</button>
-            <a href="#" class="recover-link">Recover an account</a>
-        </form>
+    <section id="sendOTPSection">
+        <div class="container">
+            <section id="sendOTPSection" class="loginForm">
+                <form id="sendOTPForm">
+                    <label for="userIdentity" class="login-title">Login!</label>
+                    <input type="text" id="userIdentity" name="userIdentity" required placeholder="Enter your username">
+                    <button type="button" onclick="sendOTP()">Send Verification</button>
+                    <a href="#" class="recover-link">Recover an account</a>
+                    <a href="#" class="recover-link">Don't have an account? Register Now!</a>
+                </form>
+            </section>
+            <div class="welcome-label">
+                Welcome to SpaceSurfer!
+            </div>
+            
+        </div>
     </section>
 
     <section id="enterOTPSection" class="form-container" style="display: none;">

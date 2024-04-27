@@ -2,7 +2,7 @@ body, html {
     min-height: 100vh; /* Ensure body stretches to full viewport height */
     font-family: 'Arial', sans-serif;
     /* background-image: linear-gradient(to bottom, rgba(12, 39, 138, 0.754), rgba(39, 20, 58, 0.404)); */
-    background-image: url(AIfire_transparent.png);
+    background-image: url(images/galaxy.png);
     background-size: cover; /* Scale the background image as large as possible */
     background-repeat: no-repeat; /* Prevent the background image from repeating */
     padding: 0;
@@ -42,12 +42,12 @@ body, html {
 }
 
 .flipped-image {
-    transform: scaleX(-1);
+    transform: scaleX(-1) rotate(15deg);;
 }
 
 
 header, footer {
-    background-color: #0d092cb5;
+    /* background-color: #0d092c38; */
     color: white;
     text-align: center;
     padding: 5px 0;
@@ -77,13 +77,13 @@ h1 {
 } */
 
 .header-logo {
-    width: 150px;
+    width: 130px;
     height: auto;
 }
 
 .header-title {
-    width: 450px;
-    height: auto;
+    width: 350px;
+    height: 80px;
 }
 
 header h1 {
@@ -93,11 +93,11 @@ header h1 {
 
 nav {
     /* background-color: #5e08ff; */
-    background-color: #0d092c44;
+    /* background-color: #0d092c44; */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    padding: 0px 0;
     /* border-bottom: 2px solid #040d46; Specify width, style, and color */
     border-radius: 5px; /* Adjust if you want rounded corners */
 }
@@ -113,7 +113,7 @@ nav {
 
 .nav-item {
     margin-left: 40px; /* Adds space between navigation items */
-    color: white; /* Change font color */
+    color: #DEA47E; /* Change font color */
     font-weight: bold; /* Make text bold */
     font-family: Arial, sans-serif; /* Set the font, with a fallback */
     margin-top: 0px;
@@ -144,10 +144,10 @@ h3 {
 }
 
 footer {
-    background-color: #0d092cb5;
+    background-color: #0d092c38;
     color: white;
     text-align: center;
-    padding: 5px 0;
+    padding: 0px 0;
 }
 
 section {
@@ -156,12 +156,27 @@ section {
 
 .form-container {
     background-color: #fff;
-    border-radius: 5px;
+    border-radius: 15px;
     padding: 40px;
     max-width: 300px;
     margin: 0 auto;
     margin-top: 75px;
     text-align: center;
+}
+.form-container input,
+.form-container button {
+    border: 1px solid white; /* Border color from your palette */
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1em;
+}
+
+/* Button specific styling */
+.form-container button {
+    background-color: #666A86; /* Pinkish color for the button */
+    color: #fff;
+    cursor: pointer;
+    padding-bottom: 10px;
 }
 
 
@@ -171,11 +186,95 @@ form {
     flex-direction: column;
 }
 
-.recover-link {
-    color: #539CC9;
-    font-size: 12px;
+
+/* Overall container styling */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* min-height: 100vh; Full viewport height */
+    color: #666a86; /* Darker text color for contrast */
+    font-family: 'Arial', sans-serif;
+    padding-top: 60px;
+}
+
+/* Style for the form section */
+.loginForm {
+    border-radius: 25px;
+    padding: 40px;
+    margin-right: 75px; /* Add space between the form and the welcome label */
+    background-color: white;
+    color: #fff; /* This color won't be visible on a white background, consider changing */
+    width: 300px;
+    height: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    display: flex; /* Use flexbox to align children */
+    align-items: center; /* Center-align the flex items horizontally */
+    justify-content: center; /* Center-align the flex items vertically */
+}
+
+/* Style for form elements */
+.loginForm form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Space between form items */
+    justify-content: center; /* Centers form items vertically */
+    height: 100%; /* Take full height of parent */
+    color: #666; /* For visible text, choose a contrasting color */
+}
+
+
+/* Style for input and button elements */
+.loginForm input,
+.loginForm button {
+    border: 1px solid white; /* Border color from your palette */
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1em;
+}
+
+/* Button specific styling */
+.loginForm button {
+    background-color: #666A86; /* Pinkish color for the button */
+    color: #fff;
+    cursor: pointer;
+    padding-bottom: 10px;
+}
+
+.login-title {
+    font-size: 3em; /* This sets the font size to 200% of the base font size */
+    margin-bottom: 20px; /* Adds space below the title for better spacing */
+    color: #788AA3; 
+    text-align: center;
+}
+/* Style for the large label */
+.welcome-label {
+    font-size: 3em; /* Makes the font size three times larger than the base size */
+    font-weight: bold; /* Adds weight to the font */
+    color: white; /* Pinkish color from your palette */
+    text-shadow: 2px 2px 4px #666a86; /* Adds a shadow for a 3D effect */
+    text-transform: uppercase; /* Capitalizes all letters */
+    letter-spacing: 0.0em; /* Increases spacing between letters */
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(45deg, #788aa3, #dea47e); /* Gradient background */
+    border-radius: 15px; /* Rounds the corners of the label's background */
+    box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    display: inline-block; /* Allows the element to respect the padding and margin */
+}
+
+/* Link styles */
+.loginForm .recover-link {
+    color: #DB5461; /* Color from your palette */
     text-decoration: none;
-    margin-top: 20px;
+    font-size: 1em;
+    margin-top: 3px;
+    margin-bottom: 1px;
+    text-align: center;
+}
+
+.loginForm .recover-link:hover {
+    text-decoration: underline;
 }
 
 

@@ -19,7 +19,8 @@ function displayHomePage() {
 
     // sessionStorage.setItem('userIdentity', userIdentity);
     document.getElementById("identity").style.display = "block";
-    document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
+    var loggedInAs = sessionStorage.getItem('userIdentity');
+    document.getElementById("identity").textContent = `Logged in as: ${loggedInAs}`;
     // Additional setup as necessary
 }
 
