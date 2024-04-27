@@ -14,7 +14,7 @@
 
 </head>
 
-<body>
+<body class = "main-content">
     <header>
         
         <nav>
@@ -27,30 +27,33 @@
                 </div>
             </div>
             <div class="nav-items">
-                <div class="nav-item" id="identity" style="display: none;" >Logged in as: </div>
+                <!-- <div class="nav-item" id="identity" style="display: none;" >Logged in as: </div> -->
                 <div class="nav-item" id="navAbout" onclick="window.location.href='../UnAuthnAbout/about.html'">About</div>
                 <div class="nav-item" id="navRegister" onclick="window.location.href='../Registration/index.html'">Register</div>
                 <!-- <div class="nav-item" id="navRegister" onclick="window.location.href='../EmployeeAccountSetup/index.html'">Employee Account Setup</div>     -->
                 <div class="nav-item" id="navLogin" onclick="window.location.href='../Login/index.html'">Login</div>
+                <div id = "burgerNav" class="hamburger-menu" onclick="toggleMenu()" style="display: none;">
+                    ☰
+                </div>
             </div>
+
         </nav>
     </header>
 
     <section id="sendOTPSection">
         <div class="container">
-            <section id="sendOTPSection" class="loginForm">
-                <form id="sendOTPForm">
-                    <label for="userIdentity" class="login-title">Login!</label>
-                    <input type="text" id="userIdentity" name="userIdentity" required placeholder="Enter your username">
-                    <button type="button" onclick="sendOTP()">Send Verification</button>
-                    <a href="#" class="recover-link">Recover an account</a>
-                    <a href="#" class="recover-link">Don't have an account? Register Now!</a>
-                </form>
-            </section>
             <div class="welcome-label">
                 Welcome to SpaceSurfer!
             </div>
             
+        </div>
+    </section>
+
+    <section id="welcomeSection" style="display: none;">
+        <div class="container">
+            <div class="welcome-label">
+                Welcome to SpaceSurfer!
+            </div>  
         </div>
     </section>
 
@@ -70,12 +73,13 @@
         <label style="color: #e33434; font-size: 18px;">Incorrect verification code. Please double-check and try again.</label>
     </section>
     <!--General Homepage-->
-    <section id="homepageGen" class="homepage-container" style="display: none;">
+    <section id="homepageGen" class="navBurger" style="display: none;">
         <button class="initProfileButton" type="button" onclick="getUserProfile()">Profile</button>
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
         <button type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</button>
+        <button type="button" id = "identity"></button>
         <button type="button" onclick="logout()">Logout</button>
     </section>
 

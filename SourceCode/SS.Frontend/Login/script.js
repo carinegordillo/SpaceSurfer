@@ -3,25 +3,34 @@ document.addEventListener('DOMContentLoaded', function() {
     if (accessToken) {
         // Assuming accessToken is sufficient to determine logged in state
         displayHomePage();
+        document.getElementById("burgerNav").style.display = "block";
+        document.getElementById("welcomeSection").style.display = "block";
+        document.getElementById("identity").textContent = `Logged in as: ${loggedInAs}`;
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => item.style.display = 'none');
     } else {
         // No valid token, show login
         document.getElementById("sendOTPSection").style.display = "block";
     }
 });
-
+function toggleMenu() {
+    var x = document.getElementById("homepageGen");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
 function displayHomePage() {
-    document.getElementById("homepageGen").style.display = "block";
+    // document.getElementById("homepageGen").style.display = "block";
     document.getElementById("sendOTPSection").style.display = "none";
     document.getElementById("enterOTPSection").style.display = "none";
     // Hide other sections that shouldn't be visible right after login
     document.getElementById("homepageManager").style.display = "none";
     document.getElementById("taskManagerView").style.display = "none";
-
-    // sessionStorage.setItem('userIdentity', userIdentity);
     document.getElementById("identity").style.display = "block";
     var loggedInAs = sessionStorage.getItem('userIdentity');
     document.getElementById("identity").textContent = `Logged in as: ${loggedInAs}`;
-    // Additional setup as necessary
 }
 
 function sendOTP() {
