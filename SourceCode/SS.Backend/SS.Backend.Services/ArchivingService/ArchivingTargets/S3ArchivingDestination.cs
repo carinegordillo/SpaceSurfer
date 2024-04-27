@@ -8,8 +8,8 @@ namespace SS.Backend.Services.ArchivingService
 {
     public class S3ArchivingDestination : ITargetArchivingDestination
     {
-        private string accessKey = "accessKey";
-        private string secretKey = "secretKey";
+        string accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
+        string secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
 
         public async Task<Response> UploadFileAsync(ArchivesModel archiveInfo)
         {
