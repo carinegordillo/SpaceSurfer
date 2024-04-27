@@ -601,61 +601,85 @@ async function sendConfirmation(reservation) {
 //////////////Reservation Confirmation//////////////
 
 function showConfirmationModal(reservation) {
-    const reservationID = reservation.reservationID;
 
-    // Check if the modal container element exists
-    let modal = document.getElementById('confirmModal');
-    if (!modal) {
-        // If it doesn't exist, create it
-        modal = document.createElement('div');
-        modal.id = 'confirmModal';
-        modal.classList.add('modal');
-        document.body.appendChild(modal);
+    const existingModal = document.querySelector('.modal-content');
+    if (existingModal) {
+        existingModal.remove();
     }
-
-    // Create modal content
-    let modalContent = document.createElement('div');
+    const modalContent = document.createElement('div');
     modalContent.classList.add('modal-content');
+    
     modalContent.innerHTML = `
         <h2>Confirm Reservation</h2>
-        <h3>Confirm Reservation ${reservationID}</h3>
-        <input type="text" id="confirmationCodeInput" placeholder="Enter confirmation code" />
-        <button id="confirmCode">Submit</button>
+        <form id="confirmReservationForm" data-reservation-id="${reservation.reservationID}">
+            <h2>Confirm Reservation</h2>
+            <h3>Confirm Reservation ${reservationID}</h3>
+            <input type="text" id="confirmationCodeInput" placeholder="Enter confirmation code" />
+            <button id="confirmCode">Submit</button>
+        </form>
     `;
-
-    // Append modal content to modal container
-    modal.innerHTML = ''; // Clear existing content
-    modal.appendChild(modalContent);
-
-    // Create success message element
-    let successMessage = document.createElement('div');
-    successMessage.id = 'successMessage';
-    successMessage.textContent = 'You have successfully confirmed your reservation!';
-    successMessage.style.display = 'none';
-
-    // Append success message to modal container
-    modal.appendChild(successMessage);
-
-    // // Create error message element
-    // let errorMsg = document.createElement('div');
-    // errorMsg.id = 'errorMsg';
-    // errorMsg.textContent = 'You have already been added to this waitlist.';
-    // errorMsg.style.display = 'none';
-
-    // // Append error message to modal container
-    // modal.appendChild(errorMsg);
-
-    // Show the modal
-    modal.style.display = 'block';
-    const closeButton = modal.querySelector('.close-button');
-    const confirmationButton = modal.querySelector('#confirmCode');
-
-    // Add event listeners
-    closeButton.addEventListener('click', closeModal);
-    confirmationButton.addEventListener('click', confirmReservation);
+    document.body.appendChild(modalContent);
+    
+    document.getElementById('confirmReservationForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        confirmReservation(reservation);
+    });
 
 
+// V2
+    // // Check if the modal container element exists
+    // let modal = document.getElementById('confirmModal');
+    // if (!modal) {
+    //     // If it doesn't exist, create it
+    //     modal = document.createElement('div');
+    //     modal.id = 'confirmModal';
+    //     modal.classList.add('modal');
+    //     document.body.appendChild(modal);
+    // }
 
+    // // Create modal content
+    // let modalContent = document.createElement('div');
+    // modalContent.classList.add('modal-content');
+    // modalContent.innerHTML = `
+    //     <h2>Confirm Reservation</h2>
+    //     <h3>Confirm Reservation ${reservationID}</h3>
+    //     <input type="text" id="confirmationCodeInput" placeholder="Enter confirmation code" />
+    //     <button id="confirmCode">Submit</button>
+    // `;
+
+    // // Append modal content to modal container
+    // modal.innerHTML = ''; // Clear existing content
+    // modal.appendChild(modalContent);
+
+    // // Create success message element
+    // let successMessage = document.createElement('div');
+    // successMessage.id = 'successMessage';
+    // successMessage.textContent = 'You have successfully confirmed your reservation!';
+    // successMessage.style.display = 'none';
+
+    // // Append success message to modal container
+    // modal.appendChild(successMessage);
+
+    // // // Create error message element
+    // // let errorMsg = document.createElement('div');
+    // // errorMsg.id = 'errorMsg';
+    // // errorMsg.textContent = 'You have already been added to this waitlist.';
+    // // errorMsg.style.display = 'none';
+
+    // // // Append error message to modal container
+    // // modal.appendChild(errorMsg);
+
+    // // Show the modal
+    // modal.style.display = 'block';
+    // const closeButton = modal.querySelector('.close-button');
+    // const confirmationButton = modal.querySelector('#confirmCode');
+
+    // // Add event listeners
+    // closeButton.addEventListener('click', closeModal);
+    // confirmationButton.addEventListener('click', confirmReservation);
+
+
+//V1
     // const existingModal = document.querySelector('.modal-content');
     // if (existingModal) {
     //     existingModal.remove();
@@ -694,6 +718,7 @@ async function confirmReservation(reservation, code) {
     var idToken = sessionStorage.getItem('idToken');
     var parsedIdToken = JSON.parse(idToken);
     var username = parsedIdToken.Username;
+    var reservationID = reservation.reservationID;
 
     const isTokenExp = checkTokenExpiration(accessToken);
     if (!isTokenExp) {

@@ -265,31 +265,41 @@ async function listConfirmations() {
             sessionStorage.setItem('accessToken', accessToken);
             console.log('New access token stored:', accessToken);
         }
+        console.log(data);
 
         const detailsContainer = document.getElementById('reservation-details');
         detailsContainer.innerHTML = ''; // Clear previous entries
 
-        data.forEach(reservation => {
-            const div = document.createElement('div');
-            div.className = 'reservation-entry'; // This class should have corresponding styles in style.css
-            div.innerHTML = `
-                <h3>Reservation ID: ${reservation.reservationID}</h3>
-                <p>Start Time: ${new Date(reservation.reservationStartTime).toLocaleString()}</p>
-                <p>End Time: ${new Date(reservation.reservationEndTime).toLocaleString()}</p>
-                <div class="button-group">
-                    <button onclick="deleteConfirmation(${reservation.reservationID})">Delete Confirmation</button>
-                    <button onclick="cancelConfirmation('${username}', ${reservation.reservationID})">Cancel Confirmation</button>
-                </div>
-            `;
-            detailsContainer.appendChild(div);
-        });
+
+        if (Array.isArray(data) && data.length > 0) {
+            data.forEach(reservation => {
+                const div = document.createElement('div');
+                div.className = 'reservation-entry'; // This class should have corresponding styles in style.css
+                div.innerHTML = `
+                    <h3>Reservation ID: ${reservation.reservationID}</h3>
+                    <p>Start Time: ${new Date(reservation.reservationStartTime).toLocaleString()}</p>
+                    <p>End Time: ${new Date(reservation.reservationEndTime).toLocaleString()}</p>
+                    <div class="button-group">
+                        <button onclick="deleteConfirmation(${reservation.reservationID})">Delete Confirmation</button>
+                        <button onclick="cancelConfirmation('${username}', ${reservation.reservationID})">Cancel Confirmation</button>
+                    </div>
+                `;
+                div.addEventListener('click', () => displayReservationDetails(reservation));
+                detailsContainer.appendChild(div);
+                console.log(data);
+            });
+        } else {
+            detailsContainer.innerHTML = '<p>You currently do not have confirmed reservations.</p>';
+        }
 
         console.log('List of confirmations retrieved successfully:', data);
-        return data;
+        //return data;
     } catch (error) {
         console.error('Error listing confirmations:', error);
     }
 }
+
+
 
 // Function to display reservation details
 function displayReservationDetails(reservation) {
@@ -414,106 +424,8 @@ function closeLeaveModal() {
     }
 }
 
-function toggleButtons() {
-    const buttonsContainer = document.getElementById('buttons-container');
-    if (buttonsContainer.style.display === "none") {
-        buttonsContainer.style.display = "block";
-        // Optionally, also call listConfirmations here if you want to load data
-        listConfirmations('hashedUsername1');
-    } else {
-        buttonsContainer.style.display = "none";
-    }
-}
 
-////// mock reservations test/////
-const mockReservations = [
-    {
-        reservationID: 1,
-        companyID: 1,
-        floorPlanID: 101,
-        spaceID: 'A1',
-        reservationStartTime: '2024-04-20T09:00:00',
-        reservationEndTime: '2024-04-20T17:00:00',
-        status: 'Active',
-        userHash: 'hashedUsername1'
-    },
-    {
-        reservationID: 2,
-        companyID: 1,
-        floorPlanID: 102,
-        spaceID: 'A2',
-        reservationStartTime: '2024-04-21T10:00:00',
-        reservationEndTime: '2024-04-21T18:00:00',
-        status: 'Active',
-        userHash: 'hashedUsername2'
-    },
-    {
-        reservationID: 3,
-        companyID: 2,
-        floorPlanID: 201,
-        spaceID: 'B1',
-        reservationStartTime: '2024-04-22T08:00:00',
-        reservationEndTime: '2024-04-22T16:00:00',
-        status: 'Active',
-        userHash: 'hashedUsername3'
-    }
-];
-
-function displayReservations() {
-    const container = document.getElementById('reservation-details');
-    container.innerHTML = ''; // Clear existing entries
-
-    mockReservations.forEach(res => {
-        const div = document.createElement('div');
-        div.className = 'reservation-entry';
-        div.innerHTML = `
-        <div class="container">
-            <div class="reservation-details-container content-container">
-                <h3>Reservation ID: ${res.reservationID}</h3>
-                <p>Start Time: ${res.reservationStartTime}</p>
-                <p>End Time: ${res.reservationEndTime}</p>
-                <p>Status: ${res.status}</p>
-                <div class="button-container">
-                    <button onclick="cancelConfirmation(${res.reservationID})">Cancel</button>
-                    <button onclick="deleteConfirmation(${res.reservationID})">Delete</button>
-                </div>
-                <div id="reservation-details">
-                </div>
-            </div>
-        </div>
-
-        `;
-        container.appendChild(div);
-    });
-}
-
-// Dummy function for cancelling confirmation
-function cancelConfirmation(reservationID) {
-    alert(`Confirmation cancelled for reservation ID ${reservationID}`);
-    // Update the display by filtering out the cancelled reservation
-    const index = mockReservations.findIndex(res => res.reservationID === reservationID);
-    if (index > -1) {
-        mockReservations.splice(index, 1);
-        displayReservations(); // Refresh the list
-    }
-}
-
-// Dummy function for deleting confirmation
-function deleteConfirmation(reservationID) {
-    alert(`Confirmation deleted for reservation ID ${reservationID}`);
-    // Update the display by filtering out the deleted reservation
-    const index = mockReservations.findIndex(res => res.reservationID === reservationID);
-    if (index > -1) {
-        mockReservations.splice(index, 1);
-        displayReservations(); // Refresh the list
-    }
-}
-
-// Load and display reservations when the page loads or a button is clicked
-//window.onload = displayReservations;
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('initConfirmationsButton').addEventListener('click', () => {
-        displayWaitlistedReservations();
-    });
+document.getElementById('initConfirmationsButton').addEventListener('click', () => {
+    listConfirmations();
 });
+
