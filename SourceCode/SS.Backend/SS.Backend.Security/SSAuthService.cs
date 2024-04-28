@@ -20,6 +20,7 @@ namespace SS.Backend.Security
         private readonly Hashing hasher;
         private readonly SqlDAO sqldao;
         private readonly Logger log;
+        
 
         public SSAuthService(GenOTP genotp, Hashing hasher, SqlDAO sqldao, Logger log)
         {

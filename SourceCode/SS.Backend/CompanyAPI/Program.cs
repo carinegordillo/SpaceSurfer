@@ -33,6 +33,10 @@ builder.Services.AddTransient<CustomSqlCommandBuilder>();
 builder.Services.AddTransient<ISpaceManagerDao, SpaceManagerDao>();
 builder.Services.AddTransient<ISpaceReader, SpaceReader>();
 
+//logging
+builder.Services.AddTransient<LogEntry>();
+builder.Services.AddTransient<ILogTarget, SqlLogTarget>();
+builder.Services.AddTransient<Logger>();
 
 //security
 
