@@ -39,22 +39,22 @@ builder.Services.AddTransient<SSAuthService>(provider =>
 
 //adding archiving 
 builder.Services.AddTransient<ITargetArchivingDestination, S3ArchivingDestination>();
-builder.Services.AddSingleton<TwoMinuteArchivingService>();
+builder.Services.AddSingleton<MonthlyArchivingService>();
 
 
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
-var archivingService = app.Services.GetRequiredService<TwoMinuteArchivingService>();
+var archivingService = app.Services.GetRequiredService<MonthlyArchivingService>();
 
 app.Lifetime.ApplicationStarted.Register(() => {
-    Console.WriteLine("Application is starting. TwoMinuteArchivingService is being started...");
+    Console.WriteLine("Application is starting. MonthlyArchivingService is being started...");
     archivingService.Start();
 });
 
 app.Lifetime.ApplicationStopping.Register(() => {
-    Console.WriteLine("Application is stopping. TwoMinuteArchivingService is being stopped...");
+    Console.WriteLine("Application is stopping. MonthlyArchivingService is being stopped...");
     archivingService.Stop();
 });
 
