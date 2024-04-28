@@ -22,6 +22,8 @@
   <ProjectReference Include="..\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj" />
   <ProjectReference Include="..\SS.Backend.ReservationManagers\SS.Backend.ReservationManagers.csproj" />
   <ProjectReference Include="..\SS.Backend.SpaceManager\SS.Backend.SpaceManager.csproj" />
+  <ProjectReference Include="..\SS.Backend.Services\SS.Backend.Services.csproj" />
+  <ProjectReference Include="..\SS.Backend.Waitlist\SS.Backend.Waitlist.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 ﻿using SS.Backend.SharedNamespace;
 using SS.Backend.ReservationManagement;
 using SS.Backend.Waitlist;
+using SS.Backend.Services.LoggingService;
 
 
 namespace SS.Backend.ReservationManagers{
@@ -14,14 +15,21 @@ namespace SS.Backend.ReservationManagers{
         private readonly IReservationRequirements _reservationRequirements = new SpaceSurferReservationRequirements();
 
         private readonly WaitlistService _waitlist;
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+
+        private LogEntry logEntry;
+
+        
 
 
 
-        public ReservationCreationManager(IReservationCreatorService reservationCreatorService, IReservationValidationService reservationValidationService, WaitlistService waitlistService)
+        public ReservationCreationManager(IReservationCreatorService reservationCreatorService, IReservationValidationService reservationValidationService, WaitlistService waitlistService, ILogger logger)
         {
             _reservationCreatorService = reservationCreatorService;
             _reservationValidationService = reservationValidationService;
             _waitlist = waitlistService;
+            _logger = logger;
             
         }
 
@@ -40,10 +48,12 @@ namespace SS.Backend.ReservationManagers{
             {
                 response.ErrorMessage += "Reservation did not pass validation checks: " + validationResponse.ErrorMessage;
                 response.HasError = true;
+                logEntry = logBuilder.Error().Business().Description($"Reservation did not pass validation checks").User(userReservationsModel.UserHash).Build();
             }
 
             else
             {
+                logEntry = logBuilder.Info().Business().Description($"Reservation passed validation checks").User(userReservationsModel.UserHash).Build();
                 try
                 {
                     reservationCreationResponse =  await _reservationCreatorService.CreateReservationWithAutoIDAsync(tableName, userReservationsModel);
@@ -51,20 +61,25 @@ namespace SS.Backend.ReservationManagers{
                     {
                         response.ErrorMessage = "Could not create Reservation.";
                         response.HasError = true;
+                        logEntry = logBuilder.Error().Business().Description($"Error trying to create reservation").User(userReservationsModel.UserHash).Build();
                     }
                     else
                     {
                         response.ErrorMessage = "Reservation created successfully!";
+
                         response.HasError = false;
+                        logEntry = logBuilder.Info().Business().Description($"Successfull created reservation").User(userReservationsModel.UserHash).Build();
                     }
                 }
                 catch (Exception ex)
                 {
+                    logEntry = logBuilder.Error().Business().Description($"Error trying to create reservation Error {ex.Message}").User(userReservationsModel.UserHash).Build();
                     response.HasError = true;
                     response.ErrorMessage = ex.Message;
                 }
 
             }
+            _logger.SaveData(logEntry);
             return response;
         }
 

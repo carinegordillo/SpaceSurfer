@@ -1,5 +1,6 @@
 using SS.Backend.SharedNamespace;
 using SS.Backend.ReservationManagement;
+using SS.Backend.Services.LoggingService;
 using System.Data;
 
 
@@ -15,20 +16,27 @@ namespace SS.Backend.ReservationManagers{
 
         private readonly IReservationRequirements _reservationRequirements = new SpaceSurferReservationRequirements();
         
+        private readonly ILogger _logger;
         
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+
+        private LogEntry logEntry;
     
 
-        public ReservationDeletionManager(IReservationDeletionService reservationDeletionService, IReservationValidationService reservationValidationService, IReservationStatusUpdater reservationStatusUpdater, IReservationReadService reservationReadService)
+        public ReservationDeletionManager(IReservationDeletionService reservationDeletionService, IReservationValidationService reservationValidationService, IReservationStatusUpdater reservationStatusUpdater, IReservationReadService reservationReadService, ILogger logger)
         {
             _reservationDeletionService = reservationDeletionService;
             _reservationValidationService = reservationValidationService;
             _reservationStatusUpdater = reservationStatusUpdater;
             _reservationReadService = reservationReadService;
+            _logger = logger;
+            
             
         }
 
         public async Task<Response> DeleteSpaceSurferSpaceReservationAsync(string userHash, int reservationID)
         {
+            Response response = new Response();
             var reservationReadResponse = await _reservationReadService.GetReservationByID("dbo.reservations", reservationID);
 
             if (!reservationReadResponse.HasError && reservationReadResponse.ValuesRead != null)
@@ -50,11 +58,16 @@ namespace SS.Backend.ReservationManagers{
 
                 if (reservation.UserHash != userHash)
                 {
-                    return new Response { HasError = true, ErrorMessage = "User does not have permission to delete this reservation." };
+                    logEntry = logBuilder.Error().Business().Description($"User tried to delete reservation #{reservationID} that is not theirs.").User(userHash).Build();
+                    response.HasError = true;
+                    response.ErrorMessage = "User does not have permission to delete this reservation." ;
+                    
                 }
                 if (reservation.Status == ReservationStatus.Active)
                 {
-                    return new Response { HasError = true, ErrorMessage = "Cannot delete active Reservation, please cancel first." };
+                    logEntry = logBuilder.Error().Business().Description($"User tried to delete an active reservation #{reservationID}.").User(userHash).Build();
+                    response.HasError = true;
+                    response.ErrorMessage = "Cannot delete active Reservation, please cancel first." ;
                 }
 
                 try
@@ -62,23 +75,34 @@ namespace SS.Backend.ReservationManagers{
                     var reservationDeletionResponse = await _reservationDeletionService.DeleteReservationAsync(userHash, reservationID);
                     if (reservationDeletionResponse.HasError)
                     {
-                        return new Response { HasError = true, ErrorMessage = "Could not delete Reservation." };
+                        logEntry = logBuilder.Error().Business().Description($"Could not delete Reservation #{reservationID}.").User(userHash).Build();
+                        response.HasError = true;
+                        response.ErrorMessage = "Could not delete Reservation." ;
                     }
                     else
                     {
-                        return new Response { HasError = false, ErrorMessage = "Reservation deleted successfully." };
+                        logEntry = logBuilder.Info().Business().Description($"Reservation #{reservationID} was deleted successfully.").User(userHash).Build();
+                        response.HasError = false;
+                        response.ErrorMessage = "Reservation deleted successfully." ;
                     }
                 }
                 catch (Exception ex)
                 {
-                    return new Response { HasError = true, ErrorMessage = ex.Message };
+                    logEntry = logBuilder.Error().Business().Description($"Reservation #{reservationID} could not be deleted. Error : {ex.Message}.").User(userHash).Build();
+                    response.HasError = true;
+                    response.ErrorMessage = ex.Message;
                 }
             }
             else
             {
+                logEntry = logBuilder.Error().Business().Description($"No data for Reservation #{reservationID} was found or unexpected error occurred").User(userHash).Build();
 
-                return new Response { HasError = true, ErrorMessage = "No data found or error occurred." };
+                response.HasError = true;
+                response.ErrorMessage = "No data found or error occurred.";
             }
+
+            _logger.SaveData(logEntry);
+            return response;
         }
 
         
