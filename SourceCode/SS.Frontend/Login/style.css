@@ -35,11 +35,11 @@ body, html {
     z-index: -1;
   }
 
-
+/* 
 .header-content {
     display: flex;
     align-items: center;
-}
+} */
 
 .flipped-image {
     transform: scaleX(-1) rotate(15deg);;
@@ -108,18 +108,49 @@ nav {
 
 .nav-items {
     display: flex;
-    margin-right: 30px;
+    justify-content: space-between;; /* Align items to the start of the container */
+    gap: 10px; /* Spacing between nav items */
+    padding: 10px;
+    flex-wrap: nowrap; /* Prevent wrapping of items */
 }
 
 .nav-item {
-    margin-left: 40px; /* Adds space between navigation items */
-    color: #DEA47E; /* Change font color */
-    font-weight: bold; /* Make text bold */
-    font-family: Arial, sans-serif; /* Set the font, with a fallback */
-    margin-top: 0px;
-    font-size: 20px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #dde1e7; /* Light blue background */
+    color: #788AA3; /* Dark grey text */
+    padding: 10px 20px; /* Adjust padding as needed */
+    border-radius: 5px; /* Rounded corners for a "button-like" appearance */
     cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    margin: 4px;
+    text-align: center;
+    white-space: nowrap; /* Keep text on one line */
+}
 
+.nav-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Ensure the container takes full width */
+    padding: 0 10px; /* Add some padding on the sides */
+    border-radius: 5px;
+}
+
+/* Styles for the header-content and images, if needed */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* Add any additional styles needed for layout */
+}
+
+.nav-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
+    background-color: #c4c9d1; /* Slightly darker background on hover */
+    transform: translateY(-2px); /* Lift button on hover */
 }
 
 nav a {
@@ -129,9 +160,7 @@ nav a {
     font-weight: bold;
 }
 
-nav a:hover {
-    color: #ddd;
-}
+
 
 h1, h2 {
     color: #fff;
@@ -322,41 +351,6 @@ input {
     margin: 20px auto;
 }
 
-.navBurger{
-    display: none;
-    position: fixed; /* Positioned relative to the viewport */
-    left: 0;
-    top: 0;
-    width: 250px; /* Width of the sidebar */
-    height: 100%; /* Full-height sidebar */
-    background-color: #788AA3; /* Sidebar background color */
-    overflow-x: hidden; /* Disable horizontal scroll */
-    padding-top: 20px;
-}
-.hamburger-menu {
-    cursor: pointer;
-    font-size: 30px; /* Adjust size as needed */
-    user-select: none;
-    color: white;
-}
-.navBurger button {
-    display: block;
-    background-color: #44444400; /* Button background color */
-    color: white;
-    padding: 16px 20px;
-    padding-right: 10px;
-    border: none;
-    text-align: left;
-    font-size: 18px;
-    width: 100%;
-    transition: 0.3s;
-    cursor: pointer;
-}
-
-.navBurger button:hover {
-    background-color: #ddd; /* Button hover color */
-    color: black;
-}
 
 .task-container {
     background: rgb(205, 216, 247);
