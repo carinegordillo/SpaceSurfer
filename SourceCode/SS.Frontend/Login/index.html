@@ -23,14 +23,14 @@
                     <img src="images/sslogo.png" alt="Logo" class="header-logo flipped-image">
                 </div>
                 <div>
-                    <img src="images/whiteSS.png" alt="Title" class="header-title">
+                    <img src="images/outlineSS.png" alt="Title" class="header-title">
                 </div>
             </div>
             <div class="nav-container">
                 <div id="noLogin" class="nav-items"  style="display: none;">
-                    <div class="nav-item" id="navAbout" onclick="window.location.href='../UnAuthnAbout/about.html'">About</div>
+                    <div class="nav-item" id="navAbout" onclick="getAbout()">About</div>
                     <div class="nav-item" id="navRegister" onclick="window.location.href='../Registration/index.html'">Register</div>
-                    <div class="nav-item" id="navLogin" onclick="window.location.href='../Login/index.html'">Login</div>
+                    <div class="nav-item" id="navLogin" onclick="getLogin()">Login</div>
                 </div>
                 <div id="homepageGen" class="nav-items" style="display: none;">
                     <div class="nav-item" type="button" onclick="getHomePage()">Home</div>
@@ -49,7 +49,7 @@
 
     
 
-    <section id="sendOTPSection" >
+    <section id="sendOTPSection" style="display: none;">
         <div class="container">
             <section id="sendOTPSection" class="loginForm">
                 <form id="sendOTPForm">
@@ -60,17 +60,60 @@
                     <a href="#" class="recover-link">Don't have an account? Register Now!</a>
                 </form>
             </section>
-            <div class="welcome-label">
+            <!-- <div class="welcome-label">
                 Welcome to SpaceSurfer!
-            </div>
+            </div> -->
+            <img src="images/astroText.png" alt="Astro" class = "hovering">
+
+        </div>
+    </section>
+    <section id="UnAuthnAbout" style="display: none;">
+        <div class="container">
+            <section id="sendOTPSection" class="loginForm">
+                <form id="sendOTPForm">
+                    <label class="login-title">About</label>
+                    <a>Welcome to Space Surfer - Your Premier Space Reservation Platform!
+                        Who We Are
+                        Space Surfer is a cutting-edge platform designed to simplify the way individuals and businesses reserve spaces for various purposes. Whether you're booking a conference room, securing a spot in a co-working space, or claiming a seat at a local event, Space Surfer offers a seamless, intuitive reservation experience that puts your convenience first.
+                        
+                        Our Mission
+                        Our mission at Space Surfer is to revolutionize space booking by making it as easy and stress-free as possible. We believe that finding and securing the right space, whether for work, leisure, or special events, should be straightforward and hassle-free. Space Surfer leverages advanced technology to connect space providers with users, ensuring efficient transactions and satisfied outcomes.
+                        
+                        What We Offer
+                        Space Surfer provides a wide array of features designed to enhance your booking experience:
+                        
+                        Real-Time Availability: See up-to-date space availability to ensure you can book the space you need, when you need it.
+                        Diverse Locations: Access a variety of spaces across multiple locations worldwide. Whether you're local or traveling, find a space that suits your needs.
+                        Flexible Booking Options: From hourly reservations to long-term leases, choose the booking option that best fits your schedule and budget.
+                        User-Friendly Interface: Our platform is designed with user experience in mind. Navigate our site with ease and book your space in just a few clicks.
+                        Secure Transactions: Your security is our top priority. We provide a secure platform for all transactions, safeguarding your personal and financial information.
+                        How It Works
+                        Booking your space with Space Surfer is as simple as:
+                        
+                        Search: Enter your location and date to see available spaces.
+                        Select: Choose the space that meets your criteria.
+                        Book: Reserve your space through our secure checkout process.
+                        Use: Enjoy your reserved space and manage your booking through our user-friendly dashboard.
+                        Our Vision
+                        Looking ahead, Space Surfer aims to expand its reach by incorporating more diverse spaces and offering enhanced features that anticipate and meet our users' evolving needs. We are committed to continuous improvement and innovation to remain at the forefront of the space reservation industry.
+                        
+                        Join Us
+                        Ready to get started? Join Space Surfer today and experience the ultimate in space booking convenience. For questions or further information, please contact us at support@spacesurfer.com.
+                        
+                        Thank you for choosing Space Surfer — where your space is just a click away!</a>
+                </form>
+            </section>
+            <!-- <div class="welcome-label">
+                Welcome to SpaceSurfer!
+            </div> -->
+            <img src="images/astronaut.png" alt="Astro" class = "hovering">
+
         </div>
     </section>
 
     <section id="welcomeSection" style="display: none;">
         <div class="container">
-            <div class="welcome-label">
-                Welcome to SpaceSurfer Home Page
-            </div>  
+            <img src="images/astronaut.png" alt="Astro" class="header-title">
         </div>
     </section>
 

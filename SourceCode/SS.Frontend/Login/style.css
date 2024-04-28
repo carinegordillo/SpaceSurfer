@@ -118,16 +118,17 @@ nav {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    background-color: #dde1e7; /* Light blue background */
-    color: #788AA3; /* Dark grey text */
+    background-color: #E2E2D3; /* Light blue background corrected to more accurate description */
+    color: #7a796c; /* Text color */
     padding: 10px 20px; /* Adjust padding as needed */
-    border-radius: 5px; /* Rounded corners for a "button-like" appearance */
+    border-radius: 15px; /* Rounded corners for a "button-like" appearance */
     cursor: pointer;
     transition: all 0.3s ease; /* Smooth transition for hover effects */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     margin: 4px;
     text-align: center;
     white-space: nowrap; /* Keep text on one line */
+    border: 1.5px solid #FF2E57; /* Define border width and style along with color */
 }
 
 .nav-container {
@@ -149,7 +150,7 @@ nav {
 
 .nav-item:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
-    background-color: #c4c9d1; /* Slightly darker background on hover */
+    background-color: #AFAEA0; /* Slightly darker background on hover */
     transform: translateY(-2px); /* Lift button on hover */
 }
 
@@ -231,25 +232,24 @@ form {
 .loginForm {
     border-radius: 25px;
     padding: 40px;
-    margin-right: 75px; /* Add space between the form and the welcome label */
-    background-color: white;
-    color: #fff; /* This color won't be visible on a white background, consider changing */
-    width: 300px;
-    height: 300px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    display: flex; /* Use flexbox to align children */
-    align-items: center; /* Center-align the flex items horizontally */
-    justify-content: center; /* Center-align the flex items vertically */
+    margin-right: 75px; /* Space between the form and the welcome label */
+    background-color: #E2E2D3;
+    color: #666; /* Adjusted for better visibility */
+    width: max-width; /* Keeps width fixed, change to max-width if desired */
+    min-height: 300px; /* Ensures it doesn't get smaller than 300px high */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 20px;
 }
 
-/* Style for form elements */
 .loginForm form {
     display: flex;
     flex-direction: column;
-    gap: 5px; /* Space between form items */
-    justify-content: center; /* Centers form items vertically */
-    height: 100%; /* Take full height of parent */
-    color: #666; /* For visible text, choose a contrasting color */
+    gap: 5px;
+    justify-content: center;
+    align-items: center; /* Added for horizontal centering */
 }
 
 
@@ -273,7 +273,7 @@ form {
 .login-title {
     font-size: 3em; /* This sets the font size to 200% of the base font size */
     margin-bottom: 20px; /* Adds space below the title for better spacing */
-    color: #788AA3; 
+    color: #7a796c; 
     text-align: center;
 }
 /* Style for the large label */
@@ -633,4 +633,16 @@ input[type="checkbox"] {
 .completed {
     text-decoration: line-through;
     color: grey;
+}
+.hovering {
+    animation: hoverAnimation 2s ease-in-out infinite;
+}
+
+@keyframes hoverAnimation {
+    0%, 100% {
+        transform: translateY(0); /* Start and end at the original position */
+    }
+    50% {
+        transform: translateY(-20px); /* Move up by 20 pixels */
+    }
 }
