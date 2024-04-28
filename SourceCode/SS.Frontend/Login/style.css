@@ -282,11 +282,12 @@ form {
     font-weight: bold; /* Adds weight to the font */
     color: white; /* Pinkish color from your palette */
     text-shadow: 2px 2px 4px #666a86; /* Adds a shadow for a 3D effect */
-    text-transform: uppercase; /* Capitalizes all letters */
+    /* text-transform: uppercase; Capitalizes all letters */
     letter-spacing: 0.0em; /* Increases spacing between letters */
     margin: 0;
     padding: 20px;
-    background: linear-gradient(45deg, #788aa3, #dea47e); /* Gradient background */
+    background: #788AA3;
+    /* background: linear-gradient(45deg,#DDF2EB, #788aa3,  #666A86); Gradient background */
     border-radius: 15px; /* Rounds the corners of the label's background */
     box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
     display: inline-block; /* Allows the element to respect the padding and margin */
