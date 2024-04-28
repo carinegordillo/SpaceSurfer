@@ -169,6 +169,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Waitlist", "SS.B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.TaskManagerHub", "SS.Backend.Tests.TaskManagerHub\SS.Backend.Tests.TaskManagerHub.csproj", "{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.ReservationManagers", "SS.Backend.Tests.ReservationManagers\SS.Backend.Tests.ReservationManagers.csproj", "{D935C7CA-69A4-4369-9789-53C87831F873}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -319,6 +321,10 @@ Global
 		{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D935C7CA-69A4-4369-9789-53C87831F873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D935C7CA-69A4-4369-9789-53C87831F873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D935C7CA-69A4-4369-9789-53C87831F873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D935C7CA-69A4-4369-9789-53C87831F873}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
