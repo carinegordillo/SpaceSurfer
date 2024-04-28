@@ -1,5 +1,6 @@
 using SS.Backend.SharedNamespace;
 using SS.Backend.ReservationManagement;
+using SS.Backend.Services.LoggingService;
 
 
 namespace SS.Backend.ReservationManagers{
@@ -12,15 +13,21 @@ namespace SS.Backend.ReservationManagers{
         private readonly IReservationStatusUpdater _reservationStatusUpdater;
 
         private readonly IReservationRequirements _reservationRequirements = new SpaceSurferReservationRequirements();
+
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+
+        private LogEntry logEntry;
         
         
     
 
-        public ReservationCancellationManager(IReservationCancellationService reservationCancellationService, IReservationValidationService reservationValidationService, IReservationStatusUpdater reservationStatusUpdater)
+        public ReservationCancellationManager(IReservationCancellationService reservationCancellationService, IReservationValidationService reservationValidationService, IReservationStatusUpdater reservationStatusUpdater, ILogger logger)
         {
             _reservationCancellationService = reservationCancellationService;
             _reservationValidationService = reservationValidationService;
             _reservationStatusUpdater = reservationStatusUpdater;
+            _logger = logger;
             
         }
 
@@ -59,6 +66,8 @@ namespace SS.Backend.ReservationManagers{
                         reservationCancellationResponse =  await _reservationCancellationService.CancelReservationAsync(tableName, userReservationsModel.ReservationID.Value);
                         if (reservationCancellationResponse.HasError)
                         {
+                            logEntry = logBuilder.Error().Business().Description($"Could not Cancel reservation with ID {userReservationsModel.ReservationID} due to being invalid").User(userReservationsModel.UserHash).Build();
+                            
                             
                             response.ErrorMessage = "could not cancel Reservation.";
                             response.HasError = true;
@@ -67,20 +76,27 @@ namespace SS.Backend.ReservationManagers{
                         {
                             response.ErrorMessage = "Reservation cancelled successfully.";
                             response.HasError = false;
+                            logEntry = logBuilder.Info().Business().Description($"Reservation with ID {userReservationsModel.ReservationID} successfully Cancelled").User(userReservationsModel.UserHash).Build();
+                            
                         }
                     }
                     catch (Exception ex)
                     {
                         response.HasError = true;
                         response.ErrorMessage = ex.Message;
+                        logEntry = logBuilder.Error().Business().Description($"Error trying to Cancel reservation with ID {userReservationsModel.ReservationID} Error : {ex.Message}").User(userReservationsModel.UserHash).Build();
+                            
                     }
                 }
                 else
                 {
 
-                    reservationCancellationResponse = new Response { HasError = true, ErrorMessage = "Reservation ID is null." };
+                    response  = new Response { HasError = true, ErrorMessage = "Reservation ID is null." };
+                    logEntry = logBuilder.Error().Business().Description($"Error trying to Cancel reservation because reservation ID is null").User(userReservationsModel.UserHash).Build();
+                            
                 }
             }
+            _logger.SaveData(logEntry);
             return response;
         }
     }

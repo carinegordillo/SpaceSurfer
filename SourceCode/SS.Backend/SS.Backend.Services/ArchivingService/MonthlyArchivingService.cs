@@ -1,3 +1,4 @@
+using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
 using System;
 using System.Threading;
@@ -5,11 +6,13 @@ using System.Threading;
 
 namespace SS.Backend.Services.ArchivingService
 {
-    public class MonthlyArchivingService
+    public class MonthlyArchivingService : IReoccuringArchivingService
     {
         private readonly ITargetArchivingDestination _archivingTarget;
         private Thread _thread;
         private bool _isRunning = true;
+
+        
 
 
         public MonthlyArchivingService(ITargetArchivingDestination archivingTarget)
@@ -33,7 +36,7 @@ namespace SS.Backend.Services.ArchivingService
             _thread.Join(); 
         }
         
-        private void Run()
+        public void Run()
         {
             while (_isRunning)
             {
@@ -56,13 +59,13 @@ namespace SS.Backend.Services.ArchivingService
             }
         }
 
-        private DateTime GetNextRunTime()
+        public DateTime GetNextRunTime()
         {
             var nextMonth = DateTime.Now.AddMonths(1);
             return new DateTime(nextMonth.Year, nextMonth.Month, 1);
         }
 
-        private async void PerformScheduledTask()
+        public async void PerformScheduledTask()
         {
             Response tableReaderResponse = new Response();
 

@@ -1,6 +1,7 @@
 ﻿using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
 using SS.Backend.Waitlist;
+using SS.Backend.Services.LoggingService;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System;
@@ -21,6 +22,10 @@ namespace SS.Backend.ReservationManagement{
         private IReservationManagementRepository _reservationManagementRepository;
         private readonly WaitlistService _waitlist;
 
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+
+        private LogEntry logEntry;
+
         public ReservationCreatorService(IReservationManagementRepository reservationManagementRepository, WaitlistService waitlist)
         {
             _reservationManagementRepository = reservationManagementRepository;
@@ -32,7 +37,6 @@ namespace SS.Backend.ReservationManagement{
             Response response = new Response();
 
             var commandBuilder = new CustomSqlCommandBuilder();
-
 
             var parameters = new Dictionary<string, object>
                         {
@@ -57,6 +61,10 @@ namespace SS.Backend.ReservationManagement{
             if (response.HasError == false){
                 response.ErrorMessage += "- CreateReservationWithAutoIDAsync - command successful - ";
 
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully created Auto ID reservation at {userReservationsModel.CompanyID}").User(userReservationsModel.UserHash).Build();
+
+                
+
                 //Waitlist Service
                 int compid = userReservationsModel.CompanyID;
                 int floorid = userReservationsModel.FloorPlanID;
@@ -75,9 +83,12 @@ namespace SS.Backend.ReservationManagement{
                 }
             }
             else{
-                    response.ErrorMessage += $"- CreateReservationWithAutoIDAsync - command : {InsertReservationCommand.CommandText} not successful - \n ErrorMessage {response.ErrorMessage} \n HasError {response.HasError} ";
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to create Auto ID reservation at {userReservationsModel.CompanyID}").User(userReservationsModel.UserHash).Build();
+                response.ErrorMessage += $"- CreateReservationWithAutoIDAsync - command : {InsertReservationCommand.CommandText} not successful - \n ErrorMessage {response.ErrorMessage} \n HasError {response.HasError} ";
 
             }
+
+            _reservationManagementRepository.LogTask(logEntry); 
             return response;
 
 
@@ -87,6 +98,8 @@ namespace SS.Backend.ReservationManagement{
             Response response = new Response();
 
             var commandBuilder = new CustomSqlCommandBuilder();
+           
+            
 
             var parameters = new Dictionary<string, object>
                         {
@@ -112,14 +125,20 @@ namespace SS.Backend.ReservationManagement{
 
             if (response.HasError == false){
                 response.HasError = false;
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully created Manual ID reservation ({userReservationsModel.ReservationID}) at {userReservationsModel.CompanyID}").User(userReservationsModel.UserHash).Build();
+
+                _reservationManagementRepository.LogTask(logEntry); 
     
             }
             else{
                 response.HasError = true;
+                logEntry = logBuilder.Info().DataStore().Description($"Failed to create Manual ID reservation ({userReservationsModel.ReservationID}) at {userReservationsModel.CompanyID}").User(userReservationsModel.UserHash).Build();
+
                 response.ErrorMessage = $"- CreateReservationWithManualIDAsync - command : {InsertReservationCommand.CommandText} not successful - ";
                 
 
             }
+            _reservationManagementRepository.LogTask(logEntry);
 
             return response;
 

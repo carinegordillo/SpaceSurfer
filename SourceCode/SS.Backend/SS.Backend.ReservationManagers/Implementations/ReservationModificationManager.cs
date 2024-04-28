@@ -1,5 +1,6 @@
 using SS.Backend.SharedNamespace;
 using SS.Backend.ReservationManagement;
+using SS.Backend.Services.LoggingService;
 
 
 namespace SS.Backend.ReservationManagers{
@@ -9,15 +10,21 @@ namespace SS.Backend.ReservationManagers{
         private readonly string SS_RESERVATIONS_TABLE = "dbo.reservations";
         private readonly IReservationModificationService _reservationModificationService;
         private readonly IReservationValidationService _reservationValidationService;
+        private readonly ILogger _logger;
 
         private readonly IReservationRequirements _reservationRequirements = new SpaceSurferReservationRequirements();
+
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+
+        private LogEntry logEntry;
         
     
 
-        public ReservationModificationManager(IReservationModificationService reservationModificationService, IReservationValidationService reservationValidationService)
+        public ReservationModificationManager(IReservationModificationService reservationModificationService, IReservationValidationService reservationValidationService, ILogger logger)
         {
             _reservationModificationService = reservationModificationService;
             _reservationValidationService = reservationValidationService;
+            _logger = logger;
             
         }
 
@@ -33,6 +40,7 @@ namespace SS.Backend.ReservationManagers{
     
             if (validationResponse.HasError)
             {
+                logEntry = logBuilder.Error().Business().Description($"Reservation did not pass validation checks : {validationResponse.ErrorMessage}.").User(userReservationsModel.UserHash).Build();
                 response.ErrorMessage = "Reservation did not pass validation checks: " + validationResponse.ErrorMessage;
                 response.HasError = true;
             }
@@ -44,12 +52,15 @@ namespace SS.Backend.ReservationManagers{
                     reservationCreationResponse =  await _reservationModificationService.ModifyReservationTimes(tableName, userReservationsModel);
                     if (reservationCreationResponse.HasError)
                     {
-                        response.ErrorMessage = "Sorry! could not create Reservation.";
+                        response.ErrorMessage = "Sorry! could not update Reservation.";
+                        logEntry = logBuilder.Error().Business().Description($"Could not modify reservation #{userReservationsModel.ReservationID}.").User(userReservationsModel.UserHash).Build();
                         response.HasError = true;
                     }
                     else
                     {
                         response.ErrorMessage = "Reservation updated successfully.";
+                        logEntry = logBuilder.Info().Business().Description($"Modfied reservation #{userReservationsModel.ReservationID}.").User(userReservationsModel.UserHash).Build();
+                        
                         response.HasError = false;
                     }
                 }
@@ -57,9 +68,12 @@ namespace SS.Backend.ReservationManagers{
                 {
                     response.HasError = true;
                     response.ErrorMessage = ex.Message;
+                    logEntry = logBuilder.Error().Business().Description($"Could not modify reservation #{userReservationsModel.ReservationID}. Error : {ex.Message}").User(userReservationsModel.UserHash).Build();
+                        
                 }
 
             }
+            _logger.SaveData(logEntry);
             return response;
         }
 

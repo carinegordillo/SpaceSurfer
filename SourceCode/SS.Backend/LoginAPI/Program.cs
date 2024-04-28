@@ -3,6 +3,7 @@ using SS.Backend.DataAccess;
 using SS.Backend.Security;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
+using SS.Backend.Services.ArchivingService ;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllers();
+
 
 var baseDirectory = AppContext.BaseDirectory;
 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
@@ -36,7 +37,26 @@ builder.Services.AddTransient<SSAuthService>(provider =>
     )
 );
 
+//adding archiving 
+builder.Services.AddTransient<ITargetArchivingDestination, S3ArchivingDestination>();
+builder.Services.AddSingleton<TwoMinuteArchivingService>();
+
+
+builder.Services.AddControllers();
+
 var app = builder.Build();
+
+var archivingService = app.Services.GetRequiredService<TwoMinuteArchivingService>();
+
+app.Lifetime.ApplicationStarted.Register(() => {
+    Console.WriteLine("Application is starting. TwoMinuteArchivingService is being started...");
+    archivingService.Start();
+});
+
+app.Lifetime.ApplicationStopping.Register(() => {
+    Console.WriteLine("Application is stopping. TwoMinuteArchivingService is being stopped...");
+    archivingService.Stop();
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -69,6 +89,8 @@ app.Use(async (context, next) =>
         await next();
     }
 });
+
+
 
 app.UseStaticFiles();
 

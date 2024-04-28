@@ -5,13 +5,15 @@ using System;
 using System.Threading;
 
 
-namespace SS.Backend.Services.ArchivingService
+namespace SS.Backend.Services.ArchivingService 
 {
-    public class TwoMinuteArchivingService
+    public class TwoMinuteArchivingService : IReoccuringArchivingService
     {
         private readonly ITargetArchivingDestination _archivingTarget;
         private Thread _thread;
         private bool _isRunning = true;
+        private AutoResetEvent _waitHandle = new AutoResetEvent(false);
+
 
 
         
@@ -23,7 +25,7 @@ namespace SS.Backend.Services.ArchivingService
         }
 
 
-          public void Start()
+        public void Start()
         {
             _thread = new Thread(new ThreadStart(Run));
             Console.WriteLine("Starting TwoMinuteArchivingService...");
@@ -35,13 +37,15 @@ namespace SS.Backend.Services.ArchivingService
         {
             Console.WriteLine("Stopping TwoMinuteArchivingService...");
             _isRunning = false;
-            if (_thread.IsAlive) {
-                _thread.Interrupt();
+            _waitHandle.Set();  // Signal the thread to stop waiting and check the loop condition
+            if (_thread.IsAlive)
+            {
+                _thread.Join();
             }
-            _thread.Join(); 
+            Console.WriteLine("TwoMinuteArchivingService stopped.");
         }
         
-        private void Run()
+        public void Run()
         {
             Console.WriteLine("TwoMinuteArchivingService running...");
             while (_isRunning)
@@ -65,16 +69,17 @@ namespace SS.Backend.Services.ArchivingService
             }
         }
 
-        private DateTime GetNextRunTime()
+        public DateTime GetNextRunTime()
         {
             Console.WriteLine("Getting next run time...");
-            var nextMonth = DateTime.Now.AddSeconds(30);
+            var nextMonth = DateTime.Now.AddMinutes(2);
             return nextMonth;
         }
 
-        private async void PerformScheduledTask()
+        public async void PerformScheduledTask()
         {
             Response tableReaderResponse = new Response();
+            Response tableResetterResponse = new Response();
 
 
 
@@ -96,11 +101,18 @@ namespace SS.Backend.Services.ArchivingService
                     s3Info.destination = "space-surfer-archivestest";
                     s3Info.filePath = tempFilePath;
                     
-                    string dateTimeNow = DateTime.Now.ToString("yyyyMMdd_HHmmss"); 
+                    string dateTimeNow = DateTime.Now.ToString("yyyyMMdd_HHmm"); 
                     s3Info.fileName = $"SpaceSurferLogs_{dateTimeNow}.txt";
 
                     Console.WriteLine("Performing scheduled task..."+ DateTime.Now);
                     _archivingTarget.UploadFileAsync(s3Info);
+                   tableResetterResponse = await tableReader.ResetSqlTable("dbo.Logs");
+
+                   if (tableResetterResponse.HasError == true)
+                   {
+                       Console.WriteLine("Error resetting table: " + tableResetterResponse.ErrorMessage);
+                   }    
+                    
                 }
             }
             catch (Exception e){

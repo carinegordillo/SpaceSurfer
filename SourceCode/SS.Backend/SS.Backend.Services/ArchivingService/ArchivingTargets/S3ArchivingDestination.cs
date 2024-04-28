@@ -4,12 +4,34 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Transfer;
 using SS.Backend.SharedNamespace;  
+using System.Text.Json;
+
 namespace SS.Backend.Services.ArchivingService
 {
     public class S3ArchivingDestination : ITargetArchivingDestination
     {
-        string accessKey = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
-        string secretKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
+        private readonly string accessKey;
+        private readonly string secretKey;
+
+        public S3ArchivingDestination()
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "s3config.json");
+            string configJson = File.ReadAllText(configFilePath);
+
+            using (JsonDocument doc = JsonDocument.Parse(configJson))
+            {
+                JsonElement root = doc.RootElement;
+                JsonElement awsConfig = root.GetProperty("AWS");
+                accessKey = awsConfig.GetProperty("AccessKey").GetString() ?? "No Access Key";
+                secretKey = awsConfig.GetProperty("SecretKey").GetString() ?? "No Secret Key";
+
+            }
+            Console.WriteLine("Access Key: " + accessKey);
+            Console.WriteLine("Secret Key: " + secretKey);
+        }
+
 
         public async Task<Response> UploadFileAsync(ArchivesModel archiveInfo)
         {
