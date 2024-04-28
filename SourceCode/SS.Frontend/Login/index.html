@@ -10,7 +10,8 @@
     <!--<link rel="stylesheet" href="/Waitlist/style.css"> -->
     <script src="UserProfile.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- CAN WE ADD THAT ?!  -->
 
 </head>
 
@@ -33,7 +34,9 @@
                     <div class="nav-item" id="navLogin" onclick="getLogin()">Login</div>
                 </div>
                 <div id="homepageGen" class="nav-items" style="display: none;">
-                    <div class="nav-item" type="button" onclick="getHomePage()">Home</div>
+                    <div class="nav-item" type="button" onclick="getHomePage()">
+                        <i class="fas fa-home">Home</i> 
+                    </div>
                     <div class="nav-item" type="button" onclick="getUserProfile()">Profile</div>
                     <div class="nav-item" type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</div>
                     <div class="nav-item" type="button" onclick="waitlistAccess()">Waitlist</div>
@@ -52,40 +55,13 @@
     <section id="sendOTPSection" style="display: none;">
         <div class="container">
             <section id="sendOTPSection" class="loginForm">
-                <div class="about-section">
-                    <h2 class="login-title">About Space Surfer</h2>
-                    <p>Welcome to <strong>Space Surfer</strong> - Your Premier Space Reservation Platform!</p>
-                    
-                    <h3>Who We Are</h3>
-                    <p>Space Surfer is a cutting-edge platform designed to simplify the way individuals and businesses reserve spaces for various purposes. Whether you're booking a conference room, securing a spot in a co-working space, or claiming a seat at a local event, Space Surfer offers a seamless, intuitive reservation experience that puts your convenience first.</p>
-                    <h3>Our Mission</h3>
-                    <p>Our mission at Space Surfer is to revolutionize space booking by making it as easy and stress-free as possible. We believe that finding and securing the right space, whether for work, leisure, or special events, should be straightforward and hassle-free. Space Surfer leverages advanced technology to connect space providers with users, ensuring efficient transactions and satisfied outcomes.</p>
-                    
-                    <!-- <h3>What We Offer</h3>
-                    <ul>
-                        <li><strong>Real-Time Availability:</strong> See up-to-date space availability to ensure you can book the space you need, when you need it.</li>
-                        <li><strong>Diverse Locations:</strong> Access a variety of spaces across multiple locations worldwide. Whether you're local or traveling, find a space that suits your needs.</li>
-                        <li><strong>Flexible Booking Options:</strong> From hourly reservations to long-term leases, choose the booking option that best fits your schedule and budget.</li>
-                        <li><strong>User-Friendly Interface:</strong> Our platform is designed with user experience in mind. Navigate our site with ease and book your space in just a few clicks.</li>
-                        <li><strong>Secure Transactions:</strong> Your security is our top priority. We provide a secure platform for all transactions, safeguarding your personal and financial information.</li>
-                    </ul>
-                    
-                    <h3>How It Works</h3>
-                    <ol>
-                        <li><strong>Search:</strong> Enter your location and date to see available spaces.</li>
-                        <li><strong>Select:</strong> Choose the space that meets your criteria.</li>
-                        <li><strong>Book:</strong> Reserve your space through our secure checkout process.</li>
-                        <li><strong>Use:</strong> Enjoy your reserved space and manage your booking through our user-friendly dashboard.</li>
-                    </ol> -->
-                    
-                    <h3>Our Vision</h3>
-                    <p>Looking ahead, Space Surfer aims to expand its reach by incorporating more diverse spaces and offering enhanced features that anticipate and meet our users' evolving needs. We are committed to continuous improvement and innovation to remain at the forefront of the space reservation industry.</p>
-                    
-                    <h3>Join Us</h3>
-                    <p>Ready to get started? Join Space Surfer today and experience the ultimate in space booking convenience. For questions or further information, please contact us at <a href="mailto:support@spacesurfer.com">spacesurfer@gmail.com</a>.</p>
-                    
-                    <p>Thank you for choosing Space Surfer — where your space is just a click away!</p>
-                </div>
+                <form id="sendOTPForm">
+                    <label for="userIdentity" class="login-title">Login!</label>
+                    <input type="text" id="userIdentity" name="userIdentity" required placeholder="Enter your username">
+                    <button type="button" onclick="sendOTP()">Send Verification</button>
+                    <a href="#" class="recover-link">Recover an account</a>
+                    <a href="#" class="recover-link">Don't have an account? Register Now!</a>
+                </form>
             </section>
             <!-- <div class="welcome-label">
                 Welcome to SpaceSurfer!
@@ -99,35 +75,40 @@
             <section id="sendOTPSection" class="loginForm">
                 <form id="sendOTPForm">
                     <label class="login-title">About</label>
-                    <a>Welcome to Space Surfer - Your Premier Space Reservation Platform!
-                        Who We Are
-                        Space Surfer is a cutting-edge platform designed to simplify the way individuals and businesses reserve spaces for various purposes. Whether you're booking a conference room, securing a spot in a co-working space, or claiming a seat at a local event, Space Surfer offers a seamless, intuitive reservation experience that puts your convenience first.
+                    <div class="about-section">
+                        <p>Welcome to <strong>Space Surfer</strong> - Your Premier Space Reservation Platform!</p>
                         
-                        Our Mission
-                        Our mission at Space Surfer is to revolutionize space booking by making it as easy and stress-free as possible. We believe that finding and securing the right space, whether for work, leisure, or special events, should be straightforward and hassle-free. Space Surfer leverages advanced technology to connect space providers with users, ensuring efficient transactions and satisfied outcomes.
+                        <h3>Who We Are</h3>
+                        <p>Space Surfer is a cutting-edge platform designed to simplify the way individuals and businesses reserve spaces for various purposes. Whether you're booking a conference room, securing a spot in a co-working space, or claiming a seat at a local event, Space Surfer offers a seamless, intuitive reservation experience that puts your convenience first.</p>
                         
-                        What We Offer
-                        Space Surfer provides a wide array of features designed to enhance your booking experience:
+                        <h3>Our Mission</h3>
+                        <p>Our mission at Space Surfer is to revolutionize space booking by making it as easy and stress-free as possible. We believe that finding and securing the right space, whether for work, leisure, or special events, should be straightforward and hassle-free. Space Surfer leverages advanced technology to connect space providers with users, ensuring efficient transactions and satisfied outcomes.</p>
                         
-                        Real-Time Availability: See up-to-date space availability to ensure you can book the space you need, when you need it.
-                        Diverse Locations: Access a variety of spaces across multiple locations worldwide. Whether you're local or traveling, find a space that suits your needs.
-                        Flexible Booking Options: From hourly reservations to long-term leases, choose the booking option that best fits your schedule and budget.
-                        User-Friendly Interface: Our platform is designed with user experience in mind. Navigate our site with ease and book your space in just a few clicks.
-                        Secure Transactions: Your security is our top priority. We provide a secure platform for all transactions, safeguarding your personal and financial information.
-                        How It Works
-                        Booking your space with Space Surfer is as simple as:
+                        <!-- <h3>What We Offer</h3>
+                        <ul>
+                            <li><strong>Real-Time Availability:</strong> See up-to-date space availability to ensure you can book the space you need, when you need it.</li>
+                            <li><strong>Diverse Locations:</strong> Access a variety of spaces across multiple locations worldwide. Whether you're local or traveling, find a space that suits your needs.</li>
+                            <li><strong>Flexible Booking Options:</strong> From hourly reservations to long-term leases, choose the booking option that best fits your schedule and budget.</li>
+                            <li><strong>User-Friendly Interface:</strong> Our platform is designed with user experience in mind. Navigate our site with ease and book your space in just a few clicks.</li>
+                            <li><strong>Secure Transactions:</strong> Your security is our top priority. We provide a secure platform for all transactions, safeguarding your personal and financial information.</li>
+                        </ul>
                         
-                        Search: Enter your location and date to see available spaces.
-                        Select: Choose the space that meets your criteria.
-                        Book: Reserve your space through our secure checkout process.
-                        Use: Enjoy your reserved space and manage your booking through our user-friendly dashboard.
-                        Our Vision
-                        Looking ahead, Space Surfer aims to expand its reach by incorporating more diverse spaces and offering enhanced features that anticipate and meet our users' evolving needs. We are committed to continuous improvement and innovation to remain at the forefront of the space reservation industry.
+                        <h3>How It Works</h3>
+                        <ol>
+                            <li><strong>Search:</strong> Enter your location and date to see available spaces.</li>
+                            <li><strong>Select:</strong> Choose the space that meets your criteria.</li>
+                            <li><strong>Book:</strong> Reserve your space through our secure checkout process.</li>
+                            <li><strong>Use:</strong> Enjoy your reserved space and manage your booking through our user-friendly dashboard.</li>
+                        </ol> -->
                         
-                        Join Us
-                        Ready to get started? Join Space Surfer today and experience the ultimate in space booking convenience. For questions or further information, please contact us at support@spacesurfer.com.
+                        <h3>Our Vision</h3>
+                        <p>Looking ahead, Space Surfer aims to expand its reach by incorporating more diverse spaces and offering enhanced features that anticipate and meet our users' evolving needs. We are committed to continuous improvement and innovation to remain at the forefront of the space reservation industry.</p>
                         
-                        Thank you for choosing Space Surfer — where your space is just a click away!</a>
+                        <h3>Join Us</h3>
+                        <p>Ready to get started? Join Space Surfer today and experience the ultimate in space booking convenience. For questions or further information, please contact us at <a href="mailto:support@spacesurfer.com">support@spacesurfer.com</a>.</p>
+                        
+                        <p>Thank you for choosing Space Surfer — where your space is just a click away!</p>
+                    </div>
                 </form>
             </section>
             <!-- <div class="welcome-label">
@@ -140,7 +121,7 @@
 
     <section id="welcomeSection" style="display: none;">
         <div class="container">
-            <img src="images/astronaut.png" alt="Astro" class="header-title">
+            <img src="images/astronaut.png" alt="Astro" class = "hovering">
         </div>
     </section>
 
