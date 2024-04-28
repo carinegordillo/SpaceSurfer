@@ -148,6 +148,113 @@ namespace SS.Backend.UserManagement
             return response;
 
         }
+        public async Task<Response> CreateAccount(UserInfo userInfo, CompanyInfo? companyInfo)
+        {   
+            UserPepper userPepper = new UserPepper();
+            Hashing hashing = new Hashing();
+            string pepper = "DA06";
+
+
+#pragma warning disable CS8604 // Possible null reference argument.
+            var validPepper = new UserPepper
+            {
+                hashedUsername = hashing.HashData(userInfo.username, pepper)
+            };
+#pragma warning restore CS8604 // Possible null reference argument.
+            Dictionary<string, object> userAccount_success_parameters;
+
+
+#pragma warning disable CS8604 // Possible null reference argument.
+            var userProfile_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                { "FirstName", userInfo.firstname},
+                { "LastName", userInfo.lastname}, 
+                {"backupEmail", userInfo.backupEmail},
+                {"appRole", userInfo.role}, 
+            };
+#pragma warning restore CS8604 // Possible null reference argument.
+
+#pragma warning disable CS8604 // Possible null reference argument.
+            var activeAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"isActive", userInfo.status} 
+            };
+#pragma warning restore CS8604 // Possible null reference argument.
+
+            var hashedAccount_success_parameters = new Dictionary<string, object>
+            {
+                {"hashedUsername", validPepper.hashedUsername},
+                {"username", userInfo.username},
+                {"user_id", 1}
+            };
+
+
+            var tableData = new Dictionary<string, Dictionary<string, object>>
+            {
+                // { "userAccount", userAccount_success_parameters },
+                { "userProfile", userProfile_success_parameters },
+                { "activeAccount", activeAccount_success_parameters}, 
+                {"userHash", hashedAccount_success_parameters}
+            };
+            Console.WriteLine("TABLE DATE ",  tableData);
+
+            if (userInfo.role != 4) {
+                userAccount_success_parameters = new Dictionary<string, object>
+                {
+                    { "username", userInfo.username},
+                    {"birthDate", userInfo.dob},
+                };
+                tableData.Add("userAccount", userAccount_success_parameters);
+            } 
+
+            if (companyInfo != null)
+            {
+#pragma warning disable CS8604 // Possible null reference argument.
+                var companyProfile_success_parameters = new Dictionary<string, object>
+                {
+                    {"hashedUsername", validPepper.hashedUsername},
+                    {"companyName", companyInfo.companyName},
+                    {"address", companyInfo.address},
+                    {"openingHours", companyInfo.openingHours},
+                    {"closingHours", companyInfo.closingHours},
+                    {"daysOpen", companyInfo.daysOpen}
+                };
+#pragma warning restore CS8604 // Possible null reference argument.
+
+                // Add the companyProfile dictionary to tableData
+                tableData.Add("companyProfile", companyProfile_success_parameters);
+            }
+
+            var builder = new CustomSqlCommandBuilder();
+            Response tablesresponse = new Response();
+
+            // Iterate through each table entry in the provided data
+            foreach (var tableEntry in tableData)
+            {
+                string tableName = tableEntry.Key; // Table name
+                Dictionary<string, object> parameters = tableEntry.Value; // Parameters for the table
+
+                // Build the INSERT SQL command for each table
+                var insertCommand = builder.BeginInsert(tableName)
+                    .Columns(parameters.Keys) // Specify columns
+                    .Values(parameters.Keys) // Specify values (same as columns for parameterized queries)
+                    .AddParameters(parameters) // Add parameters
+                    .Build();
+
+                // Execute the INSERT command
+                tablesresponse = await _sqldao.SqlRowsAffected(insertCommand);
+
+                // Check for errors and return if any
+                if (tablesresponse.HasError)
+                {
+                    tablesresponse.ErrorMessage += $"{tableName}: error inserting data; ";
+                    return tablesresponse;
+                }
+            }
+            return tablesresponse;
+        }
 
     }
 }
