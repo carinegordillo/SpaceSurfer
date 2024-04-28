@@ -370,7 +370,7 @@ namespace EmailConfirmationAPI.Controllers
             // }
         }
 
-        [HttpGet("ListConfirmations")]
+        [HttpPost("ListConfirmations")]
         public async Task<IActionResult> ListConfirmations([FromBody] string hashedUsername)
         {
             string? accessToken = HttpContext.Request.Headers["Authorization"];
@@ -383,7 +383,7 @@ namespace EmailConfirmationAPI.Controllers
                 {
                     var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
 
-                    if (claims.TryGetValue("Role", out var role) && role == "1" || role == "2" || role == "3" || role == "4" || role == "5")
+                    if (claims.TryGetValue("Role", out var role) && (role == "1" || role == "2" || role == "3" || role == "4" || role == "5"))
                     {
                         bool closeToExpTime = _authService.CheckExpTime(accessToken);
                         if (closeToExpTime)

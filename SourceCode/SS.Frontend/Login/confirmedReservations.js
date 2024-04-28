@@ -1,5 +1,71 @@
 const baseUrl = "http://localhost:5116/api/v1/reservationConfirmation";
 
+function showModal(message, isSuccess = true) {
+    const modalElement = document.createElement('div');
+    modalElement.style.position = 'fixed';
+    modalElement.style.top = '20%';
+    modalElement.style.left = '50%';
+    modalElement.style.transform = 'translate(-50%, -50%)';
+    modalElement.style.zIndex = '1000';
+    modalElement.style.padding = '20px';
+    modalElement.style.backgroundColor = isSuccess ? 'lightgreen' : 'salmon';
+    modalElement.innerText = message;
+
+    const closeButton = document.createElement('button');
+    closeButton.innerText = 'Close';
+    closeButton.onclick = function() {
+        modalElement.remove();
+    };
+    modalElement.appendChild(closeButton);
+
+    document.body.appendChild(modalElement);
+}
+
+// You may need a function to create the details container if it doesn't exist
+function createDetailsContainer() {
+    const container = document.createElement('div');
+    container.id = 'reservation-details';
+    document.body.appendChild(container); // Append it somewhere in your body, or to a specific element
+    return container;
+}
+
+document.addEventListener('DOMContentLoaded', attachClickHandlersToDetailsContainer);
+function attachClickHandlersToDetailsContainer() {
+    const detailsContainer = document.getElementById('reservation-details');
+    if (detailsContainer) {
+        detailsContainer.addEventListener('click', handleReservationButtonClick);
+    }
+}
+function handleReservationButtonClick(event) {
+    const target = event.target;
+    if (target.tagName === 'BUTTON') {
+        const reservationID = target.getAttribute('data-reservation-id');
+        if (target.className.includes('delete-btn')) {
+            deleteConfirmation(reservationID);
+        } else if (target.className.includes('cancel-btn')) {
+            const username = target.getAttribute('data-username');
+            cancelConfirmation(username, reservationID);
+        }
+    }
+}
+// document.addEventListener('DOMContentLoaded', () => {
+//     const detailsContainer = document.getElementById('reservation-details');
+//     if (detailsContainer) {
+//         detailsContainer.addEventListener('click', function(event) {
+//             const target = event.target;
+//             if (target.tagName === 'BUTTON') {
+//                 const reservationID = target.dataset.reservationId;
+//                 if (target.classList.contains('delete-btn')) {
+//                     deleteConfirmation(reservationID);
+//                 } else if (target.classList.contains('cancel-btn')) {
+//                     const username = target.dataset.username;
+//                     cancelConfirmation(username, reservationID);
+//                 }
+//             }
+//         });
+//     }
+// });
+
 function logout() {
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('idToken');
@@ -69,9 +135,11 @@ async function sendConfirmation(reservationID) {
         }
 
         console.log('Confirmation sent successfully:', data);
+        showModal('Confirmation sent successfully!', true);
         return data;
     } catch (error) {
         console.error('Error sending confirmation:', error);
+        showModal('Failed to send confirmation: ' + error.message, false);
     }
 }
 
@@ -148,9 +216,11 @@ async function confirmReservation(reservationID, otp) {
         }
 
         console.log('Reservation confirmed successfully:', data);
+        showModal('Reservation confirmed successfully:', true);
         return data;
     } catch (error) {
         console.error('Error confirming reservation:', error);
+        showModal('Error confirming reservation: ' + error.message, false);
     }
 }
 
@@ -226,9 +296,11 @@ async function cancelConfirmation(hashedUsername, reservationID) {
         }
 
         console.log('Confirmation cancelled successfully:', data);
+        showModal('Confirmation cancelled successfully!', true);
         return data;
     } catch (error) {
         console.error('Error canceling confirmation:', error);
+        showModal('Error canceling confirmation: ' + error.message, false); // Using modal to show error message
     }
 }
 
@@ -237,6 +309,10 @@ async function cancelConfirmation(hashedUsername, reservationID) {
 async function listConfirmations() {
     var accessToken = sessionStorage.getItem('accessToken');
     var idToken = sessionStorage.getItem('idToken');
+    if (!idToken) {
+        console.error('idToken is missing');
+        return; // Exit the function if there is no idToken.
+    }
     var parsedIdToken = JSON.parse(idToken);
     var username = parsedIdToken.Username;
 
@@ -249,12 +325,12 @@ async function listConfirmations() {
     const url = `${baseUrl}/ListConfirmations?hashedUsername=${username}`;
     try {
         const response = await fetch(url, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username })
+            body: JSON.stringify(username)
         });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -266,36 +342,78 @@ async function listConfirmations() {
             console.log('New access token stored:', accessToken);
         }
         console.log(data);
+        
+
+        const confirmations = data.confirmations;
 
         const detailsContainer = document.getElementById('reservation-details');
         detailsContainer.innerHTML = ''; // Clear previous entries
 
-
-        if (Array.isArray(data) && data.length > 0) {
-            data.forEach(reservation => {
+        // Check if confirmations is an array and has items
+        if (Array.isArray(confirmations) && confirmations.length > 0) {
+            // Iterate over the confirmations array and create HTML for each
+            confirmations.forEach(reservation => {
                 const div = document.createElement('div');
-                div.className = 'reservation-entry'; // This class should have corresponding styles in style.css
+                //div.className = 'reservation-list';
                 div.innerHTML = `
-                    <h3>Reservation ID: ${reservation.reservationID}</h3>
-                    <p>Start Time: ${new Date(reservation.reservationStartTime).toLocaleString()}</p>
-                    <p>End Time: ${new Date(reservation.reservationEndTime).toLocaleString()}</p>
-                    <div class="button-group">
-                        <button onclick="deleteConfirmation(${reservation.reservationID})">Delete Confirmation</button>
-                        <button onclick="cancelConfirmation('${username}', ${reservation.reservationID})">Cancel Confirmation</button>
+                    <div class="container">
+                        <div class="reservation-details-container content-container">
+                            <h3>Reservation ID: ${reservation.reservationID}</h3>
+                            <p>Start Time: ${new Date(reservation.reservationStartTime).toLocaleString()}</p>
+                            <p>End Time: ${new Date(reservation.reservationEndTime).toLocaleString()}</p>
+                            <div class="button-group">
+                                <button id="delete-btn"">Delete</button>
+                                <button id="cancel-btn"">Cancel</button>
+                            </div>
+                        </div>
                     </div>
                 `;
-                div.addEventListener('click', () => displayReservationDetails(reservation));
+                const cancelConfirmationBtn = document.getElementById('cancel-btn');
+                cancelConfirmationBtn.addEventListener('click', () => openDialogCancel(reservation));
+                const deleteConfirmationBtn = document.getElementById('delete-btn');
+                deleteConfirmationBtn.addEventListener('click', () => openDialogDelete(reservation));
                 detailsContainer.appendChild(div);
-                console.log(data);
             });
-        } else {
+        }else{
             detailsContainer.innerHTML = '<p>You currently do not have confirmed reservations.</p>';
         }
 
+        // const confirmations = data.confirmations;
+
+        // const detailsContainer = document.getElementById('reservation-details');
+        // detailsContainer.innerHTML = ''; // Clear previous entries
+
+        // // Check if confirmations is an array and has items
+        // if (Array.isArray(confirmations) && confirmations.length > 0) {
+        //     // Iterate over the confirmations array and create HTML for each
+        //     confirmations.forEach(reservation => {
+        //         const reservationElement = document.createElement('div');
+        //         reservationElement.className = 'reservation-entry';
+                
+        //         // Create the HTML string for the reservation details and buttons
+        //         const reservationHTML = `
+        //             <h3>Reservation ID: ${reservation.reservationID}</h3>
+        //             <p>Start Time: ${new Date(reservation.reservationStartTime).toLocaleString()}</p>
+        //             <p>End Time: ${new Date(reservation.reservationEndTime).toLocaleString()}</p>
+        //             <button class="delete-btn" data-reservation-id="${reservation.reservationID}">Delete Confirmation</button>
+        //             <button class="cancel-btn" data-reservation-id="${reservation.reservationID}">Cancel Confirmation</button>
+        //         `;
+
+        //         // Set the innerHTML of the reservationElement with the reservation details
+        //         reservationElement.innerHTML = reservationHTML;
+
+        //         // Append the reservationElement to the detailsContainer
+        //         detailsContainer.appendChild(reservationElement);
+        //     });
+        // } else {
+        //     detailsContainer.innerHTML = '<p>You currently do not have any confirmed reservations.</p>';
+        // }
+
         console.log('List of confirmations retrieved successfully:', data);
-        //return data;
+        showModal('List of confirmations retrieved successfully', true);
     } catch (error) {
         console.error('Error listing confirmations:', error);
+        showModal('Error listing confirmations: ' + error.message, false);
     }
 }
 
@@ -424,8 +542,16 @@ function closeLeaveModal() {
     }
 }
 
+// module.exports = {
+//     listConfirmations,
+//     sendConfirmation
+// };
 
-document.getElementById('initConfirmationsButton').addEventListener('click', () => {
-    listConfirmations();
-});
+window.onload=function(){
+    document.getElementById('initConfirmationsButton').addEventListener('click', () => {
+        listConfirmations();
+    });
+}
+
+
 

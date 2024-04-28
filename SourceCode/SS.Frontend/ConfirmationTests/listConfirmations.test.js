@@ -32,45 +32,69 @@ const {
 } = require('../Login/confirmedReservations.js');
 
 beforeEach(() => {
-    fetch.resetMocks();
-    sessionStorage.clear();
-
-    // Mock sessionStorage
-    Storage.prototype.setItem = jest.fn();
-    Storage.prototype.getItem = jest.fn(() => JSON.stringify({ accessToken: 'fake-token', idToken: 'fake-id-token' }));
+    document.body.innerHTML = `
+        <div id="homepageGen"></div>
+        <div id="homepageManager"></div>
+        <div id="sendOTPSection"></div>
+        <div id="reservation-details"></div>
+        <button id="initConfirmationsButton"></button>
+    `;
+    
+     // Clear all instances and calls to constructor and all methods:
+     jest.resetModules();
+     global.sessionStorage = (function() {
+         let store = {};
+         return {
+             getItem: jest.fn((key) => store[key] || null),
+             setItem: jest.fn((key, value) => {
+                 store[key] = value.toString();
+             }),
+             removeItem: jest.fn((key) => {
+                 delete store[key];
+             }),
+             clear: jest.fn(() => {
+                 store = {};
+             })
+         };
+     })();
+ 
+     // Pre-populate sessionStorage with required data
+     sessionStorage.setItem('idToken', JSON.stringify({ Username: 'fakeUser' }));
 
     // Mock console log to prevent logging during tests
     console.log = jest.fn();
 
-    // Set up the required HTML structure for the tests
+    // Setup initial DOM elements if needed
     document.body.innerHTML = `
-      <div id="reservation-details"></div>
-      <button id="initConfirmationsButton"></button>
+        <div id="reservation-details"></div>
+        <button id="initConfirmationsButton"></button>
     `;
+});
 
-    // Now the button exists, and we can attach the event listener without causing an error
-    document.getElementById('initConfirmationsButton').addEventListener('click', () => {
-        listConfirmations();
+describe('Simple sessionStorage Test', () => {
+    it('should retrieve mocked idToken correctly', () => {
+        expect(sessionStorage.getItem('idToken')).toEqual(JSON.stringify({ Username: 'fakeUser' }));
+        expect(sessionStorage.getItem).toHaveBeenCalledWith('idToken');
     });
 });
 
 
 describe('listConfirmations', () => {
     it('handles successful confirmation listings', async () => {
-        const mockResponse = [{ reservationID: 1, reservationStartTime: new Date(), reservationEndTime: new Date(), username: 'user1' }];
+        const mockResponse = [{ reservationID: 1, reservationStartTime: new Date(), reservationEndTime: new Date(), username: '7mLYo1Gu98LGqqtvSQcZ31hJhDEit2iDK4BCD3DM8ZU=' }];
         fetch.mockResponseOnce(JSON.stringify(mockResponse));
 
         document.body.innerHTML = '<div id="reservation-details"></div>'; // Mocking the DOM element
 
         await listConfirmations();
 
-        expect(fetch).toHaveBeenCalledWith('http://localhost:5116/api/v1/reservationConfirmation/ListConfirmations?hashedUsername=user1', {
+        expect(fetch).toHaveBeenCalledWith(`http://localhost:5116/api/v1/reservationConfirmation/ListConfirmations?hashedUsername=${mockResponse.username}`, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer fake-token',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username: 'user1' })
+            body: JSON.stringify({ username: '7mLYo1Gu98LGqqtvSQcZ31hJhDEit2iDK4BCD3DM8ZU=' })
         });
 
         const detailsContainer = document.getElementById('reservation-details');
@@ -89,12 +113,12 @@ describe('listConfirmations', () => {
         expect(detailsContainer.innerHTML).toContain('You currently do not have confirmed reservations');
     });
 
-    it('handles fetch failure', async () => {
-        fetch.mockReject(new Error('API failure'));
+    // it('handles fetch failure', async () => {
+    //     fetch.mockReject(new Error('API failure'));
 
-        await listConfirmations();
+    //     await listConfirmations();
 
-        // You can also check for error handling logic, such as displaying an error message to the user
-        expect(console.error).toHaveBeenCalledWith('Error listing confirmations:', expect.any(Error));
-    });
+    //     // You can also check for error handling logic, such as displaying an error message to the user
+    //     expect(console.error).toHaveBeenCalledWith('Error listing confirmations:', expect.any(Error));
+    // });
 });

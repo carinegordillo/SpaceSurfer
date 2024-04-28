@@ -106,23 +106,22 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.Use((context, next) =>
+// Manually handle CORS
+app.Use(async (context, next) =>
 {
-    
-    context.Response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:3000");
-    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+    // Set the necessary headers for CORS
+    context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
 
-    
+    // Handle the preflight request
     if (context.Request.Method == "OPTIONS")
     {
-        context.Response.Headers.Append("Access-Control-Max-Age", "86400"); 
-        context.Response.StatusCode = 204; 
-        return Task.CompletedTask;
+        context.Response.StatusCode = 200;
+        await context.Response.CompleteAsync();
+        return;
     }
-
-    return next();
+    await next();
 });
 
 

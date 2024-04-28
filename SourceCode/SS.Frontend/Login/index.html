@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8081 http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275 http://localhost:8089 http://localhost:5279 http://localhost:5048; img-src 'self' data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8081 http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275 http://localhost:8089 http://localhost:5279 http://localhost:5048 http://localhost:5116; img-src 'self' data:;">
         <link rel="stylesheet" href="spaceBookingCenter.css"> 
-    <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="confirmStyle.css">
         <link rel="stylesheet" href="PersonalOverviewStyle.css">
     <!--<link rel="stylesheet" href="/Waitlist/style.css"> -->
     <script src="UserProfile.js"></script>
@@ -196,13 +197,12 @@
         <button id="initConfirmationsButton">Initialize Confirmations</button>
         <div class="reservations-container content-container">
             <h2>Confirmed Reservations</h2>
-            <ul id="reservations-list">
-            </ul>
-        </div>
-        <div class="reservation-details-container content-container">
-            <h2>Reservation Details</h2>
-            <div id="reservation-details">
+            <div id="reservation-details" class="reservation-details">
+                <!-- Dynamic content will be loaded here by your JavaScript -->
             </div>
+        </div>
+        <div id="modal-container" class="modal-container" style="display: none;">
+            <!-- Modal content will be populated and shown by your JavaScript -->
         </div>
     </section>
 

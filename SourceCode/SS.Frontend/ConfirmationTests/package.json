@@ -17,7 +17,11 @@
         "nightwatch": "^2.6.25"
     },
     "jest": {
+        "setupFiles": ["./jest.setup.js"],
         "testEnvironment": "jsdom"
     },
-    "license": "ISC"
+    "license": "ISC",
+    "dependencies": {
+        "util": "^0.12.5"
+    }
 }
