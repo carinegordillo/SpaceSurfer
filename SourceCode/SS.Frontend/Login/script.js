@@ -113,6 +113,7 @@ function spaceBookingCenterAccess() {
     document.getElementById('enterOTPSection').style.display = 'none';
     document.getElementById('successResult').style.display = 'none';
     document.getElementById('failResult').style.display = 'none';
+    document.getElementById('personalOverviewCenter').style.display = 'none';
 }
 
 function taskHubAccess() {
@@ -139,6 +140,7 @@ function personalOverviewAccess() {
     document.getElementById('successResult').style.display = 'none';
     document.getElementById('failResult').style.display = 'none';
     document.getElementById('waitlistView').style.display = 'none';
+    document.getElementById('spaceBookingView').style.display = 'none';
 }
     // Hide other sections if needed
 function waitlistAccess() {
