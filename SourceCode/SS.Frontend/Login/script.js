@@ -106,6 +106,7 @@ function logout() {
         console.log("Identity element not found");
     }
     document.getElementById("sendOTPSection").style.display = "block";
+    document.getElementById("noLogin").style.display = "block";
     document.getElementById("homepageGen").style.display = "none";
     document.getElementById("homepageManager").style.display = "none";
     document.getElementById("taskManagerView").style.display = "none";
