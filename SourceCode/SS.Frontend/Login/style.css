@@ -216,7 +216,70 @@ form {
     flex-direction: column;
 }
 
+#accountCreationForm {
+    width: 100%; 
+    max-width: 500px; 
+    background: rgb(205, 216, 247);
+    padding: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 45px;
+    text-align: center; 
+}
+#additionalFields {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
 
+#additionalFields div {
+    flex-basis: 48%; /* Adjusts the basis to less than 50% to account for margins */
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+    #additionalFields {
+        flex-direction: column;
+    }
+    #additionalFields div {
+        flex-basis: 100%; /* Full width on smaller screens */
+    }
+}
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Space between rows */
+}
+
+.form-row label {
+    margin-right: 10px; /* Space between label and input */
+    flex-basis: 25%; /* Adjust as needed */
+    text-align: right; /* Align the text to the right */
+}
+
+.form-row input[type="text"],
+.form-row input[type="email"],
+.form-row input[type="date"],
+.form-row input[type="time"] {
+    flex-grow: 1; /*Input field takes up remaining space*/
+}
+
+label {
+    display: flex;
+    margin-bottom: 0px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="date"],
+input[type="time"] {
+    width: 50%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #040d46;
+    box-sizing: border-box; 
+}
 /* Overall container styling */
 .container {
     display: flex;
@@ -361,6 +424,10 @@ input {
 }
 
 #accountCreationForm h2 {
+    color: #333;
+    font-size: 24px;
+}
+#TaskForm h2 {
     color: #333;
     font-size: 24px;
 }

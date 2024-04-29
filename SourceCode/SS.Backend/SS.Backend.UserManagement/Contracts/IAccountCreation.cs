@@ -1,7 +1,5 @@
 using SS.Backend.SharedNamespace;
 
-using SS.Backend.SharedNamespace;
-
 namespace SS.Backend.UserManagement
 {
     public interface IAccountCreation

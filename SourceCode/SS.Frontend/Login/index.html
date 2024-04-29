@@ -30,7 +30,7 @@
             <div class="nav-container">
                 <div id="noLogin" class="nav-items"  style="display: none;">
                     <div class="nav-item" id="navAbout" onclick="getAbout()">About</div>
-                    <div class="nav-item" id="navRegister" onclick="window.location.href='../Registration/index.html'">Register</div>
+                    <div class="nav-item" id="navRegister" onclick="registrationAccess()">Register</div>
                     <div class="nav-item" id="navLogin" onclick="getLogin()">Login</div>
                 </div>
                 <div id="homepageGen" class="nav-items" style="display: none;">
@@ -140,7 +140,58 @@
     <section id="failResult" class="form-container" style="display: none;">
         <label style="color: #e33434; font-size: 18px;">Incorrect verification code. Please double-check and try again.</label>
     </section>
-    <!--General Homepage-->
+    <!--Regisration-->
+    <section id="Registration" class="form-container" style="display: none;">
+        <form id="accountCreationForm">
+            <h2>Register to SpaceSurfer🤙</h2>
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <input type="date" id="dob" name="dob" placeholder="Date of Birth" required><br>
+            <input type="text" id="firstname" name="firstName" placeholder="First Name" required>
+            <input type="text" id="lastname" name="lastName" placeholder="Last Name" required>
+            <!-- <input type="text" id="role" name="role" placeholder="Role" required> -->
+            <input type="hidden" id="role" name="role">
+            <input type="hidden" id="status" name="status">
+            <input type="text" id="backupEmail" name="backupEmail" placeholder="Backup Email">
+            
+            <h3>Are You A Company/Facility?</h3>
+            <div class="form-row" style="display: flex; justify-content: center;">
+            <input type="checkbox" id="isCompany" name="isCompany" onchange="handleCheckboxChange(this)" >
+            <label for="isCompany">Company</label>
+    
+            <input type="checkbox" id="isFacility" name="isFacility" onchange="handleCheckboxChange(this)" >
+            <label for="isFacility">Facility</label>
+            </div>
+            
+            <div id="additionalFields" style="display: none;">
+                <label for="name">Company/Facility Name:</label>
+                <input type="text" id="companyName" name="name"><br>
+    
+                <label for="location">Location:</label>
+                <input type="text" id="address" name="location"><br>
+    
+                <label for="openingHours">Opening Hours:</label>
+                <input type="time" id="openingHours" name="openingHours"> <br>
+    
+                <label for="closingHours">Closing Hours:</label>
+                <input type="time" id="closingHours" name="closingHours"><br>
+    
+                <fieldset id="daysOpen">
+                    <legend>Days Open:</legend>
+                    <label><input type="checkbox" name="daysOpen" value="Monday"> Monday</label><br>
+                    <label><input type="checkbox" name="daysOpen" value="Tuesday"> Tuesday</label><br>
+                    <label><input type="checkbox" name="daysOpen" value="Wednesday"> Wednesday</label><br>
+                    <label><input type="checkbox" name="daysOpen" value="Thursday"> Thursday</label><br>
+                    <label><input type="checkbox" name="daysOpen" value="Friday"> Friday</label><br>
+                    <label><input type="checkbox" name="daysOpen" value="Saturday"> Saturday</label><br>
+                    <label><input type="checkbox" name="daysOpen" value="Sunday"> Sunday</label><br>
+                </fieldset>
+            </div>
+            
+            <button id="postAccount" type="submit">Create Account</button>
+            <button id="loadRequestsButton">Load Requests</button>
+            <ul id="recoveryRequestsList"></ul>
+        </form>
+    </section>
     
 
     <section id="userProfileView" class="homepage-container" style="display: none;">
@@ -212,7 +263,6 @@
     <div id="modal" class="modal" style="display:none;">
         <div class="modal-content">
             <span class="close-button">×</span>
-            <!-- <h2>Message</h2> -->
             <p id="modal-message">Your message goes here.</p>
         </div>
     </div>
@@ -265,8 +315,8 @@
 
     <!--Task Manager View-->>
     <section id="taskManagerView" class="homepage-container" style="display: none;">
-        <div id="registerView" class="task-container">
-            <div id="accountCreationForm" class="flex-container">
+        <div  class="task-container">
+            <div id="TaskForm" class="flex-container">
     
                 <!-- Task List Container -->
                 <div class="task-list-section">
@@ -291,8 +341,6 @@
                     </div>
                 </div>
                 
-                
-    
                 <!-- Task Creation Form -->
                 <div class="task-form-section">
                     <h2>Create Task</h2>
@@ -355,14 +403,6 @@
     </section>
 
     
-
-
-
-
-
-
-    
-
     <!--Manager Homepage-->
     <section id="homepageManager" class="homepage-container" style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
@@ -467,6 +507,7 @@
     <script src="waitlistScript.js"></script>
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
+    <script src="Registraton.js"></script>
     <!--<script src="../SpaceManager/pages/SpaceManager.js"></script>-->
     
 

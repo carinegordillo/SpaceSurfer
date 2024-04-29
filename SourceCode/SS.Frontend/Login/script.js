@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("sendOTPSection").style.display = "none";
         document.getElementById("identity").textContent = `Logged in as: ${sessionStorage.getItem('userIdentity')}`;
         document.getElementById('UnAuthnAbout').style.display = 'none';
+        document.getElementById('Registration').style.display = 'none';
     } else {
         // No valid token, show login
         document.getElementById("homepageGen").style.display = "none";
@@ -23,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("taskManagerView").style.display = "none";
         document.getElementById('spaceBookingView').style.display = 'none';
         document.getElementById('userProfileView').style.display = 'none';
+        document.getElementById('Registration').style.display = 'none';
     }
 });
 
@@ -80,6 +82,7 @@ function authenticateUser() {
                         document.getElementById("welcomeSection").style.display = "block";
                         document.getElementById("noLogin").style.display = "none";
                         document.getElementById('UnAuthnAbout').style.display = 'none';
+                        document.getElementById('Registration').style.display = 'none';
 
                     }
                     else {
@@ -89,7 +92,7 @@ function authenticateUser() {
                         document.getElementById("welcomeSection").style.display = "block";
                         document.getElementById("noLogin").style.display = "none";
                         document.getElementById('UnAuthnAbout').style.display = 'none';
-
+                        document.getElementById('Registration').style.display = 'none';
                      }
                 },
                 error: function (xhr, status, error) {
@@ -129,6 +132,7 @@ function logout() {
     document.getElementById('waitlistView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
     document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
 }
 
 function getLogin(){
@@ -146,6 +150,7 @@ function getLogin(){
     document.getElementById('waitlistView').style.display = 'none';
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('Registration').style.display = 'none';
 }
 
 function getAbout(){
@@ -163,6 +168,7 @@ function getAbout(){
     document.getElementById('waitlistView').style.display = 'none';
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('Registration').style.display = 'none';
 }
 
 function getUserProfile(){
@@ -180,6 +186,7 @@ function getUserProfile(){
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
     document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
 
 
 }
@@ -198,10 +205,25 @@ function spaceBookingCenterAccess() {
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
     document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
 
 }
 
+function registrationAccess() {
+    document.getElementById('taskManagerView').style.display = 'none';
+    document.getElementById('sendOTPSection').style.display = 'none';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById('failResult').style.display = 'none';
+    document.getElementById('personalOverviewCenter').style.display = 'none';
+    document.getElementById('spaceBookingView').style.display = 'none';
+    document.getElementById('userProfileView').style.display = 'none';
+    document.getElementById('waitlistView').style.display = 'none';
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('UnAuthnAbout').style.display = 'none';
 
+    document.getElementById('Registration').style.display = 'block';
+}
 function taskHubAccess() {
     document.getElementById('taskManagerView').style.display = 'block';
     
@@ -219,6 +241,7 @@ function taskHubAccess() {
     document.getElementById("welcomeSection").style.display = "none";
     document.getElementById('UnAuthnAbout').style.display = 'none';
 
+    document.getElementById('Registration').style.display = 'none';
 }
 
 function personalOverviewAccess() {
@@ -236,6 +259,7 @@ function personalOverviewAccess() {
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
     document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
 
 }
     // Hide other sections if needed
@@ -254,6 +278,7 @@ function waitlistAccess() {
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
     document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
 
 }
 function getHomePage() {
@@ -268,5 +293,5 @@ function getHomePage() {
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById('UnAuthnAbout').style.display = 'none';
-
+    document.getElementById('Registration').style.display = 'none';
 }
