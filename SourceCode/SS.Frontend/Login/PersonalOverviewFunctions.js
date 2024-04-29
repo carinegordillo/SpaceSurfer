@@ -152,14 +152,14 @@ async function confirmSelection() {
 
     if (currentView === 'list') {
         displayReservationList();
-        document.getElementById('calendar').style.display = 'none';
-        document.getElementById('reservation-list').style.display = 'block';
+        document.getElementById('calendar-poc').style.display = 'none';
+        document.getElementById('reservation-list-poc').style.display = 'block';
         document.getElementById('view-prompt').style.display = 'none';
     }
     if (currentView === 'calendar') {
         createCalendar(currentDate.getFullYear(), currentDate.getMonth());
-        document.getElementById('reservation-list').style.display = 'none';
-        document.getElementById('calendar').style.display = 'block';
+        document.getElementById('reservation-list-poc').style.display = 'none';
+        document.getElementById('calendar-poc').style.display = 'block';
         document.getElementById('view-prompt').style.display = 'none';
     }
 }
@@ -183,7 +183,7 @@ function listView() {
 
 function displayReservationList() {
 
-    var container = document.querySelector("#reservation-list");
+    var container = document.querySelector("#reservation-list-poc");
     container.innerHTML = "";
     reservations.forEach(reservation => {
         var listItem = document.createElement("div");
@@ -254,7 +254,7 @@ function changeMonth(offset) {
     createCalendar(currentDate.getFullYear(), currentDate.getMonth());
 }
 function createCalendar(year, month) {
-    const calendarBody = document.querySelector('#calendar tbody');
+    const calendarBody = document.querySelector('#calendar-poc tbody');
     const monthYearContainer = document.querySelector('#month-year');
 
     // Clear previous calendar

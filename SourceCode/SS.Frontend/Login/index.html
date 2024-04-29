@@ -37,7 +37,7 @@
                     <div class="nav-item" type="button" onclick="getUserProfile()">Profile</div>
                     <div class="nav-item" type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</div>
                     <div class="nav-item" type="button" onclick="waitlistAccess()">Waitlist</div>
-                    <div class="nav-item" type="button" onclick="personalOverviewAccess()">Personal Overview</div>
+                    <div class="nav-item" type="button" onclick="personalOverviewAccess()" data-testid="personal-overview-view">Personal Overview</div>
                     <div class="nav-item" type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</div>
                     <div class="nav-item" type="button" id="identity"></div>
                     <div class="nav-item" type="button" onclick="logout()">Logout</div>
@@ -126,7 +126,7 @@
             </div>
             <button id="confirm-button">Confirm Selection</button>
 
-            <div id="calendar">
+            <div id="calendar-poc">
                 <div id="month-info-container">
                     <div id="prev-month">&lt;</div>
                     <div id="month-year"></div>
@@ -147,7 +147,7 @@
                     <tbody></tbody>
                 </table>
             </div>
-            <div style=" border: groove; border-radius: 100px;" id="reservation-list">
+            <div style=" border: groove; border-radius: 100px;" id="reservation-list-poc">
             </div>
         </div>
         <div>
@@ -381,6 +381,8 @@
         <p>Designed and Developed by the PixelPals Team</p>
     </footer>
 
+
+    <!--Reservation Detail Template-->
     <template id="reservation-detail-template">
         <span class="reservationID">ReservationID:</span>
         <span id="labelReservationID" class="reservation-ID"></span>

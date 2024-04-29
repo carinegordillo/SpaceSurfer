@@ -87,12 +87,12 @@
     margin: 0 auto; /* Center horizontally */
 }
 
-#calendar {
+#calendar-poc {
     width: 100%; /* Take up all available width */
     display: none; /* Hide by default */
 }
 
-#reservation-list {
+#reservation-list-poc {
     width: 100%; /* Take up all available width */
     border: 1px solid black;
     border-radius: 0px !important; /* Remove border-radius to make it square */
@@ -147,7 +147,7 @@ th {
 }
 
 /* Style for scrollable list */
-#reservation-list {
+#reservation-list-poc {
     overflow-y: auto;
     border: solid;
     max-height: 600px; /* Adjust the maximum height as needed */
