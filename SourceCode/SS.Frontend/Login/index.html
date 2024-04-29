@@ -39,6 +39,7 @@
                     <div class="nav-item" type="button" onclick="waitlistAccess()">Waitlist</div>
                     <div class="nav-item" type="button" onclick="personalOverviewAccess()">Personal Overview</div>
                     <div class="nav-item" type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</div>
+                    <div class="nav-item" type="button" onclick="employeeSetupAccess()">Employee Account Setup</div>
                     <div class="nav-item" type="button" id="identity"></div>
                     <div class="nav-item" type="button" onclick="logout()">Logout</div>
                 </div>
@@ -64,7 +65,6 @@
                 Welcome to SpaceSurfer!
             </div> -->
             <img src="images/astroText.png" alt="Astro" class = "hovering">
-
         </div>
     </section>
     <section id="UnAuthnAbout" style="display: none;">
@@ -115,13 +115,11 @@
 
         </div>
     </section>
-
     <section id="welcomeSection" style="display: none;">
         <div class="container">
             <img src="images/astronaut.png" alt="Astro" class = "hovering">
         </div>
     </section>
-
     <section id="enterOTPSection" class="form-container" style="display: none;">
         <form id="enterOTPForm">
             <label for="otp">Enter Verification Code</label>
@@ -129,15 +127,13 @@
             <button type="button" onclick="authenticateUser()">Login</button>
         </form>
     </section>
-
     <section id="successResult" class="form-container" style="display: none;">
         <label style="color:#03fc52; font-size: 18px;">Authentication was successful!</label>
     </section>
-
     <section id="failResult" class="form-container" style="display: none;">
         <label style="color: #e33434; font-size: 18px;">Incorrect verification code. Please double-check and try again.</label>
     </section>
-    <!--Regisration-->
+    <!--Registration-->
     <section id="Registration" style="display: none;">
         <div class = "container">
             <form id="accountCreationForm" class = "loginForm">
@@ -151,7 +147,7 @@
                 <input type="hidden" id="status" name="status">
                 <input type="text" id="backupEmail" name="backupEmail" placeholder="Backup Email">
                 
-                <h3>Are You A Company/Facility?</h3>
+                <label class="login-title">Are You A Company/Facility?</label>
                 <div class="form-row" style="display: flex; justify-content: center;">
                 <input type="checkbox" id="isCompany" name="isCompany" onchange="handleCheckboxChange(this)" >
                 <label for="isCompany">Company</label>
@@ -184,7 +180,6 @@
                         <label><input type="checkbox" name="daysOpen" value="Sunday"> Sunday</label><br>
                     </fieldset>
                 </div>
-                
                 <button id="postAccount" type="submit">Create Account</button>
                 <button id="loadRequestsButton" onclick="testingRegistration()">Load Requests</button>
                 <ul id="recoveryRequestsList"></ul>
@@ -192,6 +187,25 @@
         </div>  
     </section>
     
+
+    <section id="employeeSetup" style="display: none;">
+        <div id = "registerView" class = "container"  >
+            <form id="employeeForm" class = "loginForm">
+                <label class="login-title">Register Employee to Space Surfer</label>
+                <input type="text" id="username" name="username" placeholder="Username" required>
+                <input type="date" id="dob" name="dob" placeholder="Date of Birth" required><br>
+                <input type="text" id="firstname" name="firstName" placeholder="First Name" required>
+                <input type="text" id="lastname" name="lastName" placeholder="Last Name" required>
+                <!-- <input type="text" id="role" name="role" placeholder="Role" required> -->
+                <input type="hidden" id="role" name="role">
+                <input type="hidden" id="status" name="status">
+                <input type="hidden" id="backupEmail" name="backupEmail"> <br>
+        
+                <button id="postAccount" type="submit">Create Employee Account</button>
+                <ul id="recoveryRequestsList"></ul>
+            </form>
+        </div>
+    </section>
 
     <section id="userProfileView" class="homepage-container" style="display: none;">
         <div class="userProfileContainer">
