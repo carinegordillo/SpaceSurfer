@@ -110,7 +110,7 @@ async function fetchReservationDeletion() {
             throw new Error(`Error deleting reservations: ${response.status}`);
         }
 
-        errorPrompt.textContent = 'Reservetion ID ' + reservationIDValue + 'was deleted.';
+        errorPrompt.textContent = 'Reservetion ID ' + reservationIDValue + ' was deleted.';
         errorPrompt.style.display = 'block';
         return data;
     }

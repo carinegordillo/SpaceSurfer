@@ -24,6 +24,12 @@ describe('Task Management Tests', () => {
     }).as('createTask');
   
     cy.visit('http://localhost:3000/Login/index.html');
+    cy.get('#userIdentity').type('brandongalich@gmail.com');
+    cy.get('button').contains('Send Verification').click();
+    cy.wait('@sendOTP');
+    cy.get('#otp').type('password');
+    cy.get('button').contains('Login').click();
+    cy.wait('@authenticate');
   });
 
   it('should handle OTP verification and login', () => {
