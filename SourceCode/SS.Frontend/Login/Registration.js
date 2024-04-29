@@ -1,6 +1,7 @@
 
 document.getElementById('accountCreationForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    console.log("regusration form has been submitted ")
     submitAccountCreationForm();
 });
 updateAdditionalFieldsDisplay();
@@ -66,10 +67,13 @@ function submitAccountCreationForm() {
     })
     .then(response => response.json())
     .then(data => {
-        alert('Account created successfully!');
+        // alert('Account created successfully!');
+        showModal('Account created successfully! You may now login');
+        getLogin();
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error creating account. ' + error.message);
+        // alert('Error creating account. ' + error.message);
+        showModal('Error creating account. ' + error.message);
     });
 }

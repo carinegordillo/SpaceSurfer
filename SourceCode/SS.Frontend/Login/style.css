@@ -216,7 +216,7 @@ form {
     flex-direction: column;
 }
 
-#accountCreationForm {
+/* #accountCreationForm {
     width: 100%; 
     max-width: 500px; 
     background: rgb(205, 216, 247);
@@ -224,7 +224,7 @@ form {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 45px;
     text-align: center; 
-}
+} */
 #additionalFields {
     display: flex;
     justify-content: space-between;
@@ -423,10 +423,10 @@ input {
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-#accountCreationForm h2 {
+/* #accountCreationForm h2 {
     color: #333;
     font-size: 24px;
-}
+} */
 #TaskForm h2 {
     color: #333;
     font-size: 24px;
