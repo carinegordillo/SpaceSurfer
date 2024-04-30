@@ -1,18 +1,18 @@
-//using Microsoft.AspNetCore.Mvc;
-//using System.Data;
-//// using SS.Backend.Services;
-//using SS.Backend.SpaceManager;
-//using SS.Backend.SharedNamespace;
-//using SS.Backend.Security;
-//using Microsoft.IdentityModel.JsonWebTokens;
-//using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+// using Microsoft.AspNetCore.Mvc;
+// using System.Data;
+// // using SS.Backend.Services;
+// using SS.Backend.SpaceManager;
+// using SS.Backend.SharedNamespace;
+// using SS.Backend.Security;
+// using Microsoft.IdentityModel.JsonWebTokens;
+// using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
-//namespace demoAPI.Controllers;
+// namespace demoAPI.Controllers;
 
-//[ApiController]
-//[Route("api/SpaceManager")]
-//public class DemoController : ControllerBase
-//{
+// [ApiController]
+// [Route("api/SpaceManager")]
+// public class DemoController : ControllerBase
+// {
 
 //    private readonly ISpaceCreation _spaceCreation;
 //    private readonly ISpaceModification _spaceModification;
@@ -176,4 +176,4 @@
 
 //        return Ok(new { message = "SpaceID deleted successfully!" + response });
 //    }
-//}
+// }

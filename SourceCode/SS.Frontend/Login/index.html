@@ -44,7 +44,6 @@
                     <div class="nav-item" type="button" onclick="logout()">Logout</div>
                 </div>
             </div>
-
         </nav>
     </header>
 
@@ -57,8 +56,8 @@
                     <label for="userIdentity" class="login-title">Login!</label>
                     <input type="text" id="userIdentity" name="userIdentity" required placeholder="Enter your username">
                     <button type="button" onclick="sendOTP()">Send Verification</button>
-                    <a href="#" class="recover-link">Recover an account</a>
-                    <a href="#" class="recover-link">Don't have an account? Register Now!</a>
+                    <a href="#" class="recover-link" >Recover an account</a>
+                    <a href="#" class="recover-link" onclick="registrationAccess()">Don't have an account? Register Now!</a>
                 </form>
             </section>
             <!-- <div class="welcome-label">
@@ -137,9 +136,9 @@
     <section id="Registration" style="display: none;">
         <div class = "container">
             <form id="accountCreationForm" class = "loginForm">
-                <label class="login-title">Register to SpaceSurfer🤙</label>
-                <input type="text" id="username" name="username" placeholder="Username" required>
-                <input type="date" id="dob" name="dob" placeholder="Date of Birth" required><br>
+                <label class="register-title">Register to SpaceSurfer🤙</label>
+                <input type="text" id="username" name="username" placeholder="Email" required>
+                <input type="date" id="dob" name="dob" placeholder="Date of Birth" required>
                 <input type="text" id="firstname" name="firstName" placeholder="First Name" required>
                 <input type="text" id="lastname" name="lastName" placeholder="Last Name" required>
                 <!-- <input type="text" id="role" name="role" placeholder="Role" required> -->
@@ -147,7 +146,7 @@
                 <input type="hidden" id="status" name="status">
                 <input type="text" id="backupEmail" name="backupEmail" placeholder="Backup Email">
                 
-                <label class="login-title">Are You A Company/Facility?</label>
+                <label class="register-title">Are You A Company/Facility?</label>
                 <div class="form-row" style="display: flex; justify-content: center;">
                 <input type="checkbox" id="isCompany" name="isCompany" onchange="handleCheckboxChange(this)" >
                 <label for="isCompany">Company</label>
@@ -181,13 +180,12 @@
                     </fieldset>
                 </div>
                 <button id="postAccount" type="submit">Create Account</button>
-                <button id="loadRequestsButton" onclick="testingRegistration()">Load Requests</button>
-                <ul id="recoveryRequestsList"></ul>
+                <!-- <button id="loadRequestsButton" onclick="testingRegistration()">Load Requests</button>
+                <ul id="recoveryRequestsList"></ul> -->
             </form>
+            <img src="images/astroText.png" alt="Astro" class = "hovering">
         </div>  
     </section>
-    
-
     <section id="employeeSetup" style="display: none;">
         <div id = "registerView" class = "container"  >
             <form id="employeeForm" class = "loginForm">
@@ -415,7 +413,6 @@
         </div>
     </section>
 
-    
     <!--Manager Homepage-->
     <section id="homepageManager" class="homepage-container" style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
@@ -423,60 +420,6 @@
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
         <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
         <button type="button" onclick="logout()">Logout</button>
-
-        <!--<div class="uplaodSection">-->
-        <!-- Space Manager -->
-        <!--<button class="accordion">Upload Space</button>
-        <div class="form-container" style="display:none;">
-            <form id="spaceCreationForm">
-                <div class="spaceRow">
-                    <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
-                    <small>Max file size: 5MB</small>
-                    <input type="text" id="floorPlanName" name="floorPlanName" placeholder="Floor Plan Name" required><br />
-                    <input type="hidden" id="imageBase64" name="imageBase64">
-                </div>
-                <div id="imagePreviewContainer"></div><br>
-                <button type="button" id="addSpace">Add Space ID</button><br />
-                <div id="spacesContainer">
-                    <div class="spaceRow">
-                        <input type="text" class="spaceID" name="spaceID[]" placeholder="Space ID">
-                        <input type="text" class="timeLimit" name="timeLimit[]" placeholder="Time Limit">
-                    </div>
-                </div>
-
-                <button id="postSpace" type="submit">Create Space</button>
-                <button id="loadRequestsButton" type="button">Load Requests</button>
-                <ul id="recoveryRequestsList"></ul>
-            </form>
-        </div>
-    </div>-->
-        <!--<div class="modifySection">
-        <button class="accordion">Modify Space</button>
-        <div class="form-container" style="display:none;">
-            <form id="modifySpaceForm">
-                <h3>Warning: CANNOT Modify Space if an existing Reservation Associated Exists</h3>
-                <div class="spaceRowModify">
-                    <input type="text" id="modifyFloorPlanName" name="floorPlanName" placeholder="Floor Plan Name"><br />
-                    <input type="file" id="replaceImage" name="replaceImage" accept="image/*">
-                    <button id="modifyImage" type="button" class="btn btn-modify">Replace Floor Plan Image - Max file size: 5MB</button>
-                    <input type="hidden" id="modifyImageBase64" name="modifyImageBase64">
-                    <button id="deleteFloor" type="button" class="btn btn-danger">Delete Floor</button>
-                </div>
-                <div id="modifyImagePreviewContainer"></div><br>
-                <button type="button" id="addSpaceModify" class="btn btn-add-space">Add Space ID</button><br />
-                <div id="spacesModificationContainer">
-                    <div class="spaceRowModify">
-                        <input type="text" class="modifySpaceID" name="spaceID[]" placeholder="Space ID">
-                        <input type="text" class="modifyTimeLimit" name="modifytimeLimit[]" placeholder="Modify Time Limit">
-                        <button id="deleteSpace" type="button" class="btn btn-danger">Delete Space</button>
-                    </div>
-                </div>
-
-                <button id="modifyTimeLimits" type="submit" class="btn btn-modify">Modify Time Limits</button>
-            </form>
-        </div>
-    </div>-->
-
     </section>
 
     <footer>
@@ -521,11 +464,6 @@
     <script src="waitlistScript.js"></script>
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
-    
-    <!--<script src="../SpaceManager/pages/SpaceManager.js"></script>-->
-    
-
 </body>
-
 </html>
 

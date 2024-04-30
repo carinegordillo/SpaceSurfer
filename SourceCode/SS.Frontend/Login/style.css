@@ -339,6 +339,12 @@ input[type="time"] {
     color: #7a796c; 
     text-align: center;
 }
+.register-title {
+    font-size: 1.5em; /* This sets the font size to 200% of the base font size */
+    margin-bottom: 20px; /* Adds space below the title for better spacing */
+    color: #7a796c; 
+    text-align: center;
+}
 /* Style for the large label */
 .welcome-label {
     font-size: 3em; /* Makes the font size three times larger than the base size */
@@ -448,7 +454,7 @@ input[type="date"],
 input[type="number"],
 textarea,
 select {
-    width: 100%;
+    width: 80%;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
