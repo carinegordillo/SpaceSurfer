@@ -31,7 +31,7 @@ function createDetailsContainer() {
 
 document.addEventListener('DOMContentLoaded', attachClickHandlersToDetailsContainer);
 function attachClickHandlersToDetailsContainer() {
-    const detailsContainer = document.getElementById('reservation-details');
+    const detailsContainer = document.querySelector('.reservations-list');
     if (detailsContainer) {
         detailsContainer.addEventListener('click', handleReservationButtonClick);
     }
@@ -41,30 +41,13 @@ function handleReservationButtonClick(event) {
     if (target.tagName === 'BUTTON') {
         const reservationID = target.getAttribute('data-reservation-id');
         if (target.className.includes('delete-btn')) {
-            deleteConfirmation(reservationID);
+            openDialogDelete(reservationID);
         } else if (target.className.includes('cancel-btn')) {
             const username = target.getAttribute('data-username');
-            cancelConfirmation(username, reservationID);
+            openDialogCancel(username, reservationID);
         }
     }
 }
-// document.addEventListener('DOMContentLoaded', () => {
-//     const detailsContainer = document.getElementById('reservation-details');
-//     if (detailsContainer) {
-//         detailsContainer.addEventListener('click', function(event) {
-//             const target = event.target;
-//             if (target.tagName === 'BUTTON') {
-//                 const reservationID = target.dataset.reservationId;
-//                 if (target.classList.contains('delete-btn')) {
-//                     deleteConfirmation(reservationID);
-//                 } else if (target.classList.contains('cancel-btn')) {
-//                     const username = target.dataset.username;
-//                     cancelConfirmation(username, reservationID);
-//                 }
-//             }
-//         });
-//     }
-// });
 
 function logout() {
     sessionStorage.removeItem('accessToken');
@@ -237,13 +220,12 @@ async function deleteConfirmation(reservationID) {
         return;
     }
 
-    const url = `${baseUrl}/DeleteConfirmation?reservationID=${reservationID}`;
+    const url = `${baseUrl}/DeleteConfirmation/${reservationID}`;
     try {
         const response = await fetch(url, {
             method: 'DELETE',
             headers: {
-                'Authorization': 'Bearer ' + accessToken,
-                'Content-Type': 'application/json'
+                'Authorization': 'Bearer ' + accessToken
             }
         });
         if (!response.ok) {
@@ -345,72 +327,52 @@ async function listConfirmations() {
         
 
         const confirmations = data.confirmations;
-
-        const detailsContainer = document.getElementById('reservation-details');
-        detailsContainer.innerHTML = ''; // Clear previous entries
+        const detailsContainer = document.querySelector('.reservations-list');
+        if (!detailsContainer) {
+            console.error('The "reservations-list" element was not found in the DOM.');
+            return;
+        }
+        console.log(confirmations);
 
         // Check if confirmations is an array and has items
         if (Array.isArray(confirmations) && confirmations.length > 0) {
+            console.log('Starting to create reservation details...');
+            detailsContainer.innerHTML = ''; // Clear previous entries
             // Iterate over the confirmations array and create HTML for each
             confirmations.forEach(reservation => {
-                const div = document.createElement('div');
-                //div.className = 'reservation-list';
-                div.innerHTML = `
-                    <div class="container">
-                        <div class="reservation-details-container content-container">
-                            <h3>Reservation ID: ${reservation.reservationID}</h3>
-                            <p>Start Time: ${new Date(reservation.reservationStartTime).toLocaleString()}</p>
-                            <p>End Time: ${new Date(reservation.reservationEndTime).toLocaleString()}</p>
-                            <div class="button-group">
-                                <button id="delete-btn"">Delete</button>
-                                <button id="cancel-btn"">Cancel</button>
-                            </div>
-                        </div>
+                console.log('Creating detail for reservation ID:', reservation.reservationID);
+                const reservationDiv = document.createElement('div');
+                reservationDiv.classList.add('confirmation-items');
+
+                // Format the reservation start time
+                const formattedStartTime = new Date(reservation.reservationStartTime).toLocaleString();
+                const formattedEndTime = new Date(reservation.reservationEndTime).toLocaleString();
+            
+                 // Create the HTML content for the reservation detail
+                reservationDiv.innerHTML = `
+                    <p>Reservation ID: ${reservation.reservationID}</p>
+                    <p>Company ID: ${reservation.companyID}</p>
+                    <p>Floor Plan ID: ${reservation.floorPlanID}</p>
+                    <p>Space ID: ${reservation.spaceID}</p>
+                    <p>Start Time: ${formattedStartTime}</p>
+                    <p>End Time: ${formattedEndTime}</p>
+                    <div class="button-group">
+                        <button data-reservation-id="${reservation.reservationID}" class="delete-btn">Delete Confirmation</button>
+                        <button data-username="${username}" data-reservation-id="${reservation.reservationID}" class="cancel-btn">Cancel Confirmation</button>
                     </div>
                 `;
-                const cancelConfirmationBtn = document.getElementById('cancel-btn');
-                cancelConfirmationBtn.addEventListener('click', () => openDialogCancel(reservation));
-                const deleteConfirmationBtn = document.getElementById('delete-btn');
-                deleteConfirmationBtn.addEventListener('click', () => openDialogDelete(reservation));
-                detailsContainer.appendChild(div);
+
+                // Append the reservation detail to the details container
+                detailsContainer.appendChild(reservationDiv);
+                console.log(reservation);
             });
+            console.log('Finished creating reservation details.');
         }else{
             detailsContainer.innerHTML = '<p>You currently do not have confirmed reservations.</p>';
         }
 
-        // const confirmations = data.confirmations;
-
-        // const detailsContainer = document.getElementById('reservation-details');
-        // detailsContainer.innerHTML = ''; // Clear previous entries
-
-        // // Check if confirmations is an array and has items
-        // if (Array.isArray(confirmations) && confirmations.length > 0) {
-        //     // Iterate over the confirmations array and create HTML for each
-        //     confirmations.forEach(reservation => {
-        //         const reservationElement = document.createElement('div');
-        //         reservationElement.className = 'reservation-entry';
-                
-        //         // Create the HTML string for the reservation details and buttons
-        //         const reservationHTML = `
-        //             <h3>Reservation ID: ${reservation.reservationID}</h3>
-        //             <p>Start Time: ${new Date(reservation.reservationStartTime).toLocaleString()}</p>
-        //             <p>End Time: ${new Date(reservation.reservationEndTime).toLocaleString()}</p>
-        //             <button class="delete-btn" data-reservation-id="${reservation.reservationID}">Delete Confirmation</button>
-        //             <button class="cancel-btn" data-reservation-id="${reservation.reservationID}">Cancel Confirmation</button>
-        //         `;
-
-        //         // Set the innerHTML of the reservationElement with the reservation details
-        //         reservationElement.innerHTML = reservationHTML;
-
-        //         // Append the reservationElement to the detailsContainer
-        //         detailsContainer.appendChild(reservationElement);
-        //     });
-        // } else {
-        //     detailsContainer.innerHTML = '<p>You currently do not have any confirmed reservations.</p>';
-        // }
-
         console.log('List of confirmations retrieved successfully:', data);
-        showModal('List of confirmations retrieved successfully', true);
+        //showModal('List of confirmations retrieved successfully', true);
     } catch (error) {
         console.error('Error listing confirmations:', error);
         showModal('Error listing confirmations: ' + error.message, false);
@@ -442,9 +404,7 @@ function displayReservationDetails(reservation) {
     deleteConfirmationBtn.addEventListener('click', () => openDialogDelete(reservation));
 }
 
-function openDialogCancel(reservation) {
-    var reservationId = reservation.reservationID;
-    var username = reservation.userHash;
+function openDialogCancel(username, reservationID) {
 
     // Create modal elements
     const modal = document.createElement('div');
@@ -457,21 +417,24 @@ function openDialogCancel(reservation) {
     const closeBtn = document.createElement('span');
     closeBtn.classList.add('close-button');
     closeBtn.innerHTML = '&times;';
-    closeBtn.onclick = closeLeaveModal;
+    closeBtn.onclick = leaveModal;
 
     const message = document.createElement('p');
-    message.innerText = 'Are you sure you want to cancel the confirmation for:';
+    message.innerText = 'Are you sure you want to cancel the confirmation for ';
 
     const reservationIdText = document.createElement('p');
-    spaceIdText.innerHTML = `Reservation: <span id="reservationId">${reservationId}</span>`;
+    reservationIdText.innerHTML = `Reservation: <span id="reservationId">${reservationID}</span>`;
 
     const yesBtn = document.createElement('button');
     yesBtn.innerText = 'Yes';
-    yesBtn.onclick = () => cancelConfirmation(username, reservationId);
+    yesBtn.onclick = () => {
+        cancelConfirmation(username, reservationID);
+        leaveModal();
+    };
 
     const noBtn = document.createElement('button');
     noBtn.innerText = 'No';
-    noBtn.onclick = closeLeaveModal;
+    noBtn.onclick = leaveModal;
 
     // Append elements
     modalContent.appendChild(closeBtn);
@@ -485,10 +448,10 @@ function openDialogCancel(reservation) {
 
     // Show the modal
     modal.style.display = 'block';
+    modal.style.color = "#010100"; 
 }
 
-function openDialogDelete(reservation) {
-    var reservationId = reservation.reservationID;
+function openDialogDelete(reservationID) {
 
     // Create modal elements
     const modal = document.createElement('div');
@@ -501,21 +464,24 @@ function openDialogDelete(reservation) {
     const closeBtn = document.createElement('span');
     closeBtn.classList.add('close-button');
     closeBtn.innerHTML = '&times;';
-    closeBtn.onclick = closeLeaveModal;
+    closeBtn.onclick = leaveModal;
 
     const message = document.createElement('p');
     message.innerText = 'You cannot reconfirm the reservation once it is deleted. Are you sure you want to delete the confirmation for:';
 
     const reservationIdText = document.createElement('p');
-    spaceIdText.innerHTML = `Reservation: <span id="reservationId">${reservationId}</span>`;
+    spaceIdText.innerHTML = `Reservation: <span id="reservationId">${reservationID}</span>`;
 
     const yesBtn = document.createElement('button');
     yesBtn.innerText = 'Yes';
-    yesBtn.onclick = () => deleteConfirmation(reservationId);
+    yesBtn.onclick = () => {
+        deleteConfirmation(reservationID);
+        leaveModal();
+    };
 
     const noBtn = document.createElement('button');
     noBtn.innerText = 'No';
-    noBtn.onclick = closeLeaveModal;
+    noBtn.onclick = leaveModal;
 
     // Append elements
     modalContent.appendChild(closeBtn);
@@ -529,9 +495,10 @@ function openDialogDelete(reservation) {
 
     // Show the modal
     modal.style.display = 'block';
+    modal.style.color = "#010100"; 
 }
 
-function closeLeaveModal() {
+function leaveModal() {
     console.log('Close modal function called');
     const modal = document.getElementById('confirmModal');
     if (modal && modal.style) {
@@ -542,16 +509,8 @@ function closeLeaveModal() {
     }
 }
 
-// module.exports = {
-//     listConfirmations,
-//     sendConfirmation
-// };
-
-window.onload=function(){
+document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('initConfirmationsButton').addEventListener('click', () => {
         listConfirmations();
     });
-}
-
-
-
+});

@@ -569,7 +569,7 @@ namespace EmailConfirmationAPI.Controllers
         }
 
         [HttpDelete("DeleteConfirmation/{reservationID}")]
-        public async Task<IActionResult> DeleteConfirmation([FromBody] int reservationID)
+        public async Task<IActionResult> DeleteConfirmation(int reservationID)
         {
             string? accessToken = HttpContext.Request.Headers["Authorization"];
             if (accessToken != null && accessToken.StartsWith("Bearer "))

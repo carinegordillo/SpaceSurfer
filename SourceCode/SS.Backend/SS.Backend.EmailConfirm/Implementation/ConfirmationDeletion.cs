@@ -43,11 +43,11 @@ namespace SS.Backend.EmailConfirm
                             response.ErrorMessage = $"Unable to unconfirm Reservation {reservationID}.";
                         }
                     }
-                    else
-                    {
-                        response.HasError = true;
-                        response.ErrorMessage = $"Invalid ReservationID: {reservationID}. Please try again.";
-                    }
+                    // else
+                    // {
+                    //     response.HasError = true;
+                    //     response.ErrorMessage = $"Invalid ReservationID: {reservationID}. Please try again.";
+                    // }
                 }
             }
             else
