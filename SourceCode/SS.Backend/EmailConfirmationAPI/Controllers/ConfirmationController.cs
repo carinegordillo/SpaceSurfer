@@ -128,40 +128,6 @@ namespace EmailConfirmationAPI.Controllers
                 return BadRequest("Unauthorized. Access token is missing or invalid.");
             }
 
-            // UserReservationsModel reservation = null;
-            // Response resResponse = new Response();
-            // try
-            // {
-            //     (reservation, resResponse) = await _emailDao.GetUserReservationByID(ReservationID);
-            //     Console.WriteLine(resResponse.ErrorMessage);
-            //     if (reservation == null || resResponse.HasError)
-            //     {
-            //         return StatusCode(500, "Failed to retrieve reservation data: " + resResponse.ErrorMessage);
-            //     }
-                
-            //     Response response = await _emailSender.SendConfirmation(reservation);
-            //     if (response.HasError)
-            //     {
-            //         return StatusCode(500, $"Failed to send email confirmation: {response.ErrorMessage}");
-            //     }
-               
-            //     return Ok("Success");
-            // }
-            // // catch (SmtpCommandException ex)
-            // // {
-               
-            // //     return StatusCode(500, "SMTP command error: " + ex.Message);
-            // // }
-            // // catch (IOException ex)
-            // // {
-              
-            // //     return StatusCode(500, "IO error: " + ex.Message);
-            // // }
-            // catch (Exception ex)
-            // {
-            //     Console.WriteLine(resResponse.ErrorMessage);
-            //     return StatusCode(500, "Error sending email: " + ex.Message);
-            // }
         }
 
         [HttpPost("ResendConfirmation")]
@@ -332,20 +298,6 @@ namespace EmailConfirmationAPI.Controllers
                 return BadRequest("Unauthorized. Access token is missing or invalid.");
             }
 
-            // try
-            // {
-            //     Response response = await _emailService.ConfirmReservation(reservationID, otp);
-            //     if (response.HasError)
-            //     {
-            //         return StatusCode(500, $"Failed to confirm reservation: {response.ErrorMessage}");
-            //     }
-               
-            //     return Ok("Success");
-            // }
-            // catch (Exception ex)
-            // {
-            //     return StatusCode(500, "Error sending email: " + ex.Message);
-            // }
         }
 
         [HttpPost("ListConfirmations")]
@@ -428,26 +380,6 @@ namespace EmailConfirmationAPI.Controllers
                 return BadRequest("Unauthorized. Access token is missing or invalid.");
             }
 
-       
-            // Response response = new Response();
-            // try
-            // {
-            //     var confirmations = await _confirmList.ListConfirmations(hashedUsername);
-            //     var count = confirmations.Count();
-            //     Console.WriteLine(count);
-            
-            //     if (confirmations == null)
-            //     {
-            //         return StatusCode(500, "Failed to retrieve confirmed reservations data. ");
-            //     }
-               
-            //     return Ok(confirmations);
-            // }
-            // catch (Exception ex)
-            // {
-            //     //Console.WriteLine(resResponse.ErrorMessage);
-            //     return StatusCode(500, "Error listing confirmations: " + ex.Message);
-            // }
         }
 
         [HttpPost("CancelConfirmation")]

@@ -12,12 +12,30 @@
     background-color: #f9f9f9;
 }
 
+.confirmations-container{
+    display:flex;
+    text-align: center;
+    padding: 5px;
+    background-color: #695c91;
+    color: white;
+    border-radius: 5px;
+}
 
+.confirmation-items{
+    display:grid;
+    text-align: left;
+    padding: 5px;
+    background-color: #695c91;
+    color: white;
+    border: solid #ccc;
+    font-size: 16px;
+    border-radius: 5px;
+}
 
 .reservation-details-container {
     width: 70%;
     margin-right: 10px;
-    margin-left: 100px;
+    margin-left: 10px;
     margin-top: 10px;
     display:inline-block;
     /* border-color: #495EA8; */
@@ -37,8 +55,7 @@
 }
 
 /* Styles for the buttons within each reservation entry */
-.reservation-entry .delete-btn,
-.reservation-entry .cancel-btn {
+.delete-btn, .cancel-btn {
     padding: 5px 10px;
     margin-right: 10px;
     border: none;
@@ -47,12 +64,19 @@
 }
 
 /* Different colors for delete and cancel for clarity */
-.reservation-entry .delete-btn {
-    background-color: #ff6b6b;
+.delete-btn {
+    background-color: #9a2323;
+}
+.delete-btn:hover {
+    background-color: #ca4343;
 }
 
-.reservation-entry .cancel-btn {
+.cancel-btn {
     background-color: #ffe66d;
+    color: black;
+}
+.cancel-btn:hover {
+    background-color: #b39d30;
 }
 
 /* Modal container styles */
