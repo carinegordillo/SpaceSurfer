@@ -342,11 +342,17 @@ namespace SS.Backend.EmailConfirm
             if (!response.HasError && response.ValuesRead != null && response.ValuesRead.Rows.Count > 0)
             {
                 DataRow statusRow = response.ValuesRead.Rows[0];
-                var reservationOtp = response.ValuesRead.Columns.Contains("reservationOTP") ? statusRow["reservationOTP"].ToString() : null;
-                var confirmStatus = response.ValuesRead.Columns.Contains("confirmStatus") ? statusRow["confirmStatus"].ToString() : null;
+                var reservationOtp = statusRow["reservationOTP"].ToString();
+                var confirmStatus = statusRow["confirmStatus"].ToString();
 
-                if (reservationOtp == null) response.ErrorMessage += "The 'reservationOtp' data was not found.";
-                if (confirmStatus == null) response.ErrorMessage += "The 'confirmStatus' data was not found.";
+                if (string.IsNullOrEmpty(reservationOtp) || string.IsNullOrEmpty(confirmStatus))
+                {
+                    return new Response
+                    {
+                        HasError = true,
+                        ErrorMessage = "The reservation data is incomplete."
+                    };
+                }
 
                 if (confirmStatus.Trim().Equals("yes", StringComparison.OrdinalIgnoreCase)) 
                 {
@@ -367,18 +373,21 @@ namespace SS.Backend.EmailConfirm
                             {
                                 response.HasError = true;
                                 response.ErrorMessage = "Failed to update confirmation status.";
+                                return response;
                             }
                         }
                         else
                         {
                             response.HasError = true;
                             response.ErrorMessage = "OTP does not match. Please try again.";
+                            return response;
                         }
                     }
                     else
                     {
                         response.HasError = true;
                         response.ErrorMessage = "ReservationID not found in database.";
+                        return response;
                     }
                 }
             }
@@ -386,8 +395,10 @@ namespace SS.Backend.EmailConfirm
             {
                 response.HasError = true;
                 response.ErrorMessage = "Failed to retrieve reservation confirmation info. Please try again later.";
+                return response;
             }
-            
+            response.HasError = false;
+            response.ErrorMessage = "Reservation confirmed successfully.";
             return response;
         }
     }

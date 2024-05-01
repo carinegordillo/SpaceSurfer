@@ -238,6 +238,7 @@ async function deleteConfirmation(reservationID) {
             console.log('New access token stored:', accessToken);
         }
         console.log('Confirmation deleted successfully:', data);
+        listConfirmations(); // Refresh the list
         return data;
     } catch (error) {
         console.error('Error deleting confirmation:', error);
@@ -279,6 +280,7 @@ async function cancelConfirmation(hashedUsername, reservationID) {
 
         console.log('Confirmation cancelled successfully:', data);
         showModal('Confirmation cancelled successfully!', true);
+        listConfirmations(); // Refresh the list
         return data;
     } catch (error) {
         console.error('Error canceling confirmation:', error);
@@ -504,6 +506,7 @@ function leaveModal() {
     if (modal && modal.style) {
         console.log('Modal element found in DOM');
         modal.style.display = 'none';
+        modal.innerHTML = '';
     } else {
         console.log('Modal element not found in DOM');
     }

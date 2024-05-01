@@ -9,6 +9,7 @@ using SS.Backend.SpaceManager;
 using SS.Backend.EmailConfirm;
 using SS.Backend.Security;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.Net.Http.Headers;
 using SS.Backend.Services.LoggingService;
 using System.Text;
@@ -22,6 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

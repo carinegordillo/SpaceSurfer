@@ -278,8 +278,8 @@ function renderReservations(data, containerSelector) {
             buttonsHtml = `
             <button class="modify-btn" data-reservation='${JSON.stringify(reservation)}'>Modify</button>
             <button class="cancel-btn" data-reservation='${JSON.stringify(reservation)}'>Cancel</button>
-            <button class="confirm-btn" data-reservation-id="${JSON.stringify(reservation)}">Confirm</button>
-            <button class="resend-email-btn" data-reservation-id="${JSON.stringify(reservation)}">Resend Email</button>
+            <button class="confirm-btn" data-reservation='${JSON.stringify(reservation)}'>Confirm</button>
+            <button class="resend-email-btn" data-reservation='${JSON.stringify(reservation)}'>Resend Email</button>
         `;
             break;
         case 1: 
@@ -329,8 +329,15 @@ function attachEventListeners() {
     });
     document.querySelectorAll('.confirm-btn').forEach(button => {
         button.addEventListener('click', function() {
-            const reservationData = JSON.parse(this.getAttribute('data-reservation'));
-            showConfirmationModal(reservationData);
+            const reservationString = this.getAttribute('data-reservation');
+            console.log("Reservation string:", reservationString); // For debugging
+            try {
+                const reservationData = JSON.parse(reservationString);
+                console.log("Parsed reservation data:", reservationData); // For debugging
+                showConfirmationModal(reservationData);
+            } catch (e) {
+                console.error("Parsing error:", e);
+            }
         });
     });
     document.querySelectorAll('.resend-email-btn').forEach(button => {
@@ -601,28 +608,39 @@ async function sendConfirmation(reservation) {
 //////////////Reservation Confirmation//////////////
 
 function showConfirmationModal(reservation) {
-
+    const reservationID = reservation.reservationID;
+    if (!reservation || !reservationID) {
+        console.error('Invalid reservation object or missing reservationID');
+        return;
+    }
+    // Ensure only one modal exists at a time
     const existingModal = document.querySelector('.modal-content');
     if (existingModal) {
-        existingModal.remove();
+        existingModal.remove(); // Remove existing modal to prevent duplicates
     }
+
+    // Create modal content
     const modalContent = document.createElement('div');
     modalContent.classList.add('modal-content');
-    
+
+    // Set innerHTML safely, and ensure IDs and data attributes are used correctly
     modalContent.innerHTML = `
         <h2>Confirm Reservation</h2>
-        <form id="confirmReservationForm" data-reservation-id="${reservation.reservationID}">
-            <h2>Confirm Reservation</h2>
-            <h3>Confirm Reservation ${reservationID}</h3>
-            <input type="text" id="confirmationCodeInput" placeholder="Enter confirmation code" />
-            <button id="confirmCode">Submit</button>
+        <form id="confirmReservationForm" data-reservation-id="${reservationID}">
+            <h3>Reservation ID: ${reservationID}</h3> <!-- Correctly display reservation ID -->
+            <input type="text" id="confirmationCodeInput" placeholder="Enter confirmation code" required />
+            <button type="submit">Submit</button> <!-- Ensure the button has type="submit" -->
         </form>
     `;
+
+    // Append modal content to the body or a specific modal container if you have one
     document.body.appendChild(modalContent);
-    
-    document.getElementById('confirmReservationForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        confirmReservation(reservation);
+
+    // Attach event listener to the form for handling submissions
+    document.getElementById('confirmReservationForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission behavior
+        const confirmationCode = document.getElementById('confirmationCodeInput').value;
+        confirmReservation(reservationID, confirmationCode); // Call confirmReservation with the right parameters
     });
 
 
@@ -712,31 +730,30 @@ function showConfirmationModal(reservation) {
     // }
 }
 
-async function confirmReservation(reservation, code) {
+async function confirmReservation(reservationID, code) {
 
     var accessToken = sessionStorage.getItem('accessToken');
     var idToken = sessionStorage.getItem('idToken');
     var parsedIdToken = JSON.parse(idToken);
     var username = parsedIdToken.Username;
-    var reservationID = reservation.reservationID;
-
+    
     const isTokenExp = checkTokenExpiration(accessToken);
     if (!isTokenExp) {
         logout();
         return;
     }
 
-    const url = `http://localhost:5116/api/v1/reservationConfirmation/ConfirmReservation?reservationID=${encodeURIComponent(reservationID)}&otp=${encodeURIComponent(code)}`;
+    const url = `http://localhost:5116/api/v1/reservationConfirmation/ConfirmReservation?reservationID=${reservationID}&otp=${encodeURIComponent(code)}`;
     try {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Authorization': 'Bearer ' + accessToken,
-                'Content-Type': 'application/json'
+                'Authorization': 'Bearer ' + accessToken
             }
         });
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(`HTTP error! status: ${response.status} - ${errorData.detail || errorData.title}`);
         }
         const data = await response.json();
         if (data.newToken) {
@@ -746,6 +763,7 @@ async function confirmReservation(reservation, code) {
         }
 
         console.log('Reservation confirmed successfully:', data);
+        onSuccess('Reservation confirmed successfully!');
         return data;
     } catch (error) {
         console.error('Error confirming reservation:', error);
@@ -806,14 +824,14 @@ async function resendEmail(reservation) {
     var parsedIdToken = JSON.parse(idToken);
     var username = parsedIdToken.Username;
     const reservationID = reservation.reservationID;
-
+    
     const isTokenExp = checkTokenExpiration(accessToken);
     if (!isTokenExp) {
         logout();
         return;
     }
     
-    const url = `${baseUrl}/ResendConfirmation?reservationID=${reservationID}`;
+    const url = `http://localhost:5116/api/v1/reservationConfirmation/ResendConfirmation?reservationID=${encodeURIComponent(reservationID)}`;
     try {
         const response = await fetch(url, {
             method: 'POST',
@@ -824,7 +842,8 @@ async function resendEmail(reservation) {
             body: JSON.stringify({ reservationID })
         });
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(`HTTP error! status: ${response.status} - ${errorData.detail || errorData.title}`);
         }
         const data = await response.json();
         if (data.newToken) {
@@ -834,6 +853,7 @@ async function resendEmail(reservation) {
         }
 
         console.log('Confirmation resent successfully:', data);
+        onSuccess('Confirmation resent successfully!');
         return data;
     } catch (error) {
         console.error('Error resending confirmation:', error);
