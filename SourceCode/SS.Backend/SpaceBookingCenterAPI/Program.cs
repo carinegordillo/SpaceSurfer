@@ -12,6 +12,7 @@ using SS.Backend.Security;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using SS.Backend.Services.LoggingService;
+
 using System.Text;
 
 
@@ -38,8 +39,24 @@ builder.Services.AddTransient<ConfigService>(provider =>new ConfigService(config
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
 
+
+
+
+
+//security
+
+builder.Services.AddTransient<GenOTP>();
+builder.Services.AddTransient<Hashing>();
+builder.Services.AddTransient<Response>();
+builder.Services.AddTransient<LogEntry>();
+builder.Services.AddTransient<ILogTarget, SqlLogTarget>();
+builder.Services.AddTransient<SS.Backend.Services.LoggingService.ILogger,Logger>();
+builder.Services.AddTransient<Logger>();
+builder.Services.AddTransient<SqlDAO>();
+
 //Repo Setup
 builder.Services.AddTransient<IReservationManagementRepository, ReservationManagementRepository>();
+
 
 //Services Setup
 builder.Services.AddTransient<IReservationCreatorService, ReservationCreatorService>();
@@ -50,6 +67,10 @@ builder.Services.AddTransient<IReservationValidationService, ReservationValidati
 builder.Services.AddTransient<IReservationStatusUpdater, ReservationStatusUpdater>();
 builder.Services.AddTransient<IReservationDeletionService, ReservationDeletionService>();
 
+//spaceMAnger setup
+builder.Services.AddTransient<ISpaceManagerDao, SpaceManagerDao>();
+builder.Services.AddTransient<ISpaceReader, SpaceReader>();
+
 
 //Mangers Setup
 builder.Services.AddTransient<IReservationCreationManager, ReservationCreationManager>();
@@ -58,20 +79,6 @@ builder.Services.AddTransient<IReservationModificationManager, ReservationModifi
 builder.Services.AddTransient<IReservationReaderManager, ReservationReaderManager>();
 builder.Services.AddTransient<IAvailibilityDisplayManager, AvailabilityDisplayManager>();
 builder.Services.AddTransient<IReservationDeletionManager, ReservationDeletionManager>();
-
-//spaceMAnger setup
-builder.Services.AddTransient<ISpaceManagerDao, SpaceManagerDao>();
-builder.Services.AddTransient<ISpaceReader, SpaceReader>();
-
-//security
-
-builder.Services.AddTransient<GenOTP>();
-builder.Services.AddTransient<Hashing>();
-builder.Services.AddTransient<Response>();
-builder.Services.AddTransient<LogEntry>();
-builder.Services.AddTransient<ILogTarget, SqlLogTarget>();
-builder.Services.AddTransient<Logger>();
-builder.Services.AddTransient<SqlDAO>();
 
 
 builder.Services.AddTransient<SSAuthService>(provider =>
@@ -95,7 +102,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
 app.Use((context, next) =>
 {
     
@@ -114,7 +120,6 @@ app.Use((context, next) =>
 
     return next();
 });
-
 
 
 

@@ -7,6 +7,7 @@ namespace SS.Backend.TaskManagerHub
     {
         public Task<Response> ListTasks(string hashedUsername);
         public Task<Response> ListTasksByPriority(string hashedUsername, string priority);
+        public Task<Response> ScoreTasks(string hashedUsername);
 
         public Task<Response> CreateNewTask(TaskHub taskHub);
 
@@ -14,5 +15,6 @@ namespace SS.Backend.TaskManagerHub
         public Task<Response> ModifyTasks(TaskHub task, Dictionary<string, object> fieldsToUpdate);
 
         public Task<Response> DeleteTask(TaskHub task);
+
     }
 }
