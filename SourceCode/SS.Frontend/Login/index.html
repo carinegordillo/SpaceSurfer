@@ -132,7 +132,10 @@
 
     <section id="spaceBookingView" class="homepage-container" style="display: none;">
         <button id="initAppButton">Initialize spaceBookingCenter</button>
+        <button type="button" onclick="waitlistAccess()">Waitlist</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
+        <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
+        <button type="button" onclick="logout()">Logout</button>
         <div id="accessTokenContainer"></div>
         <div class="space-booking-center-container">
             <div class="sidebar"></div>
@@ -162,6 +165,9 @@
     <!--Waitlist View-->
     <section id="waitlistView" class="homepage-container" style="display: none;">
         <button id="initWaitlistButton">Initialize Waitlist</button>
+        <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
+        <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
+        <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
         <div class="container">
             <div class="reservations-container content-container">
                 <h2>Waitlisted Reservations</h2>
