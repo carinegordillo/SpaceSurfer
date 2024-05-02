@@ -16,7 +16,7 @@
 
 <body class = "main-content">
     <header>
-        
+
         <nav>
             <div class="header-content">
                 <div>
@@ -37,7 +37,7 @@
                     <div class="nav-item" type="button" onclick="getUserProfile()">Profile</div>
                     <div class="nav-item" type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</div>
                     <div class="nav-item" type="button" onclick="waitlistAccess()">Waitlist</div>
-                    <div class="nav-item" type="button" onclick="personalOverviewAccess()">Personal Overview</div>
+                    <div class="nav-item" type="button" onclick="personalOverviewAccess()" data-testid="personal-overview-view">Personal Overview</div>
                     <div class="nav-item" type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</div>
                     <div class="nav-item" type="button" id="identity"></div>
                     <div class="nav-item" type="button" onclick="logout()">Logout</div>
@@ -108,9 +108,12 @@
 
     <!--Personal Overview Center View-->
     <section id="personalOverviewCenter" class="homepage-container" style="display: none;">
-        <h2>Welcome to SpaceSurfers!</h2>
+        <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <div id="calendar-container">
             <h3 id="POC">Personal Overview Center</h3>
+            <!-- Add the prompt element -->
+            <p id="view-prompt">Please select a view before confirming.</p>
+
             <div id="calendar-header">
                 <button id="calendar-button">Calendar</button>
                 <button id="list-button">List</button>
@@ -123,7 +126,7 @@
             </div>
             <button id="confirm-button">Confirm Selection</button>
 
-            <div id="calendar">
+            <div id="calendar-poc">
                 <div id="month-info-container">
                     <div id="prev-month">&lt;</div>
                     <div id="month-year"></div>
@@ -144,10 +147,12 @@
                     <tbody></tbody>
                 </table>
             </div>
-            <div style=" border: groove; border-radius: 100px;" id="reservation-list">
+            <div style=" border: groove; border-radius: 100px;" id="reservation-list-poc">
             </div>
         </div>
         <div>
+            <div id="error-prompt"></div>
+
             <form id="delete-reservation-form" class="delete-form">
                 <label for="reservation-id">Enter Reservation ID to Delete:</label>
                 <input type="number" id="reservation-id" name="reservation-id" required>
@@ -166,6 +171,7 @@
         </div>
     </div>
 
+    <!--Space Booking View-->
     <section id="spaceBookingView" class="homepage-container" style="display: none;">
         <button id="initAppButton">Initialize spaceBookingCenter</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
@@ -216,7 +222,7 @@
     <section id="taskManagerView" class="homepage-container" style="display: none;">
         <div id="registerView" class="task-container">
             <div id="accountCreationForm" class="flex-container">
-    
+
                 <!-- Task List Container -->
                 <div class="task-list-section">
                     <h2>Task Manager Hub🤙</h2>
@@ -239,9 +245,9 @@
                         <ul id="taskListCompleted"></ul>
                     </div>
                 </div>
-                
-                
-    
+
+
+
                 <!-- Task Creation Form -->
                 <div class="task-form-section">
                     <h2>Create Task</h2>
@@ -307,75 +313,67 @@
         </div>
     </section>
 
-    
-
-
-
-
-
-
-    
 
     <!--Manager Homepage-->
     <section id="homepageManager" class="homepage-container" style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
-        <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
+        <button type="button" onclick="personalOverviewAccess()">PersonalOverview </button>
         <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
         <button type="button" onclick="logout()">Logout</button>
 
         <!--<div class="uplaodSection">-->
         <!-- Space Manager -->
         <!--<button class="accordion">Upload Space</button>
-        <div class="form-container" style="display:none;">
-            <form id="spaceCreationForm">
-                <div class="spaceRow">
-                    <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
-                    <small>Max file size: 5MB</small>
-                    <input type="text" id="floorPlanName" name="floorPlanName" placeholder="Floor Plan Name" required><br />
-                    <input type="hidden" id="imageBase64" name="imageBase64">
-                </div>
-                <div id="imagePreviewContainer"></div><br>
-                <button type="button" id="addSpace">Add Space ID</button><br />
-                <div id="spacesContainer">
+            <div class="form-container" style="display:none;">
+                <form id="spaceCreationForm">
                     <div class="spaceRow">
-                        <input type="text" class="spaceID" name="spaceID[]" placeholder="Space ID">
-                        <input type="text" class="timeLimit" name="timeLimit[]" placeholder="Time Limit">
+                        <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
+                        <small>Max file size: 5MB</small>
+                        <input type="text" id="floorPlanName" name="floorPlanName" placeholder="Floor Plan Name" required><br />
+                        <input type="hidden" id="imageBase64" name="imageBase64">
                     </div>
-                </div>
+                    <div id="imagePreviewContainer"></div><br>
+                    <button type="button" id="addSpace">Add Space ID</button><br />
+                    <div id="spacesContainer">
+                        <div class="spaceRow">
+                            <input type="text" class="spaceID" name="spaceID[]" placeholder="Space ID">
+                            <input type="text" class="timeLimit" name="timeLimit[]" placeholder="Time Limit">
+                        </div>
+                    </div>
 
-                <button id="postSpace" type="submit">Create Space</button>
-                <button id="loadRequestsButton" type="button">Load Requests</button>
-                <ul id="recoveryRequestsList"></ul>
-            </form>
-        </div>
-    </div>-->
+                    <button id="postSpace" type="submit">Create Space</button>
+                    <button id="loadRequestsButton" type="button">Load Requests</button>
+                    <ul id="recoveryRequestsList"></ul>
+                </form>
+            </div>
+        </div>-->
         <!--<div class="modifySection">
-        <button class="accordion">Modify Space</button>
-        <div class="form-container" style="display:none;">
-            <form id="modifySpaceForm">
-                <h3>Warning: CANNOT Modify Space if an existing Reservation Associated Exists</h3>
-                <div class="spaceRowModify">
-                    <input type="text" id="modifyFloorPlanName" name="floorPlanName" placeholder="Floor Plan Name"><br />
-                    <input type="file" id="replaceImage" name="replaceImage" accept="image/*">
-                    <button id="modifyImage" type="button" class="btn btn-modify">Replace Floor Plan Image - Max file size: 5MB</button>
-                    <input type="hidden" id="modifyImageBase64" name="modifyImageBase64">
-                    <button id="deleteFloor" type="button" class="btn btn-danger">Delete Floor</button>
-                </div>
-                <div id="modifyImagePreviewContainer"></div><br>
-                <button type="button" id="addSpaceModify" class="btn btn-add-space">Add Space ID</button><br />
-                <div id="spacesModificationContainer">
+            <button class="accordion">Modify Space</button>
+            <div class="form-container" style="display:none;">
+                <form id="modifySpaceForm">
+                    <h3>Warning: CANNOT Modify Space if an existing Reservation Associated Exists</h3>
                     <div class="spaceRowModify">
-                        <input type="text" class="modifySpaceID" name="spaceID[]" placeholder="Space ID">
-                        <input type="text" class="modifyTimeLimit" name="modifytimeLimit[]" placeholder="Modify Time Limit">
-                        <button id="deleteSpace" type="button" class="btn btn-danger">Delete Space</button>
+                        <input type="text" id="modifyFloorPlanName" name="floorPlanName" placeholder="Floor Plan Name"><br />
+                        <input type="file" id="replaceImage" name="replaceImage" accept="image/*">
+                        <button id="modifyImage" type="button" class="btn btn-modify">Replace Floor Plan Image - Max file size: 5MB</button>
+                        <input type="hidden" id="modifyImageBase64" name="modifyImageBase64">
+                        <button id="deleteFloor" type="button" class="btn btn-danger">Delete Floor</button>
                     </div>
-                </div>
+                    <div id="modifyImagePreviewContainer"></div><br>
+                    <button type="button" id="addSpaceModify" class="btn btn-add-space">Add Space ID</button><br />
+                    <div id="spacesModificationContainer">
+                        <div class="spaceRowModify">
+                            <input type="text" class="modifySpaceID" name="spaceID[]" placeholder="Space ID">
+                            <input type="text" class="modifyTimeLimit" name="modifytimeLimit[]" placeholder="Modify Time Limit">
+                            <button id="deleteSpace" type="button" class="btn btn-danger">Delete Space</button>
+                        </div>
+                    </div>
 
-                <button id="modifyTimeLimits" type="submit" class="btn btn-modify">Modify Time Limits</button>
-            </form>
-        </div>
-    </div>-->
+                    <button id="modifyTimeLimits" type="submit" class="btn btn-modify">Modify Time Limits</button>
+                </form>
+            </div>
+        </div>-->
 
     </section>
 
@@ -383,31 +381,34 @@
         <p>Designed and Developed by the PixelPals Team</p>
     </footer>
 
+
+    <!--Reservation Detail Template-->
     <template id="reservation-detail-template">
-        <label class="reservationID">ReservationID:</label>
-        <label id="labelReservationID" class="reservation-ID"></label>
+        <span class="reservationID">ReservationID:</span>
+        <span id="labelReservationID" class="reservation-ID"></span>
         <br>
-        <label class="companyName">CompanyName:</label>
-        <label id="labelCompany" class="company-Name"></label>
+        <span class="companyName">CompanyName:</span>
+        <span id="labelCompany" class="company-Name"></span>
         <br>
-        <label class="company-id">CompanyID:</label>
-        <label id="labelCompanyID" class="company-ID"></label>
+        <span class="company-id">CompanyID:</span>
+        <span id="labelCompanyID" class="company-ID"></span>
         <br>
-        <label class="companyAddress">Address:</label>
-        <label id="labelAddress" class="company-address"></label>
+        <span class="companyAddress">Address:</span>
+        <span id="labelAddress" class="company-address"></span>
         <br>
-        <label class="plan-id">Floor Plan ID: </label>
-        <label id="labelFloorPlanID" class="floor-plan-ID"></label>
-        <label class="space-id">-</label>
-        <label id="labelSpaceID" class="Space-ID"></label>
+        <span class="plan-id">Floor Plan - Space ID: </span>
+        <span id="labelFloorPlanID" class="floor-plan-ID"></span>
+        <span class="space-id">-</span>
+        <span id="labelSpaceID" class="Space-ID"></span>
         <br>
-        <label class="reservation-date">Reservation Date:</label>
-        <label id="labelReservationDate" class="reservation-date-class"></label>
+        <span class="reservation-date">Reservation Date:</span>
+        <span id="labelReservationDate" class="reservation-date-class"></span>
         <br>
-        <label class="reservation-start">Reservation Time:</label>
-        <label id="labelReservationTimeStart" class="reservation-time-start"></label>
-        <label class="reservation-end">-</label>
-        <label id="labelReservationTimeEnd" class="reservation-time-end"></label>
+        <span class="reservation-start">Reservation Time:</span>
+        <span id="labelReservationTimeStart" class="reservation-time-start"></span>
+        <span class="reservation-end">-</span>
+        <span id="labelReservationTimeEnd" class="reservation-time-end"></span>
+
         <br>
         <label id="labelStatus" class="reservation-status"></label>
         <br>
@@ -421,7 +422,7 @@
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
     <!--<script src="../SpaceManager/pages/SpaceManager.js"></script>-->
-    
+
 
 </body>
 
