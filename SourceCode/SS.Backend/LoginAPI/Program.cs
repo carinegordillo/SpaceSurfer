@@ -17,6 +17,7 @@ var baseDirectory = AppContext.BaseDirectory;
 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
 var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
 
+
 builder.Services.AddTransient<ConfigService>(provider =>
     new ConfigService(configFilePath));
 builder.Services.AddTransient<SqlDAO>();
@@ -38,23 +39,30 @@ builder.Services.AddTransient<SSAuthService>(provider =>
 );
 
 //adding archiving 
+
+var archivingConfigFilePath = Path.Combine(projectRootDirectory, "Configs", "archivingconfig.json");
+
 builder.Services.AddTransient<ITargetArchivingDestination, S3ArchivingDestination>();
-builder.Services.AddSingleton<MonthlyArchivingService>();
+builder.Services.AddSingleton(provider =>
+{
+    var archivingTarget = provider.GetRequiredService<ITargetArchivingDestination>();
+    return new ArchivingService(archivingTarget, archivingConfigFilePath);
+});
 
 
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
-var archivingService = app.Services.GetRequiredService<MonthlyArchivingService>();
+var archivingService = app.Services.GetRequiredService<ArchivingService>();
 
 app.Lifetime.ApplicationStarted.Register(() => {
-    Console.WriteLine("Application is starting. MonthlyArchivingService is being started...");
+    Console.WriteLine("Application is starting. ArchivingService is being started...");
     archivingService.Start();
 });
 
 app.Lifetime.ApplicationStopping.Register(() => {
-    Console.WriteLine("Application is stopping. MonthlyArchivingService is being stopped...");
+    Console.WriteLine("Application is stopping. ArchivingService is being stopped...");
     archivingService.Stop();
 });
 
