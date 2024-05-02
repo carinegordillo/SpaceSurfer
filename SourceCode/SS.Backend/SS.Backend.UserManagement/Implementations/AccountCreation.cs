@@ -164,7 +164,7 @@ namespace SS.Backend.UserManagement
         }
 
 
-        public async Task<Response> CreateUserAccount(UserInfo userInfo, CompanyInfo? companyInfo)
+        public async Task<Response> CreateUserAccount(UserInfo userInfo, CompanyInfo? companyInfo, string? manager_hashedUsername)
         {
             Response response = new Response();
             string validationMessage = CheckUserInfoValidity(userInfo);
@@ -176,7 +176,13 @@ namespace SS.Backend.UserManagement
                 return response;
             }
 
-            response  = await _userManagementDao.CreateAccount(userInfo, companyInfo);
+            if (userInfo.role != 4){
+                response  = await _userManagementDao.CreateAccount(userInfo, companyInfo, null);
+            }else if (userInfo.role == 4){
+                response  = await _userManagementDao.CreateAccount(userInfo, companyInfo, manager_hashedUsername);
+            }
+
+            
             Console.WriteLine("THIS IS THE REPONSE:::::", response.ErrorMessage);
 
             if (response.HasError == false)
@@ -237,50 +243,6 @@ namespace SS.Backend.UserManagement
         }
 
 
-        public async Task<Response> getEmployeeCompanyID(UserInfo userInfo, string manager_hashedUsername) {
-            var baseDirectory = AppContext.BaseDirectory;
-            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-            ConfigService configService = new ConfigService(configFilePath);
-            SqlDAO SQLDao = new SqlDAO(configService);
-            Response response = new Response();
-
-            try {
-                // Build the SQL query to fetch companyID
-                var builder = new CustomSqlCommandBuilder();
-                var parameters = new Dictionary<string, object> {
-                    {"hashedUsername", manager_hashedUsername}
-                };
-
-                var selectCommand = builder.BeginSelect()
-                                        .SelectColumns("companyID") // Assuming 'companyID' is the column you want to fetch
-                                        .From("companyProfile")
-                                        .Where("hashedUsername = @hashedUsername")
-                                        .AddParameters(parameters) // Safe parameter binding using a dictionary
-                                        .Build();
-
-                // Execute the query
-                var queryResponse = await SQLDao.ReadSqlResult(selectCommand);
-                if (queryResponse.HasError) {
-                    // Handle errors, e.g., no such user or SQL errors
-                    response.HasError = true;
-                    response.ErrorMessage = "Failed to retrieve company ID: " + queryResponse.ErrorMessage;
-                } else if (queryResponse.ValuesRead != null && queryResponse.ValuesRead.Rows.Count > 0) {
-                    // Set the response properties accordingly
-                    response.ValuesRead = queryResponse.ValuesRead;
-                    response.HasError = false;
-                } else {
-                    // Handle the case where no rows were returned
-                    response.HasError = true;
-                    response.ErrorMessage = "No company associated with the provided manager username.";
-                }
-            } catch (Exception ex) {
-                // Exception handling, if something unexpected occurs
-                response.HasError = true;
-                response.ErrorMessage = $"An unexpected error occurred: {ex.Message}";
-            }
-            return response;
-        }
 
         public async Task<Response> VerifyAccount(string username)
         {

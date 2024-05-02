@@ -16,11 +16,11 @@ namespace SS.Backend.SpaceManager
             _spaceManagerDao = spaceManagerDao;
         }
 
-        public async Task<Response> ModifyFloorImage(string hashedUsername, string floorPlanName, byte[] newFloorPlanImage)
+        public async Task<Response> ModifyFloorImage(CompanyFloor? companyFloor)
         {
             Response response = new Response();
-            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
-
+            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(companyFloor.hashedUsername);
+            var newFloorPlanImage = companyFloor.FloorPlanImage;
             if (companyIDResponse.HasError || companyIDResponse.ValuesRead == null || companyIDResponse.ValuesRead.Rows.Count == 0)
             {
                 response.ErrorMessage = "Invalid hashedUsername or companyID not found.";
@@ -56,50 +56,26 @@ namespace SS.Backend.SpaceManager
             var whereClauses = new Dictionary<string, object>
             {
                 {"companyID", companyID}, 
-                {"floorPlanName", floorPlanName}
+                {"floorPlanName", companyFloor.FloorPlanName}
             };
 
             // Now call the GeneralModifier with the updated signature
-            response = await _spaceManagerDao.GeneralModifier(whereClauses, "floorPlanImage", newFloorPlanImage, "dbo.companyFloor");
-            if (response.HasError == false)
-            {
-                LogEntry entry = new LogEntry()
+            response = await _spaceManagerDao.GeneralModifier(whereClauses, "floorPlanImage", companyFloor.FloorPlanImage, "dbo.companyFloor");
 
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Info",
-                    username = hashedUsername,
-                    category = "Data Store",
-                    description = "Successful floor image modification"
-                };
-                //await logger.SaveData(entry);
-            }
-            else
-            {
-                LogEntry entry = new LogEntry()
-
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Error",
-                    username = hashedUsername,
-                    category = "Data Store",
-                    description = "Error modifying floor image in data store."
-                };
-                // await logger.SaveData(entry);
-            }
             return response;
         }
 
-        public async Task<Response> ModifyTimeLimit(string hashedUsername, string spaceID, int newTimeLimit)
+        public async Task<Response> ModifyTimeLimit(SpaceModifier? spaceModifier)
         {
             Response response = new Response();
-            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
+            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(spaceModifier.hashedUsername);
 
             if (companyIDResponse.HasError || companyIDResponse.ValuesRead == null || companyIDResponse.ValuesRead.Rows.Count == 0)
             {
                 response.ErrorMessage = "Invalid hashedUsername or companyID not found.";
                 return response;
             }
+            var newTimeLimit = spaceModifier.newTimeLimit;
 
             // Assuming we have only one row per hashedUsername
             DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
@@ -130,44 +106,19 @@ namespace SS.Backend.SpaceManager
             var whereClauses = new Dictionary<string, object>
             {
                 {"companyID", companyID},
-                {"spaceID", spaceID}
+                {"spaceID", spaceModifier.spaceID}
             };
 
             // Now call the GeneralModifier with the updated signature
-            response = await _spaceManagerDao.GeneralModifier(whereClauses, "timeLimit", newTimeLimit, "dbo.companyFloorSpaces");
-            if (response.HasError == false)
-            {
-                LogEntry entry = new LogEntry()
-
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Info",
-                    username = hashedUsername,
-                    category = "Data Store",
-                    description = "Successful time limit modifcation"
-                };
-                //await logger.SaveData(entry);
-            }
-            else
-            {
-                LogEntry entry = new LogEntry()
-
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Error",
-                    username = hashedUsername,
-                    category = "Data Store",
-                    description = "Error modifying time limit in data store."
-                };
-                // await logger.SaveData(entry);
-            }
+            response = await _spaceManagerDao.GeneralModifier(whereClauses, "timeLimit", spaceModifier.newTimeLimit, "dbo.companyFloorSpaces");
+        
             return response;
         }
 
-        public async Task<Response> DeleteSpace(string hashedUsername, string spaceID)
+        public async Task<Response> DeleteSpace(SpaceModifier? spaceModifier)
         {
             Response response = new Response();
-            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
+            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(spaceModifier.hashedUsername);
 
             if (companyIDResponse.HasError || companyIDResponse.ValuesRead == null || companyIDResponse.ValuesRead.Rows.Count == 0)
             {
@@ -197,36 +148,10 @@ namespace SS.Backend.SpaceManager
             var conditions = new Dictionary<string, object>
             {
                 { "companyID", companyID },
-                { "spaceID", spaceID }
+                { "spaceID", spaceModifier.spaceID }
             };
 
             response = await _spaceManagerDao.DeleteField(conditions, "dbo.companyFloorSpaces");
-            if (response.HasError == false)
-            {
-                LogEntry entry = new LogEntry()
-
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Info",
-                    username = hashedUsername,
-                    category = "Data Store",
-                    description = "Successful space deletion"
-                };
-                //await logger.SaveData(entry);
-            }
-            else
-            {
-                LogEntry entry = new LogEntry()
-
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Error",
-                    username = hashedUsername,
-                    category = "Data Store",
-                    description = "Error deleting space in data store."
-                };
-                // await logger.SaveData(entry);
-            }
             return response;
         }
 
@@ -257,10 +182,10 @@ namespace SS.Backend.SpaceManager
         }
 
 
-        public async Task<Response> DeleteFloor(string hashedUsername, string floorPlanName)
+        public async Task<Response> DeleteFloor(CompanyFloor? companyFloor)
         {
             Response response = new Response();
-            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
+            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(companyFloor.hashedUsername);
 
             if (companyIDResponse.HasError || companyIDResponse.ValuesRead == null || companyIDResponse.ValuesRead.Rows.Count == 0)
             {
@@ -288,7 +213,7 @@ namespace SS.Backend.SpaceManager
                 return checkResponse;
             }
     
-            var fetchFloorPlanIdResponse = await _spaceManagerDao.GetFloorPlanIdByNameAndCompanyId(floorPlanName, companyID);
+            var fetchFloorPlanIdResponse = await _spaceManagerDao.GetFloorPlanIdByNameAndCompanyId(companyFloor.FloorPlanName, companyID);
             if(fetchFloorPlanIdResponse.HasError || fetchFloorPlanIdResponse.ValuesRead == null || fetchFloorPlanIdResponse.ValuesRead.Rows.Count == 0)
             {
                 return new Response { HasError = true, ErrorMessage = "Floor plan not found or error fetching floor plan ID." };
@@ -303,31 +228,7 @@ namespace SS.Backend.SpaceManager
             }
 
             var deleteFloorResponse = await _spaceManagerDao.DeleteField(new Dictionary<string, object> { { "floorPlanID", floorPlanID }, { "companyID", companyID } }, "dbo.companyFloor");
-            if (deleteFloorResponse.HasError == false)
-            {
-                LogEntry entry = new LogEntry()
-
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Info",
-                    username = hashedUsername,
-                    category = "Data Store",
-                    description = "Successful floor deletion"
-                };
-            }
-            else
-            {
-                LogEntry entry = new LogEntry()
-
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Error",
-                    username = hashedUsername,
-                    category = "Data Store",
-                    description = "Error deleting floor in data store."
-                };
-                // await logger.SaveData(entry);
-            }
+        
             return deleteFloorResponse;
         }
 

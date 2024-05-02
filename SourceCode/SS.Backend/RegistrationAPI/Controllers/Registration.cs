@@ -32,7 +32,7 @@ public class RegistrationController : ControllerBase
     public async Task<IActionResult> PostCreateAccount([FromBody] AccountCreationRequest request){
         try
         {
-            var response = await _accountCreation.CreateUserAccount(request.UserInfo, request.CompanyInfo);
+            var response = await _accountCreation.CreateUserAccount(request.UserInfo, request.CompanyInfo, request.manager_hashedUsername);
             return Ok(response);
         }
         catch (Exception ex)

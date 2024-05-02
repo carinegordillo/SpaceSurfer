@@ -103,7 +103,8 @@ function submitEmployeeCreationForm() {
     };
     var accountCreationRequest = {
         userInfo: userInfo,
-        companyInfo: companyInfo
+        companyInfo: companyInfo,
+        manager_hashedUsername : JSON.parse(sessionStorage.getItem('idToken')).Username
     };
     fetch('http://localhost:8080/api/registration/postAccount', {
         method: 'POST',

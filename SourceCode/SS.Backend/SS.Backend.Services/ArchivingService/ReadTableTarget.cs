@@ -10,7 +10,8 @@ using System.Text;
 namespace SS.Backend.Services.ArchivingService
 {
     public class ReadTableTarget
-    {    private ISqlDAO _sqldao;
+    {    
+        // private ISqlDAO _sqldao;
         
 
         //private string TABLE_NAME = "dbo.NewAutoIDReservations";
