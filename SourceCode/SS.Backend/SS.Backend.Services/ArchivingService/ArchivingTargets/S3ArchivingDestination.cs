@@ -28,8 +28,7 @@ namespace SS.Backend.Services.ArchivingService
                 secretKey = awsConfig.GetProperty("SecretKey").GetString() ?? "No Secret Key";
 
             }
-            Console.WriteLine("Access Key: " + accessKey);
-            Console.WriteLine("Secret Key: " + secretKey);
+
         }
 
 

@@ -26,7 +26,7 @@ namespace SS.Backend.Services.ArchivingService
             //replace once we have designated file path
 
             ConfigService configService = new ConfigService(configFilePath);
-            SqlDAO _sqldao = new SqlDAO(configService);
+            _sqldao = new SqlDAO(configService);
 
             SqlLogTarget sqlLogTarget =  new SqlLogTarget(_sqldao);
             Logger logger = new Logger(sqlLogTarget);
