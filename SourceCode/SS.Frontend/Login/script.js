@@ -211,3 +211,5 @@ function getHomePage() {
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById('userProfileView').style.display = 'none';
 }
+
+

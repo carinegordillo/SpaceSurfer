@@ -1,17 +1,17 @@
-using Microsoft.Net.Http.Headers;
 using SS.Backend.DataAccess;
 using SS.Backend.Security;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
-using SS.Backend.Services.ArchivingService ;
+using SS.Backend.UserDataProtection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-
 
 var baseDirectory = AppContext.BaseDirectory;
 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
@@ -36,34 +36,15 @@ builder.Services.AddTransient<SSAuthService>(provider =>
         provider.GetRequiredService<Logger>()
     )
 );
-
-//adding archiving 
-//builder.Services.AddTransient<ITargetArchivingDestination, S3ArchivingDestination>();
-//builder.Services.AddSingleton<MonthlyArchivingService>();
-
-
-builder.Services.AddControllers();
+builder.Services.AddTransient<UserDataProtection>(provider =>
+    new UserDataProtection(
+        provider.GetRequiredService<SqlDAO>(),
+        provider.GetRequiredService<GenOTP>(),
+        provider.GetRequiredService<Hashing>()
+    )
+);
 
 var app = builder.Build();
-
-//var archivingService = app.Services.GetRequiredService<MonthlyArchivingService>();
-
-//app.Lifetime.ApplicationStarted.Register(() => {
-//    Console.WriteLine("Application is starting. MonthlyArchivingService is being started...");
-//    archivingService.Start();
-//});
-
-//app.Lifetime.ApplicationStopping.Register(() => {
-//    Console.WriteLine("Application is stopping. MonthlyArchivingService is being stopped...");
-//    archivingService.Stop();
-//});
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.Use(async (context, next) =>
 {
@@ -72,12 +53,11 @@ app.Use(async (context, next) =>
 
     var allowedOrigins = new[] { "http://localhost:3000" };
 
-
     if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
     {
         context.Response.Headers.Append(HeaderNames.AccessControlAllowOrigin, origin);
         context.Response.Headers.Append(HeaderNames.AccessControlAllowMethods, "GET, POST, OPTIONS");
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowHeaders, "Content-Type, Accept");
+        context.Response.Headers.Append(HeaderNames.AccessControlAllowHeaders, "Content-Type, Accept, Authorization");
     }
     if (context.Request.Method == "OPTIONS")
     {
@@ -90,9 +70,16 @@ app.Use(async (context, next) =>
     }
 });
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
+}
 
+app.UseHttpsRedirection();
 
-app.UseStaticFiles();
+app.UseMiddleware<AuthorizationMiddleware>();
 
 app.MapControllers();
 

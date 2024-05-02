@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8081 http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275 http://localhost:8089 http://localhost:5279 http://localhost:5048; img-src 'self' data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8081 http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275 http://localhost:8089 http://localhost:5279 http://localhost:5048 http://localhost:5084; img-src 'self' data:;">
      <link rel="stylesheet" href="spaceBookingCenter.css"> 
     <link rel="stylesheet" href="style.css">
      <link rel="stylesheet" href="PersonalOverviewStyle.css">
@@ -14,9 +14,9 @@
 
 </head>
 
-<body class = "main-content">
+<body class="main-content">
     <header>
-        
+
         <nav>
             <div class="header-content">
                 <div>
@@ -27,7 +27,7 @@
                 </div>
             </div>
             <div class="nav-container">
-                <div id="noLogin" class="nav-items"  style="display: none;">
+                <div id="noLogin" class="nav-items" style="display: none;">
                     <div class="nav-item" id="navAbout" onclick="window.location.href='../UnAuthnAbout/about.html'">About</div>
                     <div class="nav-item" id="navRegister" onclick="window.location.href='../Registration/index.html'">Register</div>
                     <div class="nav-item" id="navLogin" onclick="window.location.href='../Login/index.html'">Login</div>
@@ -47,9 +47,9 @@
         </nav>
     </header>
 
-    
 
-    <section id="sendOTPSection" >
+
+    <section id="sendOTPSection">
         <div class="container">
             <section id="sendOTPSection" class="loginForm">
                 <form id="sendOTPForm">
@@ -70,7 +70,7 @@
         <div class="container">
             <div class="welcome-label">
                 Welcome to SpaceSurfer Home Page
-            </div>  
+            </div>
         </div>
     </section>
 
@@ -90,10 +90,11 @@
         <label style="color: #e33434; font-size: 18px;">Incorrect verification code. Please double-check and try again.</label>
     </section>
     <!--General Homepage-->
-    
+
 
     <section id="userProfileView" class="homepage-container" style="display: none;">
         <div class="userProfileContainer">
+            <button type="button" onclick="cpraAccess()">User Data Protection</button>
             <div class="profile">
                 <div id="leftPanel" class="left-panel">
                 </div>
@@ -218,11 +219,16 @@
         </div>
     </section>
 
+    <!--User Data Protection View-->
+    <section id="cpraView" class="homepage-container" style="display: none;">
+        <div id="contentContainer"></div>
+    </section>
+
     <!--Task Manager View-->>
     <section id="taskManagerView" class="homepage-container" style="display: none;">
         <div id="registerView" class="task-container">
             <div id="accountCreationForm" class="flex-container">
-    
+
                 <!-- Task List Container -->
                 <div class="task-list-section">
                     <h2>Task Manager Hub🤙</h2>
@@ -245,9 +251,9 @@
                         <ul id="taskListCompleted"></ul>
                     </div>
                 </div>
-                
-                
-    
+
+
+
                 <!-- Task Creation Form -->
                 <div class="task-form-section">
                     <h2>Create Task</h2>
@@ -313,19 +319,20 @@
         </div>
     </section>
 
-    
 
 
 
 
 
 
-    
+
+
 
     <!--Manager Homepage-->
     <section id="homepageManager" class="homepage-container" style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
+        <button type="button" onclick="cpraAccess()">User Data Protection</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
         <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
         <button type="button" onclick="logout()">Logout</button>
@@ -426,8 +433,9 @@
     <script src="waitlistScript.js"></script>
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
+    <script src="cpraScript.js"></script>
     <!--<script src="../SpaceManager/pages/SpaceManager.js"></script>-->
-    
+
 
 </body>
 

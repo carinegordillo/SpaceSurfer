@@ -344,6 +344,97 @@ namespace SS.Backend.Security
 
         }
 
+        public async Task<Response> verifyCode(AuthenticationRequest authRequest)
+        {
+            var builder = new CustomSqlCommandBuilder();
+            Response result = new();
+
+            #region Validate arguments
+            if (authRequest is null)
+            {
+                throw new ArgumentNullException(nameof(authRequest));
+            }
+
+            if (System.String.IsNullOrWhiteSpace(authRequest.UserIdentity))
+            {
+                throw new ArgumentException($"{nameof(authRequest.UserIdentity)} must be valid");
+            }
+
+            if (System.String.IsNullOrWhiteSpace(authRequest.Proof))
+            {
+                throw new ArgumentException($"{nameof(authRequest.UserIdentity)} must be valid");
+            }
+            #endregion
+
+            string user = authRequest.UserIdentity;
+            string proof = authRequest.Proof;
+
+            try
+            {
+                var selectCommand = builder
+                    .BeginSelectAll()
+                    .From("OTP")
+                    .Where($"Username = '{user}'")
+                    .Build();
+                result = await sqldao.ReadSqlResult(selectCommand);
+
+                string? dbOTP = result.ValuesRead?.Rows[0]?["OTP"].ToString();
+                string? dbSalt = result.ValuesRead?.Rows[0]?["Salt"].ToString();
+                DateTime timestamp = result.ValuesRead?.Rows[0]?["Timestamp"] != DBNull.Value
+                ? (DateTime)result.ValuesRead.Rows[0]["Timestamp"]
+                : DateTime.MinValue;
+
+                TimeSpan timeElapsed = DateTime.UtcNow - timestamp;
+
+                // compare the otp stored in DB with user inputted otp
+                string HashedProof = hasher.HashData(proof, dbSalt);
+                if (dbOTP == HashedProof)
+                {
+                    if (timeElapsed.TotalMinutes > 2)
+                    {
+                        result.HasError = true;
+                        result.ErrorMessage = "OTP has expired.";
+                        return result;
+                    }
+                    else
+                    {
+                        // they match and not expired, so get the roles from the DB for that user
+                        var readRoles = builder
+                            .BeginSelectAll()
+                            .From("userProfile")
+                            .Where($"hashedUsername = '{user}'")
+                            .Build();
+                        result = await sqldao.ReadSqlResult(readRoles);
+                        if (result.ValuesRead.Rows.Count > 0)
+                        {
+                            result.HasError = false;
+
+                            return result;
+                        }
+                        else
+                        {
+                            result.HasError = true;
+                            result.ErrorMessage = "No roles found for the user.";
+                            return result;
+                        }
+                    }
+                }
+                else
+                {
+                    result.HasError = true;
+                    result.ErrorMessage = "Failed to authenticate.";
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMessage = ex.Message;
+
+                return result;
+            }
+        }
+
+
         /// <summary>
         /// This method authorizes a user by checking if their claims are contained in the required claims
         /// </summary>
