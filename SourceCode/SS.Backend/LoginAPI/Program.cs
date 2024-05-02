@@ -1,9 +1,7 @@
-using Microsoft.Net.Http.Headers;
 using SS.Backend.DataAccess;
 using SS.Backend.Security;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,29 +43,31 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.Use(async (context, next) =>
+app.Use((context, next) =>
 {
+<<<<<<< Updated upstream
     // Get the origin header from the request
     var origin = context.Request.Headers[HeaderNames.Origin].ToString();
     Console.WriteLine("Origin: " + origin);
     var allowedOrigins = new[] { "http://13.52.79.219" , "http://localhost:3000" };
     Console.WriteLine("Allowed Origins: " + string.Join(", ", allowedOrigins));
+=======
 
-    if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
-    {
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowOrigin, origin);
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowMethods, "GET, POST, OPTIONS");
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowHeaders, "Content-Type, Accept");
-    }
+    context.Response.Headers.Append("Access-Control-Allow-Origin", "http://13.52.79.219");
+    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+
+>>>>>>> Stashed changes
+
     if (context.Request.Method == "OPTIONS")
     {
-        context.Response.StatusCode = StatusCodes.Status200OK;
-        await context.Response.CompleteAsync();
+        context.Response.Headers.Append("Access-Control-Max-Age", "86400");
+        context.Response.StatusCode = 204;
+        return Task.CompletedTask;
     }
-    else
-    {
-        await next();
-    }
+
+    return next();
 });
 
 app.UseStaticFiles();
