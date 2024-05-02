@@ -43,7 +43,7 @@ namespace EmailConfirmationAPI.Controllers
         }
 
         [HttpPost("SendConfirmation")]
-        public async Task<IActionResult> SendConfirmation([FromBody] int ReservationID)
+        public async Task<IActionResult> SendConfirmation([FromQuery] int ReservationID)
         {
             string? accessToken = HttpContext.Request.Headers["Authorization"];
             if (accessToken != null && accessToken.StartsWith("Bearer "))
@@ -115,16 +115,19 @@ namespace EmailConfirmationAPI.Controllers
                     }
                     else
                     {
+                        Console.WriteLine("Unauthorized role.");
                         return BadRequest("Unauthorized role.");
                     }
                 }
                 else
                 {
+                    Console.WriteLine("Invalid token.");
                     return BadRequest("Invalid token.");
                 }
             }
             else
             {
+                Console.WriteLine("Unauthorized");
                 return BadRequest("Unauthorized. Access token is missing or invalid.");
             }
 

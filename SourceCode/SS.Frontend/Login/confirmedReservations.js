@@ -472,7 +472,7 @@ function openDialogDelete(reservationID) {
     message.innerText = 'You cannot reconfirm the reservation once it is deleted. Are you sure you want to delete the confirmation for:';
 
     const reservationIdText = document.createElement('p');
-    spaceIdText.innerHTML = `Reservation: <span id="reservationId">${reservationID}</span>`;
+    reservationIdText.innerHTML = `Reservation: <span id="reservationId">${reservationID}</span>`;
 
     const yesBtn = document.createElement('button');
     yesBtn.innerText = 'Yes';

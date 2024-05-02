@@ -92,3 +92,38 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: none; /* Hide by default */
 }
+
+.modal-confirm-content {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    padding: 20px;
+    background-color: rgb(175, 175, 175); /* Default color for success */
+    font-family: Arial, sans-serif;
+    color: #333;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.modal-confirm-content.error {
+    background-color: rgb(255, 87, 68); /* Color for error */
+}
+
+.modal-confirm-content button.close-button {
+    display: block;
+    text-align: right;
+    padding: 10px 20px;
+    margin: 20px auto 0;
+    border: none;
+    background-color: #000000;
+    color: rgb(0, 0, 0);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.modal-confirm-content button.close-button:hover {
+    background-color: #555;
+}
