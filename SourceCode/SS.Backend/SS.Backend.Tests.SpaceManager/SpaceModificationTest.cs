@@ -66,8 +66,8 @@ namespace SS.Backend.Tests.SpacemodificationTest
         {
             Stopwatch timer = new Stopwatch();
             CompanyFloor companyFloor = new CompanyFloor{
-                hashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", 
-                FloorPlanName = "Demo Code",
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ", 
+                FloorPlanName = "first floor",
                 FloorPlanImage =  new byte[] { 0x08, 0x02, 0x03, 0x09 }
             };
             timer.Start();
@@ -85,9 +85,9 @@ namespace SS.Backend.Tests.SpacemodificationTest
         {
             Stopwatch timer = new Stopwatch();
             SpaceModifier spaceModifier = new SpaceModifier{
-                hashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", 
-                spaceID = "code1",
-                newTimeLimit =  3
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ", 
+                spaceID = "first1",
+                newTimeLimit =  10
             };
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -135,8 +135,8 @@ namespace SS.Backend.Tests.SpacemodificationTest
         {
             Stopwatch timer = new Stopwatch();
             CompanyFloor companyFloor = new CompanyFloor{
-                hashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", 
-                FloorPlanName = "Demo Code"
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ", 
+                FloorPlanName = "plswork"
             };
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.

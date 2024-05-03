@@ -1,13 +1,4 @@
-
 document.getElementById('replaceImage').addEventListener('change', function(event) {
-    const accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Token expired or invalid');
-        logout();
-        return;
-    }
-    event.preventDefault();
-
     var fileModify = event.target.files[0];
     if (!fileModify) {
         alert('No file selected.');
@@ -34,13 +25,6 @@ document.getElementById('replaceImage').addEventListener('change', function(even
 document.getElementById('imageUpload').addEventListener('change', handleImageUpload);
 
 function handleImageUpload(event) {
-    const accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Token expired or invalid');
-        logout();
-        return;
-    }
-    event.preventDefault();
     var file = event.target.files[0];
     if (!file) {
         alert('No file selected.');
@@ -89,12 +73,6 @@ function addSpaceRow(containerId, rowClass) {
 }
 
 document.getElementById('addSpace').addEventListener('click', function() {
-    const accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Token expired or invalid');
-        logout();
-        return;
-    }
     const container = document.getElementById('spacesContainer');
     const currentSpaces = container.getElementsByClassName('spaceRow').length;
 
@@ -113,12 +91,6 @@ document.getElementById('addSpace').addEventListener('click', function() {
 });
 
 document.getElementById('addSpaceModify').addEventListener('click', function() {
-    const accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Token expired or invalid');
-        logout();
-        return;
-    }
     const container = document.getElementById('spacesModificationContainer');
     const currentModifiedSpaces = container.getElementsByClassName('spaceRowModify').length;
 
@@ -142,12 +114,6 @@ document.getElementById('addSpaceModify').addEventListener('click', function() {
 });
 
 function collectSpacesAndTimeLimits() {
-    const accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Token expired or invalid');
-        logout();
-        return;
-    }
     let spacesDict = {};
     // Assuming each spaceID input is directly followed by its corresponding timeLimit input
     const spaceIDs = document.querySelectorAll('.spaceID');
@@ -165,12 +131,6 @@ function collectSpacesAndTimeLimits() {
 }
 
 function collectSpacesAndTimeLimitsToModify() {
-    const accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Token expired or invalid');
-        logout();
-        return;
-    }
     let spacesDict = {};
     // Assuming each spaceID input is directly followed by its corresponding timeLimit input
     const spaceIDs = document.querySelectorAll('.modifySpaceID');
@@ -196,104 +156,70 @@ document.querySelectorAll('.accordion').forEach(function(button) {
 });
 
 
+
 document.getElementById('spaceCreationForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    const accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Token expired or invalid');
-        logout();
-        return;
-    }
     const companyFloor = {
-        hashedUsername : JSON.parse(sessionStorage.getItem('idToken')).Username,
+        hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,
         FloorPlanName: document.getElementById('floorPlanName').value,
         FloorPlanImage: document.getElementById('imageBase64').value,
         FloorSpaces: collectSpacesAndTimeLimits()
     };
-    sendData('http://localhost:8081/api/SpaceManager/postSpace', companyFloor, 'accessToken');
+    sendData('http://localhost:8081/api/SpaceManager/postSpace', companyFloor);
 });
 
 document.getElementById('modifySpaceForm').addEventListener('submit', function(e) {
-    const accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Token expired or invalid');
-        logout();
-        return;
-    }
     e.preventDefault();
     const spacesToModify = collectSpacesAndTimeLimitsToModify();
-    const idToken = JSON.parse(sessionStorage.getItem('idToken'));
-    if (idToken && idToken.Username) {
-        spacesToModify.hashedUsername = idToken.Username;
-    } else {
-        console.error('ID Token is missing or malformed');
-        return; 
-    }
-    sendData('http://localhost:8081/api/SpaceManager/modifyTimeLimits', spacesToModify, 'accessToken');
+    const request = {
+        hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,
+        ...spacesToModify  // Use spread syntax to merge spacesToModify into the request object
+    };
+    sendData('http://localhost:8081/api/SpaceManager/modifyTimeLimits', request);
 });
 
-document.getElementById('modifyImage').addEventListener('click', function(e) {
-    e.preventDefault();
-    const accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Token expired or invalid');
-        logout();
-        return;
-    }
+document.getElementById('modifyImage').addEventListener('click', function() {
     const newFloor = {
         hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,
         FloorPlanName: document.getElementById('modifyFloorPlanName').value,
         FloorPlanImage: document.getElementById('modifyImageBase64').value
     };
-    sendData('http://localhost:8081/api/SpaceManager/modifyFloorPlan', newFloor, 'accessToken');
+    sendData('http://localhost:8081/api/SpaceManager/modifyFloorPlan', newFloor);
 });
 
 document.addEventListener('click', function(e) {
-    e.preventDefault();
-    const accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Token expired or invalid');
-        logout();
-        return;
-    }
     if (e.target.classList.contains('deleteSpace')) {
-        const spaceModifier = {
+        const spaceID = e.target.closest('.spaceRowModify').querySelector('.modifySpaceID').value;
+        const request = {
             hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,
-            spaceID : e.target.closest('.spaceRowModify').querySelector('.modifySpaceID').value
+            spaceID: spaceID
         }
-        sendData('http://localhost:8081/api/SpaceManager/deleteSpace', spaceModifier, 'accessToken');
+        sendData('http://localhost:8081/api/SpaceManager/deleteSpace', request);
     }
 });
 
 document.getElementById('deleteFloor').addEventListener('click', function() {
-    e.preventDefault();
-    const accessToken = sessionStorage.getItem('accessToken');
-    if (!accessToken) {
-        console.error('Token expired or invalid');
-        logout();
-        return;
-    }
-    const spaceModifier = {
+    const FloorPlanName = document.getElementById('modifyFloorPlanName').value;
+    const request = {
         hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,
-        FloorPlanName : document.getElementById('modifyFloorPlanName').value
+        FloorPlanName: FloorPlanName
     }
-    sendData('http://localhost:8081/api/SpaceManager/deleteFloor', spaceModifier, 'accessToken');
+    sendData('http://localhost:8081/api/SpaceManager/deleteFloor', request);
 });
 
 
-function sendData(url, data, tokenKey) {
-    const accessToken = sessionStorage.getItem('accessToken');
+function sendData(url, data) {
+    const accessToken = sessionStorage.getItem('accessToken'); 
     if (!accessToken) {
         console.error('Token expired or invalid');
         logout();
         return;
     }
-    const token = localStorage.getItem(tokenKey);
     fetch(url, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     })

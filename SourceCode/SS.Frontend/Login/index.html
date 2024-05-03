@@ -11,7 +11,6 @@
     <script src="UserProfile.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
-
 <body class = "main-content">
     <header>
         
@@ -39,9 +38,12 @@
                     <div class="nav-item" type="button" onclick="waitlistAccess()">Waitlist</div>
                     <div class="nav-item" type="button" onclick="personalOverviewAccess()">Personal Overview</div>
                     <div class="nav-item" type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</div>
+                    <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
                     <div class="nav-item" type="button" onclick="employeeSetupAccess()">Employee Account Setup</div>
                     <div class="nav-item" type="button" id="identity"></div>
                     <div class="nav-item" type="button" onclick="logout()">Logout</div>
+                    <div class="nav-item" type="button" onclick="window.location.href = './test.html'">test</div>
+
                 </div>
             </div>
         </nav>
@@ -324,12 +326,10 @@
         </div>
     </section>
 
-    <!--Task Manager View-->>
+    <!--Task Manager View-->
     <section id="taskManagerView" class="homepage-container" style="display: none;">
         <div  class="task-container">
             <div id="TaskForm" class="flex-container">
-    
-                <!-- Task List Container -->
                 <div class="task-list-section">
                     <h2>Task Manager Hub🤙</h2>
                     <button id="viewTasksBtn" type="button">View Tasks</button>
@@ -352,7 +352,6 @@
                     </div>
                 </div>
                 
-                <!-- Task Creation Form -->
                 <div class="task-form-section">
                     <h2>Create Task</h2>
                     <form id="createTaskForm">
@@ -401,10 +400,6 @@
                                     <option value="Low">Low</option>
                                 </select>
                             </div>
-                            <!-- <div>
-                                <label for="modNotificationSetting">Notification Setting:</label>
-                                <input type="number" id="modNotificationSetting" required>
-                            </div> -->
                             <button type="submit">Submit Changes</button>
                         </form>
                     </div>
@@ -412,6 +407,55 @@
             </div>
         </div>
     </section>
+
+
+    <!--Space Manager-->
+<!-- need to rename to space row and modify space row depedning on js  -->
+    <section id="spaceManagerView" class="homepage-container" style="display: none;">
+        <div class="task-container">
+            <div class="flex-container">
+                <div class="space-list-section">
+                    <h2>Space Manager🤙</h2>
+                    <button class="accordion">Upload Space</button>
+                    <form id="spaceCreationForm" class="space-form" style="display:none">
+                        <div class="form-group">
+                            <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
+                            <small>Max file size: 5MB</small>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="floorPlanName" name="floorPlanName" placeholder="Floor Plan Name" required>
+                        </div>
+                        <input type="hidden" id="imageBase64" name="imageBase64">
+                        <div id="imagePreviewContainer" class="image-preview"></div>
+                        <button type="button" id="addSpace" class="btn btn-add">Add Space ID</button>
+                        <div id="spacesContainer" class="space-container"></div>
+                        <button id="postSpace" type="submit" class="btn btn-primary">Create Space</button>
+                    </form>
+                </div>
+
+                <div class="space-form-section">
+                    <button class="accordion">Modify Space</button>
+                    <form id="modifySpaceForm" class="space-form" style="display:none">
+                        <label>Warning: Cannot modify space if an existing reservation is associated</label>
+                        <div class="form-group">
+                            <h4>Modify Floor</h4>
+                            <input type="text" id="modifyFloorPlanName" name="floorPlanName" placeholder="Floor Plan Name">
+                            <input type="file" id="replaceImage" name="replaceImage" accept="image/*">
+                            <button id="modifyImage" type="button" class="btn btn-modify">Replace Floor Plan Image - Max file size: 5MB</button>
+                        </div>
+                        <input type="hidden" id="modifyImageBase64" name="modifyImageBase64">
+                        <button id="deleteFloor" type="button" class="btn btn-danger">Delete Floor</button>
+                        <div id="modifyImagePreviewContainer" class="image-preview"></div>
+                        <!-- <h4>Modify Spaces</h4> -->
+                        <button type="button" id="addSpaceModify" class="btn btn-add">Modify Spaces</button>
+                        <div id="spacesModificationContainer" class="space-container"></div>
+                        <button id="modifyTimeLimits" type="submit" class="btn btn-primary">Modify Time Limits</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
 
     <!--Manager Homepage-->
     <section id="homepageManager" class="homepage-container" style="display: none;">
@@ -464,7 +508,7 @@
     <script src="waitlistScript.js"></script>
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
-    <script sr = "SpaceManager.js"></script>
+    <script src = "SpaceManager.js"></script>
 </body>
 </html>
 

@@ -222,7 +222,7 @@ namespace SS.Backend.SpaceManager
 
      
             var deleteSpacesResponse = await _spaceManagerDao.DeleteField(new Dictionary<string, object> { { "floorPlanID", floorPlanID } }, "dbo.companyFloorSpaces");
-            if(deleteSpacesResponse.HasError)
+            if(deleteSpacesResponse.HasError && deleteSpacesResponse.RowsAffected > 0)
             {
                 return deleteSpacesResponse; // Return error response from deleting spaces
             }

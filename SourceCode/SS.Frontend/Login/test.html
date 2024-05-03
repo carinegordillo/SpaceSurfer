@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8081 http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275 http://localhost:8089 http://localhost:5279 http://localhost:5048 http://localhost:8080; img-src 'self' data:;">
+    <link rel="stylesheet" href="style.css">
+
+    <title>File Input Test</title>
+</head>
+<body>
+    <section id="spaceManagerView" class="homepage-container">
+        <div class="task-container">
+            <div class="flex-container">
+                <div class="space-list-section">
+                    <h2>Space Manager🤙</h2>
+                    <button class="accordion">Upload Space</button>
+                    <form id="spaceCreationForm" class="space-form" >
+                        <div class="form-group">
+                            <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
+                            <small>Max file size: 5MB</small>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="floorPlanName" name="floorPlanName" placeholder="Floor Plan Name" required>
+                        </div>
+                        <input type="hidden" id="imageBase64" name="imageBase64">
+                        <div id="imagePreviewContainer" class="image-preview"></div>
+                        <button type="button" id="addSpace" class="btn btn-add">Add Space ID</button>
+                        <div id="spacesContainer" class="space-container"></div>
+                        <button id="postSpace" type="submit" class="btn btn-primary">Create Space</button>
+                    </form>
+                </div>
+
+                <div class="space-form-section">
+                    <button class="accordion">Modify Space</button>
+                    <form id="modifySpaceForm" class="space-form" >
+                        <label>Warning: Cannot modify space if an existing reservation is associated</label>
+                        <div class="form-group">
+                            <h4>Modify Floor</h4>
+                            <input type="text" id="modifyFloorPlanName" name="floorPlanName" placeholder="Floor Plan Name">
+                            <input type="file" id="replaceImage" name="replaceImage" accept="image/*">
+                            <button id="modifyImage" type="button" class="btn btn-modify">Replace Floor Plan Image - Max file size: 5MB</button>
+                        </div>
+                        <input type="hidden" id="modifyImageBase64" name="modifyImageBase64">
+                        <button id="deleteFloor" type="button" class="btn btn-danger">Delete Floor</button>
+                        <div id="modifyImagePreviewContainer" class="image-preview"></div>
+                        <h4>Modify Spaces</h4>
+                        <button type="button" id="addSpaceModify" class="btn btn-add">Add Space ID</button>
+                        <div id="spacesModificationContainer" class="space-container"></div>
+                        <button id="modifyTimeLimits" type="submit" class="btn btn-primary">Modify Time Limits</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src = "SpaceManager.js"></script>
+
+</body>
+</html>

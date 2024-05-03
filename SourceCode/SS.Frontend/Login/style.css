@@ -423,7 +423,7 @@ input {
 
 
 .task-container {
-    background: rgb(205, 216, 247);
+    background: #E2E2D3;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -485,7 +485,7 @@ button:hover {
     justify-content: space-between; 
 }
 
-.task-list-section, .task-form-section {
+.task-list-section, .space-form-section {
     flex: 1; 
     padding: 20px; 
     box-sizing: border-box; 
@@ -495,7 +495,7 @@ button:hover {
     border-right: 1px solid #ccc; 
 }
 
-.task-form-section {
+.space-form-section {
     padding-left: 40px;
 }
 
@@ -718,4 +718,113 @@ input[type="checkbox"] {
     50% {
         transform: translateY(-20px); /* Move up by 20 pixels */
     }
+}
+
+/* .task-container {
+    display: flex;
+    flex-direction: column;
+} */
+
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 20px;
+}
+
+.homepage-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    background-color: #f4f4f8;
+}
+
+.space-list-section, .space-form-section {
+    flex: 1;
+    background: #ffffff;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+h2, h4 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.space-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.btn-primary {
+    background-color: #4CAF50;
+}
+
+.btn-primary:hover {
+    background-color: #45a049;
+}
+
+.btn-danger {
+    background-color: #f44336;
+}
+
+.btn-danger:hover {
+    background-color: #e53935;
+}
+
+.btn-add, .btn-modify {
+    background-color: #2196F3;
+}
+
+.btn-add:hover, .btn-modify:hover {
+    background-color: #1e88e5;
+}
+
+.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 15px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    transition: 0.4s;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.accordion.active, .accordion:hover {
+    background-color: #ccc;
+}
+
+.image-preview {
+    /* border: 1px solid #ccc; */
+    padding: 2px;
+    /* border-radius: 4px; */
+    /* margin-top: 10px; */
+}
+
+.space-container {
+    border: 1px dashed #ccc;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
 }
