@@ -44,7 +44,7 @@ public class AuthorizationMiddleware
             
             await _next(context);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Log exception or handle token validation errors
             context.Response.StatusCode = 500; // Internal server error

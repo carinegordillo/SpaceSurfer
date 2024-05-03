@@ -1,54 +1,5 @@
 const baseUrl = "http://localhost:5116/api/v1/reservationConfirmation";
 
-function showModal(message, isSuccess = true) {
-    const modalElement = document.createElement('div');
-    modalElement.style.position = 'fixed';
-    modalElement.style.top = '20%';
-    modalElement.style.left = '50%';
-    modalElement.style.transform = 'translate(-50%, -50%)';
-    modalElement.style.zIndex = '1000';
-    modalElement.style.padding = '20px';
-    modalElement.style.backgroundColor = isSuccess ? 'lightgreen' : 'salmon';
-    modalElement.innerText = message;
-
-    const closeButton = document.createElement('button');
-    closeButton.innerText = 'Close';
-    closeButton.onclick = function() {
-        modalElement.remove();
-    };
-    modalElement.appendChild(closeButton);
-
-    document.body.appendChild(modalElement);
-}
-
-// You may need a function to create the details container if it doesn't exist
-function createDetailsContainer() {
-    const container = document.createElement('div');
-    container.id = 'reservation-details';
-    document.body.appendChild(container); // Append it somewhere in your body, or to a specific element
-    return container;
-}
-
-document.addEventListener('DOMContentLoaded', attachClickHandlersToDetailsContainer);
-function attachClickHandlersToDetailsContainer() {
-    const detailsContainer = document.querySelector('.reservations-list');
-    if (detailsContainer) {
-        detailsContainer.addEventListener('click', handleReservationButtonClick);
-    }
-}
-function handleReservationButtonClick(event) {
-    const target = event.target;
-    if (target.tagName === 'BUTTON') {
-        const reservationID = target.getAttribute('data-reservation-id');
-        if (target.className.includes('delete-btn')) {
-            openDialogDelete(reservationID);
-        } else if (target.className.includes('cancel-btn')) {
-            const username = target.getAttribute('data-username');
-            openDialogCancel(username, reservationID);
-        }
-    }
-}
-
 function logout() {
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('idToken');
@@ -381,29 +332,45 @@ async function listConfirmations() {
     }
 }
 
+function showModal(message, isSuccess = true) {
+    const modalElement = document.createElement('div');
+    modalElement.style.position = 'fixed';
+    modalElement.style.top = '20%';
+    modalElement.style.left = '50%';
+    modalElement.style.transform = 'translate(-50%, -50%)';
+    modalElement.style.zIndex = '1000';
+    modalElement.style.padding = '20px';
+    modalElement.style.backgroundColor = isSuccess ? 'lightgreen' : 'salmon';
+    modalElement.innerText = message;
 
+    const closeButton = document.createElement('button');
+    closeButton.innerText = 'Close';
+    closeButton.onclick = function() {
+        modalElement.remove();
+    };
+    modalElement.appendChild(closeButton);
 
-// Function to display reservation details
-function displayReservationDetails(reservation) {
-    // Display reservation details in the reservation-details container
-    const reservationDetails = document.getElementById('reservation-details');
-    reservationDetails.innerHTML = `
-        <h3>${reservation.companyName}</h3>
-        <p>Company ID: ${reservation.companyID}</p>
-        <p>FloorPlan ID: ${reservation.floorPlanID}</p>
-        <p>Space ID: ${reservation.spaceID}</p>
-        <p>Start Time: ${reservation.startTime}</p>
-        <p>End Time: ${reservation.endTime}</p>
-        <img src="path_to_floor_plan_image" alt="Floor Plan">
-        <button id="cancelConfirmationBtn">Cancel Confirmation</button>
-        <button id="deleteConfirmationBtn">Delete Confirmation</button>
-    `;
+    document.body.appendChild(modalElement);
+}
 
-    const cancelConfirmationBtn = document.getElementById('cancelConfirmationBtn');
-    cancelConfirmationBtn.addEventListener('click', () => openDialogCancel(reservation));
-
-    const deleteConfirmationBtn = document.getElementById('deleteConfirmationBtn');
-    deleteConfirmationBtn.addEventListener('click', () => openDialogDelete(reservation));
+document.addEventListener('DOMContentLoaded', attachClickHandlersToDetailsContainer);
+function attachClickHandlersToDetailsContainer() {
+    const detailsContainer = document.querySelector('.reservations-list');
+    if (detailsContainer) {
+        detailsContainer.addEventListener('click', handleReservationButtonClick);
+    }
+}
+function handleReservationButtonClick(event) {
+    const target = event.target;
+    if (target.tagName === 'BUTTON') {
+        const reservationID = target.getAttribute('data-reservation-id');
+        if (target.className.includes('delete-btn')) {
+            openDialogDelete(reservationID);
+        } else if (target.className.includes('cancel-btn')) {
+            const username = target.getAttribute('data-username');
+            openDialogCancel(username, reservationID);
+        }
+    }
 }
 
 function openDialogCancel(username, reservationID) {
@@ -503,7 +470,7 @@ function openDialogDelete(reservationID) {
 function leaveModal() {
     console.log('Close modal function called');
     const modal = document.getElementById('confirmModal');
-    if (modal && modal.style) {
+    if (modal) {
         console.log('Modal element found in DOM');
         modal.style.display = 'none';
         modal.innerHTML = '';

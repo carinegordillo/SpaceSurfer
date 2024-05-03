@@ -64,7 +64,7 @@ namespace EmailConfirmationAPI.Controllers
                             principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
                             principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
                             var newToken = _authService.CreateJwt(Request, principal);
-                            UserReservationsModel reservation = null;
+                            UserReservationsModel? reservation = null;
                             Response resResponse = new Response();
                             try
                             {
@@ -89,7 +89,7 @@ namespace EmailConfirmationAPI.Controllers
                         }
                         else
                         {
-                            UserReservationsModel reservation = null;
+                            UserReservationsModel? reservation = null;
                             Response resResponse = new Response();
                             try
                             {
@@ -155,7 +155,7 @@ namespace EmailConfirmationAPI.Controllers
                             principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
                             principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
                             var newToken = _authService.CreateJwt(Request, principal);
-                            UserReservationsModel reservation = null;
+                            UserReservationsModel? reservation = null;
                             Response resResponse = new Response();
                             try
                             {
@@ -182,7 +182,7 @@ namespace EmailConfirmationAPI.Controllers
                         }
                         else
                         {
-                            UserReservationsModel reservation = null;
+                            UserReservationsModel? reservation = null;
                             Response resResponse = new Response();
                             try
                             {

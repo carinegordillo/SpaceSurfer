@@ -11,3 +11,6 @@ dotnet_diagnostic.CS8604.severity = suggestion
 
 # CS4014: Because this call is not awaited, execution of the current method continues before the call is completed
 dotnet_diagnostic.CS4014.severity = none
+
+# CS8629: Nullable value type may be null.
+dotnet_diagnostic.CS8629.severity = none

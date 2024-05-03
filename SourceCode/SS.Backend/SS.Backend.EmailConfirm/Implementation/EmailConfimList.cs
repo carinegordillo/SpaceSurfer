@@ -72,7 +72,7 @@ namespace SS.Backend.EmailConfirm
                 response.HasError = true;   
                 response.ErrorMessage = "No data found in Reservations Table.";
                 Console.WriteLine("No data found in Reservations Table.");
-                return null;
+                //return null;
             }
 
             // get ConfirmReservation table info and chec confirmStatus

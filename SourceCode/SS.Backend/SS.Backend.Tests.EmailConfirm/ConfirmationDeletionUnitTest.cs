@@ -145,7 +145,9 @@ public class ConfirmationDeletionUnitTest
                         using (SqlCommand command = new SqlCommand(sql, connection, transaction))
                         {
                             // Execute the command and get the inserted reservation ID
+#pragma warning disable CS8605 // Unboxing a possibly null value.
                             reservationID = (int)await command.ExecuteScalarAsync().ConfigureAwait(false);
+#pragma warning restore CS8605 // Unboxing a possibly null value.
                         }
 
                         // Optionally, insert into another table if needed using reservationID

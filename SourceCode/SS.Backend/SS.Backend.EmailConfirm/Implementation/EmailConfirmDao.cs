@@ -216,6 +216,7 @@ namespace SS.Backend.EmailConfirm
                 if (response.ValuesRead != null && response.ValuesRead.Rows.Count > 0)
                 {
                     DataRow row = response.ValuesRead.Rows[0];
+#pragma warning disable CS8601 // Possible null reference assignment.
                     reservation = new UserReservationsModel
                     {
                         ReservationID = Convert.ToInt32(row["reservationID"]),
@@ -227,6 +228,7 @@ namespace SS.Backend.EmailConfirm
                         Status = Enum.Parse<ReservationStatus>(row["status"].ToString(), true),
                         UserHash = row["userHash"].ToString()
                     };
+#pragma warning restore CS8601 // Possible null reference assignment.
 
                     response.ErrorMessage = $"GetUserReservationByID Command: Successful: {reservation}";
                 }

@@ -14,7 +14,6 @@ namespace SS.Backend.Tests.EmailConfirm;
 [TestClass]
 public class ConfirmListUnitTest
 {
-    private EmailConfirmService _emailConfirm;
     private IEmailConfirmDAO _emailDAO;
     private SqlDAO _sqlDao;
     private ConfigService _configService;

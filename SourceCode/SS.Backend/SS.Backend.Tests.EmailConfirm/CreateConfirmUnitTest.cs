@@ -73,7 +73,7 @@ public class CreateConfirmUnitTest
         var calendarFilePath = Path.Combine(projectRootDirectory, "CalendarFiles", "SSReservation.ics");
         string otp = string.Empty;
         string icsFile = string.Empty;
-        byte[] fileBytes = null;
+        byte[]? fileBytes = null;
 
         var infoResponse = await _emailDAO.GetReservationInfo(reservationID);
         if (!infoResponse.HasError && infoResponse.ValuesRead != null && infoResponse.ValuesRead.Rows.Count > 0)
@@ -98,12 +98,15 @@ public class CreateConfirmUnitTest
             if (address == null) response.ErrorMessage = "The 'address' data was not found.";
             if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
             if (companyName == null) response.ErrorMessage = "The 'CompanyName' data was not found.";
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             if (date == null) response.ErrorMessage = "The 'reservationDate' data was not found.";
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
             if (startTime == null) response.ErrorMessage = "The 'reservationStartTime' data was not found.";
             if (endTime == null) response.ErrorMessage = "The 'reservationEndTime' data was not found.";
-            
+
 
             //calendar ics creator
+#pragma warning disable CS8601 // Possible null reference assignment.
             var reservationInfo = new ReservationInfo
             {
                 filePath = calendarFilePath,
@@ -114,6 +117,7 @@ public class CreateConfirmUnitTest
                 description = $"Reservation at: {companyName} \nReservationID: {reservationID} \nSpaceID: {spaceID}",
                 location = address
             };
+#pragma warning restore CS8601 // Possible null reference assignment.
             var calendarCreator = new CalendarCreator();
             icsFile = await calendarCreator.CreateCalendar(reservationInfo);
             if (icsFile == null)

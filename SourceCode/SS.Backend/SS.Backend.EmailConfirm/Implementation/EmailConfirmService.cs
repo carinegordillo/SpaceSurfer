@@ -72,7 +72,9 @@ namespace SS.Backend.EmailConfirm
                         end = DateTime.Parse(row["reservationEndTime"].ToString());
                     }
 
+#pragma warning disable CS8629 // Nullable value type may be null.
                     DateTime? date = start.Value;
+#pragma warning restore CS8629 // Nullable value type may be null.
 
                     if (location == null) response.ErrorMessage = "The 'address' data was not found.";
                     if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
@@ -84,6 +86,7 @@ namespace SS.Backend.EmailConfirm
 
 
                     //calendar ics creator
+#pragma warning disable CS8601 // Possible null reference assignment.
                     var reservationInfo = new ReservationInfo
                     {
                         filePath = icsFilePath,
@@ -94,6 +97,7 @@ namespace SS.Backend.EmailConfirm
                         description = $"Reservation at: {companyName} ReservationID: {reservationID} SpaceID: {spaceID}",
                         location = location
                     };
+#pragma warning restore CS8601 // Possible null reference assignment.
                     var calendarCreator = new CalendarCreator();
                     icsFilePath = await calendarCreator.CreateCalendar(reservationInfo);
                     Console.WriteLine(icsFilePath);
@@ -158,14 +162,18 @@ namespace SS.Backend.EmailConfirm
                 }
                 else
                 {
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
                     return (null, null, null, new Response { HasError = true, ErrorMessage = "ReservationID not found in database." });
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
                 }
             }
             else
             {
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
                 return (null, null, null, new Response { HasError = true, ErrorMessage = "Failed to retrieve reservation info." });
-                // response.HasError = true;
-                // response.ErrorMessage += "An error occured during reservation confirmation creation. Please try again later.";
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
+                              // response.HasError = true;
+                              // response.ErrorMessage += "An error occured during reservation confirmation creation. Please try again later.";
             }
 
             return (icsFilePath, otp, htmlBody,response);
@@ -208,7 +216,9 @@ namespace SS.Backend.EmailConfirm
 
                 if (confirmStatus.Trim().Equals("yes", StringComparison.OrdinalIgnoreCase)) 
                 {
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
                     return (null, null, null, new Response { HasError = true, ErrorMessage = "Unable to send confirmation Email. Reservation is already confirmed." });
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
                 }
                 else
                 {
@@ -230,7 +240,9 @@ namespace SS.Backend.EmailConfirm
                             //             ? Convert.ToInt32(row["reservationID"])
                             //             : -1; // or any other default value you choose
 
+#pragma warning disable CS8601 // Possible null reference assignment.
                             reservationinfo.location = infoResponse.ValuesRead.Columns.Contains("CompanyAddress") ? row["CompanyAddress"].ToString() : null;
+#pragma warning restore CS8601 // Possible null reference assignment.
                             var spaceID = infoResponse.ValuesRead.Columns.Contains("spaceID") ? row["spaceID"].ToString() : null;
                             var companyName = infoResponse.ValuesRead.Columns.Contains("CompanyName") ? row["CompanyName"].ToString() : null;
                             //extract and handle reservation date and time 
@@ -245,8 +257,10 @@ namespace SS.Backend.EmailConfirm
                                 reservationinfo.end = DateTime.Parse(row["reservationEndTime"].ToString());
                             }
 
+#pragma warning disable CS8629 // Nullable value type may be null.
                             reservationinfo.dateTime = reservationinfo.start.Value;
-                            
+#pragma warning restore CS8629 // Nullable value type may be null.
+
                             if (reservationinfo.location == null) response.ErrorMessage = "The 'address' data was not found.";
                             if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
                             //if (resID == null) response.ErrorMessage = "The 'reservationID' data was not found.";
@@ -316,7 +330,9 @@ namespace SS.Backend.EmailConfirm
                         }
                         else
                         {
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
                             return (null, null, null, new Response { HasError = true, ErrorMessage = "ReservationID not found in database." });
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
                         }
                     }
                     else
