@@ -45,6 +45,7 @@ namespace SS.Backend.Services.LoggingService
             return errorMsg;
         }
 
+
         public async Task<Response> SaveData(LogEntry log)
         {
             Response result = new Response();

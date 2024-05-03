@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Security;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+//using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text.Json;
@@ -19,6 +20,7 @@ namespace SS.Backend.Security
         private readonly Hashing hasher;
         private readonly SqlDAO sqldao;
         private readonly Logger log;
+        
 
         public SSAuthService(GenOTP genotp, Hashing hasher, SqlDAO sqldao, Logger log)
         {
@@ -413,6 +415,7 @@ namespace SS.Backend.Security
             return ssPrincipal;
         }
 
+
         public string CreateJwt(HttpRequest Request, SSPrincipal principal)
         {
             var header = new JwtHeader();
@@ -523,17 +526,16 @@ namespace SS.Backend.Security
             }
         }
 
-        /*
-        public IDictionary<string, string>? ExtractClaimsFromToken(string tokenString)
+        public string? ExtractClaimsFromToken(string tokenString)
         {
             try
             {
                 var token = JsonSerializer.Deserialize<Jwt>(tokenString);
-                return token.Payload.Claims;
+                var claimsJson = JsonSerializer.Serialize(token.Payload.Claims);
+                return claimsJson;
             }
             catch (Exception)
             {
-                // Log or handle exception
                 return null;
             }
         }

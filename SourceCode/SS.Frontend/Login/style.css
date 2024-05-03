@@ -1,16 +1,56 @@
-html, body {
-    height: 100%;
-    margin: 0;
+body, html {
+    min-height: 100vh; /* Ensure body stretches to full viewport height */
+    font-family: 'Arial', sans-serif;
+    /* background-image: linear-gradient(to bottom, rgba(12, 39, 138, 0.754), rgba(39, 20, 58, 0.404)); */
+    background-image: url(images/galaxy.png);
+    background-size: cover; /* Scale the background image as large as possible */
+    background-repeat: no-repeat; /* Prevent the background image from repeating */
     padding: 0;
+    margin: 0;
+    display: flex; /* Make the body a flex container */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: space-between; /* Push content to the top and bottom */
 }
 
+.background-image {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    /* overflow: hidden; */
+    height: auto;
+  }
+  
+  .background-image::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* background-image: url('skystar.jpg'); */
+    
+    background-size: cover;
+    background-position: center;
+    opacity: 0.5; /* Adjust the opacity as needed */
+    z-index: -1;
+  }
+
+/* 
 .header-content {
     display: flex;
     align-items: center;
-}
+} */
 
 .flipped-image {
-    transform: scaleX(-1);
+    transform: scaleX(-1) rotate(15deg);;
+}
+
+
+header, footer {
+    /* background-color: #0d092c38; */
+    color: white;
+    text-align: center;
+    padding: 5px 0;
 }
 
 h1 {
@@ -21,29 +61,29 @@ h1 {
     color: #fff;
 }
 
-body {
+/* body {
     font-family: 'Arial', sans-serif;
     background: linear-gradient(to bottom, #495EA8, #A29CAF);
     color: #fff;
     display: flex;
     flex-direction: column;
-}
+} */
 
-header {
+/* header {
     padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
+} */
 
 .header-logo {
-    width: 150px;
+    width: 130px;
     height: auto;
 }
 
 .header-title {
-    width: 450px;
-    height: auto;
+    width: 350px;
+    height: 80px;
 }
 
 header h1 {
@@ -51,13 +91,13 @@ header h1 {
     margin-left: 10px;
 }
 
-av {
+nav {
     /* background-color: #5e08ff; */
-    background-color: #0d092c44;
+    /* background-color: #0d092c44; */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    padding: 0px 0;
     /* border-bottom: 2px solid #040d46; Specify width, style, and color */
     border-radius: 5px; /* Adjust if you want rounded corners */
 }
@@ -68,18 +108,49 @@ av {
 
 .nav-items {
     display: flex;
-    margin-right: 30px;
+    justify-content: space-between;; /* Align items to the start of the container */
+    gap: 10px; /* Spacing between nav items */
+    padding: 10px;
+    flex-wrap: nowrap; /* Prevent wrapping of items */
 }
 
 .nav-item {
-    margin-left: 40px; /* Adds space between navigation items */
-    color: white; /* Change font color */
-    font-weight: bold; /* Make text bold */
-    font-family: Arial, sans-serif; /* Set the font, with a fallback */
-    margin-top: 0px;
-    font-size: 20px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #dde1e7; /* Light blue background */
+    color: #788AA3; /* Dark grey text */
+    padding: 10px 20px; /* Adjust padding as needed */
+    border-radius: 5px; /* Rounded corners for a "button-like" appearance */
     cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    margin: 4px;
+    text-align: center;
+    white-space: nowrap; /* Keep text on one line */
+}
 
+.nav-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Ensure the container takes full width */
+    padding: 0 10px; /* Add some padding on the sides */
+    border-radius: 5px;
+}
+
+/* Styles for the header-content and images, if needed */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* Add any additional styles needed for layout */
+}
+
+.nav-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
+    background-color: #c4c9d1; /* Slightly darker background on hover */
+    transform: translateY(-2px); /* Lift button on hover */
 }
 
 nav a {
@@ -89,9 +160,7 @@ nav a {
     font-weight: bold;
 }
 
-nav a:hover {
-    color: #ddd;
-}
+
 
 h1, h2 {
     color: #fff;
@@ -104,10 +173,10 @@ h3 {
 }
 
 footer {
-    background-color: #B8D3DA;
-    color: #fff;
+    background-color: #0d092c38;
+    color: white;
     text-align: center;
-    margin-top: auto;
+    padding: 0px 0;
 }
 
 section {
@@ -116,33 +185,136 @@ section {
 
 .form-container {
     background-color: #fff;
-    border-radius: 5px;
+    border-radius: 15px;
     padding: 40px;
     max-width: 300px;
     margin: 0 auto;
     margin-top: 75px;
     text-align: center;
 }
+.form-container input,
+.form-container button {
+    border: 1px solid white; /* Border color from your palette */
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1em;
+}
+
+/* Button specific styling */
+.form-container button {
+    background-color: #666A86; /* Pinkish color for the button */
+    color: #fff;
+    cursor: pointer;
+    padding-bottom: 10px;
+}
+
+
 
 form {
     display: flex;
     flex-direction: column;
 }
 
-.recover-link {
-    color: #539CC9;
-    font-size: 12px;
-    text-decoration: none;
-    margin-top: 20px;
+
+/* Overall container styling */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* min-height: 100vh; Full viewport height */
+    color: #666a86; /* Darker text color for contrast */
+    font-family: 'Arial', sans-serif;
+    padding-top: 60px;
 }
 
-label {
+/* Style for the form section */
+.loginForm {
+    border-radius: 25px;
+    padding: 40px;
+    margin-right: 75px; /* Add space between the form and the welcome label */
+    background-color: white;
+    color: #fff; /* This color won't be visible on a white background, consider changing */
+    width: 300px;
+    height: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    display: flex; /* Use flexbox to align children */
+    align-items: center; /* Center-align the flex items horizontally */
+    justify-content: center; /* Center-align the flex items vertically */
+}
+
+/* Style for form elements */
+.loginForm form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Space between form items */
+    justify-content: center; /* Centers form items vertically */
+    height: 100%; /* Take full height of parent */
+    color: #666; /* For visible text, choose a contrasting color */
+}
+
+
+/* Style for input and button elements */
+.loginForm input,
+.loginForm button {
+    border: 1px solid white; /* Border color from your palette */
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1em;
+}
+
+/* Button specific styling */
+.loginForm button {
+    background-color: #666A86; /* Pinkish color for the button */
+    color: #fff;
+    cursor: pointer;
+    padding-bottom: 10px;
+}
+
+.login-title {
+    font-size: 3em; /* This sets the font size to 200% of the base font size */
+    margin-bottom: 20px; /* Adds space below the title for better spacing */
+    color: #788AA3; 
+    text-align: center;
+}
+/* Style for the large label */
+.welcome-label {
+    font-size: 3em; /* Makes the font size three times larger than the base size */
+    font-weight: bold; /* Adds weight to the font */
+    color: white; /* Pinkish color from your palette */
+    text-shadow: 2px 2px 4px #666a86; /* Adds a shadow for a 3D effect */
+    /* text-transform: uppercase; Capitalizes all letters */
+    letter-spacing: 0.0em; /* Increases spacing between letters */
+    margin: 0;
+    padding: 20px;
+    background: #788AA3;
+    /* background: linear-gradient(45deg,#DDF2EB, #788aa3,  #666A86); Gradient background */
+    border-radius: 15px; /* Rounds the corners of the label's background */
+    box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    display: inline-block; /* Allows the element to respect the padding and margin */
+}
+
+/* Link styles */
+.loginForm .recover-link {
+    color: #DB5461; /* Color from your palette */
+    text-decoration: none;
+    font-size: 1em;
+    margin-top: 3px;
+    margin-bottom: 1px;
+    text-align: center;
+}
+
+.loginForm .recover-link:hover {
+    text-decoration: underline;
+}
+
+
+/* label {
     color: black;
     margin-bottom: 10px;
     font-weight: bold;
     font-size: 20px;
     padding: 10px;
-}
+} */
 
 input {
     margin-bottom: 15px;
@@ -150,7 +322,7 @@ input {
     font-size: 16px;
 }
 
-button {
+/* button {
     background-color: #4CAF50;
     border: none;
     color: #fff;
@@ -163,8 +335,302 @@ button {
 
     button:hover {
         background-color: #2F7232;
-    }
+    } */
 
 #enterOTPSection {
     display: none;
+}
+
+
+
+.homepage-container {
+    background: #f4f4f4;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 80%;
+    margin: 20px auto;
+}
+
+
+.task-container {
+    background: rgb(205, 216, 247);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+#accountCreationForm h2 {
+    color: #333;
+    font-size: 24px;
+}
+
+form div {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+textarea,
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Adds padding inside the box */
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+/* 
+#modifyTaskFormContainer {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+} */
+.flex-container {
+    display: flex;
+    justify-content: space-between; 
+}
+
+.task-list-section, .task-form-section {
+    flex: 1; 
+    padding: 20px; 
+    box-sizing: border-box; 
+}
+
+.task-list-section {
+    border-right: 1px solid #ccc; 
+}
+
+.task-form-section {
+    padding-left: 40px;
+}
+
+#taskList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.task-item {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.3s;
+}
+
+.task-item:hover {
+    background-color: #e9e9e9;
+}
+
+.task-item div {
+    margin-bottom: 8px;
+}
+
+.task-item button {
+    margin-right: 10px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+}
+
+.task-item button:hover {
+    background-color: #0056b3;
+}
+
+.task-item span {
+    padding: 3px 6px;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+}
+
+/* Using more specific selectors to apply styles without additional classes */
+.task-item div strong {
+    font-size: 14px;
+    color: #333;
+}
+
+#viewTasksBtn{
+    margin-bottom: 10px;
+}
+
+.task-form-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.task-form-section h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.task-form-section form {
+    margin: 20px 0;
+}
+
+.task-form-section form div {
+    margin-bottom: 15px;
+}
+
+.task-form-section label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.task-form-section input,
+.task-form-section textarea,
+.task-form-section select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.task-form-section input[type="date"],
+.task-form-section input[type="number"] {
+    padding: 6px;
+}
+
+.task-form-section textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.task-form-section button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.task-form-section button:hover {
+    background-color: #0056b3;
+}
+
+#modifyTaskFormContainer {
+    margin-top: 30px;
+    padding: 20px;
+    border-top: 2px solid #eee;
+}
+
+#modifyTaskFormContainer h2 {
+    color: #444;
+}
+
+#modifyTaskFormContainer button {
+    background-color: #28a745;
+}
+
+#modifyTaskFormContainer button:hover {
+    background-color: #218838;
+}
+.task-list-section {
+    background-color: #f8f9fa; /* Light grey background */
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.task-list-section h2 {
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+
+.task-list-section button {
+    background-color: #007bff; /* Bootstrap blue */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin-right: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.task-list-section h3 {
+    color: #333;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.task-list-section button:hover {
+    background-color: #0056b3; /* Darker blue */
+}
+
+.task-list-section select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    margin-right: 10px;
+    width: 50%;
+}
+
+.task-list-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.task-item {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+.task-item.completed {
+    background-color: #e0e0e0; 
+    text-decoration: line-through; 
+}
+
+.task-header {
+    display: flex;
+    align-items: center;
+}
+
+.task-header strong {
+    margin-left: 8px;
+}
+
+input[type="checkbox"] {
+    margin-right: 10px;
+}
+.completed {
+    text-decoration: line-through;
+    color: grey;
 }

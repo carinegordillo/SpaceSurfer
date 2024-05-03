@@ -244,6 +244,7 @@ namespace SS.Backend.Services.AccountCreationService
             {
                 {"hashedUsername", validPepper.hashedUsername},
                 {"username", userInfo.username},
+                {"user_id", 1}
             };
 
 
@@ -254,6 +255,7 @@ namespace SS.Backend.Services.AccountCreationService
                 { "activeAccount", activeAccount_success_parameters}, 
                 {"userHash", hashedAccount_success_parameters}
             };
+            Console.WriteLine("TABLE DATE ",  tableData);
 
             if (companyInfo != null)
             {
