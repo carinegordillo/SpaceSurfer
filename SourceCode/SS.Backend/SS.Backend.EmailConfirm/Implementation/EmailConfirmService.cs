@@ -134,6 +134,7 @@ namespace SS.Backend.EmailConfirm
                         <p>Hello!</p>
                         <p>Thank you for reserving a space at SpaceSurfer! Here are the details of your reservation:</p>
                         <ul>
+                            <li>Reservation ID: <strong>{reservationID}</strong></li>
                             <li>Reservation at: <strong>{companyName}</strong></li>
                             <li>Location: <strong>{address}</strong></li>
                             <li>SpaceID: <strong>{spaceID}</strong></li>
@@ -141,8 +142,8 @@ namespace SS.Backend.EmailConfirm
                             <li>Start Time: <strong>{startTime}</strong></li>
                             <li>End Time: <strong>{endTime}</strong></li>
                         </ul>
-                        <p>To confirm your reservation, please head over to SpaceSurfers --&gt; Your Reservations --&gt; Active Reservation, 
-                        and confirm your Reservation with this code:</p>
+                        <p>To confirm your reservation, head over to SpaceSurfer --&gt; Space Booking Center --&gt; Active Reservations, and confirm your Reservation with this code:</p>
+                        <p><strong>{otp}</strong></p>
                         <p><strong>{otp}</strong></p>
                         <p>Best,<br>PixelPals</p>
                     </body>
@@ -153,6 +154,7 @@ namespace SS.Backend.EmailConfirm
                     string? endTimeString = reservationInfo.end?.ToString("h:mm tt"); 
 
                     htmlBody = htmlBody.Replace("{companyName}", companyName)
+                                        .Replace("{reservationID}", Convert.ToString(reservationID))
                                         .Replace("{address}", reservationInfo.location)
                                         .Replace("{spaceID}", spaceID)
                                         .Replace("{date}", dateString)
@@ -303,6 +305,7 @@ namespace SS.Backend.EmailConfirm
                                 <p>Hello!</p>
                                 <p>Thank you for reserving a space at SpaceSurfer! Here are the details of your reservation:</p>
                                 <ul>
+                                    <li>Reservation ID: <strong>{reservationID}</strong></li>
                                     <li>Reservation at: <strong>{companyName}</strong></li>
                                     <li>Location: <strong>{address}</strong></li>
                                     <li>SpaceID: <strong>{spaceID}</strong></li>
@@ -310,7 +313,7 @@ namespace SS.Backend.EmailConfirm
                                     <li>Start Time: <strong>{startTime}</strong></li>
                                     <li>End Time: <strong>{endTime}</strong></li>
                                 </ul>
-                                <p>To confirm your reservation, head over to SpaceSurfer --&gt; Personal Overview, and confirm your Reservation with this code:</p>
+                                <p>To confirm your reservation, head over to SpaceSurfer --&gt; Space Booking Center --&gt; Active Reservations, and confirm your Reservation with this code:</p>
                                 <p><strong>{otp}</strong></p>
                                 <p>Best,<br>PixelPals</p>
                             </body>
@@ -321,6 +324,7 @@ namespace SS.Backend.EmailConfirm
                             string? endTimeString = reservationinfo.end?.ToString("h:mm tt"); 
 
                             htmlBody = htmlBody.Replace("{companyName}", companyName)
+                                                .Replace("{reservationID}", Convert.ToString(reservationID))
                                                 .Replace("{address}", reservationinfo.location)
                                                 .Replace("{spaceID}", spaceID)
                                                 .Replace("{date}", dateString)

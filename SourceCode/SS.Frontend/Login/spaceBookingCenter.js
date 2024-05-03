@@ -743,7 +743,7 @@ async function confirmReservation(reservationID, code) {
         return data;
     } catch (error) {
         console.error('Error confirming reservation:', error);
-        onError('Error confirming reservation. Check if reservation is already reserved under Confirmations tab.');
+        onError('Error confirming reservation. Please try again or check if reservation is already confirmed.');
     }
 }
 function closeModal() {
