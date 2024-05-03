@@ -131,20 +131,22 @@ function collectSpacesAndTimeLimits() {
 }
 
 function collectSpacesAndTimeLimitsToModify() {
-    let spacesDict = {};
-    // Assuming each spaceID input is directly followed by its corresponding timeLimit input
+    let modifications = [];
     const spaceIDs = document.querySelectorAll('.modifySpaceID');
     const timeLimits = document.querySelectorAll('.modifyTimeLimit');
 
     spaceIDs.forEach((spaceInput, index) => {
         const spaceID = spaceInput.value;
-        const timeLimit = timeLimits[index].value; // Assuming the same index
+        const timeLimit = timeLimits[index].value;
         if (spaceID && timeLimit) {
-            spacesDict[spaceID] = parseInt(timeLimit);
+            modifications.push({
+                spaceID: spaceID,
+                newTimeLimit: parseInt(timeLimit)
+            });
         }
     });
 
-    return spacesDict;
+    return modifications;
 }
 
 document.querySelectorAll('.accordion').forEach(function(button) {
@@ -156,7 +158,6 @@ document.querySelectorAll('.accordion').forEach(function(button) {
 });
 
 
-
 document.getElementById('spaceCreationForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const companyFloor = {
@@ -166,16 +167,22 @@ document.getElementById('spaceCreationForm').addEventListener('submit', function
         FloorSpaces: collectSpacesAndTimeLimits()
     };
     sendData('http://localhost:8081/api/SpaceManager/postSpace', companyFloor);
+    document.getElementById('spaceCreationForm').reset();
 });
 
 document.getElementById('modifySpaceForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    const spacesToModify = collectSpacesAndTimeLimitsToModify();
-    const request = {
-        hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,
-        ...spacesToModify  // Use spread syntax to merge spacesToModify into the request object
-    };
-    sendData('http://localhost:8081/api/SpaceManager/modifyTimeLimits', request);
+    const modifications = collectSpacesAndTimeLimitsToModify();
+    modifications.forEach(modification => {
+        const request = {
+            hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,
+            spaceID: modification.spaceID,
+            newTimeLimit: modification.newTimeLimit
+        };
+        sendData('http://localhost:8081/api/SpaceManager/modifyTimeLimits', request);
+        document.getElementById('modifySpaceForm').reset();
+
+    });
 });
 
 document.getElementById('modifyImage').addEventListener('click', function() {
