@@ -21,8 +21,6 @@ namespace SS.Backend.EmailConfirm
         public async Task<(string ics, string otp, string body, Response res)> CreateConfirmation(int reservationID)
         {
             var response = new Response();
-            //DataRow reservationInput = reservationInfo.ValuesRead.Rows[0];
-            //var reservationinfo = new ReservationInfo();
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../"));
             var icsFilePath = Path.Combine(projectRootDirectory, "CalendarFiles", "SSReservation.ics");
@@ -38,10 +36,9 @@ namespace SS.Backend.EmailConfirm
                 foreach (DataColumn column in row.Table.Columns)
                 {
                     rowAsString.Append(row[column].ToString());
-                    rowAsString.Append(" "); // Add a space or another delimiter if needed
+                    rowAsString.Append(" ");
                 }
 
-                // Now you can print or use rowAsString.ToString()
                 Console.WriteLine(rowAsString.ToString());
 
                 var resID = Convert.ToInt32(row["ReservationID"]);
@@ -50,11 +47,6 @@ namespace SS.Backend.EmailConfirm
                 {
                     var getOtp = new GenOTP();
                     otp = getOtp.generateOTP();
-
-                    //extract reservation info
-                    // int resID = infoResponse.ValuesRead.Columns.Contains("reservationID") && row["reservationID"] != DBNull.Value
-                    //             ? Convert.ToInt32(row["reservationID"])
-                    //             : -1; // or any other default value you choose
         
                     var location = infoResponse.ValuesRead.Rows[0]["CompanyAddress"].ToString();
                     Console.WriteLine($"reservation ID: {reservationID}");
@@ -71,10 +63,7 @@ namespace SS.Backend.EmailConfirm
                     {
                         end = DateTime.Parse(row["reservationEndTime"].ToString());
                     }
-
-#pragma warning disable CS8629 // Nullable value type may be null.
                     DateTime? date = start.Value;
-#pragma warning restore CS8629 // Nullable value type may be null.
 
                     if (location == null) response.ErrorMessage = "The 'address' data was not found.";
                     if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
@@ -101,12 +90,6 @@ namespace SS.Backend.EmailConfirm
                     var calendarCreator = new CalendarCreator();
                     icsFilePath = await calendarCreator.CreateCalendar(reservationInfo);
                     Console.WriteLine(icsFilePath);
-                    // var firstLine = File.ReadLines(icsFilePath).First();
-                    // if (firstLine != "BEGIN:VCALENDAR")
-                    // {
-                    //     // Log error or handle the situation when the file wasn't updated as expected
-                    //     Console.WriteLine("The ICS file was not updated correctly.");
-                    // }
                     byte[]? fileBytes = await File.ReadAllBytesAsync(icsFilePath);
                     if (string.IsNullOrEmpty(icsFilePath))
                     {
@@ -237,11 +220,6 @@ namespace SS.Backend.EmailConfirm
                             var getOtp = new GenOTP();
                             newOtp = getOtp.generateOTP();
 
-                            //extract reservation info
-                            // int resID = infoResponse.ValuesRead.Columns.Contains("reservationID") && row["reservationID"] != DBNull.Value
-                            //             ? Convert.ToInt32(row["reservationID"])
-                            //             : -1; // or any other default value you choose
-
 #pragma warning disable CS8601 // Possible null reference assignment.
                             reservationinfo.location = infoResponse.ValuesRead.Columns.Contains("CompanyAddress") ? row["CompanyAddress"].ToString() : null;
 #pragma warning restore CS8601 // Possible null reference assignment.
@@ -258,10 +236,7 @@ namespace SS.Backend.EmailConfirm
                             {
                                 reservationinfo.end = DateTime.Parse(row["reservationEndTime"].ToString());
                             }
-
-#pragma warning disable CS8629 // Nullable value type may be null.
                             reservationinfo.dateTime = reservationinfo.start.Value;
-#pragma warning restore CS8629 // Nullable value type may be null.
 
                             if (reservationinfo.location == null) response.ErrorMessage = "The 'address' data was not found.";
                             if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
