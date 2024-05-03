@@ -1,19 +1,37 @@
-﻿#reservation-details {
+﻿﻿#reservation-details-template {
     font-family: Arial, sans-serif;
 }
 
-.companyName, .companyAddress, .company-id, .plan-id, .space-id, .reservation-date, .reservation-start, .reservation-end {
+.reservationID, .companyName, .companyAddress, .company-id, .plan-id, .space-id, .reservation-date, .reservation-start, .reservation-end {
     font-weight: bold !important;
     color: #000000 !important;
 }
 
-.company-Name, .company-ID, .company-address, .floor-plan-ID, .Space-ID, .reservation-date-class, .reservation-time-start, .reservation-time-end {
-    color: #0094ff !important;
+.reservation-ID {
+    font-weight: bold !important;
+    color: #006a79 !important;
 }
 
-.reservation-status {
-    color: #ff0000 !important;
+.reservation-ID, .company-Name, .company-ID, .company-address, .floor-plan-ID, .Space-ID, .reservation-date-class, .reservation-time-start, .reservation-time-end {
+    color: #8002fe !important;
 }
+
+/* Define different classes for each status color */
+.reservation-status.active {
+    color: #00ff28 !important;
+}
+
+.reservation-status.cancelled {
+    color: #d20202 !important;
+}
+
+.reservation-status.passed {
+    color: #ffcb00 !important;
+}
+
+/*.reservation-status {
+    color: #ff0000 !important;
+}*/
 
 #calendar-container {
     text-align: center;
@@ -69,13 +87,14 @@
     margin: 0 auto; /* Center horizontally */
 }
 
-#calendar {
+#calendar-poc {
     width: 100%; /* Take up all available width */
     display: none; /* Hide by default */
 }
 
-#reservation-list {
+#reservation-list-poc {
     width: 100%; /* Take up all available width */
+    border: 1px solid black;
     border-radius: 0px !important; /* Remove border-radius to make it square */
     display: none; /* Hide by default */
 }
@@ -85,7 +104,7 @@ table {
     margin: 0 auto; /* Center the table horizontally */
 }
 
-th{
+th {
     padding: 3px;
     border: 1px solid #ddd;
     height: 50px;
@@ -97,7 +116,7 @@ td {
     border: 1px solid #ddd;
     height: 50px;
     text-align: center;
-    position:relative;
+    position: relative;
 }
 
 .day-number {
@@ -128,7 +147,7 @@ th {
 }
 
 /* Style for scrollable list */
-#reservation-list {
+#reservation-list-poc {
     overflow-y: auto;
     border: solid;
     max-height: 600px; /* Adjust the maximum height as needed */
@@ -146,8 +165,8 @@ th {
 .delete-form {
     margin-top: 20px;
     text-align: center; /* Center align the form */
-    align-content:center;
-    align-items:center;
+    align-content: center;
+    align-items: center;
 }
 
     .delete-form label {
@@ -155,14 +174,23 @@ th {
     }
 
     .delete-form input[type="number"] {
-
         text-align: center;
-        width:120px;
+        width: 120px;
     }
 
     .delete-form button {
         font-size: 14px;
         padding: 8px 15px;
-        width:120px; 
+        width: 120px;
     }
 
+#view-prompt {
+    color: red; 
+    display: none;
+}
+
+#error-prompt {
+    color: red;
+    display: none;
+    text-align: center;
+}

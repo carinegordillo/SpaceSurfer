@@ -9,9 +9,12 @@
     "cors": "^2.8.5"
   },
   "scripts": {
-    "start": "npm install && lite-server"
+    "start": "npm install && lite-server",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.12",
     "cypress": "^13.8.1",
     "jest": "^29.7.0",
     "lite-server": "^2.6.1",

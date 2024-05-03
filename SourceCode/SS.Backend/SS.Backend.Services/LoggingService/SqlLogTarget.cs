@@ -7,6 +7,7 @@ namespace SS.Backend.Services.LoggingService
     public class SqlLogTarget : ILogTarget
     {
         private readonly ISqlDAO _SqlDAO;
+
         public SqlLogTarget(ISqlDAO sqlDAO)
         {
             _SqlDAO = sqlDAO;
@@ -16,6 +17,7 @@ namespace SS.Backend.Services.LoggingService
             Response result = new Response();
             try
             {
+               
                 string sql = "INSERT INTO dbo.Logs VALUES (@Timestamp, @LogLevel, @Username, @Category, @Description); SELECT SCOPE_IDENTITY();";
                 var command = new SqlCommand(sql);
 
@@ -25,7 +27,10 @@ namespace SS.Backend.Services.LoggingService
                 command.Parameters.AddWithValue("@Category", log.category);
                 command.Parameters.AddWithValue("@Description", log.description);
 
-                return await _SqlDAO.SqlRowsAffected(command);
+                result = await _SqlDAO.SqlRowsAffected(command);
+
+                Console.WriteLine(result.ErrorMessage);
+                return result;
             }
             catch (Exception ex)
             {

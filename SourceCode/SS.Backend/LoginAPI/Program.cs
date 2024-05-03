@@ -3,6 +3,7 @@ using SS.Backend.DataAccess;
 using SS.Backend.Security;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
+using SS.Backend.Services.ArchivingService ;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,11 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllers();
+
 
 var baseDirectory = AppContext.BaseDirectory;
 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
 var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+
 
 builder.Services.AddTransient<ConfigService>(provider =>
     new ConfigService(configFilePath));
@@ -36,7 +38,33 @@ builder.Services.AddTransient<SSAuthService>(provider =>
     )
 );
 
+//adding archiving 
+
+var archivingConfigFilePath = Path.Combine(projectRootDirectory, "Configs", "archivingconfig.json");
+
+builder.Services.AddTransient<ITargetArchivingDestination, S3ArchivingDestination>();
+builder.Services.AddSingleton(provider =>
+{
+    var archivingTarget = provider.GetRequiredService<ITargetArchivingDestination>();
+    return new ArchivingService(archivingTarget, archivingConfigFilePath);
+});
+
+
+builder.Services.AddControllers();
+
 var app = builder.Build();
+
+var archivingService = app.Services.GetRequiredService<ArchivingService>();
+
+app.Lifetime.ApplicationStarted.Register(() => {
+    Console.WriteLine("Application is starting. ArchivingService is being started...");
+    archivingService.Start();
+});
+
+app.Lifetime.ApplicationStopping.Register(() => {
+    Console.WriteLine("Application is stopping. ArchivingService is being stopped...");
+    archivingService.Stop();
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -69,6 +97,8 @@ app.Use(async (context, next) =>
         await next();
     }
 });
+
+
 
 app.UseStaticFiles();
 

@@ -1,6 +1,7 @@
 using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
 using Microsoft.Data.SqlClient;
+using SS.Backend.Services.LoggingService;
 
 
 namespace SS.Backend.ReservationManagement
@@ -124,6 +125,27 @@ namespace SS.Backend.ReservationManagement
             }
             else{
                 response.ErrorMessage += $"- ReadReservationsTableWithMutliple- {command.CommandText} -  command not successful -";
+
+            }
+
+            return response;
+            
+        }
+
+        public async Task<Response> LogTask(LogEntry logEntry){
+            Response response = new Response();
+
+            SqlLogTarget sqlLogTarget =  new SqlLogTarget(_sqldao);
+            Logger logger = new Logger(sqlLogTarget);
+            response = await logger.SaveData(logEntry);
+
+            if (response.HasError == false){
+                response.HasError = false;
+                response.ErrorMessage += "- Logged Task";
+            }
+            else{
+                response.HasError = false;
+                response.ErrorMessage += $"Couldnt Log task-";
 
             }
 

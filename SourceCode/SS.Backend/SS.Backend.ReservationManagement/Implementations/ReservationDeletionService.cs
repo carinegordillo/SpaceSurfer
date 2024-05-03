@@ -1,5 +1,6 @@
 using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
+using SS.Backend.Services.LoggingService;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -9,6 +10,10 @@ namespace SS.Backend.ReservationManagement{
 public class ReservationDeletionService : IReservationDeletionService
 {
         private IReservationManagementRepository _reservationManagementRepository;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+
+        private LogEntry logEntry;
+
 
         public ReservationDeletionService(IReservationManagementRepository reservationManagementRepository)
         {
@@ -32,12 +37,14 @@ public class ReservationDeletionService : IReservationDeletionService
 
             if (response.HasError == false)
             {
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully deleted reservation ({reservationID})").Build();
                 response.ErrorMessage += $"- DeleteReservationAsync - command successful {response.ErrorMessage} -";
                 response.HasError = false;
             }
             else
             {
                 response.ErrorMessage += $"- DeleteReservationAsync - command : {command.CommandText} not successful - {response.ErrorMessage} -";
+                logEntry = logBuilder.Error().DataStore().Description($"Successfully deleted reservation ({reservationID})").Build();
                 response.HasError = true;
 
             }

@@ -5,8 +5,13 @@ namespace SS.Backend.Services.EmailService
 {
     public class MailSender
     {
-        public static async Task SendEmail(string email, string subject, string messageBody)
+        public static async Task SendEmail(string email, string subject, string messageBody, DateTime? scheduledTime = null)
         {
+            if (scheduledTime.HasValue && scheduledTime > DateTime.Now)
+            {
+                TimeSpan delay = scheduledTime.Value - DateTime.Now;
+                await Task.Delay(delay);
+            }
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("SpaceSurfers", "spacesurfers5@gmail.com"));
             message.To.Add(new MailboxAddress("", email));

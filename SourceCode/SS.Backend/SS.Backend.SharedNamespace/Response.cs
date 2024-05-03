@@ -8,7 +8,6 @@ namespace SS.Backend.SharedNamespace
         public string? ErrorMessage { get; set; }
         public int RowsAffected { get; set; } = 0;
         public DataTable? ValuesRead { get; set; }
-        public List<Dictionary<string, object>> Values { get; set; } = new List<Dictionary<string, object>>();
         public void PrintDataTable()
         {
             if (ValuesRead != null && ValuesRead.Rows.Count > 0)
