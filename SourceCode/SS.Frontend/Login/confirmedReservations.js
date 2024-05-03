@@ -386,7 +386,7 @@ function openDialogCancel(username, reservationID) {
     const closeBtn = document.createElement('span');
     closeBtn.classList.add('close-button');
     closeBtn.innerHTML = '&times;';
-    closeBtn.onclick = leaveModal;
+    closeBtn.onclick = () => leaveModal();
 
     const message = document.createElement('p');
     message.innerText = 'Are you sure you want to cancel the confirmation for ';
@@ -395,6 +395,7 @@ function openDialogCancel(username, reservationID) {
     reservationIdText.innerHTML = `Reservation: <span id="reservationId">${reservationID}</span>`;
 
     const yesBtn = document.createElement('button');
+    yesBtn.dataset.testid = "yesBtn"; 
     yesBtn.innerText = 'Yes';
     yesBtn.onclick = () => {
         cancelConfirmation(username, reservationID);
@@ -403,7 +404,7 @@ function openDialogCancel(username, reservationID) {
 
     const noBtn = document.createElement('button');
     noBtn.innerText = 'No';
-    noBtn.onclick = leaveModal;
+    noBtn.onclick = () => leaveModal();
 
     // Append elements
     modalContent.appendChild(closeBtn);
@@ -433,7 +434,7 @@ function openDialogDelete(reservationID) {
     const closeBtn = document.createElement('span');
     closeBtn.classList.add('close-button');
     closeBtn.innerHTML = '&times;';
-    closeBtn.onclick = leaveModal;
+    closeBtn.onclick = () => leaveModal();
 
     const message = document.createElement('p');
     message.innerText = 'You cannot reconfirm the reservation once it is deleted. Are you sure you want to delete the confirmation for:';
@@ -450,7 +451,7 @@ function openDialogDelete(reservationID) {
 
     const noBtn = document.createElement('button');
     noBtn.innerText = 'No';
-    noBtn.onclick = leaveModal;
+    noBtn.onclick = () => leaveModal();
 
     // Append elements
     modalContent.appendChild(closeBtn);

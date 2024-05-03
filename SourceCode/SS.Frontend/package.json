@@ -6,15 +6,16 @@
   "dependencies": {
     "ajax": "^0.0.4",
     "axios": "^0.26.1",
-    "cors": "^2.8.5",
-    "typescript": "^4.6.2"
+    "cors": "^2.8.5"
   },
   "scripts": {
     "start": "npm install && lite-server"
   },
   "devDependencies": {
+    "cypress": "^13.8.1",
     "jest": "^29.7.0",
-    "lite-server": "^2.6.1"
+    "lite-server": "^2.6.1",
+    "typescript": "^5.4.5"
   },
   "author": "",
   "license": "ISC"
