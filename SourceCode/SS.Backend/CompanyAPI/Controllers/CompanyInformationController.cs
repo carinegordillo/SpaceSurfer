@@ -200,99 +200,87 @@ public class CompanyInfoController : ControllerBase
     [HttpGet("FloorPlanManager")]
     public async Task<IActionResult> GetFloorPlans([FromQuery] string hashedUsername)
     {
-        var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
-        DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
-        Console.WriteLine("companyIDResponse, ", companyIDRow);
-        int companyID = Convert.ToInt32(companyIDRow["companyID"]);
-        Console.WriteLine($"company id::::  {companyID}");
-        var floorPlans = await _spaceReader.GetCompanyFloorsAsync(companyID);
-        foreach (var floorplan in floorPlans)
+        Console.WriteLine("This is getting called ");
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
+        if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
-            Console.WriteLine(floorplan);
+            accessToken = accessToken.Substring("Bearer ".Length).Trim();
+            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+
+            if (claimsJson != null)
+            {
+                var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+
+                if (claims.TryGetValue("Role", out var role) && role == "1" || role == "2" || role == "3" || role == "4" || role == "5")
+                {
+                    bool closeToExpTime = _authService.CheckExpTime(accessToken);
+                    if (closeToExpTime)
+                    {
+                        SSPrincipal principal = new SSPrincipal();
+                        principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                        principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                        var newToken = _authService.CreateJwt(Request, principal);
+                        try
+                        {
+                            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
+                            DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
+                            int companyID = Convert.ToInt32(companyIDRow["companyID"]);
+                            Console.WriteLine("company id:::: ", companyID);
+                            var floorPlans = await _spaceReader.GetCompanyFloorsAsync(companyID);
+                            foreach (var floorplan in floorPlans)
+                            {
+                                Console.WriteLine(floorplan);
+                            }
+
+                            return Ok(new { floorPlans, newToken });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Internal server error: " + ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                            {
+                                var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
+                                DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
+                                int companyID = Convert.ToInt32(companyIDRow["companyID"]);
+                                Console.WriteLine("company id:::: ", companyID);
+                                var floorPlans = await _spaceReader.GetCompanyFloorsAsync(companyID);
+                                if (floorPlans == null || !floorPlans.Any())
+                                {
+                                    return NotFound("Floor plans not found for the given company ID.");
+                                }else {
+                                    foreach (var floorplan in floorPlans)
+                                    {
+                                        Console.WriteLine("Toyal floorplasn: ", floorPlans);
+                                        Console.WriteLine("this is the first floor plan" , floorplan.FloorPlanID);
+                                    }
+                                }
+
+                                return Ok(floorPlans);
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Internal server error: " + ex.Message);
+                        }
+                    }
+                }
+                else
+                {
+                    return BadRequest("Unauthorized role.");
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid token.");
+            }
         }
-
-        return Ok(new { floorPlans});
-    //     Console.WriteLine("This is getting called ");
-    //     string? accessToken = HttpContext.Request.Headers["Authorization"];
-    //     if (accessToken != null && accessToken.StartsWith("Bearer "))
-    //     {
-    //         accessToken = accessToken.Substring("Bearer ".Length).Trim();
-    //         var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
-
-    //         if (claimsJson != null)
-    //         {
-    //             var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
-
-    //             if (claims.TryGetValue("Role", out var role) && role == "1" || role == "2" || role == "3" || role == "4" || role == "5")
-    //             {
-    //                 bool closeToExpTime = _authService.CheckExpTime(accessToken);
-    //                 if (closeToExpTime)
-    //                 {
-    //                     SSPrincipal principal = new SSPrincipal();
-    //                     principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
-    //                     principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
-    //                     var newToken = _authService.CreateJwt(Request, principal);
-    //                     try
-    //                     {
-    //                         var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
-    //                         DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
-    //                         int companyID = Convert.ToInt32(companyIDRow["companyID"]);
-    //                         Console.WriteLine("company id:::: ", companyID);
-    //                         var floorPlans = await _spaceReader.GetCompanyFloorsAsync(companyID);
-    //                         foreach (var floorplan in floorPlans)
-    //                         {
-    //                             Console.WriteLine(floorplan);
-    //                         }
-
-    //                         return Ok(new { floorPlans, newToken });
-    //                     }
-    //                     catch (Exception ex)
-    //                     {
-    //                         return StatusCode(500, "Internal server error: " + ex.Message);
-    //                     }
-    //                 }
-    //                 else
-    //                 {
-    //                     try
-    //                         {
-    //                             var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
-    //                             DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
-    //                             int companyID = Convert.ToInt32(companyIDRow["companyID"]);
-    //                             Console.WriteLine("company id:::: ", companyID);
-    //                             var floorPlans = await _spaceReader.GetCompanyFloorsAsync(companyID);
-    //                             if (floorPlans == null || !floorPlans.Any())
-    //                             {
-    //                                 return NotFound("Floor plans not found for the given company ID.");
-    //                             }else {
-    //                                 foreach (var floorplan in floorPlans)
-    //                                 {
-    //                                     Console.WriteLine("Toyal floorplasn: ", floorPlans);
-    //                                     Console.WriteLine("this is the first floor plan" , floorplan.FloorPlanID);
-    //                                 }
-    //                             }
-
-    //                             return Ok(floorPlans);
-    //                     }
-    //                     catch (Exception ex)
-    //                     {
-    //                         return StatusCode(500, "Internal server error: " + ex.Message);
-    //                     }
-    //                 }
-    //             }
-    //             else
-    //             {
-    //                 return BadRequest("Unauthorized role.");
-    //             }
-    //         }
-    //         else
-    //         {
-    //             return BadRequest("Invalid token.");
-    //         }
-    //     }
-    //     else
-    //     {
-    //         return BadRequest("Unauthorized. Access token is missing or invalid.");
-    //     }
+        else
+        {
+            return BadRequest("Unauthorized. Access token is missing or invalid.");
+        }
 
     }
 
