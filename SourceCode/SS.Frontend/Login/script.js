@@ -115,6 +115,7 @@ function logout() {
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById('waitlistView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('userProfileView').style.display = 'none';
 }
 
 function getUserProfile(){
@@ -136,9 +137,11 @@ function getUserProfile(){
 }
 
 function spaceBookingCenterAccess() {
+   
     document.getElementById('spaceBookingView').style.display = 'block';
     // document.getElementById('homepageGen').style.display = 'none';
     // document.getElementById('homepageManager').style.display = 'none';
+    document.getElementById('userProfileView').style.display = 'none';
     document.getElementById('sendOTPSection').style.display = 'none';
     document.getElementById('enterOTPSection').style.display = 'none';
     document.getElementById('successResult').style.display = 'none';
@@ -166,6 +169,7 @@ function taskHubAccess() {
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById('waitlistView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('userProfileView').style.display = 'none';
 }
 
 function personalOverviewAccess() {
@@ -182,6 +186,7 @@ function personalOverviewAccess() {
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('userProfileView').style.display = 'none';
 }
     // Hide other sections if needed
 function waitlistAccess() {
@@ -198,6 +203,7 @@ function waitlistAccess() {
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('userProfileView').style.display = 'none';
 }
 function getHomePage() {
     document.getElementById("welcomeSection").style.display = "block";
@@ -209,5 +215,6 @@ function getHomePage() {
     document.getElementById('personalOverviewCenter').style.display = 'none';
     document.getElementById("taskManagerView").style.display = "none";
     document.getElementById('spaceBookingView').style.display = 'none';
+    document.getElementById('userProfileView').style.display = 'none';
     document.getElementById('userProfileView').style.display = 'none';
 }

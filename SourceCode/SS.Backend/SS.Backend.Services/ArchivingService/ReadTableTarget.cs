@@ -45,7 +45,7 @@ namespace SS.Backend.Services.ArchivingService
                 response.ErrorMessage += $"- ReadSqlTable - command : not successful - ";
                 
             }
-            Console.WriteLine("readsqlTable" + response.ErrorMessage);
+            
 
             return response;
 

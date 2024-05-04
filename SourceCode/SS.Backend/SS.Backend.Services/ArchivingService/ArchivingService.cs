@@ -3,8 +3,9 @@ using System.IO;
 using System.Text.Json;
 using System.Threading;
 using Amazon.S3;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 using SS.Backend.SharedNamespace;
+using Ionic.Zip;
 
 namespace SS.Backend.Services.ArchivingService
 {
@@ -144,17 +145,35 @@ namespace SS.Backend.Services.ArchivingService
                 else
                 {
                     var tempFilePath = ArchivingFormats.SaveToTextFile(tableReaderResponse.ValuesRead);
+                    // Create a zip file
+                    string zipFilePath = Path.ChangeExtension(tempFilePath, ".zip");
+                    using (ZipFile zip = new ZipFile())
+                    {
+                        // Add the text file to the zip correctly
+                        zip.AddFile(tempFilePath, "");
+                        zip.Save(zipFilePath);
+                    }
 
                     ArchivesModel s3Info = new ArchivesModel
                     {
                         destination = "space-surfer-archivestest",
-                        filePath = tempFilePath,
-                        fileName = $"SpaceSurferLogs_{DateTime.Now:yyyyMMdd_HHmm}.txt"
+                        filePath = zipFilePath,
+                        fileName = $"SpaceSurferLogs_{DateTime.Now:yyyyMMdd_HHmm}.zip"
                     };
 
                     Console.WriteLine("Performing scheduled task..." + DateTime.Now);
                     await _archivingTarget.UploadFileAsync(s3Info);
                     tableResetterResponse = await tableReader.ResetSqlTable("dbo.Logs");
+                    if (File.Exists(tempFilePath))
+                    {
+                        File.Delete(tempFilePath);
+                        Console.WriteLine("Temporary file deleted successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No file to delete.");
+                    }
+                    
 
                     if (tableResetterResponse.HasError)
                     {
