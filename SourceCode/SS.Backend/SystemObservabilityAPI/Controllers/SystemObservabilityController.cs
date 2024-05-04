@@ -50,6 +50,7 @@ namespace SystemObservabilityAPI.Controllers
                             var viewsDurationCount = await _viewDurationService.GetTop3ViewDuration(user,timeSpan);
                             var loginsCount = await _loginCountService.GetLoginCount(user,timeSpan);
                             var topCompanyReservationCount = await _companyReservationCountService.GetTop3CompaniesWithMostReservations(user,timeSpan);
+                  
 
 
             //                if (_authService.CheckExpTime(accessToken))
