@@ -327,6 +327,7 @@ function waitlistAccess() {
 }
 function spaceManagerAccess() {
     document.getElementById('spaceManagerView').style.display = 'block';
+    // fetchFloorPlans(companyID);
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById('sendOTPSection').style.display = 'none';
     document.getElementById('enterOTPSection').style.display = 'none';
@@ -340,8 +341,8 @@ function spaceManagerAccess() {
     document.getElementById('UnAuthnAbout').style.display = 'none';
     document.getElementById('Registration').style.display = 'none';
     document.getElementById('employeeSetup').style.display = 'none';
-
 }
+
 function getHomePage() {
     document.getElementById("welcomeSection").style.display = "block";
     document.getElementById('waitlistView').style.display = 'none';

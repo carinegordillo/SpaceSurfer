@@ -240,3 +240,72 @@ function sendData(url, data) {
         alert('An error occurred. Please try again.');
     });
 }
+
+document.getElementById('companyList').addEventListener('click', function () {
+    console.log("Company List button was clicked")
+    // const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
+    fetchFloorPlan();
+});
+
+function fetchFloorPlan() {
+    console.log("sending request");
+    const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
+    let accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+        console.error('Token expired or invalid');
+        logout();
+        return;
+    }
+
+    const url = `http://localhost:5279/api/v1/spaceBookingCenter/companies/FloorPlanManager?hashedUsername=${encodeURIComponent(userName)}`;
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        let floorPlanContent = document.getElementById('floorPlanContent');
+        if (!floorPlanContent) {
+            console.error('floorPlanContent element is missing');
+            return;
+        }
+        floorPlanContent.innerHTML = '';
+
+        // Access the floorPlans array within the data object
+        if (data.floorPlans && Array.isArray(data.floorPlans)) {
+            data.floorPlans.forEach(floorPlan => {
+                const floorDiv = document.createElement('div');
+                floorDiv.classList.add('floor-plan');
+                floorDiv.innerHTML = `<h3>${floorPlan.floorPlanName}</h3>
+                                      <img src="data:image/png;base64,${floorPlan.floorPlanImageBase64}" alt="${floorPlan.floorPlanName}" />
+                                      <div>FloorSpaces:</div>`;
+
+                const spacesList = document.createElement('ul');
+                // Ensure that floorSpaces is an object before trying to access its keys
+                if (typeof floorPlan.floorSpaces === 'object' && floorPlan.floorSpaces !== null) {
+                    Object.entries(floorPlan.floorSpaces).forEach(([spaceID, timeLimit]) => {
+                        const spaceItem = document.createElement('li');
+                        spaceItem.textContent = `SpaceID: ${spaceID}, Time Limit: ${timeLimit}`;
+                        spacesList.appendChild(spaceItem);
+                    });
+                }
+
+                floorDiv.appendChild(spacesList);
+                floorPlanContent.appendChild(floorDiv);
+            });
+        } else {
+            console.error('No floor plans data found or floorPlans is not an array:', data);
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching floor plans:', error);
+    });
+}

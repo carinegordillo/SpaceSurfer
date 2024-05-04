@@ -416,6 +416,12 @@
             <div class="flex-container">
                 <div class="space-list-section">
                     <h2>Space Manager🤙</h2>
+                    <ul id="spaceList"></ul>
+                    <button id = "companyList">Companies List</button>
+                    <div id="floorPlanContent" class="floor-plans-container"></div>
+                </div>
+
+                <div class="space-form-section">
                     <button class="accordion">Upload Space</button>
                     <form id="spaceCreationForm" class="space-form" style="display:none">
                         <div class="form-group">
@@ -431,9 +437,6 @@
                         <div id="spacesContainer" class="space-container"></div>
                         <button id="postSpace" type="submit" class="btn btn-primary">Create Space</button>
                     </form>
-                </div>
-
-                <div class="space-form-section">
                     <button class="accordion">Modify Space</button>
                     <form id="modifySpaceForm" class="space-form" style="display:none">
                         <label>Warning: Cannot modify space if an existing reservation is associated</label>
