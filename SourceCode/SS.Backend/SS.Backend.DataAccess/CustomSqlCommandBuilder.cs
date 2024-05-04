@@ -131,6 +131,12 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
+    public ICustomSqlCommandBuilder GroupBy(string tableName)
+    {
+        _commandText.Append($" GROUP BY {tableName} ");
+        return this;
+    }
+
     private void ResetBuilder()
     {
         _commandText.Clear();

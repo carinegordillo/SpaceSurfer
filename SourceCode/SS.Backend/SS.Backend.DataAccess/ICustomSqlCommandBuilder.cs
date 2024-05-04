@@ -20,6 +20,7 @@ namespace SS.Backend.DataAccess
         ICustomSqlCommandBuilder Join(string joinTable, string fromColumn, string toColumn);
         ICustomSqlCommandBuilder BeginStoredProcedure(string storedProcedureName);
         ICustomSqlCommandBuilder OrderBy(string tableName);
+        ICustomSqlCommandBuilder GroupBy(string tableName);
         ICustomSqlCommandBuilder AddParameters(Dictionary<string, object> parameters);
         SqlCommand Build();
 
