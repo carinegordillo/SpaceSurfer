@@ -3,6 +3,10 @@ using System.Data;
 using SS.Backend.UserManagement;
 using SS.Backend.DataAccess;
 
+using SS.Backend.SharedNamespace;
+using SS.Backend.Services.LoggingService;
+
+
 namespace AccountManagement.Controllers;
 
 [ApiController]

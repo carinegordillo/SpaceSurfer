@@ -627,6 +627,28 @@ button:hover {
     margin-left: 8px;
 }
 
+
+
+#accountRecoverySection {
+    border-radius: 25px;
+    padding: 40px;
+    background-color: white;
+    color: #333; /* Changed color to make text visible */
+    width: 25%; /* Adjust width according to your requirement */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    flex-direction: column; /* Stack children vertically */
+    margin: auto; /* Center horizontally in its parent */
+}
+
+#recoveryForm {
+    display: flex;
+    flex-direction: column; /* Stack form elements vertically */
+    width: 100%; /* Take full width available */
+}
+
 input[type="checkbox"] {
     margin-right: 10px;
 }
@@ -705,4 +727,43 @@ button {
 
 button:hover {
     background-color: #45a049;
+}
+/* Modal background (darkened overlay) */
+.modal {
+    position: fixed; /* Ensure it stays fixed on the screen */
+    top: 0;
+    left: 0;
+    width: 100%; /* Cover the whole screen */
+    height: 100%;
+    display: flex; /* Use flex to center the content */
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+    z-index: 1000; /* Ensure it's above other elements */
+}
+
+/* Modal content (centered box) */
+.modal-content {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    max-width: 400px; /* Limit the maximum width of the modal */
+    width: 80%; /* Make it responsive */
+    text-align: center; /* Center text inside the modal */
+}
+
+/* OK button styling */
+.close-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff; /* Blue button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
 }

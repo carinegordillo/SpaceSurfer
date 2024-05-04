@@ -5,14 +5,14 @@ let isEditing = false;
 
 
 function initProfile() {
-    const idToken = sessionStorage.getItem('idToken');
-    
-    if (!idToken) {
-        console.error('idToken not found in sessionStorage');
-        return;
-    }
 
     try {
+        const idToken = sessionStorage.getItem('idToken');
+    
+        if (!idToken) {
+            console.error('idToken not found in sessionStorage');
+            return;
+        }
         const parsedIdToken = JSON.parse(idToken);
 
         // Log parsed object for debugging
@@ -41,6 +41,7 @@ function initProfile() {
 // Event listener for profile actions
 document.addEventListener('click', function (event) {
     const target = event.target;
+    initProfile();
 
     if (target.id === 'editProfile') {
         event.preventDefault();
@@ -200,6 +201,6 @@ async function checkTokenExpiration(accessToken) {
 function logout() {
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('idToken');
+    document.getElementById('userProfileView').style.display = 'none';
     // Redirect to login or handle logout UI changes
 }
-initProfile();
