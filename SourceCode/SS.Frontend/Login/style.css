@@ -828,3 +828,74 @@ button {
     border-radius: 4px;
     margin-top: 10px;
 }
+/*User profile */
+
+.profile {
+    display: flex;
+    background: 788AA3;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: black; 
+    
+    
+}
+
+.profile h2{
+    color: black;
+}
+
+.left-panel, .right-panel {
+    padding: 20px;
+    width: 50%;
+}
+
+.right-panel {
+    position: relative;
+}
+
+.edit-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    background-color: #4CAF50; /* Add some color */
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.edit-button:hover {
+    background-color: #45a049;
+}
+
+.account-details {
+    margin-top: 40px;
+}
+
+input, textarea {
+    display: block;
+    margin-bottom: 10px;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+button:hover {
+    background-color: #45a049;
+}

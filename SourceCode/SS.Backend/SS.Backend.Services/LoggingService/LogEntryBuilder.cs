@@ -11,7 +11,7 @@ namespace SS.Backend.Services.LoggingService
         {
             _logEntry = new LogEntry
             {
-                timestamp = DateTime.UtcNow // Default timestamp
+                timestamp = DateTime.UtcNow 
             };
         }
 

@@ -33,6 +33,7 @@ namespace SS.Backend.UserManagement
 
             response = await _sqldao.SqlRowsAffected(updateCommand);
 
+
             if (response.HasError == false){
                 response.ErrorMessage += "- General Modifier - command successful -";
             }

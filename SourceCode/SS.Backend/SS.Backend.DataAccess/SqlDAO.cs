@@ -34,6 +34,7 @@ namespace SS.Backend.DataAccess
                     {
                         result.HasError = false;
                         result.RowsAffected = rowsAffected;
+                        result.ErrorMessage += "Rows affected: " + rowsAffected;
                     }
                     else
                     {

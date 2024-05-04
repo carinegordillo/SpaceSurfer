@@ -192,6 +192,7 @@ function getAbout(){
     document.getElementById('spaceManagerView').style.display = 'none';
 
 
+    document.getElementById('userProfileView').style.display = 'none';
 }
 
 function getUserProfile(){
@@ -219,9 +220,11 @@ function getUserProfile(){
 }
 
 function spaceBookingCenterAccess() {
+   
     document.getElementById('spaceBookingView').style.display = 'block';
     // document.getElementById('homepageGen').style.display = 'none';
     // document.getElementById('homepageManager').style.display = 'none';
+    document.getElementById('userProfileView').style.display = 'none';
     document.getElementById('sendOTPSection').style.display = 'none';
     document.getElementById('enterOTPSection').style.display = 'none';
     document.getElementById('successResult').style.display = 'none';
@@ -278,6 +281,7 @@ function taskHubAccess() {
     document.getElementById('spaceManagerView').style.display = 'none';
 
 
+    document.getElementById('userProfileView').style.display = 'none';
 }
 
 function personalOverviewAccess() {
@@ -301,6 +305,7 @@ function personalOverviewAccess() {
 
 
 
+    document.getElementById('userProfileView').style.display = 'none';
 }
     // Hide other sections if needed
 function waitlistAccess() {
@@ -324,6 +329,7 @@ function waitlistAccess() {
 
 
 
+    document.getElementById('userProfileView').style.display = 'none';
 }
 function spaceManagerAccess() {
     document.getElementById('spaceManagerView').style.display = 'block';
@@ -379,4 +385,5 @@ function employeeSetupAccess() {
     document.getElementById('spaceManagerView').style.display = 'none';
 
 
+    document.getElementById('userProfileView').style.display = 'none';
 }
