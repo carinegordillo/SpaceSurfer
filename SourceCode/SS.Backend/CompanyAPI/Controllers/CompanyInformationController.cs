@@ -259,7 +259,7 @@ public class CompanyInfoController : ControllerBase
                                     }
                                 }
 
-                                return Ok(floorPlans);
+                                return Ok(new { floorPlans});
                         }
                         catch (Exception ex)
                         {
