@@ -10,7 +10,14 @@ namespace SS.Backend.Services.DeletingService
     ///
     public class AccountDeletion : IAccountDeletion
     {
-        ConfigService? configService;
+        private ConfigService? configService;
+        private IDatabaseHelper _databaseHelper;
+
+        public AccountDeletion(IDatabaseHelper databaseHelper)
+        {
+            _databaseHelper = databaseHelper;
+        }
+
 
         /// <summary>
         ///     DeleteAccount deletes the account by username
@@ -19,59 +26,40 @@ namespace SS.Backend.Services.DeletingService
         /// <param username > String value representing a username.</param>
         public async Task<Response> DeleteAccount(string username)
         {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+
+            // initializes a new instance of the logger
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+
             // initializes a new instance of the Response
             Response result = new Response();
 
             try
             {
-                var baseDirectory = AppContext.BaseDirectory;
-                var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-                var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-
-                configService = new ConfigService(configFilePath);
-
-                // initializes a new instance of SqlDAO
-                SqlDAO SQLDao = new SqlDAO(configService);
-
-                // initializes a new instance of the logger
-                Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
-
-                // initializes a new instance of the Custom Command Builder
-                var commandBuilder = new CustomSqlCommandBuilder();
-
-                var command = commandBuilder.BeginSelectAll()
-                        .From("dbo.userAccount ")
-                        .Where($"Username = '{username}'")
-                        .Build();
-
                 // Sets the tables names from the Database Helper Response
-                result = await SQLDao.ReadSqlResult(command);
+                result = await _databaseHelper.RetrieveTable(username);
 
-                // Sets the value to the username
-                //var value = new Dictionary<string, object>
+                //if (result.ValuesRead != null)
                 //{
-                //    { "Username", username}
-                //};
 
+                //    // Delete Query Command built [DELETE FROM "Users" WHERE Username = @username]
+                //    var deleteCommand = commandBuilder.BeginDelete("dbo.userAccount").Where($"Username = '{username}'").Build();
 
-                if (result.ValuesRead != null)
-                {
+                //    // Sets the reponse from the executed command
+                //    result = await SQLDao.SqlRowsAffected(deleteCommand);
 
-                    // Delete Query Command built [DELETE FROM "Users" WHERE Username = @username]
-                    var deleteCommand = commandBuilder.BeginDelete("dbo.userAccount").Where($"Username = '{username}'").Build();
-
-                    // Sets the reponse from the executed command
-                    result = await SQLDao.SqlRowsAffected(deleteCommand);
-
-                    //// Appends the responses into one response
-                    //overallResponse.RowsAffected += response.RowsAffected;
-                    //overallResponse.HasError |= response.HasError;
-                }
-                else
-                {
-                    // Handle the case where tables.Task is not completed or its result is null
-                    throw new InvalidOperationException("Failed to retrieve table.");
-                }
+                //    //// Appends the responses into one response
+                //    //overallResponse.RowsAffected += response.RowsAffected;
+                //    //overallResponse.HasError |= response.HasError;
+                //}
+                //else
+                //{
+                //    // Handle the case where tables.Task is not completed or its result is null
+                //    throw new InvalidOperationException("Failed to retrieve table.");
+                //}
 
                 // await tables;
                 //// Check if the task completed successfully and its result is not null
@@ -85,7 +73,7 @@ namespace SS.Backend.Services.DeletingService
                 //    }
                 //}
 
-                if (result.HasError == false)
+                if (!result.HasError)
                 {
 
                     // Successful Deletion
@@ -95,8 +83,8 @@ namespace SS.Backend.Services.DeletingService
                         timestamp = DateTime.UtcNow,
                         level = "Info",
                         username = username,
-                        category = "Data Store",
-                        description = "Successful Deletion"
+                        category = "Data",
+                        description = "Successful Account Deletion"
                     };
 
                     await logger.SaveData(entry);
@@ -109,8 +97,8 @@ namespace SS.Backend.Services.DeletingService
                         timestamp = DateTime.UtcNow,
                         level = "Error",
                         username = username,
-                        category = "Data Store",
-                        description = "Unsuccessful Deletion"
+                        category = "Data",
+                        description = "Unsuccessful Account Deletion"
                     };
 
                     await logger.SaveData(errorEntry);
@@ -121,6 +109,17 @@ namespace SS.Backend.Services.DeletingService
                 // If an error occurs error
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
+
+                LogEntry errorEntry = new LogEntry()
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = username,
+                    category = "Data",
+                    description = "Account Deletion Service Encountered An Error"
+                };
+
+                await logger.SaveData(errorEntry);
             }
 
             // Logs entry based on the overallResponse error

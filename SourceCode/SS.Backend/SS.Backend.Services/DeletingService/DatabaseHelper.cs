@@ -1,38 +1,100 @@
-﻿// DatabaseHelper will no longer be needed unless a separate class is required to seclude the SqlCommands
+﻿using SS.Backend.DataAccess;
+using SS.Backend.Services.LoggingService;
+using SS.Backend.SharedNamespace;
+
+namespace SS.Backend.Services.DeletingService
+{
+    /// <summary>
+    ///     DatabaseHelper class is responsible of retrieving table names from a database
+    /// </summary>
+    ///
+    public class DatabaseHelper : IDatabaseHelper
+    {
+
+        private ISqlDAO _sqlDAO;
+        private ConfigService? configService;
+
+        public DatabaseHelper(ISqlDAO sqlDAO)
+        {
+            _sqlDAO = sqlDAO;
+        }
+
+        public async Task<Response> RetrieveTable(string username)
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+
+            Response response = new Response();
+
+            try
+            {
+                var commandBuild = new CustomSqlCommandBuilder();
+
+                var query = commandBuild.BeginSelectAll()
+                        .From("dbo.userHash ")
+                        .Where($"hashedUsername = '{username}'")
+                        .Build();
+
+                response = await _sqlDAO.SqlRowsAffected(query);
+
+
+                if (!response.HasError)
+                {
+
+                    // Successful Deletion
+                    LogEntry entry = new LogEntry()
+
+                    {
+                        timestamp = DateTime.UtcNow,
+                        level = "Info",
+                        username = username,
+                        category = "Data Store",
+                        description = "Successful Database Helper Account Deletion"
+                    };
+
+                    await logger.SaveData(entry);
+                }
+                else
+                {
+                    //Unsuccessful Deletion
+                    LogEntry errorEntry = new LogEntry()
+                    {
+                        timestamp = DateTime.UtcNow,
+                        level = "Error",
+                        username = username,
+                        category = "Data Store",
+                        description = "Unsuccessful Database Helper Account Deletion"
+                    };
+
+                    await logger.SaveData(errorEntry);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                LogEntry errorEntry = new LogEntry()
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = username,
+                    category = "Data Store",
+                    description = "Database Helper Service Encounterd An Error"
+                };
+
+                await logger.SaveData(errorEntry);
+            }
+
+            //var tableNames = commandBuild.BeginSelect().SelectOne("Username").From("dbo.userAccount ").Where("Username = '@user';").Build();
 
 
 
-//using SS.Backend.DataAccess;
-//using SS.Backend.SharedNamespace;
+            return response;
 
-//namespace SS.Backend.Services.DeletingService
-//{
-//    /// <summary>
-//    ///     DatabaseHelper class is responsible of retrieving table names from a database
-//    /// </summary>
-//    ///
-//    public class DatabaseHelper : IDatabaseHelper
-//    {
-//        // Initializing temp credential
-//        Credential temp = Credential.CreateSAUser();
-
-//#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-//        public async Task<Response> RetrieveTable(string user)
-//#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-//        {
-//            // Opens connection to Data Accss
-//            // ISqlDAO sqlDAO = new SqlDAO(temp);
-
-//            //initializing Sql Command builder
-//            CustomSqlCommandBuilder commandBuild = new CustomSqlCommandBuilder();
-
-//            // SQL Query to get the Table Names in the database
-//            //var tableNames = commandBuild.BeginSelect().SelectOne("Username").From("dbo.userAccount ").Where("Username = '@user';").Build();
-
-//            //return await sqlDAO.ReadSqlResult(tableNames);
-//#pragma warning disable CS8603 // Possible null reference return.
-//            return null;
-//#pragma warning restore CS8603 // Possible null reference return.
-//        }
-//    }
-//}
+        }
+    }
+}
