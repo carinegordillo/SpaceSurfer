@@ -13,7 +13,6 @@
 </head>
 <body class = "main-content">
     <header>
-
         <nav>
             <div class="header-content">
                 <div>
@@ -29,6 +28,7 @@
                     <div class="nav-item" id="navRegister" onclick="registrationAccess()">Register</div>
                     <div class="nav-item" id="navLogin" onclick="getLogin()">Login</div>
                 </div>
+                
                 <div id="homepageGen" class="nav-items" style="display: none;">
                     <div class="nav-item" type="button" onclick="getHomePage()">
                         <i class="fas fa-home">Home</i> 
@@ -47,8 +47,6 @@
         </nav>
     </header>
 
-    
-
     <section id="sendOTPSection" style="display: none;">
         <div class="container">
             <section id="sendOTPSection" class="loginForm">
@@ -66,6 +64,7 @@
             <img src="images/astroText.png" alt="Astro" class = "hovering">
         </div>
     </section>
+
     <section id="UnAuthnAbout" style="display: none;">
         <div class="container">
             <section id="sendOTPSection" class="loginForm">
@@ -79,23 +78,6 @@
                         
                         <h3>Our Mission</h3>
                         <p>Our mission at Space Surfer is to revolutionize space booking by making it as easy and stress-free as possible. We believe that finding and securing the right space, whether for work, leisure, or special events, should be straightforward and hassle-free. Space Surfer leverages advanced technology to connect space providers with users, ensuring efficient transactions and satisfied outcomes.</p>
-                        
-                        <!-- <h3>What We Offer</h3>
-                        <ul>
-                            <li><strong>Real-Time Availability:</strong> See up-to-date space availability to ensure you can book the space you need, when you need it.</li>
-                            <li><strong>Diverse Locations:</strong> Access a variety of spaces across multiple locations worldwide. Whether you're local or traveling, find a space that suits your needs.</li>
-                            <li><strong>Flexible Booking Options:</strong> From hourly reservations to long-term leases, choose the booking option that best fits your schedule and budget.</li>
-                            <li><strong>User-Friendly Interface:</strong> Our platform is designed with user experience in mind. Navigate our site with ease and book your space in just a few clicks.</li>
-                            <li><strong>Secure Transactions:</strong> Your security is our top priority. We provide a secure platform for all transactions, safeguarding your personal and financial information.</li>
-                        </ul>
-                        
-                        <h3>How It Works</h3>
-                        <ol>
-                            <li><strong>Search:</strong> Enter your location and date to see available spaces.</li>
-                            <li><strong>Select:</strong> Choose the space that meets your criteria.</li>
-                            <li><strong>Book:</strong> Reserve your space through our secure checkout process.</li>
-                            <li><strong>Use:</strong> Enjoy your reserved space and manage your booking through our user-friendly dashboard.</li>
-                        </ol> -->
                         
                         <h3>Our Vision</h3>
                         <p>Looking ahead, Space Surfer aims to expand its reach by incorporating more diverse spaces and offering enhanced features that anticipate and meet our users' evolving needs. We are committed to continuous improvement and innovation to remain at the forefront of the space reservation industry.</p>
@@ -114,11 +96,13 @@
 
         </div>
     </section>
+
     <section id="welcomeSection" style="display: none;">
         <div class="container">
             <img src="images/astronaut.png" alt="Astro" class = "hovering">
         </div>
     </section>
+
     <section id="enterOTPSection" class="form-container" style="display: none;">
         <form id="enterOTPForm">
             <label for="otp">Enter Verification Code</label>
@@ -126,12 +110,11 @@
             <button type="button" onclick="authenticateUser()">Login</button>
         </form>
     </section>
+
     <section id="successResult" class="form-container" style="display: none;">
         <label style="color:#03fc52; font-size: 18px;">Authentication was successful!</label>
     </section>
-    <section id="failResult" class="form-container" style="display: none;">
-        <label style="color: #e33434; font-size: 18px;">Incorrect verification code. Please double-check and try again.</label>
-    </section>
+
     <!--Registration-->
     <section id="Registration" style="display: none;">
         <div class = "container">
