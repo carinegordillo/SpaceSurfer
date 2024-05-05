@@ -51,11 +51,10 @@ function sendOTP() {
         }
     });
 }
+
 function authenticateUser() {
     var otp = document.getElementById("otp").value;
     var userIdentity = document.getElementById("userIdentity").value;
-    
-
     $.ajax({
         url: 'http://localhost:5270/api/auth/authenticate',
         type: 'POST',
@@ -77,6 +76,7 @@ function authenticateUser() {
                 contentType: 'application/json',
                 data: accessToken,
                 success: function (response) {
+                    showModal("You're logged in!");
                     if (response === "2" || response === "3") {
                         // document.getElementById("homepageManager").style.display = "block";
                         document.getElementById("homepageGen").style.display = "block";
@@ -94,6 +94,7 @@ function authenticateUser() {
 
                     }
                     else {
+                        showModal("You're logged in!");
                         document.getElementById("homepageGen").style.display = "block";
                         sessionStorage.setItem('userIdentity', userIdentity);
                         document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
@@ -113,9 +114,10 @@ function authenticateUser() {
             });
         },
         error: function (xhr, status, error) {
-            document.getElementById("enterOTPSection").style.display = "none";
-            document.getElementById("successResult").style.display = "none";
-            document.getElementById("failResult").style.display = "block";
+            // document.getElementById("enterOTPSection").style.display = "none";
+            // document.getElementById("successResult").style.display = "none";
+            // document.getElementById("failResult").style.display = "block";
+            showModal('Incorrect verification code. Please double-check and try again.');
         }
     });
 }
@@ -169,7 +171,6 @@ function getLogin(){
     document.getElementById('Registration').style.display = 'none';
     document.getElementById('employeeSetup').style.display = 'none';
     document.getElementById('spaceManagerView').style.display = 'none';
-
 }
 
 function getAbout(){
@@ -190,8 +191,6 @@ function getAbout(){
     document.getElementById('Registration').style.display = 'none';
     document.getElementById('employeeSetup').style.display = 'none';
     document.getElementById('spaceManagerView').style.display = 'none';
-
-
     document.getElementById('userProfileView').style.display = 'none';
 }
 
@@ -213,14 +212,9 @@ function getUserProfile(){
     document.getElementById('Registration').style.display = 'none';
     document.getElementById('employeeSetup').style.display = 'none';
     document.getElementById('spaceManagerView').style.display = 'none';
-
-
-
-
 }
 
 function spaceBookingCenterAccess() {
-   
     document.getElementById('spaceBookingView').style.display = 'block';
     // document.getElementById('homepageGen').style.display = 'none';
     // document.getElementById('homepageManager').style.display = 'none';
@@ -238,8 +232,6 @@ function spaceBookingCenterAccess() {
     document.getElementById('Registration').style.display = 'none';
     document.getElementById('employeeSetup').style.display = 'none';
     document.getElementById('spaceManagerView').style.display = 'none';
-
-
 }
 
 function registrationAccess() {
@@ -257,9 +249,8 @@ function registrationAccess() {
     document.getElementById('Registration').style.display = 'block';
     document.getElementById('employeeSetup').style.display = 'none';
     document.getElementById('spaceManagerView').style.display = 'none';
-
-
 }
+
 function taskHubAccess() {
     document.getElementById('taskManagerView').style.display = 'block';
     
@@ -307,7 +298,7 @@ function personalOverviewAccess() {
 
     document.getElementById('userProfileView').style.display = 'none';
 }
-    // Hide other sections if needed
+
 function waitlistAccess() {
     document.getElementById('waitlistView').style.display = 'block';
 

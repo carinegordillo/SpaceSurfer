@@ -186,6 +186,7 @@
             <img src="images/astroText.png" alt="Astro" class = "hovering">
         </div>  
     </section>
+    
     <section id="employeeSetup" style="display: none;">
         <div id = "registerView" class = "container"  >
             <form id="employeeForm" class = "loginForm">
@@ -270,7 +271,6 @@
                 <input type="number" id="reservation-id" name="reservation-id" required>
                 <button type="button" id="reservation-delete-button">Delete Reservation</button>
             </form>
-
         </div>
 
     </section>
@@ -285,7 +285,7 @@
     <!--Space Booking View-->
     <section id="spaceBookingView" class="homepage-container" style="display: none;">
         <button id="initAppButton">Initialize spaceBookingCenter</button>
-        <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
+        <!-- <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button> -->
         <div id="accessTokenContainer"></div>
         <div class="space-booking-center-container">
             <div class="sidebar"></div>
@@ -307,9 +307,9 @@
                 <div class="space-form-container" id="space-form-container"></div>
             </div>
         </div>
-        <div>
+        <!-- <div>
             <button type="button" onclick="logout()">Logout</button>
-        </div>
+        </div> -->
     </section>
 
     <!--Waitlist View-->
@@ -411,9 +411,7 @@
         </div>
     </section>
 
-
     <!--Space Manager-->
-<!-- need to rename to space row and modify space row depedning on js  -->
     <section id="spaceManagerView" class="homepage-container" style="display: none;">
         <div class="task-container">
             <div class="flex-container">
