@@ -8,7 +8,7 @@ namespace SS.Backend.Services.DeletingService
     ///
     public interface IDatabaseHelper
     {
-        public Task<Response> RetrieveTable(string user);
+        public Task<Response> DeleteAccount(string user);
 
     }
 }

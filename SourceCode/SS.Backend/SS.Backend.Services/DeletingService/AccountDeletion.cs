@@ -40,7 +40,7 @@ namespace SS.Backend.Services.DeletingService
             try
             {
                 // Sets the tables names from the Database Helper Response
-                result = await _databaseHelper.RetrieveTable(username);
+                result = await _databaseHelper.DeleteAccount(username);
 
                 //if (result.ValuesRead != null)
                 //{

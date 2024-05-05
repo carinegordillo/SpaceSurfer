@@ -1,12 +1,6 @@
 ﻿using SS.Backend.DataAccess;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
-using System.Data.Common;
 
 namespace SS.Backend.SystemObservability
 {
@@ -17,7 +11,7 @@ namespace SS.Backend.SystemObservability
         private CustomSqlCommandBuilder commandBuilder;
 
         public SystemObservabilityDAO(ISqlDAO sqlDao)
-        { 
+        {
             _sqlDAO = sqlDao;
         }
 
@@ -70,7 +64,7 @@ namespace SS.Backend.SystemObservability
                 }
                 else
                 {
-                    
+
                     LogEntry errorEntry = new LogEntry()
                     {
                         timestamp = DateTime.UtcNow,
@@ -156,7 +150,7 @@ namespace SS.Backend.SystemObservability
                 }
 
                 commandBuilder = new CustomSqlCommandBuilder();
-             
+
                 var query = commandBuilder.BeginSelectString("TOP 3 *").From("dbo.ViewDurations").Where($"Timestamp Between '{startDate}' AND '{endDate}' ORDER BY DurationInSeconds DESC;").Build();
 
                 response = await _sqlDAO.ReadSqlResult(query);
@@ -406,7 +400,7 @@ namespace SS.Backend.SystemObservability
                 commandBuilder = new CustomSqlCommandBuilder();
 
                 var query = commandBuilder.BeginSelectString("TOP 3 cp.companyName AS CompanyName, COUNT(r.reservationID) AS ReservationCount")
-                    .From("dbo.companyProfile cp").Join("dbo.reservations r","cp.companyID","r.companyID").Where($"r.reservationStartTime BETWEEN '{startDate}' AND '{endDate}'")
+                    .From("dbo.companyProfile cp").Join("dbo.reservations r", "cp.companyID", "r.companyID").Where($"r.reservationStartTime BETWEEN '{startDate}' AND '{endDate}'")
                     .GroupBy("cp.companyName").OrderBy("ReservationCount DESC;").Build();
 
                 response = await _sqlDAO.ReadSqlResult(query);
@@ -530,9 +524,9 @@ namespace SS.Backend.SystemObservability
 
                 commandBuilder = new CustomSqlCommandBuilder();
 
-                var query = commandBuilder.BeginSelectString("TOP 3 cp.companyName AS CompanyName, COUNT(r.reservationID) AS ReservationCount")
-                    .From("dbo.companyProfile cp").Join("dbo.reservations r", "cp.companyID", "r.companyID").Where($"r.reservationStartTime BETWEEN '{startDate}' AND '{endDate}'")
-                    .GroupBy("cp.companyName").OrderBy("ReservationCount DESC;").Build();
+                var query = commandBuilder.BeginSelectString("TOP 3 cp.companyName AS CompanyName, COUNT(cfs.spaceID) AS SpaceCount")
+                    .From("dbo.companyProfile cp").Join("dbo.companyFloorSpaces cfs", "cp.companyID", "cfs.companyID").Where($"cfs.timestamp BETWEEN '{startDate}' AND '{endDate}'")
+                    .GroupBy("cp.companyName, cp.companyID").OrderBy("SpaceCount DESC;").Build();
 
                 response = await _sqlDAO.ReadSqlResult(query);
 
@@ -615,7 +609,7 @@ namespace SS.Backend.SystemObservability
 
                 var parameters = new Dictionary<string, object>
                 {
- 
+
                 };
 
                 commandBuilder = new CustomSqlCommandBuilder();
@@ -803,5 +797,5 @@ namespace SS.Backend.SystemObservability
             return response;
         }
     }
-    
+
 }

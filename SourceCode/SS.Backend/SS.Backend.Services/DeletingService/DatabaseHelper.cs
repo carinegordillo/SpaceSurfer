@@ -19,7 +19,7 @@ namespace SS.Backend.Services.DeletingService
             _sqlDAO = sqlDAO;
         }
 
-        public async Task<Response> RetrieveTable(string username)
+        public async Task<Response> DeleteAccount(string username)
         {
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
@@ -33,8 +33,7 @@ namespace SS.Backend.Services.DeletingService
             {
                 var commandBuild = new CustomSqlCommandBuilder();
 
-                var query = commandBuild.BeginSelectAll()
-                        .From("dbo.userHash ")
+                var query = commandBuild.BeginDelete("dbo.userHash")
                         .Where($"hashedUsername = '{username}'")
                         .Build();
 

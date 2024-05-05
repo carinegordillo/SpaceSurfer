@@ -26,7 +26,7 @@ namespace AccountDeletionAPI.Controllers
 
         // Defining the Delete endpoint for account deletion
         [HttpPost("Delete")]
-        public async Task<IActionResult> DeleteAccountDeletion([FromBody] DeletionRequest request)
+        public async Task<IActionResult> DeleteAccountDeletion()
         {
             string? accessToken = HttpContext.Request.Headers["Authorization"];
             if (accessToken != null && accessToken.StartsWith("Bearer "))
@@ -44,7 +44,7 @@ namespace AccountDeletionAPI.Controllers
                         try
                         {
                             var user = _authService.ExtractSubjectFromToken(accessToken);
-                            var deleteReservation = await _accountDeletion.DeleteAccount(user);
+                            var deleteAccount = await _accountDeletion.DeleteAccount(user);
 
                             if (_authService.CheckExpTime(accessToken))
                             {
@@ -53,16 +53,15 @@ namespace AccountDeletionAPI.Controllers
                                 principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
                                 principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
                                 var newToken = _authService.CreateJwt(Request, principal);
-                                return Ok(new { deleteReservation, newToken });
+                                return Ok(new { deleteAccount, newToken });
                             }
                             else
                             {
-                                return Ok(deleteReservation);
+                                return Ok(deleteAccount);
                             }
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("7");
                             return StatusCode(500, $"An error occurred while fetching user reservations: {ex.Message}");
                         }
                     }

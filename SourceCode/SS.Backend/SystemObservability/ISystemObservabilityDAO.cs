@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SS.Backend.SharedNamespace;
+﻿using SS.Backend.SharedNamespace;
 
 namespace SS.Backend.SystemObservability
 {
@@ -16,6 +11,8 @@ namespace SS.Backend.SystemObservability
         Task<Response> RetrieveLoginsCount(string username, string timeSpan);
 
         Task<Response> RetrieveCompanyReservationsCount(string username, string timeSpan);
+
+        Task<Response> RetrieveCompanySpaceCount(string username, string timeSpan);
 
         Task<Response> InsertUsedFeature(string username, string featureName);
 
