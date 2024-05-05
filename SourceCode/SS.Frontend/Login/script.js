@@ -8,12 +8,27 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("noLogin").style.display = "none";
         document.getElementById("sendOTPSection").style.display = "none";
         document.getElementById("identity").textContent = `Logged in as: ${sessionStorage.getItem('userIdentity')}`;
+        document.getElementById('UnAuthnAbout').style.display = 'none';
+        document.getElementById('Registration').style.display = 'none';
+        document.getElementById('employeeSetup').style.display = 'none';
+        document.getElementById('spaceManagerView').style.display = 'none';
     } else {
         // No valid token, show login
         document.getElementById("homepageGen").style.display = "none";
         document.getElementById("welcomeSection").style.display = "none";
         document.getElementById("noLogin").style.display = "block";
         document.getElementById("sendOTPSection").style.display = "block";
+        document.getElementById('UnAuthnAbout').style.display = 'none';
+        document.getElementById('waitlistView').style.display = 'none';
+        document.getElementById('successResult').style.display = 'none';
+        document.getElementById('failResult').style.display = 'none';
+        document.getElementById('personalOverviewCenter').style.display = 'none';
+        document.getElementById("taskManagerView").style.display = "none";
+        document.getElementById('spaceBookingView').style.display = 'none';
+        document.getElementById('userProfileView').style.display = 'none';
+        document.getElementById('Registration').style.display = 'none';
+        document.getElementById('employeeSetup').style.display = 'none';
+        document.getElementById('spaceManagerView').style.display = 'none';
     }
 });
 
@@ -36,11 +51,10 @@ function sendOTP() {
         }
     });
 }
+
 function authenticateUser() {
     var otp = document.getElementById("otp").value;
     var userIdentity = document.getElementById("userIdentity").value;
-    
-
     $.ajax({
         url: 'http://localhost:5270/api/auth/authenticate',
         type: 'POST',
@@ -62,6 +76,7 @@ function authenticateUser() {
                 contentType: 'application/json',
                 data: accessToken,
                 success: function (response) {
+                    showModal("You're logged in!");
                     if (response === "2" || response === "3") {
                         // document.getElementById("homepageManager").style.display = "block";
                         document.getElementById("homepageGen").style.display = "block";
@@ -70,13 +85,27 @@ function authenticateUser() {
                         document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
                         document.getElementById("welcomeSection").style.display = "block";
                         document.getElementById("noLogin").style.display = "none";
+                        document.getElementById('UnAuthnAbout').style.display = 'none';
+                        document.getElementById('Registration').style.display = 'none';
+                        document.getElementById('employeeSetup').style.display = 'none';
+                        document.getElementById('spaceManagerView').style.display = 'none';
+
+
+
                     }
                     else {
+                        showModal("You're logged in!");
                         document.getElementById("homepageGen").style.display = "block";
                         sessionStorage.setItem('userIdentity', userIdentity);
                         document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
                         document.getElementById("welcomeSection").style.display = "block";
                         document.getElementById("noLogin").style.display = "none";
+                        document.getElementById('UnAuthnAbout').style.display = 'none';
+                        document.getElementById('Registration').style.display = 'none';
+                        document.getElementById('employeeSetup').style.display = 'none';
+                        document.getElementById('spaceManagerView').style.display = 'none';
+
+
                      }
                 },
                 error: function (xhr, status, error) {
@@ -85,9 +114,10 @@ function authenticateUser() {
             });
         },
         error: function (xhr, status, error) {
-            document.getElementById("enterOTPSection").style.display = "none";
-            document.getElementById("successResult").style.display = "none";
-            document.getElementById("failResult").style.display = "block";
+            // document.getElementById("enterOTPSection").style.display = "none";
+            // document.getElementById("successResult").style.display = "none";
+            // document.getElementById("failResult").style.display = "block";
+            showModal('Incorrect verification code. Please double-check and try again.');
         }
     });
 }
@@ -115,11 +145,56 @@ function logout() {
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById('waitlistView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
+    document.getElementById('employeeSetup').style.display = 'none';
+    document.getElementById('spaceManagerView').style.display = 'none';
+
+
+}
+
+function getLogin(){
+    console.log("get login page clicked  clicked");
+    document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('userProfileView').style.display = 'none';
+    // document.getElementById('homepageGen').style.display = 'none';
+    // document.getElementById('homepageManager').style.display = 'none';
+    document.getElementById('sendOTPSection').style.display = 'block';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById('failResult').style.display = 'none';
+    document.getElementById("taskManagerView").style.display = "none";
+    document.getElementById('personalOverviewCenter').style.display = 'none';
+    document.getElementById('waitlistView').style.display = 'none';
+    document.getElementById('spaceBookingView').style.display = 'none';
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('Registration').style.display = 'none';
+    document.getElementById('employeeSetup').style.display = 'none';
+    document.getElementById('spaceManagerView').style.display = 'none';
+}
+
+function getAbout(){
+    console.log("get about page clicked  clicked");
+    document.getElementById('UnAuthnAbout').style.display = 'block';
+    document.getElementById('userProfileView').style.display = 'none';
+    // document.getElementById('homepageGen').style.display = 'none';
+    // document.getElementById('homepageManager').style.display = 'none';
+    document.getElementById('sendOTPSection').style.display = 'none';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById('failResult').style.display = 'none';
+    document.getElementById("taskManagerView").style.display = "none";
+    document.getElementById('personalOverviewCenter').style.display = 'none';
+    document.getElementById('waitlistView').style.display = 'none';
+    document.getElementById('spaceBookingView').style.display = 'none';
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('Registration').style.display = 'none';
+    document.getElementById('employeeSetup').style.display = 'none';
+    document.getElementById('spaceManagerView').style.display = 'none';
     document.getElementById('userProfileView').style.display = 'none';
 }
 
 function getUserProfile(){
-
     console.log("get userprofile clicked  clicked");
     document.getElementById('userProfileView').style.display = 'block';
     // document.getElementById('homepageGen').style.display = 'none';
@@ -133,11 +208,13 @@ function getUserProfile(){
     document.getElementById('waitlistView').style.display = 'none';
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
-
+    document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
+    document.getElementById('employeeSetup').style.display = 'none';
+    document.getElementById('spaceManagerView').style.display = 'none';
 }
 
 function spaceBookingCenterAccess() {
-   
     document.getElementById('spaceBookingView').style.display = 'block';
     // document.getElementById('homepageGen').style.display = 'none';
     // document.getElementById('homepageManager').style.display = 'none';
@@ -151,8 +228,28 @@ function spaceBookingCenterAccess() {
     document.getElementById('waitlistView').style.display = 'none';
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
+    document.getElementById('employeeSetup').style.display = 'none';
+    document.getElementById('spaceManagerView').style.display = 'none';
 }
 
+function registrationAccess() {
+    document.getElementById('taskManagerView').style.display = 'none';
+    document.getElementById('sendOTPSection').style.display = 'none';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById('failResult').style.display = 'none';
+    document.getElementById('personalOverviewCenter').style.display = 'none';
+    document.getElementById('spaceBookingView').style.display = 'none';
+    document.getElementById('userProfileView').style.display = 'none';
+    document.getElementById('waitlistView').style.display = 'none';
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'block';
+    document.getElementById('employeeSetup').style.display = 'none';
+    document.getElementById('spaceManagerView').style.display = 'none';
+}
 
 function taskHubAccess() {
     document.getElementById('taskManagerView').style.display = 'block';
@@ -169,6 +266,12 @@ function taskHubAccess() {
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById('waitlistView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
+    document.getElementById('employeeSetup').style.display = 'none';
+    document.getElementById('spaceManagerView').style.display = 'none';
+
+
     document.getElementById('userProfileView').style.display = 'none';
 }
 
@@ -186,9 +289,16 @@ function personalOverviewAccess() {
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
+    document.getElementById('employeeSetup').style.display = 'none';
+    document.getElementById('spaceManagerView').style.display = 'none';
+
+
+
     document.getElementById('userProfileView').style.display = 'none';
 }
-    // Hide other sections if needed
+
 function waitlistAccess() {
     document.getElementById('waitlistView').style.display = 'block';
 
@@ -203,8 +313,33 @@ function waitlistAccess() {
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
+    document.getElementById('employeeSetup').style.display = 'none';
+    document.getElementById('spaceManagerView').style.display = 'none';
+
+
+
     document.getElementById('userProfileView').style.display = 'none';
 }
+function spaceManagerAccess() {
+    document.getElementById('spaceManagerView').style.display = 'block';
+    // fetchFloorPlans(companyID);
+    document.getElementById('spaceBookingView').style.display = 'none';
+    document.getElementById('sendOTPSection').style.display = 'none';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById('failResult').style.display = 'none';
+    document.getElementById("taskManagerView").style.display = "none";
+    document.getElementById('personalOverviewCenter').style.display = 'none';
+    document.getElementById('waitlistView').style.display = 'none';
+    document.getElementById('userProfileView').style.display = 'none';
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
+    document.getElementById('employeeSetup').style.display = 'none';
+}
+
 function getHomePage() {
     document.getElementById("welcomeSection").style.display = "block";
     document.getElementById('waitlistView').style.display = 'none';
@@ -216,5 +351,30 @@ function getHomePage() {
     document.getElementById("taskManagerView").style.display = "none";
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById('userProfileView').style.display = 'none';
+    document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
+    document.getElementById('employeeSetup').style.display = 'none';
+    document.getElementById('spaceManagerView').style.display = 'none';
+
+}
+
+function employeeSetupAccess() {
+    document.getElementById('employeeSetup').style.display = 'block';
+
+    document.getElementById('spaceBookingView').style.display = 'none';
+    document.getElementById('sendOTPSection').style.display = 'none';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById('failResult').style.display = 'none';
+    document.getElementById("taskManagerView").style.display = "none";
+    document.getElementById('personalOverviewCenter').style.display = 'none';
+    document.getElementById('waitlistView').style.display = 'none';
+    document.getElementById('userProfileView').style.display = 'none';
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
+    document.getElementById('spaceManagerView').style.display = 'none';
+
+
     document.getElementById('userProfileView').style.display = 'none';
 }

@@ -10,7 +10,8 @@ using System.Text;
 namespace SS.Backend.Services.ArchivingService
 {
     public class ReadTableTarget
-    {    private ISqlDAO _sqldao;
+    {    
+        // private ISqlDAO _sqldao;
         
 
         //private string TABLE_NAME = "dbo.NewAutoIDReservations";
@@ -26,7 +27,7 @@ namespace SS.Backend.Services.ArchivingService
             //replace once we have designated file path
 
             ConfigService configService = new ConfigService(configFilePath);
-            _sqldao = new SqlDAO(configService);
+            SqlDAO _sqldao = new SqlDAO(configService);
 
             SqlLogTarget sqlLogTarget =  new SqlLogTarget(_sqldao);
             Logger logger = new Logger(sqlLogTarget);

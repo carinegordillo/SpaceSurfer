@@ -39,6 +39,7 @@ namespace SS.Backend.Tests.SpacemodificationTest
 
             ConfigService configFile = new ConfigService(configFilePath);
             var connectionString = configFile.GetConnectionString();
+
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -64,10 +65,14 @@ namespace SS.Backend.Tests.SpacemodificationTest
         public async Task ModifyFloorPlan_Success()
         {
             Stopwatch timer = new Stopwatch();
+            CompanyFloor companyFloor = new CompanyFloor{
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ", 
+                FloorPlanName = "first floor",
+                FloorPlanImage =  new byte[] { 0x08, 0x02, 0x03, 0x09 }
+            };
             timer.Start();
-            var newFloorPlanImage = new byte[] { 0x01, 0x02, 0x03, 0x09 };
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceModification.ModifyFloorImage("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "Demo Code", newFloorPlanImage);
+            var response = await _spaceModification.ModifyFloorImage(companyFloor);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
             Assert.IsFalse(response.HasError, response.ErrorMessage);
@@ -79,24 +84,32 @@ namespace SS.Backend.Tests.SpacemodificationTest
         public async Task ModifySpace_Success()
         {
             Stopwatch timer = new Stopwatch();
+            SpaceModifier spaceModifier = new SpaceModifier{
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ", 
+                spaceID = "first1",
+                newTimeLimit =  10
+            };
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceModification.ModifyTimeLimit("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "code1", 2);
+            var response = await _spaceModification.ModifyTimeLimit(spaceModifier);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
             Assert.IsFalse(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
             await CleanupTestData().ConfigureAwait(false);
-          
         }
 
         [TestMethod]
         public async Task DeleteSpace_Success()
         {
             Stopwatch timer = new Stopwatch();
+            SpaceModifier spaceModifier = new SpaceModifier{
+                hashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", 
+                spaceID = "J1",
+            };
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceModification.DeleteSpace("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "demo1");
+            var response = await _spaceModification.DeleteSpace(spaceModifier);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
             Assert.IsFalse(response.HasError, response.ErrorMessage);
@@ -121,19 +134,18 @@ namespace SS.Backend.Tests.SpacemodificationTest
         public async Task DeleteFloor_Success()
         {
             Stopwatch timer = new Stopwatch();
+            CompanyFloor companyFloor = new CompanyFloor{
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ", 
+                FloorPlanName = "plswork"
+            };
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceModification.DeleteFloor("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", "Demo Code");
+            var response = await _spaceModification.DeleteFloor(companyFloor);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
             Assert.IsFalse(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
             await CleanupTestData().ConfigureAwait(false);
         }
-
-        
-
-
-
     }
 }
