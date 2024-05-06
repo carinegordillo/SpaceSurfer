@@ -161,7 +161,7 @@ namespace SS.Backend.EmailConfirm
                     category = "Data Store",
                     description = "Confirmation email resent successfully."
                 };
-                await _logger.SaveData(entry);
+                //await _logger.SaveData(entry);
             }
             else
             {
@@ -174,7 +174,7 @@ namespace SS.Backend.EmailConfirm
                     category = "Data Store",
                     description = "Resending confirmation email failed."
                 };
-                await _logger.SaveData(entry);
+                //await _logger.SaveData(entry);
             }
             return result;
         }

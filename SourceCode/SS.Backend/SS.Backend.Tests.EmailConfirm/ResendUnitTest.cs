@@ -141,9 +141,6 @@ public class ResendUnitTest
         //Assert
         Assert.IsTrue(result.HasError, "Expected ResendConfirmation to fail with confirmed reservation.");
         Assert.IsFalse(string.IsNullOrEmpty(result.ErrorMessage), "Expected an error message for confirmed reservation.");
-        // Assert.IsNotNull(icsFile);
-        // Assert.IsNotNull(otp);
-        // Assert.IsNotNull(html);
         Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
         //Cleanup
@@ -166,9 +163,6 @@ public class ResendUnitTest
         //Assert
         Assert.IsTrue(result.HasError, "Expected ResendConfirmation to fail with invalid input.");
         Assert.IsFalse(string.IsNullOrEmpty(result.ErrorMessage), "Expected an error message for invalid input.");
-        // Assert.IsNotNull(icsFile);
-        // Assert.IsNotNull(otp);
-        // Assert.IsNotNull(html);
         Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
         //Cleanup

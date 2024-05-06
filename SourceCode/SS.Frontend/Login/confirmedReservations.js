@@ -344,7 +344,7 @@ function showModal(message, isSuccess = true) {
     modalElement.innerText = message;
 
     const closeButton = document.createElement('button');
-    closeButton.innerText = 'Close';
+    closeButton.innerText = '&times;';
     closeButton.onclick = function() {
         modalElement.remove();
     };
@@ -434,7 +434,8 @@ function openDialogDelete(reservationID) {
     const closeBtn = document.createElement('span');
     closeBtn.classList.add('close-button');
     closeBtn.innerHTML = '&times;';
-    closeBtn.onclick = () => leaveModal();
+    closeBtn.addEventListener('click', leaveModal);
+
 
     const message = document.createElement('p');
     message.innerText = 'You cannot reconfirm the reservation once it is deleted. Are you sure you want to delete the confirmation for:';
@@ -451,7 +452,8 @@ function openDialogDelete(reservationID) {
 
     const noBtn = document.createElement('button');
     noBtn.innerText = 'No';
-    noBtn.onclick = () => leaveModal();
+    noBtn.addEventListener('click', leaveModal);
+
 
     // Append elements
     modalContent.appendChild(closeBtn);
@@ -473,8 +475,9 @@ function leaveModal() {
     const modal = document.getElementById('confirmModal');
     if (modal) {
         console.log('Modal element found in DOM');
-        modal.style.display = 'none';
-        modal.innerHTML = '';
+        //modal.style.display = 'none';
+        //modal.innerHTML = '';
+        modal.remove(); 
     } else {
         console.log('Modal element not found in DOM');
     }

@@ -21,8 +21,6 @@ namespace SS.Backend.EmailConfirm
         public async Task<(string ics, string otp, string body, Response res)> CreateConfirmation(int reservationID)
         {
             var response = new Response();
-            //DataRow reservationInput = reservationInfo.ValuesRead.Rows[0];
-            //var reservationinfo = new ReservationInfo();
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../"));
             var icsFilePath = Path.Combine(projectRootDirectory, "CalendarFiles", "SSReservation.ics");
@@ -38,10 +36,9 @@ namespace SS.Backend.EmailConfirm
                 foreach (DataColumn column in row.Table.Columns)
                 {
                     rowAsString.Append(row[column].ToString());
-                    rowAsString.Append(" "); // Add a space or another delimiter if needed
+                    rowAsString.Append(" ");
                 }
 
-                // Now you can print or use rowAsString.ToString()
                 Console.WriteLine(rowAsString.ToString());
 
                 var resID = Convert.ToInt32(row["ReservationID"]);
@@ -50,11 +47,6 @@ namespace SS.Backend.EmailConfirm
                 {
                     var getOtp = new GenOTP();
                     otp = getOtp.generateOTP();
-
-                    //extract reservation info
-                    // int resID = infoResponse.ValuesRead.Columns.Contains("reservationID") && row["reservationID"] != DBNull.Value
-                    //             ? Convert.ToInt32(row["reservationID"])
-                    //             : -1; // or any other default value you choose
         
                     var location = infoResponse.ValuesRead.Rows[0]["CompanyAddress"].ToString();
                     Console.WriteLine($"reservation ID: {reservationID}");
@@ -71,10 +63,7 @@ namespace SS.Backend.EmailConfirm
                     {
                         end = DateTime.Parse(row["reservationEndTime"].ToString());
                     }
-
-#pragma warning disable CS8629 // Nullable value type may be null.
                     DateTime? date = start.Value;
-#pragma warning restore CS8629 // Nullable value type may be null.
 
                     if (location == null) response.ErrorMessage = "The 'address' data was not found.";
                     if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
@@ -101,12 +90,6 @@ namespace SS.Backend.EmailConfirm
                     var calendarCreator = new CalendarCreator();
                     icsFilePath = await calendarCreator.CreateCalendar(reservationInfo);
                     Console.WriteLine(icsFilePath);
-                    // var firstLine = File.ReadLines(icsFilePath).First();
-                    // if (firstLine != "BEGIN:VCALENDAR")
-                    // {
-                    //     // Log error or handle the situation when the file wasn't updated as expected
-                    //     Console.WriteLine("The ICS file was not updated correctly.");
-                    // }
                     byte[]? fileBytes = await File.ReadAllBytesAsync(icsFilePath);
                     if (string.IsNullOrEmpty(icsFilePath))
                     {
@@ -134,6 +117,7 @@ namespace SS.Backend.EmailConfirm
                         <p>Hello!</p>
                         <p>Thank you for reserving a space at SpaceSurfer! Here are the details of your reservation:</p>
                         <ul>
+                            <li>Reservation ID: <strong>{reservationID}</strong></li>
                             <li>Reservation at: <strong>{companyName}</strong></li>
                             <li>Location: <strong>{address}</strong></li>
                             <li>SpaceID: <strong>{spaceID}</strong></li>
@@ -141,8 +125,8 @@ namespace SS.Backend.EmailConfirm
                             <li>Start Time: <strong>{startTime}</strong></li>
                             <li>End Time: <strong>{endTime}</strong></li>
                         </ul>
-                        <p>To confirm your reservation, please head over to SpaceSurfers --&gt; Your Reservations --&gt; Active Reservation, 
-                        and confirm your Reservation with this code:</p>
+                        <p>To confirm your reservation, head over to SpaceSurfer --&gt; Space Booking Center --&gt; Active Reservations, and confirm your Reservation with this code:</p>
+                        <p><strong>{otp}</strong></p>
                         <p><strong>{otp}</strong></p>
                         <p>Best,<br>PixelPals</p>
                     </body>
@@ -153,6 +137,7 @@ namespace SS.Backend.EmailConfirm
                     string? endTimeString = reservationInfo.end?.ToString("h:mm tt"); 
 
                     htmlBody = htmlBody.Replace("{companyName}", companyName)
+                                        .Replace("{reservationID}", Convert.ToString(reservationID))
                                         .Replace("{address}", reservationInfo.location)
                                         .Replace("{spaceID}", spaceID)
                                         .Replace("{date}", dateString)
@@ -235,11 +220,6 @@ namespace SS.Backend.EmailConfirm
                             var getOtp = new GenOTP();
                             newOtp = getOtp.generateOTP();
 
-                            //extract reservation info
-                            // int resID = infoResponse.ValuesRead.Columns.Contains("reservationID") && row["reservationID"] != DBNull.Value
-                            //             ? Convert.ToInt32(row["reservationID"])
-                            //             : -1; // or any other default value you choose
-
 #pragma warning disable CS8601 // Possible null reference assignment.
                             reservationinfo.location = infoResponse.ValuesRead.Columns.Contains("CompanyAddress") ? row["CompanyAddress"].ToString() : null;
 #pragma warning restore CS8601 // Possible null reference assignment.
@@ -256,10 +236,7 @@ namespace SS.Backend.EmailConfirm
                             {
                                 reservationinfo.end = DateTime.Parse(row["reservationEndTime"].ToString());
                             }
-
-#pragma warning disable CS8629 // Nullable value type may be null.
                             reservationinfo.dateTime = reservationinfo.start.Value;
-#pragma warning restore CS8629 // Nullable value type may be null.
 
                             if (reservationinfo.location == null) response.ErrorMessage = "The 'address' data was not found.";
                             if (spaceID == null) response.ErrorMessage = "The 'spaceID' data was not found.";
@@ -303,6 +280,7 @@ namespace SS.Backend.EmailConfirm
                                 <p>Hello!</p>
                                 <p>Thank you for reserving a space at SpaceSurfer! Here are the details of your reservation:</p>
                                 <ul>
+                                    <li>Reservation ID: <strong>{reservationID}</strong></li>
                                     <li>Reservation at: <strong>{companyName}</strong></li>
                                     <li>Location: <strong>{address}</strong></li>
                                     <li>SpaceID: <strong>{spaceID}</strong></li>
@@ -310,7 +288,7 @@ namespace SS.Backend.EmailConfirm
                                     <li>Start Time: <strong>{startTime}</strong></li>
                                     <li>End Time: <strong>{endTime}</strong></li>
                                 </ul>
-                                <p>To confirm your reservation, head over to SpaceSurfer --&gt; Personal Overview, and confirm your Reservation with this code:</p>
+                                <p>To confirm your reservation, head over to SpaceSurfer --&gt; Space Booking Center --&gt; Active Reservations, and confirm your Reservation with this code:</p>
                                 <p><strong>{otp}</strong></p>
                                 <p>Best,<br>PixelPals</p>
                             </body>
@@ -321,6 +299,7 @@ namespace SS.Backend.EmailConfirm
                             string? endTimeString = reservationinfo.end?.ToString("h:mm tt"); 
 
                             htmlBody = htmlBody.Replace("{companyName}", companyName)
+                                                .Replace("{reservationID}", Convert.ToString(reservationID))
                                                 .Replace("{address}", reservationinfo.location)
                                                 .Replace("{spaceID}", spaceID)
                                                 .Replace("{date}", dateString)

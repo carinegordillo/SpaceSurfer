@@ -127,6 +127,7 @@ function authenticateUser() {
 
 function logout() {
     console.log("logout clicked")
+    console.log("logout clicked")
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('idToken');
     sessionStorage.removeItem('userIdentity')
@@ -138,6 +139,8 @@ function logout() {
     } else {
         console.log("Identity element not found");
     }
+    document.getElementById("sendOTPSection").style.display = "block";
+    document.getElementById("noLogin").style.display = "block";
     document.getElementById("sendOTPSection").style.display = "block";
     document.getElementById("noLogin").style.display = "block";
     document.getElementById("homepageGen").style.display = "none";
@@ -205,6 +208,8 @@ function getUserProfile(){
     document.getElementById('userProfileView').style.display = 'block';
     // document.getElementById('homepageGen').style.display = 'none';
     // document.getElementById('homepageManager').style.display = 'none';
+    // document.getElementById('homepageGen').style.display = 'none';
+    // document.getElementById('homepageManager').style.display = 'none';
     document.getElementById('sendOTPSection').style.display = 'none';
     document.getElementById('enterOTPSection').style.display = 'none';
     document.getElementById('successResult').style.display = 'none';
@@ -263,7 +268,10 @@ function registrationAccess() {
 function taskHubAccess() {
     document.getElementById('taskManagerView').style.display = 'block';
     
+    
 // do an if user role is whatever then display the manager page 
+    // document.getElementById('homepageGen').style.display = 'block';
+    // document.getElementById('homepageManager').style.display = 'none';
     // document.getElementById('homepageGen').style.display = 'block';
     // document.getElementById('homepageManager').style.display = 'none';
     document.getElementById('sendOTPSection').style.display = 'none';
@@ -286,6 +294,8 @@ function taskHubAccess() {
 function personalOverviewAccess() {
     // Show the personalOverviewCenter section
     document.getElementById('personalOverviewCenter').style.display = 'block';
+    // document.getElementById('homepageGen').style.display = 'block';
+    // document.getElementById('homepageManager').style.display = 'none';
     // document.getElementById('homepageGen').style.display = 'block';
     // document.getElementById('homepageManager').style.display = 'none';
     document.getElementById('sendOTPSection').style.display = 'none';
@@ -406,6 +416,8 @@ function employeeSetupAccess() {
 function confirmationAccess() {
     document.getElementById('confirmationView').style.display = 'block';
 
+    // document.getElementById('homepageGen').style.display = 'block';
+    // document.getElementById('homepageManager').style.display = 'none';
     // document.getElementById('homepageGen').style.display = 'block';
     // document.getElementById('homepageManager').style.display = 'none';
     document.getElementById('sendOTPSection').style.display = 'none';

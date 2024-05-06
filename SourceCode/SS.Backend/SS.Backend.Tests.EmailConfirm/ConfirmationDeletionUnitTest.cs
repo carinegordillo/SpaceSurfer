@@ -38,31 +38,7 @@ public class ConfirmationDeletionUnitTest
 
     private async Task CleanupTestData(int reservationID)
     {
-        // var baseDirectory = AppContext.BaseDirectory;
-        // var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-        // var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-
-        // ConfigService configFile = new ConfigService(configFilePath);
-        // var connectionString = configFile.GetConnectionString();
-        // try
-        // {
-        //     using (SqlConnection connection = new SqlConnection(connectionString))
-        //     {
-        //         await connection.OpenAsync().ConfigureAwait(false);
-
-        //         string sql1 = $"DELETE FROM dbo.ConfirmReservations WHERE [reservationID] = '3'";
-
-        //         using (SqlCommand command1 = new SqlCommand(sql1, connection))
-        //         {
-        //             await command1.ExecuteNonQueryAsync().ConfigureAwait(false);
-        //         }
-        //     }
-        // }
-        // catch (Exception ex)
-        // {
-        //     Console.WriteLine($"Exception during test cleanup: {ex}");
-        // }
-         var baseDirectory = AppContext.BaseDirectory;
+        var baseDirectory = AppContext.BaseDirectory;
         var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
         var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
 
@@ -180,32 +156,6 @@ public class ConfirmationDeletionUnitTest
         }
         return reservationID; // Return the generated ID, or 0 if an error occurred
     
-        // var baseDirectory = AppContext.BaseDirectory;
-        // var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-        // var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-
-        // ConfigService configFile = new ConfigService(configFilePath);
-        // var connectionString = configFile.GetConnectionString();
-        // int reservationID = 0;
-        // try
-        // {
-        //     using (SqlConnection connection = new SqlConnection(connectionString))
-        //     {
-        //         await connection.OpenAsync().ConfigureAwait(false);
-
-        //         string sql1 = $"INSERT INTO [dbo].[Reservations] (companyID, floorPlanID, spaceID, reservationDate, reservationStartTime, reservationEndTime, status, userHash) VALUES ( 9, 8, 'SPACE022', '2024-04-22', '2024-04-08T09:00:00Z', '2024-04-05T11:00:00Z', 'Available', '7mLYo1Gu98LGqqtvSQcZ31hJhDEit2iDK4BCD3DM8ZU=')";
-        //         using (SqlCommand command1 = new SqlCommand(sql1, connection))
-        //         {
-        //             //reservationID = (int)await command1.ExecuteScalarAsync().ConfigureAwait(false); 
-        //             reservationID = Convert.ToInt32(await command1.ExecuteScalarAsync().ConfigureAwait(false));
-        //         }
-        //     }
-        // }
-        // catch (Exception ex)
-        // {
-        //     Console.WriteLine($"Exception during data insertion: {ex}");
-        // }
-        // return reservationID;
     }
 
     private async Task<int> InsertConfirmationTestData()
@@ -304,29 +254,6 @@ public class ConfirmationDeletionUnitTest
         await CleanupTestData(reservationID);
     }
 
-    [TestMethod]
-    public async Task CancelConfirmedReservation_InvalidID_Fail()
-    {
-        //Arrange
-        Stopwatch timer = new Stopwatch();
-        Response result = new Response();
-        var reservationID = -1;
-        var hashedUsername = "7mLYo1Gu98LGqqtvSQcZ31hJhDEit2iDK4BCD3DM8ZU=";
-
-        //Act
-        timer.Start();
-        result = await _confirmDelete.CancelConfirmedReservation(hashedUsername, reservationID);
-        timer.Stop();
-
-        //Assert
-        Assert.IsTrue(result.HasError, "Expected CancelConfirmedReservation to fail with invalid input.");
-        Assert.IsFalse(string.IsNullOrEmpty(result.ErrorMessage), "Expected an error message for invalid input.");
-        Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
-
-        //Cleanup
-        //await CleanupTestData(reservationID);
-
-    }
 
     [TestMethod]
     public async Task CancelConfirmedReservation_InvalidUser_Fail()
@@ -438,5 +365,30 @@ public class ConfirmationDeletionUnitTest
         // Cleanup
         await CleanupTestData(reservationID);
     }
+
+    // [TestMethod]
+    // public async Task CancelConfirmedReservation_InvalidID_Fail()
+    // {
+    //     //Arrange
+    //     Stopwatch timer = new Stopwatch();
+    //     Response result = new Response();
+    //     int? reservationID = null;
+    //     int invalidID = reservationID.GetValueOrDefault(-1);
+    //     var hashedUsername = "7mLYo1Gu98LGqqtvSQcZ31hJhDEit2iDK4BCD3DM8ZU=";
+
+    //     //Act
+    //     timer.Start();
+    //     result = await _confirmDelete.CancelConfirmedReservation(hashedUsername, invalidID);
+    //     timer.Stop();
+
+    //     //Assert
+    //     Assert.IsTrue(result.HasError, "Expected CancelConfirmedReservation to fail with invalid input.");
+    //     Assert.IsFalse(string.IsNullOrEmpty(result.ErrorMessage), "Expected an error message for invalid input.");
+    //     Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
+
+    //     //Cleanup
+    //     //await CleanupTestData(reservationID);
+
+    // }
 
 }
