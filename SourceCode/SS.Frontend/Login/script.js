@@ -1,4 +1,36 @@
-
+document.addEventListener('DOMContentLoaded', function() {
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (accessToken) {
+        // Assuming accessToken is sufficient to determine logged in state
+        // displayHomePage();
+        document.getElementById("homepageGen").style.display = "block";
+        document.getElementById("welcomeSection").style.display = "block";
+        document.getElementById("noLogin").style.display = "none";
+        document.getElementById("sendOTPSection").style.display = "none";
+        document.getElementById("identity").textContent = `Logged in as: ${sessionStorage.getItem('userIdentity')}`;
+        document.getElementById('UnAuthnAbout').style.display = 'none';
+        document.getElementById('Registration').style.display = 'none';
+        document.getElementById('employeeSetup').style.display = 'none';
+        document.getElementById('spaceManagerView').style.display = 'none';
+    } else {
+        // No valid token, show login
+        document.getElementById("homepageGen").style.display = "none";
+        document.getElementById("welcomeSection").style.display = "none";
+        document.getElementById("noLogin").style.display = "block";
+        document.getElementById("sendOTPSection").style.display = "block";
+        document.getElementById('UnAuthnAbout').style.display = 'none';
+        document.getElementById('waitlistView').style.display = 'none';
+        document.getElementById('successResult').style.display = 'none';
+        document.getElementById('failResult').style.display = 'none';
+        document.getElementById('personalOverviewCenter').style.display = 'none';
+        document.getElementById("taskManagerView").style.display = "none";
+        document.getElementById('spaceBookingView').style.display = 'none';
+        document.getElementById('userProfileView').style.display = 'none';
+        document.getElementById('Registration').style.display = 'none';
+        document.getElementById('employeeSetup').style.display = 'none';
+        document.getElementById('spaceManagerView').style.display = 'none';
+    }
+});
 
 document.addEventListener('DOMContentLoaded', function() {
     const accessToken = sessionStorage.getItem('accessToken');
@@ -127,7 +159,6 @@ function authenticateUser() {
 
 function logout() {
     console.log("logout clicked")
-    console.log("logout clicked")
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('idToken');
     sessionStorage.removeItem('userIdentity')
@@ -139,8 +170,6 @@ function logout() {
     } else {
         console.log("Identity element not found");
     }
-    document.getElementById("sendOTPSection").style.display = "block";
-    document.getElementById("noLogin").style.display = "block";
     document.getElementById("sendOTPSection").style.display = "block";
     document.getElementById("noLogin").style.display = "block";
     document.getElementById("homepageGen").style.display = "none";
@@ -208,8 +237,6 @@ function getUserProfile(){
     document.getElementById('userProfileView').style.display = 'block';
     // document.getElementById('homepageGen').style.display = 'none';
     // document.getElementById('homepageManager').style.display = 'none';
-    // document.getElementById('homepageGen').style.display = 'none';
-    // document.getElementById('homepageManager').style.display = 'none';
     document.getElementById('sendOTPSection').style.display = 'none';
     document.getElementById('enterOTPSection').style.display = 'none';
     document.getElementById('successResult').style.display = 'none';
@@ -268,10 +295,7 @@ function registrationAccess() {
 function taskHubAccess() {
     document.getElementById('taskManagerView').style.display = 'block';
     
-    
 // do an if user role is whatever then display the manager page 
-    // document.getElementById('homepageGen').style.display = 'block';
-    // document.getElementById('homepageManager').style.display = 'none';
     // document.getElementById('homepageGen').style.display = 'block';
     // document.getElementById('homepageManager').style.display = 'none';
     document.getElementById('sendOTPSection').style.display = 'none';
@@ -294,8 +318,6 @@ function taskHubAccess() {
 function personalOverviewAccess() {
     // Show the personalOverviewCenter section
     document.getElementById('personalOverviewCenter').style.display = 'block';
-    // document.getElementById('homepageGen').style.display = 'block';
-    // document.getElementById('homepageManager').style.display = 'none';
     // document.getElementById('homepageGen').style.display = 'block';
     // document.getElementById('homepageManager').style.display = 'none';
     document.getElementById('sendOTPSection').style.display = 'none';
