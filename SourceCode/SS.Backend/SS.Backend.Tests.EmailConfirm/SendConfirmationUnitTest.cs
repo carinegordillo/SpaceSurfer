@@ -16,7 +16,8 @@ public class SendConfirmationUnitTest
     private IEmailConfirmDAO _emailDAO;
     private SqlDAO _sqlDao;
     private ConfigService _configService;
-    private ILogTarget _logTarget;
+    
+    //private ILogTarget _logTarget;
     private ILogger _logger;
 
     [TestInitialize]
@@ -27,7 +28,7 @@ public class SendConfirmationUnitTest
         var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
         var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
         _configService = new ConfigService(configFilePath);
-        _logger = new Logger(_logTarget);
+        //_logger = new Logger(_logTarget);
         _sqlDao = new SqlDAO(_configService);
         _emailDAO = new EmailConfirmDAO(_sqlDao);
         _emailConfirm = new EmailConfirmService(_emailDAO);
@@ -77,7 +78,9 @@ public class SendConfirmationUnitTest
         timer.Start();
         result = await _emailDAO.GetUsername(userHash);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
         string targetEmail = result.ValuesRead.Rows[0]["username"].ToString();
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         if (targetEmail != email)
         {

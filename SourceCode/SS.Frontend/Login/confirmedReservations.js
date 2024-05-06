@@ -419,6 +419,7 @@ function openDialogCancel(username, reservationID) {
     // Show the modal
     modal.style.display = 'block';
     modal.style.color = "#010100"; 
+    modal.style.boxShadow = 'none';
 }
 
 function openDialogDelete(reservationID) {
@@ -468,6 +469,7 @@ function openDialogDelete(reservationID) {
     // Show the modal
     modal.style.display = 'block';
     modal.style.color = "#010100"; 
+    modal.style.boxShadow = 'none';
 }
 
 function leaveModal() {

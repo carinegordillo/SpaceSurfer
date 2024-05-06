@@ -54,17 +54,17 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-var archivingService = app.Services.GetRequiredService<ArchivingService>();
+//var archivingService = app.Services.GetRequiredService<ArchivingService>();
 
-app.Lifetime.ApplicationStarted.Register(() => {
-    Console.WriteLine("Application is starting. ArchivingService is being started...");
-    archivingService.Start();
-});
+// app.Lifetime.ApplicationStarted.Register(() => {
+//     Console.WriteLine("Application is starting. ArchivingService is being started...");
+//     archivingService.Start();
+// });
 
-app.Lifetime.ApplicationStopping.Register(() => {
-    Console.WriteLine("Application is stopping. ArchivingService is being stopped...");
-    archivingService.Stop();
-});
+// app.Lifetime.ApplicationStopping.Register(() => {
+//     Console.WriteLine("Application is stopping. ArchivingService is being stopped...");
+//     archivingService.Stop();
+// });
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

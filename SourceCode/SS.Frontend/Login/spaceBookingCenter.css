@@ -219,6 +219,8 @@ button:hover {
     display: flex;          
     align-items: center;    
     justify-content: center;
+    box-shadow: none; /* Set to none if previously it had some values */
+    
 }
 
 .close-button {

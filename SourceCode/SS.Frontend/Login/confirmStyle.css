@@ -16,7 +16,7 @@
     display:flex;
     text-align: center;
     padding: 5px;
-    background-color: rgb(80, 95, 133);
+    background-color: #919cb6;
     color: white;
     border-radius: 5px;
 }
@@ -42,7 +42,7 @@
     text-align: center;
     background-color: #d6d0e9;
     color: black;
-    box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1); */
     padding: 10px;
 }
 
@@ -89,9 +89,10 @@
     padding: 20px;
     border-radius: 10px;
     z-index: 1000; /* High z-index to make sure it's on top of other elements */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
     display: none; /* Hide by default */
 }
+
 
 .modal-confirm-content {
     position: fixed;
@@ -105,7 +106,7 @@
     color: #333;
     text-align: center;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    /* box-shadow: 0 4px 8px rgba(0,0,0,0.1); */
 }
 
 .modal-confirm-content.error {
