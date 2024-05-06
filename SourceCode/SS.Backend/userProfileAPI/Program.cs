@@ -31,6 +31,17 @@ builder.Services.AddTransient<IAccountRecoveryModifier, AccountRecoveryModifier>
 builder.Services.AddTransient<IProfileModifier, ProfileModifier>();
 builder.Services.AddTransient<IAccountRecovery, AccountRecovery>();
 
+//security
+
+builder.Services.AddTransient<GenOTP>();
+builder.Services.AddTransient<Hashing>();
+builder.Services.AddTransient<Response>();
+builder.Services.AddTransient<LogEntry>();
+builder.Services.AddTransient<ILogTarget, SqlLogTarget>();
+builder.Services.AddTransient<SS.Backend.Services.LoggingService.ILogger,Logger>();
+builder.Services.AddTransient<Logger>();
+builder.Services.AddTransient<SqlDAO>();
+
 
 builder.Services.AddCors(options =>
 {

@@ -29,13 +29,14 @@ namespace SS.Backend.Services.LoggingService
 
                 result = await _SqlDAO.SqlRowsAffected(command);
 
-                Console.WriteLine(result.ErrorMessage);
+                
                 return result;
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage = "Failed to log to the database:" + ex.Message;
+               
                 return result;
             }
         }
