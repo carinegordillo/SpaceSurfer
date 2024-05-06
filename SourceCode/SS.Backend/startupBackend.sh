@@ -1,4 +1,4 @@
-#!/bin/bash
+# #!/bin/bash
 # Start LoginAPI
 dotnet run --project ../SS.Backend/LoginAPI/AuthAPI.csproj &
 pid1=$!
@@ -23,6 +23,17 @@ pid5=$!
 dotnet run --project ../SS.Backend/PersonalOverview/PersonalOverviewAPI.csproj &
 pid6=$!
 
+# Start userProfileAPI
+dotnet run --project ../SS.Backend/userProfileAPI/userProfileAPI.csproj &
+pid7=$!
 
-wait $pid1 $pid2 $pid3 $pid4 $pid5 $pid6
+
+dotnet run --project ../SS.Backend/TaskManagerHubAPI/TaskManagerHubAPI.csproj &
+pid8=$!
+
+
+# dotnet run --project ../SS.Backend/SS.ConsoleApp/SS.ConsoleApp.csproj &
+# pid9=$!
+
+wait  $pid1 $pid2 $pid3 $pid4 $pid5 $pid6 $pid7 $pid8 #$pid9
 disown

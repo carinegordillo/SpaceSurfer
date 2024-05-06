@@ -8,5 +8,6 @@ namespace SS.Backend.SharedNamespace
         public DateTime? dueDate {get;set;}
         public string? priority {get;set;}
         public int? notificationSetting{get;set;}
+        public double? score{get;set;} = 0;
     }
 }

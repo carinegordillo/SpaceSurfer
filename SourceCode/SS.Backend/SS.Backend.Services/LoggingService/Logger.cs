@@ -42,8 +42,10 @@ namespace SS.Backend.Services.LoggingService
             {
                 errorMsg = "Pass";
             }
+            Console.WriteLine("CheckLogValidity: " + errorMsg);
             return errorMsg;
         }
+
 
         public async Task<Response> SaveData(LogEntry log)
         {
@@ -51,10 +53,12 @@ namespace SS.Backend.Services.LoggingService
 
             if (CheckLogValidity(log) == "Pass")
             {
+
                 result = await _logTarget.WriteData(log).ConfigureAwait(false);
             }
             else
             {
+
                 result.HasError = true;
                 result.ErrorMessage += "Invalid log entry: " + CheckLogValidity(log);
             }

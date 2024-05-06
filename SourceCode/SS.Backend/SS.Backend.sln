@@ -46,11 +46,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SS.Backend", "SS.Backend", 
 		bs-config.json = bs-config.json
 		package-lock.json = package-lock.json
 		package.json = package.json
+		CalendarFiles\SSReservation.ics = CalendarFiles\SSReservation.ics
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B01F06E3-7BFC-4E7C-BD5B-33065115F025}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.UserManagement", "SS.Backend.UserManagement\SS.Backend.UserManagement.csproj", "{2F6B7963-623D-4D58-B7B6-4704DC3805FD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.Tokens", "SS.Backend.Tests.Tokens\SS.Backend.Tests.Tokens.csproj", "{2AB7F8EB-71F5-444A-9C9B-65A8741329B7}"
 EndProject
@@ -92,11 +91,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Login", "Login", "{95C970DB
 		..\SS.Frontend\Login\index.html = ..\SS.Frontend\Login\index.html
 		..\SS.Frontend\Login\PersonalOverviewFunctions.js = ..\SS.Frontend\Login\PersonalOverviewFunctions.js
 		..\SS.Frontend\Login\PersonalOverviewStyle.css = ..\SS.Frontend\Login\PersonalOverviewStyle.css
+		..\SS.Frontend\Login\Registration.css = ..\SS.Frontend\Login\Registration.css
 		..\SS.Frontend\Login\script.js = ..\SS.Frontend\Login\script.js
 		..\SS.Frontend\Login\spaceBookingCenter.css = ..\SS.Frontend\Login\spaceBookingCenter.css
 		..\SS.Frontend\Login\spaceBookingCenter.js = ..\SS.Frontend\Login\spaceBookingCenter.js
 		..\SS.Frontend\Login\style.css = ..\SS.Frontend\Login\style.css
+		..\SS.Frontend\Login\taskManagerHubView.js = ..\SS.Frontend\Login\taskManagerHubView.js
 		..\SS.Frontend\Login\test.js = ..\SS.Frontend\Login\test.js
+		..\SS.Frontend\Login\waitlistScript.js = ..\SS.Frontend\Login\waitlistScript.js
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnAuthnAbout", "UnAuthnAbout", "{62862134-F400-4325-A07F-0FDB3512CF42}"
@@ -163,11 +165,35 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaitlistApi", "WaitlistApi\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.PersonalOverviewService", "SS.Backend.Tests.PersonalOverview\SS.Backend.Tests.PersonalOverviewService.csproj", "{9574EBE3-960D-479B-848C-C8E64E6D8B29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.TaskManagerHub", "SS.Backend.TaskManagerHub\SS.Backend.TaskManagerHub.csproj", "{F01931E1-F0DB-4198-9B44-4E9ADDC2AE69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.TaskManagerHub", "SS.Backend.TaskManagerHub\SS.Backend.TaskManagerHub.csproj", "{F01931E1-F0DB-4198-9B44-4E9ADDC2AE69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Waitlist", "SS.Backend.Waitlist\SS.Backend.Waitlist.csproj", "{BADD4D86-F724-4B3C-BA34-F39B9F5F1C3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Waitlist", "SS.Backend.Waitlist\SS.Backend.Waitlist.csproj", "{BADD4D86-F724-4B3C-BA34-F39B9F5F1C3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.TaskManagerHub", "SS.Backend.Tests.TaskManagerHub\SS.Backend.Tests.TaskManagerHub.csproj", "{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.TaskManagerHub", "SS.Backend.Tests.TaskManagerHub\SS.Backend.Tests.TaskManagerHub.csproj", "{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Waitlist", "Waitlist", "{D5EF9858-E711-45A1-8ACF-3DE740D76129}"
+	ProjectSection(SolutionItems) = preProject
+		..\SS.Frontend\Login\Waitlist\script.js = ..\SS.Frontend\Login\Waitlist\script.js
+		..\SS.Frontend\Login\Waitlist\style.css = ..\SS.Frontend\Login\Waitlist\style.css
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{A5D1B6AD-0AFD-4886-B8E1-AF641BD60EC4}"
+	ProjectSection(SolutionItems) = preProject
+		..\SS.Frontend\Login\images\sslogo.png = ..\SS.Frontend\Login\images\sslogo.png
+		..\SS.Frontend\Login\images\ssname.png = ..\SS.Frontend\Login\images\ssname.png
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManagerHubAPI", "TaskManagerHubAPI\TaskManagerHubAPI.csproj", "{DBE0B489-8048-4414-9B33-BCE1B506F86F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.ReservationManagers", "SS.Backend.Tests.ReservationManagers\SS.Backend.Tests.ReservationManagers.csproj", "{D935C7CA-69A4-4369-9789-53C87831F873}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "userProfileAPI", "userProfileAPI\userProfileAPI.csproj", "{AE9448B1-BDEE-406D-A3C1-BBA91C8A19B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.EmailConfirm", "SS.Backend.EmailConfirm\SS.Backend.EmailConfirm.csproj", "{1752F602-B5BB-41A5-839E-E53F9808976D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailConfirmationAPI", "EmailConfirmationAPI\EmailConfirmationAPI.csproj", "{5E1487FD-24BB-4CD6-A77C-A3D4D0DA6625}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.EmailConfirm", "SS.Backend.Tests.EmailConfirm\SS.Backend.Tests.EmailConfirm.csproj", "{3E301241-84AD-4F28-ABE3-BBAAF35A383D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -215,10 +241,6 @@ Global
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2F6B7963-623D-4D58-B7B6-4704DC3805FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2F6B7963-623D-4D58-B7B6-4704DC3805FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2F6B7963-623D-4D58-B7B6-4704DC3805FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2F6B7963-623D-4D58-B7B6-4704DC3805FD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2AB7F8EB-71F5-444A-9C9B-65A8741329B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2AB7F8EB-71F5-444A-9C9B-65A8741329B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AB7F8EB-71F5-444A-9C9B-65A8741329B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -319,6 +341,30 @@ Global
 		{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AC28650-B6D6-4D3B-B963-D0B19B7FD201}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1752F602-B5BB-41A5-839E-E53F9808976D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1752F602-B5BB-41A5-839E-E53F9808976D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1752F602-B5BB-41A5-839E-E53F9808976D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1752F602-B5BB-41A5-839E-E53F9808976D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E1487FD-24BB-4CD6-A77C-A3D4D0DA6625}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E1487FD-24BB-4CD6-A77C-A3D4D0DA6625}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E1487FD-24BB-4CD6-A77C-A3D4D0DA6625}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E1487FD-24BB-4CD6-A77C-A3D4D0DA6625}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E301241-84AD-4F28-ABE3-BBAAF35A383D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E301241-84AD-4F28-ABE3-BBAAF35A383D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E301241-84AD-4F28-ABE3-BBAAF35A383D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E301241-84AD-4F28-ABE3-BBAAF35A383D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBE0B489-8048-4414-9B33-BCE1B506F86F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBE0B489-8048-4414-9B33-BCE1B506F86F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBE0B489-8048-4414-9B33-BCE1B506F86F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBE0B489-8048-4414-9B33-BCE1B506F86F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D935C7CA-69A4-4369-9789-53C87831F873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D935C7CA-69A4-4369-9789-53C87831F873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D935C7CA-69A4-4369-9789-53C87831F873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D935C7CA-69A4-4369-9789-53C87831F873}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE9448B1-BDEE-406D-A3C1-BBA91C8A19B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE9448B1-BDEE-406D-A3C1-BBA91C8A19B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE9448B1-BDEE-406D-A3C1-BBA91C8A19B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE9448B1-BDEE-406D-A3C1-BBA91C8A19B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -334,7 +380,7 @@ Global
 		{ABD6D6CB-8786-4F24-8569-5B620A5C31B3} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{15BF497F-DD35-4D95-9AD4-2A752F273379} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{1D919CBC-62A1-4F64-8FB0-B3DE9FC8AC8E} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
-		{2F6B7963-623D-4D58-B7B6-4704DC3805FD} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{2AB7F8EB-71F5-444A-9C9B-65A8741329B7} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{6DD69DD0-F48E-42F8-81C4-113D37D126D9} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{5B5C6973-4229-48D8-82FC-4053FA6D2F9E} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{D10F31FC-367A-4A02-9105-D1CC2109A5A8} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
@@ -364,6 +410,15 @@ Global
 		{CFE2013A-3569-475F-BC99-86007EDBDE8A} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{C7FACCEB-FCF7-441E-9302-96567CE0E7FD} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{9574EBE3-960D-479B-848C-C8E64E6D8B29} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{1752F602-B5BB-41A5-839E-E53F9808976D} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{5E1487FD-24BB-4CD6-A77C-A3D4D0DA6625} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{3E301241-84AD-4F28-ABE3-BBAAF35A383D} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{F01931E1-F0DB-4198-9B44-4E9ADDC2AE69} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{BADD4D86-F724-4B3C-BA34-F39B9F5F1C3B} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{1AC28650-B6D6-4D3B-B963-D0B19B7FD201} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{D5EF9858-E711-45A1-8ACF-3DE740D76129} = {95C970DB-0341-4652-8C2D-8BA668EC39E0}
+		{A5D1B6AD-0AFD-4886-B8E1-AF641BD60EC4} = {95C970DB-0341-4652-8C2D-8BA668EC39E0}
+		{DBE0B489-8048-4414-9B33-BCE1B506F86F} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {27FF35A7-BBB6-414D-87FC-32255A9F675F}

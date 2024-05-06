@@ -1,7 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using SS.Backend.UserManagement;
+using System.Data;
 using SS.Backend.DataAccess;
+using SS.Backend.Security;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
+using SS.Backend.Services.LoggingService;
+using SS.Backend.SharedNamespace;
+using System.Text;
 
 namespace userProfileAPI.Controllers;
 
@@ -9,9 +15,9 @@ namespace userProfileAPI.Controllers;
 [Route("api/profile")]
 public class userProfileController : ControllerBase
 {
-    private readonly IProfileModifier _accountRecovery;
+    private readonly IProfileModifier _profileModifier;
     public userProfileController (IProfileModifier ProfileModifier){
-        _accountRecovery = ProfileModifier;
+        _profileModifier = ProfileModifier;
     }
 
 
@@ -19,7 +25,7 @@ public class userProfileController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<UserProfileModel>>> getProfile([FromQuery] string email){
 
-        var response = await _accountRecovery.getUserProfile(email);
+        var response = await _profileModifier.getUserProfile(email);
 
         if (response.HasError)
         {
@@ -33,6 +39,7 @@ public class userProfileController : ControllerBase
         {
             foreach (DataRow row in response.ValuesRead.Rows)
             {
+#pragma warning disable CS8601 // Possible null reference assignment.
                 var userRequest = new UserProfileModel
                 {
                     FirstName = Convert.ToString(row["firstName"]),
@@ -40,12 +47,41 @@ public class userProfileController : ControllerBase
                     BackupEmail = Convert.ToString(row["backupEmail"]),
                     AppRole = Convert.ToInt32(row["appRole"]),
                 };
+#pragma warning restore CS8601 // Possible null reference assignment.
                 requestList.Add(userRequest);
             }
         }
 
         return Ok(requestList);
     }
+
+    [HttpPost("updateUserProfile")]
+    public async Task<IActionResult> UpdateUserProfile([FromBody] EditableUserProfile userProfile)
+    {
+        Console.WriteLine("UpdateUserProfile called");
+
+        try
+        {
+            var response = await _profileModifier.ModifyProfile(userProfile);
+            
+            if (response == null)
+            {
+                Console.WriteLine("ModifyProfile returned null");
+                return StatusCode(500, "Internal server error: response is null");
+            }
+
+            Console.WriteLine($"Response: HasError={response.HasError}, ErrorMessage={response.ErrorMessage}");
+
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception: {ex.Message}");
+            return StatusCode(500, "Internal server error: " + ex.Message);
+        }
+    }
+
+    
 
         /*
     [Route("sendProfileModificationRequest")]
@@ -54,7 +90,7 @@ public class userProfileController : ControllerBase
     {
 
         
-        var response = await _accountRecovery.createRecoveryRequest(email, additionalInformation);
+        var response = await _profileModifier.createRecoveryRequest(email, additionalInformation);
         if (response.HasError)
         {
             // Log the error or handle it as necessary

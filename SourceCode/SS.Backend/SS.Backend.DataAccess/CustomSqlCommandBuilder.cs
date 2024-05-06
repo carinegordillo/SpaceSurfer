@@ -261,4 +261,12 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         _command.Parameters.AddWithValue("@rid", rid);
         return this;
     }
+
+    public ICustomSqlCommandBuilder getNext(int rid)
+    {
+        ResetBuilder();
+        _commandText.Append("SELECT * FROM Waitlist WHERE Position = 1 AND ReservationID = @rid");
+        _command.Parameters.AddWithValue("@rid", rid);
+        return this;
+    }
 }
