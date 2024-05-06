@@ -10,7 +10,7 @@ namespace SS.Backend.SharedNamespace
     {
         public string FeatureName { get; set; }
 
-        public int FeatureCount { get; set; }
+        public int UsageCount { get; set; }
 
     }
 }

@@ -43,7 +43,7 @@ namespace SS.Backend.SystemObservability
                         var usedFeatures = new MostUsedFeature
                         {
                             FeatureName = (string)row["FeatureName"],
-                            FeatureCount = (int)row["FeatureCount"]
+                            UsageCount = (int)row["UsageCount"]
                         };
 
                         usedFeaturesList.Add(usedFeatures);

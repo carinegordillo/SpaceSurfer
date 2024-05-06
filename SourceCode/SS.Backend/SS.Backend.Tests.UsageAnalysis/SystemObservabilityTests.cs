@@ -17,6 +17,9 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
         private IViewDurationService _viewDurationService;
         private ILoginCountService _loginCountService;
         private ICompanyReservationCountService _companyReservationCountService;
+        private IMostUsedFeatureService _mostUsedFeatureService;
+        private IRegistrationCountService _registrationCountService;
+        private ICompanySpaceCountService _companySpaceCountService;
 
         [TestInitialize]
         public void TestInitialize()
@@ -33,6 +36,9 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
             _viewDurationService = new ViewDurationService(_systemObservabilityDAOService);
             _loginCountService = new LoginCountService(_systemObservabilityDAOService);
             _companyReservationCountService = new CompanyReservationCountService(_systemObservabilityDAOService);
+            _registrationCountService = new RegistrationCountService(_systemObservabilityDAOService);
+            _companySpaceCountService = new CompanySpaceCountService(_systemObservabilityDAOService);
+            _mostUsedFeatureService = new MostUsedFeatureService(_systemObservabilityDAOService);
 
         }
 
@@ -103,9 +109,9 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
                 Assert.IsNotNull(durations);
                 Assert.IsFalse(response.HasError);
 
-            } 
-            catch (Exception ex) 
-            { 
+            }
+            catch (Exception ex)
+            {
                 response.HasError = true;
                 response.ErrorMessage = ex.Message;
 
@@ -465,6 +471,442 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
                 var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
 
                 response = await sqlDAO.SqlRowsAffected(query);
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                Assert.IsFalse(response.HasError);
+            }
+
+        }
+
+        [TestMethod]
+        public async Task InsertMostUsedFeature_Success()
+        {
+            Response response = new Response();
+            Random random = new Random();
+            int featureNum = random.Next(1, 10);
+
+            response = await _mostUsedFeatureService.InsertUsedFeature("HCGl3rHu5KQyzNKfiLlm7ZMg0eCDSjxs1ZMWWp8E7Uw=", $"Feature {featureNum}");
+
+            Assert.IsNotNull(response);
+            Assert.IsFalse(response.HasError);
+
+        }
+
+        [TestMethod]
+        public async Task RetrievingTop3FeaturesUsed_6_months_Success()
+        {
+            Response response = new Response();
+
+            try
+            {
+                for (int i = 0; i < 25; i++)
+                {
+                    Random random = new Random();
+                    int year = random.Next(23, 24);
+                    int month = random.Next(1, 12);
+                    int day = random.Next(1, 28);
+                    int featureNum = random.Next(1, 12);
+
+                    var parameters = new Dictionary<string, object>
+                { 
+                    { "FeatureName", $"Feature {featureNum}"},
+                    { "hashedUsername", "HCGl3rHu5KQyzNKfiLlm7ZMg0eCDSjxs1ZMWWp8E7Uw=" },
+                    { "TimeStamp", $"20{year}-{month}-{day} 11:33:19.070"}
+                };
+
+                    commandBuilder = new CustomSqlCommandBuilder();
+
+                    var cmd = commandBuilder.BeginInsert("FeatureAccess")
+                                                .Columns(parameters.Keys)
+                                                .Values(parameters.Keys)
+                                                .AddParameters(parameters)
+                                                .Build();
+
+                    response = await sqlDAO.SqlRowsAffected(cmd);
+
+                }
+
+                var features = await _mostUsedFeatureService.GetMostUsedFeatures("testLOGS", "6 months");
+
+                foreach (var feature in features)
+                {
+                    Console.WriteLine($"Feature Name: {feature.FeatureName}");
+                    Console.WriteLine($"Feature Count: {feature.UsageCount}");
+                    Console.WriteLine();
+                }
+
+                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+
+                response = await sqlDAO.SqlRowsAffected(query);
+
+                Assert.IsNotNull(features);
+                Assert.IsFalse(response.HasError);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                Assert.IsFalse(response.HasError);
+            }
+
+
+        }
+
+        [TestMethod]
+        public async Task RetrievingTop3FeaturesUsed_12_months_Success()
+        {
+            Response response = new Response();
+
+            try
+            {
+                for (int i = 0; i < 25; i++)
+                {
+                    Random random = new Random();
+                    int year = random.Next(22, 24);
+                    int month = random.Next(1, 12);
+                    int day = random.Next(1, 28);
+                    int featureNum = random.Next(1,12);
+
+                    var parameters = new Dictionary<string, object>
+                {
+                    { "FeatureName", $"Feature {featureNum}"},
+                    { "hashedUsername", "HCGl3rHu5KQyzNKfiLlm7ZMg0eCDSjxs1ZMWWp8E7Uw=" },
+                    { "TimeStamp", $"20{year}-{month}-{day} 11:33:19.070"}
+                };
+
+                    commandBuilder = new CustomSqlCommandBuilder();
+
+                    var cmd = commandBuilder.BeginInsert("FeatureAccess")
+                                                .Columns(parameters.Keys)
+                                                .Values(parameters.Keys)
+                                                .AddParameters(parameters)
+                                                .Build();
+
+                    response = await sqlDAO.SqlRowsAffected(cmd);
+
+                }
+
+                var features = await _mostUsedFeatureService.GetMostUsedFeatures("testLOGS", "12 months");
+
+                foreach (var feature in features)
+                {
+                    Console.WriteLine($"Feature Name: {feature.FeatureName}");
+                    Console.WriteLine($"Feature Count: {feature.UsageCount}");
+                    Console.WriteLine();
+                }
+
+                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+
+                response = await sqlDAO.SqlRowsAffected(query);
+
+                Assert.IsNotNull(features);
+                Assert.IsFalse(response.HasError);
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                Assert.IsFalse(response.HasError);
+            }
+
+
+        }
+
+        [TestMethod]
+        public async Task RetrievingTop3FeaturesUsed_24_months_Success()
+        {
+            Response response = new Response();
+
+            try
+            {
+                for (int i = 0; i < 25; i++)
+                {
+                    Random random = new Random();
+                    int year = random.Next(21, 24);
+                    int month = random.Next(1, 12);
+                    int day = random.Next(1, 28);
+                    int featureNum = random.Next(1, 12);
+
+                    var parameters = new Dictionary<string, object>
+                {
+                    { "FeatureName", $"Feature {featureNum}"},
+                    { "hashedUsername", "HCGl3rHu5KQyzNKfiLlm7ZMg0eCDSjxs1ZMWWp8E7Uw=" },
+                    { "TimeStamp", $"20{year}-{month}-{day} 11:33:19.070"}
+                };
+
+                    commandBuilder = new CustomSqlCommandBuilder();
+
+                    var cmd = commandBuilder.BeginInsert("FeatureAccess")
+                                                .Columns(parameters.Keys)
+                                                .Values(parameters.Keys)
+                                                .AddParameters(parameters)
+                                                .Build();
+
+                    response = await sqlDAO.SqlRowsAffected(cmd);
+
+                }
+
+                var features = await _mostUsedFeatureService.GetMostUsedFeatures("testLOGS", "24 months");
+
+                foreach (var feature in features)
+                {
+                    Console.WriteLine($"Feature Name: {feature.FeatureName}");
+                    Console.WriteLine($"Feature Count: {feature.UsageCount}");
+                    Console.WriteLine();
+                }
+
+                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+
+                response = await sqlDAO.SqlRowsAffected(query);
+
+                Assert.IsNotNull(features);
+                Assert.IsFalse(response.HasError);
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                Assert.IsFalse(response.HasError);
+            }
+
+
+        }
+
+        [TestMethod]
+        public async Task RetrievingTop3CompanyWithMostSpaces_6_months_Success()
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+            Response response = new Response();
+
+            try
+            {
+
+                var companySpaceCounts = await _companySpaceCountService.GetTop3CompaniesWithMostSpaces("testLOGS", "6 months");
+
+                foreach (var companySpaceCount in companySpaceCounts)
+                {
+                    Console.WriteLine($"Company Name: {companySpaceCount.CompanyName}");
+                    Console.WriteLine($"Space Count: {companySpaceCount.SpaceCount}");
+                    Console.WriteLine();
+                }
+
+                Assert.IsNotNull(companySpaceCounts);
+
+                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+
+                response = await sqlDAO.SqlRowsAffected(query);
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                Assert.IsFalse(response.HasError);
+            }
+
+        }
+
+        [TestMethod]
+        public async Task RetrievingTop3CompanyWithMostSpaces_12_months_Success()
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+            Response response = new Response();
+
+            try
+            {
+
+                var companySpaceCounts = await _companySpaceCountService.GetTop3CompaniesWithMostSpaces("testLOGS", "12 months");
+
+                foreach (var companySpaceCount in companySpaceCounts)
+                {
+                    Console.WriteLine($"Company Name: {companySpaceCount.CompanyName}");
+                    Console.WriteLine($"Space Count: {companySpaceCount.SpaceCount}");
+                    Console.WriteLine();
+                }
+
+                Assert.IsNotNull(companySpaceCounts);
+
+                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+
+                response = await sqlDAO.SqlRowsAffected(query);
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                Assert.IsFalse(response.HasError);
+            }
+
+        }
+
+        [TestMethod]
+        public async Task RetrievingTop3CompanyWithMostSpaces_24_months_Success()
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+            Response response = new Response();
+
+            try
+            {
+
+                var companySpaceCounts = await _companySpaceCountService.GetTop3CompaniesWithMostSpaces("testLOGS", "24 months");
+
+                foreach (var companySpaceCount in companySpaceCounts)
+                {
+                    Console.WriteLine($"Company Name: {companySpaceCount.CompanyName}");
+                    Console.WriteLine($"Space Count: {companySpaceCount.SpaceCount}");
+                    Console.WriteLine();
+                }
+
+                Assert.IsNotNull(companySpaceCounts);
+
+                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+
+                response = await sqlDAO.SqlRowsAffected(query);
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                Assert.IsFalse(response.HasError);
+            }
+
+        }
+
+        [TestMethod]
+        public async Task RetrievingRegistrationgCount_6_months_Success()
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+            Response response = new Response();
+
+            try
+            {
+
+                var registrationCounts = await _registrationCountService.GetRegistrationCount("testLOGS", "6 months");
+
+                foreach (var registrationCount in registrationCounts)
+                {
+                    Console.WriteLine($"Month: {registrationCount.Month}");
+                    Console.WriteLine($"Year: {registrationCount.Year}");
+                    Console.WriteLine($"Failed Registration: {registrationCount.FailedRegistrations}");
+                    Console.WriteLine($"Successful Registration: {registrationCount.SuccessfulRegistrations}");
+                    Console.WriteLine();
+                }
+
+                Assert.IsNotNull(registrationCounts);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                Assert.IsFalse(response.HasError);
+            }
+
+        }
+
+        [TestMethod]
+        public async Task RetrievingRegistrationgCount_12_months_Success()
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+            Response response = new Response();
+
+            try
+            {
+
+                var registrationCounts = await _registrationCountService.GetRegistrationCount("testLOGS", "12 months");
+
+                foreach (var registrationCount in registrationCounts)
+                {
+                    Console.WriteLine($"Month: {registrationCount.Month}");
+                    Console.WriteLine($"Year: {registrationCount.Year}");
+                    Console.WriteLine($"Failed Registration: {registrationCount.FailedRegistrations}");
+                    Console.WriteLine($"Successful Registration: {registrationCount.SuccessfulRegistrations}");
+                    Console.WriteLine();
+                }
+
+                Assert.IsNotNull(registrationCounts);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                Assert.IsFalse(response.HasError);
+            }
+
+        }
+
+        [TestMethod]
+        public async Task RetrievingRegistrationgCount_24_months_Success()
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+            Response response = new Response();
+
+            try
+            {
+
+                var registrationCounts = await _registrationCountService.GetRegistrationCount("testLOGS", "24 months");
+
+                foreach (var registrationCount in registrationCounts)
+                {
+                    Console.WriteLine($"Month: {registrationCount.Month}");
+                    Console.WriteLine($"Year: {registrationCount.Year}");
+                    Console.WriteLine($"Failed Registration: {registrationCount.FailedRegistrations}");
+                    Console.WriteLine($"Successful Registration: {registrationCount.SuccessfulRegistrations}");
+                    Console.WriteLine();
+                }
+
+                Assert.IsNotNull(registrationCounts);
+
+
 
             }
             catch (Exception ex)

@@ -275,7 +275,7 @@ namespace SS.Backend.SystemObservability
                 commandBuilder = new CustomSqlCommandBuilder();
 
                 var query = commandBuilder.BeginSelectString("MONTH(Timestamp) AS [Month], YEAR(Timestamp) AS[Year], SUM(CASE WHEN Description = 'Failure to authenticate.' " +
-                    "THEN 1 ELSE 0 END) AS[Failed Logins], SUM(CASE WHEN Description = 'Successful authentication.' THEN 1 ELSE 0 END) AS[Successful Logins]")
+                    "THEN 1 WHEN Description = 'User tried to authenticate with an expired OTP.' THEN 1 ELSE 0 END) AS[Failed Logins], SUM(CASE WHEN Description = 'Successful authentication.' THEN 1 ELSE 0 END) AS[Successful Logins]")
                     .From("dbo.logs").Where($"Timestamp BETWEEN '{startDate}' AND '{endDate}' GROUP BY YEAR(Timestamp), MONTH(Timestamp) ORDER BY [Year], [Month];").Build();
 
                 response = await _sqlDAO.ReadSqlResult(query);
@@ -609,12 +609,14 @@ namespace SS.Backend.SystemObservability
 
                 var parameters = new Dictionary<string, object>
                 {
-
+                    { "FeatureName", Feature },
+                    { "hashedUsername", username },
+                    { "timestamp", DateTime.UtcNow}
                 };
 
                 commandBuilder = new CustomSqlCommandBuilder();
 
-                var query = commandBuilder.BeginInsert("FeatureAccess")
+                var query = commandBuilder.BeginInsert("dbo.FeatureAccess")
                                             .Columns(parameters.Keys)
                                             .Values(parameters.Keys)
                                             .AddParameters(parameters)
@@ -771,6 +773,130 @@ namespace SS.Backend.SystemObservability
                         username = username,
                         category = "Data Store",
                         description = "Unsuccessful Retrieval of Top 3 Most Used Feature Counts In DB"
+                    };
+
+                    await logger.SaveData(errorEntry);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                LogEntry errorEntry = new LogEntry()
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = username,
+                    category = "Data Store",
+                    description = "Data Access Error in System Observability DAO"
+                };
+
+                await logger.SaveData(errorEntry);
+            }
+
+            return response;
+        }
+
+        public async Task<Response> RetrieveRegistrationsCount(string username, string timeSpan)
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+
+            Response response = new Response();
+
+            try
+            {
+                DateTime startDate = DateTime.MinValue;
+                DateTime endDate = DateTime.MaxValue;
+
+                if (timeSpan == "6 months")
+                {
+                    startDate = DateTime.Today.AddMonths(-6);
+                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                }
+                else if (timeSpan == "12 months")
+                {
+                    startDate = DateTime.Today.AddMonths(-12);
+                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                }
+                else if (timeSpan == "24 months")
+                {
+                    startDate = DateTime.Today.AddMonths(-24);
+                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                }
+                else
+                {
+
+                    response.HasError = true;
+                    response.ErrorMessage = "Timespan Was Not Chosen Between 6 Months, 12 Months, 24 Months";
+
+                    // Handle invalid time span
+                    LogEntry errorEntry = new LogEntry()
+                    {
+                        timestamp = DateTime.UtcNow,
+                        level = "Error",
+                        username = username,
+                        category = "Business",
+                        description = "Invalid TimeSpan For System Observability DAO"
+                    };
+
+                    await logger.SaveData(errorEntry);
+
+                    return response;
+                }
+
+                commandBuilder = new CustomSqlCommandBuilder();
+
+                var query = commandBuilder.BeginSelectString("MONTH(Timestamp) AS [Month], YEAR(Timestamp) AS[Year], SUM(CASE WHEN Description = 'Error inserting user in data store.' " +
+                    "THEN 1 ELSE 0 END) AS [Failed Registrations], SUM(CASE WHEN Description = 'Successful account creation' THEN 1 ELSE 0 END) AS [Successful Registrations]")
+                    .From("dbo.logs").Where($"Timestamp BETWEEN '{startDate}' AND '{endDate}' GROUP BY YEAR(Timestamp), MONTH(Timestamp) ORDER BY [Year], [Month];").Build();
+
+                response = await _sqlDAO.ReadSqlResult(query);
+
+                if (!response.HasError)
+                {
+
+                    LogEntry entry = new LogEntry()
+
+                    {
+                        timestamp = DateTime.UtcNow,
+                        level = "Info",
+                        username = username,
+                        category = "Data Store",
+                        description = "Successful Retrieval of Registration Counts In DB"
+                    };
+
+                    await logger.SaveData(entry);
+                }
+                else if (response.ErrorMessage == "No rows found.")
+                {
+                    LogEntry entry = new LogEntry()
+
+                    {
+                        timestamp = DateTime.UtcNow,
+                        level = "Info",
+                        username = username,
+                        category = "Data Store",
+                        description = "Successful Retrieval Of Registration Count In DB, But It Was Empty"
+                    };
+
+                    await logger.SaveData(entry);
+                }
+                else
+                {
+
+                    LogEntry errorEntry = new LogEntry()
+                    {
+                        timestamp = DateTime.UtcNow,
+                        level = "Error",
+                        username = username,
+                        category = "Data Store",
+                        description = "Unsuccessful Retrieval Of Registration Count In DB"
                     };
 
                     await logger.SaveData(errorEntry);

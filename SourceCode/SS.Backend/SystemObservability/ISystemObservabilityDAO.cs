@@ -10,6 +10,8 @@ namespace SS.Backend.SystemObservability
 
         Task<Response> RetrieveLoginsCount(string username, string timeSpan);
 
+        Task<Response> RetrieveRegistrationsCount(string username, string timeSpan);
+
         Task<Response> RetrieveCompanyReservationsCount(string username, string timeSpan);
 
         Task<Response> RetrieveCompanySpaceCount(string username, string timeSpan);
