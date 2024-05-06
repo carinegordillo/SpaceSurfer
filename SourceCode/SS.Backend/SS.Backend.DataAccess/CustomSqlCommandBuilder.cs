@@ -101,7 +101,20 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
+    public ICustomSqlCommandBuilder InnerJoin(string joinTable, string fromColumn, string toColumn)
+    {
+        _commandText.Append($" INNER JOIN {joinTable} ON {fromColumn} = {toColumn}");
+        return this;
+    }
+
     public ICustomSqlCommandBuilder BeginDelete(string tableName)
+    {
+        ResetBuilder();
+        _commandText.Append($"DELETE {tableName}");
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder BeginDeleteFrom(string tableName)
     {
         ResetBuilder();
         _commandText.Append($"DELETE FROM {tableName}");

@@ -33,8 +33,7 @@ namespace SS.Backend.Services.DeletingService
             {
                 var commandBuild = new CustomSqlCommandBuilder();
 
-                var query = commandBuild.BeginDelete("dbo.userHash")
-                        .Where($"hashedUsername = '{username}'")
+                var query = commandBuild.BeginDeleteFrom("dbo.userAccount").Where($"user_id IN (SELECT user_id FROM dbo.userHash WHERE hashedUsername = '{username}');")
                         .Build();
 
                 response = await _sqlDAO.SqlRowsAffected(query);
