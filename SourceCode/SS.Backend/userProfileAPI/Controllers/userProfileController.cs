@@ -1,7 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using SS.Backend.UserManagement;
+using System.Data;
 using SS.Backend.DataAccess;
+using SS.Backend.Security;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
+using SS.Backend.Services.LoggingService;
+using SS.Backend.SharedNamespace;
+using System.Text;
 
 namespace userProfileAPI.Controllers;
 
@@ -33,6 +39,7 @@ public class userProfileController : ControllerBase
         {
             foreach (DataRow row in response.ValuesRead.Rows)
             {
+#pragma warning disable CS8601 // Possible null reference assignment.
                 var userRequest = new UserProfileModel
                 {
                     FirstName = Convert.ToString(row["firstName"]),
@@ -40,6 +47,7 @@ public class userProfileController : ControllerBase
                     BackupEmail = Convert.ToString(row["backupEmail"]),
                     AppRole = Convert.ToInt32(row["appRole"]),
                 };
+#pragma warning restore CS8601 // Possible null reference assignment.
                 requestList.Add(userRequest);
             }
         }
