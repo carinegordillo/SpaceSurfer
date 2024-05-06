@@ -182,9 +182,6 @@ public class CreateConfirmUnitTest
         //Assert
         Assert.IsTrue(result.HasError, "Expected CreateConfirmation to fail with invalid input.");
         Assert.IsFalse(string.IsNullOrEmpty(result.ErrorMessage), "Expected an error message for invalid input.");
-        // Assert.IsNotNull(icsFile, "icsFile is Null");
-        // Assert.IsNotNull(otp, "otp is null");
-        // Assert.IsNotNull(html);
         Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
         //Cleanup
