@@ -158,7 +158,7 @@ namespace SystemObservabilityAPI.Controllers
         }
 
         [HttpPost("UsedFeatureInsertion")]
-        public async Task<IActionResult> InsertUsedFeature([FromQuery(Name = "FeatureName")] string featureName, [FromQuery(Name = "durationInSeconds")] int durationInSeconds)
+        public async Task<IActionResult> InsertUsedFeature([FromQuery(Name = "FeatureName")] string featureName)
         {
 
             string? accessToken = HttpContext.Request.Headers["Authorization"];
