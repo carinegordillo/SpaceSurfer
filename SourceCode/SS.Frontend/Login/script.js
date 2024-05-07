@@ -1,3 +1,5 @@
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const accessToken = sessionStorage.getItem('accessToken');
     if (accessToken) {
@@ -120,6 +122,7 @@ function authenticateUser() {
 
 function logout() {
     console.log("logout clicked")
+    console.log("logout clicked")
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('idToken');
     sessionStorage.removeItem('userIdentity');
@@ -194,6 +197,11 @@ function employeeSetupAccess() {
     document.getElementById('employeeSetup').style.display = 'block';
 }
 
+function confirmationAccess() {
+    hideAllSections();
+    document.getElementById('confirmationView').style.display = 'block';
+}
+
 function hideAllSections() {
     document.getElementById('employeeSetup').style.display = 'none';
     document.getElementById('spaceBookingView').style.display = 'none';
@@ -209,4 +217,5 @@ function hideAllSections() {
     document.getElementById('spaceManagerView').style.display = 'none';
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById('noLogin').style.display = 'none';
+    document.getElementById('confirmationView').style.display = 'none';
 }

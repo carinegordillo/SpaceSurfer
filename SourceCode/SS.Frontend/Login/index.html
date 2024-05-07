@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8081 http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275 http://localhost:8089 http://localhost:5279 http://localhost:5048 http://localhost:8080; img-src 'self' data:;">
-     <link rel="stylesheet" href="spaceBookingCenter.css"> 
-    <link rel="stylesheet" href="style.css">
-     <link rel="stylesheet" href="PersonalOverviewStyle.css">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com/ https://code.jquery.com/; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:8081 http://localhost:5270 http://localhost:5099 http://localhost:5005 http://localhost:5001 http://localhost:8081 https://localhost:7017 http://localhost:5112 http://localhost:5275 http://localhost:8089 http://localhost:5279 http://localhost:5048 http://localhost:5116 http://localhost:8080; img-src 'self' data:;">
+        <link rel="stylesheet" href="spaceBookingCenter.css"> 
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="confirmStyle.css">
+        <link rel="stylesheet" href="PersonalOverviewStyle.css">
     <!--<link rel="stylesheet" href="/Waitlist/style.css"> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
@@ -44,6 +45,7 @@
                         <i class="fas fa-home">Home</i> 
                     </div>
                     <div class="nav-item" type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</div>
+                    <div class="nav-item" type="button" onclick="confirmationAccess()" data-testid="confirmation-view">Confirmations</div>
                     <div class="nav-item" type="button" onclick="waitlistAccess()">Waitlist</div>
                     <div class="nav-item" type="button" onclick="personalOverviewAccess()" data-testid="personal-overview-view">Personal Overview</div>
                     <div class="nav-item" type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</div>
@@ -108,6 +110,55 @@
         </div>
     </section>
 
+    <section id="UnAuthnAbout" style="display: none;">
+        <div class="container">
+            <section id="sendOTPSection" class="loginForm">
+                <form id="sendOTPForm">
+                    <label class="login-title">About</label>
+                    <div class="about-section">
+                        <p>Welcome to <strong>Space Surfer</strong> - Your Premier Space Reservation Platform!</p>
+                        
+                        <h3>Who We Are</h3>
+                        <p>Space Surfer is a cutting-edge platform designed to simplify the way individuals and businesses reserve spaces for various purposes. Whether you're booking a conference room, securing a spot in a co-working space, or claiming a seat at a local event, Space Surfer offers a seamless, intuitive reservation experience that puts your convenience first.</p>
+                        
+                        <h3>Our Mission</h3>
+                        <p>Our mission at Space Surfer is to revolutionize space booking by making it as easy and stress-free as possible. We believe that finding and securing the right space, whether for work, leisure, or special events, should be straightforward and hassle-free. Space Surfer leverages advanced technology to connect space providers with users, ensuring efficient transactions and satisfied outcomes.</p>
+                        
+                        <!-- <h3>What We Offer</h3>
+                        <ul>
+                            <li><strong>Real-Time Availability:</strong> See up-to-date space availability to ensure you can book the space you need, when you need it.</li>
+                            <li><strong>Diverse Locations:</strong> Access a variety of spaces across multiple locations worldwide. Whether you're local or traveling, find a space that suits your needs.</li>
+                            <li><strong>Flexible Booking Options:</strong> From hourly reservations to long-term leases, choose the booking option that best fits your schedule and budget.</li>
+                            <li><strong>User-Friendly Interface:</strong> Our platform is designed with user experience in mind. Navigate our site with ease and book your space in just a few clicks.</li>
+                            <li><strong>Secure Transactions:</strong> Your security is our top priority. We provide a secure platform for all transactions, safeguarding your personal and financial information.</li>
+                        </ul>
+                        
+                        <h3>How It Works</h3>
+                        <ol>
+                            <li><strong>Search:</strong> Enter your location and date to see available spaces.</li>
+                            <li><strong>Select:</strong> Choose the space that meets your criteria.</li>
+                            <li><strong>Book:</strong> Reserve your space through our secure checkout process.</li>
+                            <li><strong>Use:</strong> Enjoy your reserved space and manage your booking through our user-friendly dashboard.</li>
+                        </ol> -->
+                        
+                        <h3>Our Vision</h3>
+                        <p>Looking ahead, Space Surfer aims to expand its reach by incorporating more diverse spaces and offering enhanced features that anticipate and meet our users' evolving needs. We are committed to continuous improvement and innovation to remain at the forefront of the space reservation industry.</p>
+                        
+                        <h3>Join Us</h3>
+                        <p>Ready to get started? Join Space Surfer today and experience the ultimate in space booking convenience. For questions or further information, please contact us at <a href="mailto:support@spacesurfer.com">support@spacesurfer.com</a>.</p>
+                        
+                        <p>Thank you for choosing Space Surfer — where your space is just a click away!</p>
+                    </div>
+                </form>
+            </section>
+            <!-- <div class="welcome-label">
+                Welcome to SpaceSurfer!
+            </div> -->
+            <img src="images/astronaut.png" alt="Astro" class = "hovering">
+
+        </div>
+    </section>
+
     <section id="welcomeSection" style="display: none;">
         <div class="container">
             <img src="images/astronaut.png" alt="Astro" class = "hovering">
@@ -124,6 +175,9 @@
 
     <section id="successResult" class="form-container" style="display: none;">
         <label style="color:#03fc52; font-size: 18px;">Authentication was successful!</label>
+    </section>
+    <section id="failResult" class="form-container" style="display: none;">
+        <label style="color: #e33434; font-size: 18px;">Incorrect verification code. Please double-check and try again.</label>
     </section>
 
     <!--Registration-->
@@ -199,6 +253,90 @@
             </form>
         </div>
     </section>
+
+    <!--Registration-->
+    <section id="Registration" style="display: none;">
+        <div class = "container">
+            <form id="accountCreationForm" class = "loginForm">
+                <label class="register-title">Register to SpaceSurfer🤙</label>
+                <input type="text" id="username" name="username" placeholder="Email" required>
+                <input type="date" id="dob" name="dob" placeholder="Date of Birth" required>
+                <input type="text" id="firstname" name="firstName" placeholder="First Name" required>
+                <input type="text" id="lastname" name="lastName" placeholder="Last Name" required>
+                <!-- <input type="text" id="role" name="role" placeholder="Role" required> -->
+                <input type="hidden" id="role" name="role">
+                <input type="hidden" id="status" name="status">
+                <input type="text" id="backupEmail" name="backupEmail" placeholder="Backup Email">
+                
+                <label class="register-title">Are You A Company/Facility?</label>
+                <div class="form-row" style="display: flex; justify-content: center;">
+                <input type="checkbox" id="isCompany" name="isCompany" onchange="handleCheckboxChange(this)" >
+                <label for="isCompany">Company</label>
+        
+                <input type="checkbox" id="isFacility" name="isFacility" onchange="handleCheckboxChange(this)" >
+                <label for="isFacility">Facility</label>
+                </div>
+                
+                <div id="additionalFields" style="display: none;">
+                    <label for="name">Company/Facility Name:</label>
+                    <input type="text" id="companyName" name="name"><br>
+        
+                    <label for="location">Location:</label>
+                    <input type="text" id="address" name="location"><br>
+        
+                    <label for="openingHours">Opening Hours:</label>
+                    <input type="time" id="openingHours" name="openingHours"> <br>
+        
+                    <label for="closingHours">Closing Hours:</label>
+                    <input type="time" id="closingHours" name="closingHours"><br>
+        
+                    <fieldset id="daysOpen">
+                        <legend>Days Open:</legend>
+                        <label><input type="checkbox" name="daysOpen" value="Monday"> Monday</label><br>
+                        <label><input type="checkbox" name="daysOpen" value="Tuesday"> Tuesday</label><br>
+                        <label><input type="checkbox" name="daysOpen" value="Wednesday"> Wednesday</label><br>
+                        <label><input type="checkbox" name="daysOpen" value="Thursday"> Thursday</label><br>
+                        <label><input type="checkbox" name="daysOpen" value="Friday"> Friday</label><br>
+                        <label><input type="checkbox" name="daysOpen" value="Saturday"> Saturday</label><br>
+                        <label><input type="checkbox" name="daysOpen" value="Sunday"> Sunday</label><br>
+                    </fieldset>
+                </div>
+                <button id="postAccount" type="submit">Create Account</button>
+                <!-- <button id="loadRequestsButton" onclick="testingRegistration()">Load Requests</button>
+                <ul id="recoveryRequestsList"></ul> -->
+            </form>
+            <img src="images/astroText.png" alt="Astro" class = "hovering">
+        </div>  
+    </section>
+
+    <section id="employeeSetup" style="display: none;">
+        <div id = "registerView" class = "container"  >
+            <form id="employeeForm" class = "loginForm">
+                <label class="login-title">Register Employee to Space Surfer</label>
+                <input type="text" id="username" name="username" placeholder="Username" required>
+                <input type="date" id="dob" name="dob" placeholder="Date of Birth" required><br>
+                <input type="text" id="firstname" name="firstName" placeholder="First Name" required>
+                <input type="text" id="lastname" name="lastName" placeholder="Last Name" required>
+                <!-- <input type="text" id="role" name="role" placeholder="Role" required> -->
+                <input type="hidden" id="role" name="role">
+                <input type="hidden" id="status" name="status">
+                <input type="hidden" id="backupEmail" name="backupEmail"> <br>
+        
+                <button id="postAccount" type="submit">Create Employee Account</button>
+                <ul id="recoveryRequestsList"></ul>
+            </form>
+        </div>
+    </section>
+    <!--General Homepage-->
+    <!-- <section id="homepageGen" class="homepage-container" style="display: none;">
+        <button class="initProfileButton" type="button" onclick="getUserProfile()">Profile</button>
+        <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
+        <button type="button" onclick="confirmationAccess()">Confirmations</button>
+        <button type="button" onclick="waitlistAccess()">Waitlist</button>
+        <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
+        <button type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</button>
+        <button type="button" onclick="logout()">Logout</button>
+    </section> -->
 
     <section id="userProfileView" class="homepage-container" style="display: none;">
         <div class="userProfileContainer">
@@ -320,6 +458,15 @@
                 <div id="reservation-details">
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!--Confirmation View-->
+    <section id="confirmationView" class="homepage-container" style="display: none;">
+        <button id="initConfirmationsButton" data-testid="initConfirmation-view">Initialize Confirmations</button>
+        <div class="confirmations-container content-container">
+            <h2>Confirmed Reservations</h2>
+            <div class="reservations-list"></div>
         </div>
     </section>
 
@@ -458,6 +605,7 @@
     <!--Manager Homepage-->
     <section id="homepageManager" class="homepage-container" style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
+        <button type="button" onclick="confirmationAccess()">Confirmations</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview </button>
         <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
@@ -504,6 +652,7 @@
     </template>
 
     <script src="script.js"></script>
+    <script src="confirmedReservations.js"></script>
     <script src="Registration.js"></script>
     <script src="taskManagerHubView.js"></script>
     <script src="waitlistScript.js"></script>
@@ -513,4 +662,3 @@
     <script src = "UserProfile.js"></script>
 </body>
 </html>
-

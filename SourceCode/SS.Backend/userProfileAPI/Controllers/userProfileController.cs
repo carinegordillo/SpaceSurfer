@@ -39,6 +39,7 @@ public class userProfileController : ControllerBase
         {
             foreach (DataRow row in response.ValuesRead.Rows)
             {
+#pragma warning disable CS8601 // Possible null reference assignment.
                 var userRequest = new UserProfileModel
                 {
                     FirstName = Convert.ToString(row["firstName"]),
@@ -46,6 +47,7 @@ public class userProfileController : ControllerBase
                     BackupEmail = Convert.ToString(row["backupEmail"]),
                     AppRole = Convert.ToInt32(row["appRole"]),
                 };
+#pragma warning restore CS8601 // Possible null reference assignment.
                 requestList.Add(userRequest);
             }
         }

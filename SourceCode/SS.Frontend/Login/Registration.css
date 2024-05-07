@@ -19,7 +19,7 @@ body {
     /* overflow: hidden; */
     height: auto;
   }
-  
+
   .background-image::before {
     content: "";
     position: absolute;
@@ -28,7 +28,7 @@ body {
     right: 0;
     bottom: 0;
     /* background-image: url('skystar.jpg'); */
-    
+
     background-size: cover;
     background-position: center;
     opacity: 0.5; /* Adjust the opacity as needed */
@@ -193,4 +193,3 @@ input[type="checkbox"] {
         flex-basis: 100%; /* Full width on smaller screens */
     }
 }
-
