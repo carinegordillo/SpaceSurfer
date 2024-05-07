@@ -54,6 +54,13 @@ nunit-*.xml
 [Rr]eleasePS/
 dlldata.c
 
+[Rr]eleasePS/
+dlldata.c
+
+# NuGet generated files
+*.nuget.g.props
+*.nuget.g.targets
+
 # Benchmark Results
 BenchmarkDotNet.Artifacts/
 
