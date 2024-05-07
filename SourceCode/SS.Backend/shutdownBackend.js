@@ -22,7 +22,7 @@ killProcess("PersonalOverviewAPI",5275);
 killProcess("WaitlistAPI",5099);
 killProcess("CompanyAPI",5279);
 killProcess("SpaceBookingCenterAPI",5005);
-killProcess("RegistrationAPI",8080);
+killProcess("RegistrationAPI",5041);
 killProcess("LoginAPI",5270);
 killProcess("userProfileAPI",5048);
 killProcess("TMH",8089)

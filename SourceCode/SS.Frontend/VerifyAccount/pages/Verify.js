@@ -17,7 +17,7 @@ function submitAccountCreationForm() {
 
     console.log("Submitting username:", username); // Debugging
 
-    fetch('http://localhost:8080/api/registration/verifyAccount', {
+    fetch('http://localhost:5041/api/registration/verifyAccount', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -58,7 +58,7 @@ function submitAccountCreationForm() {
     };
     console.log("THIS IS THE REQUEST", accountCreationRequest)
     console.log("THIS ISI THE USERINOF ", accountCreationRequest.userInfo)
-    fetch('http://localhost:8080/api/registration/postAccount', {
+    fetch('http://localhost:5041/api/registration/postAccount', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ function submitEmployeeCreationForm() {
         companyInfo: companyInfo,
         manager_hashedUsername : JSON.parse(sessionStorage.getItem('idToken')).Username
     };
-    fetch('http://localhost:8080/api/registration/postAccount', {
+    fetch('http://localhost:5041/api/registration/postAccount', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
