@@ -101,7 +101,20 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
+    public ICustomSqlCommandBuilder InnerJoin(string joinTable, string fromColumn, string toColumn)
+    {
+        _commandText.Append($" INNER JOIN {joinTable} ON {fromColumn} = {toColumn}");
+        return this;
+    }
+
     public ICustomSqlCommandBuilder BeginDelete(string tableName)
+    {
+        ResetBuilder();
+        _commandText.Append($"DELETE {tableName}");
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder BeginDeleteFrom(string tableName)
     {
         ResetBuilder();
         _commandText.Append($"DELETE FROM {tableName}");
@@ -128,6 +141,12 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
     public ICustomSqlCommandBuilder OrderBy(string tableName)
     {
         _commandText.Append($" ORDER BY {tableName} ");
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder GroupBy(string tableName)
+    {
+        _commandText.Append($" GROUP BY {tableName} ");
         return this;
     }
 

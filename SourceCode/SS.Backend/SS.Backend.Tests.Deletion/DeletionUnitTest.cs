@@ -17,6 +17,8 @@ namespace SS.Backend.Tests.Services
         // Initializing 
         private SqlDAO? dao;
         private CustomSqlCommandBuilder? commandBuilder;
+        private IAccountDeletion accountDeletion;
+        private IDatabaseHelper databaseHelper;
         private Logger? logger;
 
 
@@ -36,6 +38,8 @@ namespace SS.Backend.Tests.Services
             dao = new SqlDAO(configFile);
             commandBuilder = new CustomSqlCommandBuilder();
             logger = new Logger(new SqlLogTarget(dao));
+            databaseHelper = new DatabaseHelper(dao);
+            accountDeletion = new AccountDeletion(databaseHelper);
         }
 
         private async Task CleanupTestData(int choice)
@@ -55,7 +59,7 @@ namespace SS.Backend.Tests.Services
                 {
                     await connection.OpenAsync().ConfigureAwait(false);
 
-                    string sql1 = $"DELETE FROM dbo.Logs WHERE [Username] = 'temporary@email'";
+                    string sql1 = $"DELETE FROM dbo.Logs WHERE [Username] = 'gdulfzfh2duzkp'";
                     string sql2 = $"DELETE FROM dbo.Logs WHERE [Username] = 'temporaru@email'";
                     string sql3 = $"DELETE FROM dbo.userHash WHERE [Username] = 'temporary@email'";
                     string sql4 = $"DELETE FROM dbo.userAccount WHERE [Username] = 'temporary@email'";
@@ -157,20 +161,16 @@ namespace SS.Backend.Tests.Services
         {
             await insertUser();
 
-            // initializing account deletion
-            var deleter = new AccountDeletion();
-
             // Temporary user username
-            var userToDelete = "temporary@email";
+            var userToDelete = "gdulfzfh2duzkp";
 
             // Execute deletion command to the database
-            var result = await deleter.DeleteAccount(userToDelete);
+            var result = await accountDeletion.DeleteAccount(userToDelete);
 
             // Deletion should be successful, therefore false
             Assert.IsFalse(result.HasError);
             Assert.IsTrue(result.RowsAffected > 0);
 
-            await CleanupTestData(1);
         }
 
         /// <summary>
@@ -180,14 +180,12 @@ namespace SS.Backend.Tests.Services
         public async Task DeleteAccount_Unsuccessful_Deletion()
         {
             await insertUser();
-            // initializing account deletion
-            var deleter = new AccountDeletion();
 
             // Temporary user username
             var userToDelete = "temporaru@email";
 
             // Execute deletion command to the database
-            var result = await deleter.DeleteAccount(userToDelete);
+            var result = await accountDeletion.DeleteAccount(userToDelete);
 
             // Deletion should be unsuccessful, therefore true
             Assert.IsTrue(result.HasError);
@@ -203,14 +201,12 @@ namespace SS.Backend.Tests.Services
         [TestMethod]
         public async Task DeleteAccount_Unsuccessful_Empty()
         {
-            // initializing account deletion
-            var deleter = new AccountDeletion();
 
             // Temporary user username
             var userToDelete = "temporary@email";
 
             // Execute deletion command to the database
-            var result = await deleter.DeleteAccount(userToDelete);
+            var result = await accountDeletion.DeleteAccount(userToDelete);
 
             // Deletion should be unsuccessful, therefore true
             Assert.IsTrue(result.HasError);

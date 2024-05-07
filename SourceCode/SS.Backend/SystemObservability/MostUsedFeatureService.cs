@@ -1,62 +1,52 @@
 ﻿using SS.Backend.DataAccess;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace SS.Backend.Services.PersonalOverviewService
+namespace SS.Backend.SystemObservability
 {
-    public class PersonalOverview : IPersonalOverview
+    public class MostUsedFeatureService : IMostUsedFeatureService
     {
-
-        private ConfigService? configService;
-        private readonly IPersonalOverviewDAO _personalOverviewDAO;
-
-        public PersonalOverview(IPersonalOverviewDAO personalOverviewDAO)
+        private ConfigService configService;
+        private readonly ISystemObservabilityDAO _systemObservabilityDAO;
+        public MostUsedFeatureService(ISystemObservabilityDAO systemObservabilityDAO) 
         {
-            _personalOverviewDAO = personalOverviewDAO;
+            _systemObservabilityDAO = systemObservabilityDAO;
         }
 
-        public async Task<IEnumerable<ReservationInformation>> GetUserReservationsAsync(string username, DateOnly? fromDate = null, DateOnly? toDate = null)
+        public async Task<IEnumerable<MostUsedFeature>> GetMostUsedFeatures(string username, string timeSpan)
         {
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
             var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
             configService = new ConfigService(configFilePath);
-
-            List<ReservationInformation> reservationList = new List<ReservationInformation>();
-
-            Response result = new Response();
-
-
-            // initializes a new instance of the logger
             Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+
+            List<MostUsedFeature> usedFeaturesList = new List<MostUsedFeature>();
+
+            Response response = new Response();
 
             try
             {
+                response = await _systemObservabilityDAO.RetrieveMostUsedFeatures(username, timeSpan);
 
-                result = await _personalOverviewDAO.GetReservationList(username, fromDate, toDate);
-
-                if (!result.HasError && result.ValuesRead != null)
+                if (!response.HasError && response.ValuesRead != null)
                 {
-                    foreach (DataRow row in result.ValuesRead.Rows)
+                    foreach (DataRow row in response.ValuesRead.Rows)
                     {
-                        var reservationDate = ((DateTime)row["reservationDate"]).Date;
 
-                        var reservation = new ReservationInformation
+                        var usedFeatures = new MostUsedFeature
                         {
-                            ReservationID = Convert.ToInt32(row["reservationID"]),
-                            CompanyName = row["companyName"].ToString(),
-                            CompanyID = Convert.ToInt32(row["companyID"]),
-                            Address = row["address"].ToString(),
-                            FloorPlanID = Convert.ToInt32(row["floorPlanID"]),
-                            SpaceID = row["spaceID"].ToString(),
-                            ReservationDate = DateOnly.FromDateTime(reservationDate),
-                            ReservationStartTime = ((TimeSpan)row["startTime"]),
-                            ReservationEndTime = ((TimeSpan)row["endTime"]),
-                            Status = row["status"].ToString()
+                            FeatureName = (string)row["FeatureName"],
+                            UsageCount = (int)row["UsageCount"]
                         };
 
-                        reservationList.Add(reservation);
+                        usedFeaturesList.Add(usedFeatures);
                     }
 
                     LogEntry entry = new LogEntry()
@@ -65,69 +55,64 @@ namespace SS.Backend.Services.PersonalOverviewService
                         timestamp = DateTime.UtcNow,
                         level = "Info",
                         username = username,
-                        category = "Data Store",
-                        description = "Successful Reservation Retrieval"
+                        category = "Data",
+                        description = "Successful Retrieval of Most Used Features Service"
                     };
 
                     await logger.SaveData(entry);
                 }
                 else
                 {
-                    result.HasError = true;
-                    result.ErrorMessage += $"No data found.";
+                    response.HasError = true;
+                    response.ErrorMessage += $"No data found.";
 
                     LogEntry errorEntry = new LogEntry()
                     {
                         timestamp = DateTime.UtcNow,
                         level = "Error",
                         username = username,
-                        category = "Data Store",
-                        description = "Unsuccessful Reservation Retrieval or No Existing Reservations"
+                        category = "Data",
+                        description = "Unsuccessful Retrieval of Most Used Features Service"
                     };
                     await logger.SaveData(errorEntry);
                 }
             }
             catch (Exception ex)
             {
-                // If an error occurs error
-                result.HasError = true;
-                result.ErrorMessage = ex.Message;
-
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
                 LogEntry errorEntry = new LogEntry()
                 {
                     timestamp = DateTime.UtcNow,
                     level = "Error",
                     username = username,
                     category = "Data",
-                    description = "Service Error In PersonalOverview To Get Reservations"
+                    description = "Error in the Rerrieval of Most Used Features Service"
                 };
                 await logger.SaveData(errorEntry);
             }
 
-            return reservationList;
+            return usedFeaturesList;
+
         }
 
-        public async Task<Response> DeleteUserReservationsAsync(string username, int reservationID)
+        public async Task<Response> InsertUsedFeature(string username, string featureName)
         {
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
             var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
             configService = new ConfigService(configFilePath);
-
-            // initializes a new instance of the logger
             Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
 
             Response response = new Response();
 
             try
             {
+                response = await _systemObservabilityDAO.InsertUsedFeature(username, featureName);
 
-                response = await _personalOverviewDAO.DeleteReservation(username, reservationID);
 
-                if (response.HasError == false)
+                if (!response.HasError)
                 {
-
-                    // Successful Deletion
                     LogEntry entry = new LogEntry()
 
                     {
@@ -135,21 +120,22 @@ namespace SS.Backend.Services.PersonalOverviewService
                         level = "Info",
                         username = username,
                         category = "Data Store",
-                        description = "Successful Reservation Deletion"
+                        description = "Successful Service For Insertion of Feature Use"
                     };
 
                     await logger.SaveData(entry);
                 }
                 else
                 {
-                    //Unsuccessful Deletion
+                    response.ErrorMessage += $"Could Not Insert Feature Use Information";
+
                     LogEntry errorEntry = new LogEntry()
                     {
                         timestamp = DateTime.UtcNow,
                         level = "Error",
                         username = username,
                         category = "Data Store",
-                        description = "Unsuccessful Reservation Deletion"
+                        description = "Unsuccessful Service For Insertion of Feature Use"
                     };
 
                     await logger.SaveData(errorEntry);
@@ -158,7 +144,7 @@ namespace SS.Backend.Services.PersonalOverviewService
             catch (Exception ex)
             {
                 response.HasError = true;
-                response.ErrorMessage += $"Encountered an error deleting the reservation:{ex.Message}";
+                response.ErrorMessage = ex.Message;
 
                 LogEntry errorEntry = new LogEntry()
                 {
@@ -166,13 +152,14 @@ namespace SS.Backend.Services.PersonalOverviewService
                     level = "Error",
                     username = username,
                     category = "Data",
-                    description = "Service Error In PersonalOverview To Delete Reservaion"
+                    description = "Service Error In Most Used Feature Service"
                 };
 
                 await logger.SaveData(errorEntry);
             }
 
             return response;
+
         }
     }
 }

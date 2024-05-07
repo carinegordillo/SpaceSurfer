@@ -114,7 +114,6 @@ namespace PersonalOverviewAPI.Controllers
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("7");
                             return StatusCode(500, $"An error occurred while fetching user reservations: {ex.Message}");
                         }
                     }

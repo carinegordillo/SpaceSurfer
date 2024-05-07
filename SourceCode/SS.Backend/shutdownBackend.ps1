@@ -21,10 +21,9 @@ foreach ($port in $ports) {
             $processId = $process.OwningProcess
             
             # Get process name if process exists
-            $processName = if (Get-Process -Id $processId -ErrorAction SilentlyContinue) {
-                (Get-Process -Id $processId).ProcessName
-            } else {
-                "Process Name Not Found"
+            $processName = "Process Name Not Found"
+            if (Get-Process -Id $processId -ErrorAction SilentlyContinue) {
+                $processName = (Get-Process -Id $processId).ProcessName
             }
             
             Write-Host "  Process ID: $processId, Name: $processName"
