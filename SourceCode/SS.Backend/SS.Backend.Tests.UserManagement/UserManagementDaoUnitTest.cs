@@ -14,7 +14,8 @@ namespace SS.Backend.Tests.UserManagement;
         private SqlDAO _sqlDao;
         private ConfigService _configService;
 
-
+        string userHash1 = "Yu86Ho6KDmtOeP687I/AHNE4rhxoCzZDs9v/Mpe+SZw=";
+        string userHash2 = "MaKM/H0KYHLGJPn4alLS1BpbvakoB3RjXLmbbJI4PE4=";
         
         
         [TestInitialize]
@@ -39,7 +40,7 @@ namespace SS.Backend.Tests.UserManagement;
             
             // Arrange
             var column = "hashedUsername";  
-            var value = "user8hash";
+            var value = userHash1;
             var columnToModify = "isActive";
             var newValue = "no";
             var tableName = "dbo.activeAccount";
@@ -71,8 +72,9 @@ namespace SS.Backend.Tests.UserManagement;
         public async Task GeneralModifier_InvalidTable()
         {
             // Arrange
+            // Arrange
             var column = "hashedUsername";  
-            var value = "testUsername";
+            var value = userHash1;
             var columnToModify = "isActive";
             var newValue = "no";
             var tableName = "nonExistentTable";
@@ -88,8 +90,9 @@ namespace SS.Backend.Tests.UserManagement;
         public async Task GeneralModifier_InvalidColumn()
         {
             // Arrange
+            // Arrange
             var column = "nonExistentColumn";  
-            var value = "testUsername";
+            var value = userHash1;
             var columnToModify = "isActive";
             var newValue = "no";
             var tableName = "dbo.activeAccount";
@@ -122,7 +125,7 @@ namespace SS.Backend.Tests.UserManagement;
             // Arrange
             var userRequest = new UserRequestModel
             {
-                UserHash = "testUserHash",
+                UserHash = userHash2,
                 RequestDate = DateTime.UtcNow,
                 Status = "Pending",
                 RequestType = "Recovery",
@@ -143,9 +146,9 @@ namespace SS.Backend.Tests.UserManagement;
         [TestMethod]
         public async Task ReadTableWhere_ReturnsCorrectData_WithValidCondition()
         {
-            // Arrange
+             // Arrange
             var whereClause = "hashedUsername";
-            var whereClauseVal = "user7hash";
+            var whereClauseVal = userHash2;
             var tableName = "dbo.userProfile";
 
             // Act
