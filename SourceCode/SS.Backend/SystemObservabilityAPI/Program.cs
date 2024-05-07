@@ -1,13 +1,14 @@
 using SS.Backend.DataAccess;
 using SS.Backend.Security;
-using SS.Backend.Services.DeletingService;
 using SS.Backend.Services.LoggingService;
+using SS.Backend.SystemObservability;
 using SS.Backend.SharedNamespace;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var baseDirectory = AppContext.BaseDirectory;
 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
@@ -16,8 +17,14 @@ var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local
 builder.Services.AddTransient<ConfigService>(provider => new ConfigService(configFilePath));
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
-builder.Services.AddTransient<IDatabaseHelper, DatabaseHelper>();
-builder.Services.AddTransient<IAccountDeletion, AccountDeletion>();
+builder.Services.AddTransient<ISystemObservabilityDAO, SystemObservabilityDAO>();
+builder.Services.AddTransient<ILoginCountService, LoginCountService>();
+builder.Services.AddTransient<IRegistrationCountService, RegistrationCountService>();
+builder.Services.AddTransient<IViewDurationService, ViewDurationService>();
+builder.Services.AddTransient<IMostUsedFeatureService, MostUsedFeatureService>();
+builder.Services.AddTransient<ICompanyReservationCountService, CompanyReservationCountService>();
+builder.Services.AddTransient<ICompanySpaceCountService, CompanySpaceCountService>();
+
 builder.Services.AddTransient<GenOTP>();
 builder.Services.AddTransient<Hashing>();
 builder.Services.AddTransient<Response>();
@@ -61,6 +68,16 @@ app.Use((context, next) =>
 
     return next();
 });
+
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
+
+
+}
 
 app.UseMiddleware<AuthorizationMiddleware>();
 

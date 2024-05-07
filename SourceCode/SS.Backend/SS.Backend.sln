@@ -50,6 +50,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SS.Backend", "SS.Backend", 
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B01F06E3-7BFC-4E7C-BD5B-33065115F025}"
+	ProjectSection(SolutionItems) = preProject
+		shutdownBackend.js = shutdownBackend.js
+		shutdownBackend.ps1 = shutdownBackend.ps1
+		startupBackend.ps1 = startupBackend.ps1
+		startupBackend.sh = startupBackend.sh
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.Tokens", "SS.Backend.Tests.Tokens\SS.Backend.Tests.Tokens.csproj", "{2AB7F8EB-71F5-444A-9C9B-65A8741329B7}"
 EndProject
@@ -185,7 +191,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{A5D1B6
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManagerHubAPI", "TaskManagerHubAPI\TaskManagerHubAPI.csproj", "{DBE0B489-8048-4414-9B33-BCE1B506F86F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.Tests.ReservationManagers", "SS.Backend.Tests.ReservationManagers\SS.Backend.Tests.ReservationManagers.csproj", "{D935C7CA-69A4-4369-9789-53C87831F873}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.ReservationManagers", "SS.Backend.Tests.ReservationManagers\SS.Backend.Tests.ReservationManagers.csproj", "{D935C7CA-69A4-4369-9789-53C87831F873}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.Tests.UsageAnalysisObeservability", "SS.Backend.Tests.UsageAnalysis\SS.Backend.Tests.UsageAnalysisObeservability.csproj", "{A7936BE8-5678-4553-AD4F-56BD6E3460ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS.Backend.SystemObservability", "SystemObservability\SS.Backend.SystemObservability.csproj", "{9E67B2A6-966B-4182-83BE-1E2165FC4AC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SystemObservabilityAPI", "SystemObservabilityAPI\SystemObservabilityAPI.csproj", "{1AEE8634-C86A-458C-BEEE-33986D1B89C3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "userProfileAPI", "userProfileAPI\userProfileAPI.csproj", "{AE9448B1-BDEE-406D-A3C1-BBA91C8A19B0}"
 EndProject
@@ -361,6 +373,18 @@ Global
 		{D935C7CA-69A4-4369-9789-53C87831F873}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D935C7CA-69A4-4369-9789-53C87831F873}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D935C7CA-69A4-4369-9789-53C87831F873}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7936BE8-5678-4553-AD4F-56BD6E3460ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7936BE8-5678-4553-AD4F-56BD6E3460ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7936BE8-5678-4553-AD4F-56BD6E3460ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7936BE8-5678-4553-AD4F-56BD6E3460ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E67B2A6-966B-4182-83BE-1E2165FC4AC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E67B2A6-966B-4182-83BE-1E2165FC4AC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E67B2A6-966B-4182-83BE-1E2165FC4AC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E67B2A6-966B-4182-83BE-1E2165FC4AC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AEE8634-C86A-458C-BEEE-33986D1B89C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AEE8634-C86A-458C-BEEE-33986D1B89C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AEE8634-C86A-458C-BEEE-33986D1B89C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AEE8634-C86A-458C-BEEE-33986D1B89C3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AE9448B1-BDEE-406D-A3C1-BBA91C8A19B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AE9448B1-BDEE-406D-A3C1-BBA91C8A19B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE9448B1-BDEE-406D-A3C1-BBA91C8A19B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -419,6 +443,9 @@ Global
 		{D5EF9858-E711-45A1-8ACF-3DE740D76129} = {95C970DB-0341-4652-8C2D-8BA668EC39E0}
 		{A5D1B6AD-0AFD-4886-B8E1-AF641BD60EC4} = {95C970DB-0341-4652-8C2D-8BA668EC39E0}
 		{DBE0B489-8048-4414-9B33-BCE1B506F86F} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{A7936BE8-5678-4553-AD4F-56BD6E3460ED} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{9E67B2A6-966B-4182-83BE-1E2165FC4AC3} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{1AEE8634-C86A-458C-BEEE-33986D1B89C3} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {27FF35A7-BBB6-414D-87FC-32255A9F675F}
