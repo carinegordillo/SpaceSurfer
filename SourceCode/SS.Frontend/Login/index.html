@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="style.css">
      <link rel="stylesheet" href="PersonalOverviewStyle.css">
     <!--<link rel="stylesheet" href="/Waitlist/style.css"> -->
-    <script src="UserProfile.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body class = "main-content">
@@ -23,26 +22,38 @@
                 </div>
             </div>
             <div class="nav-container">
+                <!-- unauthorized user view -->
                 <div id="noLogin" class="nav-items"  style="display: none;">
                     <div class="nav-item" id="navAbout" onclick="getAbout()">About</div>
                     <div class="nav-item" id="navRegister" onclick="registrationAccess()">Register</div>
                     <div class="nav-item" id="navLogin" onclick="getLogin()">Login</div>
                 </div>
-                
+                <!-- company manager view -->
+                <div id = "CMview" style = "display:none;"> 
+                    <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
+                    <div class="nav-item" type="button" onclick="employeeSetupAccess()">Employee Account Setup</div>
+                </div>
+                <!-- facility manager view -->
+                <div id = "FMview" style = "display:none;"> 
+                    <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
+                    <div class="nav-item" type="button" onclick="employeeSetupAccess()">Employee Account Setup</div>
+                </div>
+                <!-- general nav all users can see -->
                 <div id="homepageGen" class="nav-items" style="display: none;">
                     <div class="nav-item" type="button" onclick="getHomePage()">
                         <i class="fas fa-home">Home</i> 
                     </div>
-                    <div class="nav-item" type="button" onclick="getUserProfile()">Profile</div>
                     <div class="nav-item" type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</div>
                     <div class="nav-item" type="button" onclick="waitlistAccess()">Waitlist</div>
                     <div class="nav-item" type="button" onclick="personalOverviewAccess()" data-testid="personal-overview-view">Personal Overview</div>
                     <div class="nav-item" type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</div>
-                    <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
-                    <div class="nav-item" type="button" onclick="employeeSetupAccess()">Employee Account Setup</div>
+                </div>
+                <div id="userNav" class="nav-items" style="display: none;">
                     <div class="nav-item" type="button" id="identity"></div>
+                    <div class="nav-item" type="button" onclick="getUserProfile()">Profile</div>
                     <div class="nav-item" type="button" onclick="logout()">Logout</div>
                 </div>
+                
             </div>
         </nav>
     </header>
@@ -499,6 +510,7 @@
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
     <script src = "SpaceManager.js"></script>
+    <script src = "UserProfile.js"></script>
 </body>
 </html>
 
