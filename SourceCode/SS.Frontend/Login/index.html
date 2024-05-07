@@ -9,7 +9,6 @@
         <link rel="stylesheet" href="confirmStyle.css">
         <link rel="stylesheet" href="PersonalOverviewStyle.css">
     <!--<link rel="stylesheet" href="/Waitlist/style.css"> -->
-    <script src="UserProfile.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body class = "main-content">
@@ -24,27 +23,39 @@
                 </div>
             </div>
             <div class="nav-container">
+                <!-- unauthorized user view -->
                 <div id="noLogin" class="nav-items"  style="display: none;">
                     <div class="nav-item" id="navAbout" onclick="getAbout()">About</div>
                     <div class="nav-item" id="navRegister" onclick="registrationAccess()">Register</div>
                     <div class="nav-item" id="navLogin" onclick="getLogin()">Login</div>
                 </div>
-                
+                <!-- company manager view -->
+                <div id = "CMview" style = "display:none;"> 
+                    <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
+                    <div class="nav-item" type="button" onclick="employeeSetupAccess()">Employee Account Setup</div>
+                    <div class="nav-item" type="button" onclick="SOAccess()">systemObservability</div>
+                </div>
+                <!-- facility manager view -->
+                <div id = "FMview" style = "display:none;"> 
+                    <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
+                </div>
+                <!-- general nav all users can see -->
                 <div id="homepageGen" class="nav-items" style="display: none;">
                     <div class="nav-item" type="button" onclick="getHomePage()">
                         <i class="fas fa-home">Home</i> 
                     </div>
-                    <div class="nav-item" type="button" onclick="getUserProfile()">Profile</div>
                     <div class="nav-item" type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</div>
                     <div class="nav-item" type="button" onclick="confirmationAccess()" data-testid="confirmation-view">Confirmations</div>
                     <div class="nav-item" type="button" onclick="waitlistAccess()">Waitlist</div>
                     <div class="nav-item" type="button" onclick="personalOverviewAccess()" data-testid="personal-overview-view">Personal Overview</div>
                     <div class="nav-item" type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</div>
-                    <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
-                    <div class="nav-item" type="button" onclick="employeeSetupAccess()">Employee Account Setup</div>
+                </div>
+                <div id="userNav" class="nav-items" style="display: none;">
                     <div class="nav-item" type="button" id="identity"></div>
+                    <div class="nav-item" type="button" onclick="getUserProfile()">Profile</div>
                     <div class="nav-item" type="button" onclick="logout()">Logout</div>
                 </div>
+                
             </div>
         </nav>
     </header>
@@ -99,54 +110,6 @@
         </div>
     </section>
 
-    <section id="UnAuthnAbout" style="display: none;">
-        <div class="container">
-            <section id="sendOTPSection" class="loginForm">
-                <form id="sendOTPForm">
-                    <label class="login-title">About</label>
-                    <div class="about-section">
-                        <p>Welcome to <strong>Space Surfer</strong> - Your Premier Space Reservation Platform!</p>
-                        
-                        <h3>Who We Are</h3>
-                        <p>Space Surfer is a cutting-edge platform designed to simplify the way individuals and businesses reserve spaces for various purposes. Whether you're booking a conference room, securing a spot in a co-working space, or claiming a seat at a local event, Space Surfer offers a seamless, intuitive reservation experience that puts your convenience first.</p>
-                        
-                        <h3>Our Mission</h3>
-                        <p>Our mission at Space Surfer is to revolutionize space booking by making it as easy and stress-free as possible. We believe that finding and securing the right space, whether for work, leisure, or special events, should be straightforward and hassle-free. Space Surfer leverages advanced technology to connect space providers with users, ensuring efficient transactions and satisfied outcomes.</p>
-                        
-                        <!-- <h3>What We Offer</h3>
-                        <ul>
-                            <li><strong>Real-Time Availability:</strong> See up-to-date space availability to ensure you can book the space you need, when you need it.</li>
-                            <li><strong>Diverse Locations:</strong> Access a variety of spaces across multiple locations worldwide. Whether you're local or traveling, find a space that suits your needs.</li>
-                            <li><strong>Flexible Booking Options:</strong> From hourly reservations to long-term leases, choose the booking option that best fits your schedule and budget.</li>
-                            <li><strong>User-Friendly Interface:</strong> Our platform is designed with user experience in mind. Navigate our site with ease and book your space in just a few clicks.</li>
-                            <li><strong>Secure Transactions:</strong> Your security is our top priority. We provide a secure platform for all transactions, safeguarding your personal and financial information.</li>
-                        </ul>
-                        
-                        <h3>How It Works</h3>
-                        <ol>
-                            <li><strong>Search:</strong> Enter your location and date to see available spaces.</li>
-                            <li><strong>Select:</strong> Choose the space that meets your criteria.</li>
-                            <li><strong>Book:</strong> Reserve your space through our secure checkout process.</li>
-                            <li><strong>Use:</strong> Enjoy your reserved space and manage your booking through our user-friendly dashboard.</li>
-                        </ol> -->
-                        
-                        <h3>Our Vision</h3>
-                        <p>Looking ahead, Space Surfer aims to expand its reach by incorporating more diverse spaces and offering enhanced features that anticipate and meet our users' evolving needs. We are committed to continuous improvement and innovation to remain at the forefront of the space reservation industry.</p>
-                        
-                        <h3>Join Us</h3>
-                        <p>Ready to get started? Join Space Surfer today and experience the ultimate in space booking convenience. For questions or further information, please contact us at <a href="mailto:support@spacesurfer.com">support@spacesurfer.com</a>.</p>
-                        
-                        <p>Thank you for choosing Space Surfer — where your space is just a click away!</p>
-                    </div>
-                </form>
-            </section>
-            <!-- <div class="welcome-label">
-                Welcome to SpaceSurfer!
-            </div> -->
-            <img src="images/astronaut.png" alt="Astro" class = "hovering">
-
-        </div>
-    </section>
 
     <section id="welcomeSection" style="display: none;">
         <div class="container">
@@ -242,90 +205,6 @@
             </form>
         </div>
     </section>
-
-    <!--Registration-->
-    <section id="Registration" style="display: none;">
-        <div class = "container">
-            <form id="accountCreationForm" class = "loginForm">
-                <label class="register-title">Register to SpaceSurfer🤙</label>
-                <input type="text" id="username" name="username" placeholder="Email" required>
-                <input type="date" id="dob" name="dob" placeholder="Date of Birth" required>
-                <input type="text" id="firstname" name="firstName" placeholder="First Name" required>
-                <input type="text" id="lastname" name="lastName" placeholder="Last Name" required>
-                <!-- <input type="text" id="role" name="role" placeholder="Role" required> -->
-                <input type="hidden" id="role" name="role">
-                <input type="hidden" id="status" name="status">
-                <input type="text" id="backupEmail" name="backupEmail" placeholder="Backup Email">
-                
-                <label class="register-title">Are You A Company/Facility?</label>
-                <div class="form-row" style="display: flex; justify-content: center;">
-                <input type="checkbox" id="isCompany" name="isCompany" onchange="handleCheckboxChange(this)" >
-                <label for="isCompany">Company</label>
-        
-                <input type="checkbox" id="isFacility" name="isFacility" onchange="handleCheckboxChange(this)" >
-                <label for="isFacility">Facility</label>
-                </div>
-                
-                <div id="additionalFields" style="display: none;">
-                    <label for="name">Company/Facility Name:</label>
-                    <input type="text" id="companyName" name="name"><br>
-        
-                    <label for="location">Location:</label>
-                    <input type="text" id="address" name="location"><br>
-        
-                    <label for="openingHours">Opening Hours:</label>
-                    <input type="time" id="openingHours" name="openingHours"> <br>
-        
-                    <label for="closingHours">Closing Hours:</label>
-                    <input type="time" id="closingHours" name="closingHours"><br>
-        
-                    <fieldset id="daysOpen">
-                        <legend>Days Open:</legend>
-                        <label><input type="checkbox" name="daysOpen" value="Monday"> Monday</label><br>
-                        <label><input type="checkbox" name="daysOpen" value="Tuesday"> Tuesday</label><br>
-                        <label><input type="checkbox" name="daysOpen" value="Wednesday"> Wednesday</label><br>
-                        <label><input type="checkbox" name="daysOpen" value="Thursday"> Thursday</label><br>
-                        <label><input type="checkbox" name="daysOpen" value="Friday"> Friday</label><br>
-                        <label><input type="checkbox" name="daysOpen" value="Saturday"> Saturday</label><br>
-                        <label><input type="checkbox" name="daysOpen" value="Sunday"> Sunday</label><br>
-                    </fieldset>
-                </div>
-                <button id="postAccount" type="submit">Create Account</button>
-                <!-- <button id="loadRequestsButton" onclick="testingRegistration()">Load Requests</button>
-                <ul id="recoveryRequestsList"></ul> -->
-            </form>
-            <img src="images/astroText.png" alt="Astro" class = "hovering">
-        </div>  
-    </section>
-
-    <section id="employeeSetup" style="display: none;">
-        <div id = "registerView" class = "container"  >
-            <form id="employeeForm" class = "loginForm">
-                <label class="login-title">Register Employee to Space Surfer</label>
-                <input type="text" id="username" name="username" placeholder="Username" required>
-                <input type="date" id="dob" name="dob" placeholder="Date of Birth" required><br>
-                <input type="text" id="firstname" name="firstName" placeholder="First Name" required>
-                <input type="text" id="lastname" name="lastName" placeholder="Last Name" required>
-                <!-- <input type="text" id="role" name="role" placeholder="Role" required> -->
-                <input type="hidden" id="role" name="role">
-                <input type="hidden" id="status" name="status">
-                <input type="hidden" id="backupEmail" name="backupEmail"> <br>
-        
-                <button id="postAccount" type="submit">Create Employee Account</button>
-                <ul id="recoveryRequestsList"></ul>
-            </form>
-        </div>
-    </section>
-    <!--General Homepage-->
-    <!-- <section id="homepageGen" class="homepage-container" style="display: none;">
-        <button class="initProfileButton" type="button" onclick="getUserProfile()">Profile</button>
-        <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
-        <button type="button" onclick="confirmationAccess()">Confirmations</button>
-        <button type="button" onclick="waitlistAccess()">Waitlist</button>
-        <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
-        <button type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</button>
-        <button type="button" onclick="logout()">Logout</button>
-    </section> -->
 
     <section id="userProfileView" class="homepage-container" style="display: none;">
         <div class="userProfileContainer">
@@ -590,6 +469,26 @@
         </div>
     </section>
     
+    <section id = "systemObservability" class = "homepage-container" style = "display: none;">
+        <label>System Observability Dashboard</label>
+    
+        <button id="fetchInformation">Fetch System Information</button>
+        <div id="informationDisplay"></div>
+
+        <h2>Log View Duration</h2>
+        <form id="viewDurationForm">
+            <input type="text" id="viewName" placeholder="View Name">
+            <input type="number" id="durationInSeconds" placeholder="Duration in Seconds">
+            <button type="submit">Submit View Duration</button>
+        </form>
+
+        <h2>Log Feature Use</h2>
+        <form id="featureUseForm">
+            <input type="text" id="featureName" placeholder="Feature Name">
+            <button type="submit">Submit Feature Use</button>
+        </form>
+    
+    </section>
 
     <!--Manager Homepage-->
     <section id="homepageManager" class="homepage-container" style="display: none;">
@@ -604,8 +503,7 @@
     <footer>
         <p>Designed and Developed by the PixelPals Team</p>
     </footer>
-
-
+    
     <!--Reservation Detail Template-->
     <template id="reservation-detail-template">
         <span class="reservationID">ReservationID:</span>
@@ -648,5 +546,6 @@
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
     <script src = "SpaceManager.js"></script>
+    <script src = "UserProfile.js"></script>
 </body>
 </html>
