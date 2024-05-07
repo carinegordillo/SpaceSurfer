@@ -4,6 +4,7 @@ namespace SS.Backend.Services.CalendarService
     {
         public string filePath { get; set; } = string.Empty;
         public string eventName { get; set; } = string.Empty;
+        public DateTime? dateTime { get; set;} = null;
         public DateTime? start { get; set; } = null;
         public DateTime? end { get; set; } = null;
         public string description { get; set; } = string.Empty;

@@ -1,3 +1,4 @@
+﻿
 ﻿using Microsoft.Data.SqlClient;
 
 namespace SS.Backend.DataAccess

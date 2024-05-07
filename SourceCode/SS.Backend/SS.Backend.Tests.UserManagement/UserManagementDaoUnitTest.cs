@@ -16,8 +16,6 @@ namespace SS.Backend.Tests.UserManagement;
 
         string userHash1 = "Yu86Ho6KDmtOeP687I/AHNE4rhxoCzZDs9v/Mpe+SZw=";
         string userHash2 = "MaKM/H0KYHLGJPn4alLS1BpbvakoB3RjXLmbbJI4PE4=";
-
-
         
         
         [TestInitialize]
@@ -74,6 +72,7 @@ namespace SS.Backend.Tests.UserManagement;
         public async Task GeneralModifier_InvalidTable()
         {
             // Arrange
+            // Arrange
             var column = "hashedUsername";  
             var value = userHash1;
             var columnToModify = "isActive";
@@ -90,6 +89,7 @@ namespace SS.Backend.Tests.UserManagement;
         [TestMethod]
         public async Task GeneralModifier_InvalidColumn()
         {
+            // Arrange
             // Arrange
             var column = "nonExistentColumn";  
             var value = userHash1;
@@ -146,7 +146,7 @@ namespace SS.Backend.Tests.UserManagement;
         [TestMethod]
         public async Task ReadTableWhere_ReturnsCorrectData_WithValidCondition()
         {
-            // Arrange
+             // Arrange
             var whereClause = "hashedUsername";
             var whereClauseVal = userHash2;
             var tableName = "dbo.userProfile";

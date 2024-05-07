@@ -36,8 +36,7 @@ internal class Program
         Console.WriteLine("Hello World!");
 
 
-        TwoMinuteArchivingService twoMinuteArchivingService = new TwoMinuteArchivingService(s3ArchivingDestination);
-        twoMinuteArchivingService.Start();
+        
         
         
     }

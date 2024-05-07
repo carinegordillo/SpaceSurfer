@@ -1,0 +1,130 @@
+.reservation-details {
+    font-size: 12px;
+    margin-top: 5px;
+    padding: auto;
+}
+
+.reservation-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+}
+
+.confirmations-container{
+    display:flex;
+    text-align: center;
+    padding: 5px;
+    background-color: #919cb6;
+    color: white;
+    border-radius: 5px;
+}
+
+.confirmation-items{
+    display:grid;
+    text-align: left;
+    padding: 5px;
+    background-color: #7889b0;
+    color: white;
+    border: solid #ccc;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.reservation-details-container {
+    width: 70%;
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-top: 10px;
+    display:inline-block;
+    /* border-color: #495EA8; */
+    text-align: center;
+    background-color: #d6d0e9;
+    color: black;
+    /* box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1); */
+    padding: 10px;
+}
+
+.reservation-entry {
+    /* Your styles for each reservation entry */
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Styles for the buttons within each reservation entry */
+.delete-btn, .cancel-btn {
+    padding: 5px 10px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Different colors for delete and cancel for clarity */
+.delete-btn {
+    background-color: #9a2323;
+}
+.delete-btn:hover {
+    background-color: #ca4343;
+}
+
+.cancel-btn {
+    background-color: #ffe66d;
+    color: black;
+}
+.cancel-btn:hover {
+    background-color: #b39d30;
+}
+
+/* Modal container styles */
+.modal-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000; /* High z-index to make sure it's on top of other elements */
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+    display: none; /* Hide by default */
+}
+
+
+.modal-confirm-content {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    padding: 20px;
+    background-color: rgb(175, 175, 175); /* Default color for success */
+    font-family: Arial, sans-serif;
+    color: #333;
+    text-align: center;
+    border-radius: 8px;
+    /* box-shadow: 0 4px 8px rgba(0,0,0,0.1); */
+}
+
+.modal-confirm-content.error {
+    background-color: rgb(255, 87, 68); /* Color for error */
+}
+
+.modal-confirm-content button.close-button {
+    display: block;
+    text-align: right;
+    padding: 10px 20px;
+    margin: 20px auto 0;
+    border: none;
+    background-color: #000000;
+    color: rgb(0, 0, 0);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.modal-confirm-content button.close-button:hover {
+    background-color: #555;
+}

@@ -40,6 +40,7 @@ builder.Services.AddTransient<Hashing>();
 builder.Services.AddTransient<Response>();
 builder.Services.AddTransient<LogEntry>();
 builder.Services.AddTransient<ILogTarget, SqlLogTarget>();
+builder.Services.AddTransient<SS.Backend.Services.LoggingService.ILogger,Logger>();
 builder.Services.AddTransient<Logger>();
 builder.Services.AddTransient<SqlDAO>();
 

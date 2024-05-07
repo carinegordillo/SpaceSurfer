@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//SpaceSurfer//Reservation Confirmation//EN
+BEGIN:VEVENT
+UID:d7cbe8da-2010-41bf-8d11-c1cc98531c5b@gmail.com
+DTSTAMP:20240510T121200
+DTSTART:20240510T121200
+DTEND:20240510T131200
+SUMMARY:SpaceSurfer Reservation
+DESCRIPTION:Reservation at: AstroTech Innovations ReservationID: 1200 SpaceID: SPACE031  
+LOCATION:250 Spaceway Blvd, Houston, TX                    
+END:VEVENT
+END:VCALENDAR

@@ -16,7 +16,7 @@ namespace SS.Backend.Tests.SpaceCreationTest
         private ISpaceManagerDao? _spaceManagerDao; 
         private SqlDAO? _sqlDao;
         private ConfigService? _configService;
-        // private SqlCommand? _command;
+     
 
         [TestInitialize]
         public void Setup()
@@ -28,7 +28,6 @@ namespace SS.Backend.Tests.SpaceCreationTest
             _sqlDao = new SqlDAO(_configService);
             _spaceManagerDao = new SpaceManagerDao(_sqlDao);
             _spaceCreation = new SpaceCreation(_spaceManagerDao);
-            
         }
         private async Task CleanupTestData()
         {
@@ -64,93 +63,91 @@ namespace SS.Backend.Tests.SpaceCreationTest
         public async Task CreateSpace_Success()
         {
             Stopwatch timer = new Stopwatch();
-
-
-            string validCompanyHash = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
             var validFloorInfo = new CompanyFloor
             {
-                FloorPlanName = "Demo Code",
+                hashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ",
+                FloorPlanName = "NEW Demo Code",
                 FloorPlanImage = new byte[] { 0x01, 0x02, 0x03, 0x04 },
-                FloorSpaces = new Dictionary<string, int> { { "code1", 2 }, { "demo1", 3 }, {"review1", 3} },
+                FloorSpaces = new Dictionary<string, int> { { "newcode1", 2 }, { "newdemo1", 3 }, {"newreview1", 3} },
             };
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceCreation.CreateSpace(validCompanyHash, validFloorInfo);
+            var response = await _spaceCreation.CreateSpace(validFloorInfo);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
             await CleanupTestData().ConfigureAwait(false);
-          
         }
 
         [TestMethod]
         public async Task CreateSpace_InvalidHashedUsername()
         {
             Stopwatch timer = new Stopwatch();
-            string invalidHashedUsername = "invalidHashValue";
             var companyFloor = new CompanyFloor
             {
+                hashedUsername = "invalidHashedUsername",
                 FloorPlanName = "Test Floor Plan",
                 FloorPlanImage = new byte[] { 0x01, 0x02 },
                 FloorSpaces = new Dictionary<string, int> { { "S1", 120 } }
             };
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceCreation.CreateSpace(invalidHashedUsername, companyFloor);
+            var response = await _spaceCreation.CreateSpace(companyFloor);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             
             Assert.IsTrue(response.HasError);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
             await CleanupTestData().ConfigureAwait(false);
-     
         }
 
         [TestMethod]
         public async Task CreateSpace_NullCompanyFloor()
         {
-            string validHashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
-
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceCreation.CreateSpace(validHashedUsername, null);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            var companyFloor = new CompanyFloor
+            {
+                hashedUsername = null,
+                FloorPlanName = null,
+                FloorPlanImage = null,
+                FloorSpaces = null
+            };
             
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var response = await _spaceCreation.CreateSpace(companyFloor);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             Assert.IsTrue(response.HasError);
         }
 
         [TestMethod]
         public async Task CreateSpace_MissingFloorPlanName()
         {
-            string validHashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
             var companyFloor = new CompanyFloor
             {
-                FloorPlanName = null, // Intentionally setting this to null
+                hashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ",
+                FloorPlanName = null, 
                 FloorPlanImage = new byte[] { 0x01, 0x02 },
                 FloorSpaces = new Dictionary<string, int> { { "S1", 120 } }
             };
-
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceCreation.CreateSpace(validHashedUsername, companyFloor);
+            var response = await _spaceCreation.CreateSpace(companyFloor);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-            
             Assert.IsTrue(response.HasError);
-
         }
 
         [TestMethod]
         public async Task CreateSpace_MissingFloorPlanImage()
         {
-            string validHashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
             var companyFloor = new CompanyFloor
             {
+                hashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ",
                 FloorPlanName = "Test Floor Plan",
-                FloorPlanImage = null, // Intentionally setting this to null
+                FloorPlanImage = null, 
                 FloorSpaces = new Dictionary<string, int> { { "S1", 120 } }
             };
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceCreation.CreateSpace(validHashedUsername, companyFloor);
+            var response = await _spaceCreation.CreateSpace(companyFloor);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             
             // Adjust the Assert based on your method's expected behavior when the floor plan image is missing
@@ -160,16 +157,16 @@ namespace SS.Backend.Tests.SpaceCreationTest
         [TestMethod]
         public async Task CreateSpace_MissingFloorSpaces()
         {
-            string validHashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
             var companyFloor = new CompanyFloor
             {
+                hashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ",
                 FloorPlanName = "Test Floor Plan",
                 FloorPlanImage = new byte[] { 0x01, 0x02 },
                 FloorSpaces = null // Intentionally setting this to an empty dictionary
             };
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceCreation.CreateSpace(validHashedUsername, companyFloor);
+            var response = await _spaceCreation.CreateSpace(companyFloor);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             
             // Adjust the Assert based on your method's expected behavior when floor spaces are missing

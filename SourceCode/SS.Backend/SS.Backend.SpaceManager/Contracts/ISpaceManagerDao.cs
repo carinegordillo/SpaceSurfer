@@ -17,7 +17,7 @@ namespace SS.Backend.SpaceManager
         public  Task<Response> readTableWhere(string whereClause, object whereClauseval, string tableName);
         public Task<Response> GetFloorPlanIdByNameAndCompanyId(string floorPlanName, int companyID);
         public  Task<Response> ExecuteReadCompanyTables(SqlCommand command);
-         public  Task<Response> ExecuteWriteCompanyTables(SqlCommand command);
+        public  Task<Response> ExecuteWriteCompanyTables(SqlCommand command);
     
         
 
