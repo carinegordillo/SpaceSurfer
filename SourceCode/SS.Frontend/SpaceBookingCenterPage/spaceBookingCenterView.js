@@ -194,6 +194,10 @@ function renderReservations(data, containerSelector) {
             buttonsHtml = `
             <button class="modify-btn" data-reservation='${JSON.stringify(reservation)}'>Modify</button>
             <button class="cancel-btn" data-reservation='${JSON.stringify(reservation)}'>Cancel</button>
+            <button class="confirm-btn" data-reservation-id="${reservation.reservationID}">Confirm</button>
+            <button class="resend-confirm-btn" data-reservation-id="${reservation.reservationID}">Resend Email</button>
+            <button class="confirm-btn" data-reservation-id="${reservation.reservationID}">Confirm</button>
+            <button class="resend-confirm-btn" data-reservation-id="${reservation.reservationID}">Resend Email</button>
         `;
             break;
         case 1: 

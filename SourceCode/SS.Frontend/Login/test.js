@@ -62,13 +62,13 @@ function authenticateUser() {
     });
 }
 
-function logout() {
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('idToken');
-    document.getElementById("homepageGen").style.display = "none";
-    document.getElementById("homepageManager").style.display = "none";
-    document.getElementById("sendOTPSection").style.display = "block";
-}
+// function logout() {
+//     sessionStorage.removeItem('accessToken');
+//     sessionStorage.removeItem('idToken');
+//     document.getElementById("homepageGen").style.display = "none";
+//     document.getElementById("homepageManager").style.display = "none";
+//     document.getElementById("sendOTPSection").style.display = "block";
+// }
 
 function waitlistAccess() {
     var accessToken = sessionStorage.getItem('accessToken');
@@ -132,13 +132,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
 });
 
-function logout() {
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('idToken');
-    document.getElementById("homepageGen").style.display = "none";
-    document.getElementById("homepageManager").style.display = "none";
-    document.getElementById("sendOTPSection").style.display = "block";
-}
+// function logout() {
+//     sessionStorage.removeItem('accessToken');
+//     sessionStorage.removeItem('idToken');
+//     document.getElementById("homepageGen").style.display = "none";
+//     document.getElementById("homepageManager").style.display = "none";
+//     document.getElementById("sendOTPSection").style.display = "block";
+// }
 
 
 

@@ -40,7 +40,7 @@ builder.Services.AddTransient<SSAuthService>(provider =>
 
 // Learn more about configuring Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -64,14 +64,14 @@ app.Use((context, next) =>
 });
 
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseDeveloperExceptionPage();
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//    app.UseDeveloperExceptionPage();
 
 
-}
+//}
 
 app.UseMiddleware<AuthorizationMiddleware>();
 

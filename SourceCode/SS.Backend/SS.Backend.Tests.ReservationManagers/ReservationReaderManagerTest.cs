@@ -150,7 +150,9 @@ namespace SS.Backend.Tests.ReservationManagers{
         
             foreach (var info in reservationReadResult)
             {
+#pragma warning disable CS8629 // Nullable value type may be null.
                 actualIds.Add(info.ReservationID.Value);
+#pragma warning restore CS8629 // Nullable value type may be null.
             }
 
             Assert.IsNotNull(reservationReadResult);
@@ -230,7 +232,9 @@ namespace SS.Backend.Tests.ReservationManagers{
             {
                 foreach (var info in reservationReadResult)
                 {
+#pragma warning disable CS8629 // Nullable value type may be null.
                     actualIds.Add(info.ReservationID.Value );
+#pragma warning restore CS8629 // Nullable value type may be null.
                 }
             }
         

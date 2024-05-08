@@ -4,6 +4,7 @@ namespace SS.Backend.SharedNamespace
     {
         public UserInfo? UserInfo { get; set; }
         public CompanyInfo? CompanyInfo { get; set; }
+        public string? manager_hashedUsername { get; set; }
 
     }
 }
