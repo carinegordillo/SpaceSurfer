@@ -10,7 +10,9 @@ $apiDirectories = @(
     "SpaceBookingCenterAPI",
     "WaitlistApi",
     "PersonalOverview",
-    "userProfileAPI"
+    "userProfileAPI".
+    "TaskManagerHubAPI",
+    "EmailConfirmationAPI"
 )
 
 # Get the current directory of the script
