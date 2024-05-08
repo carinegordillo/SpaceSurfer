@@ -1,3 +1,18 @@
+let appConfig = null;
+
+function loadConfig() {
+    fetch('csp-config.json')  
+        .then(response => response.json())
+        .then(config => {
+            appConfig = config;  
+            console.log('Configuration loaded successfully.');
+        })
+        .catch(error => {
+            console.error('Failed to load configuration:', error);
+        });
+}
+document.addEventListener('DOMContentLoaded', loadConfig);
+
 document.addEventListener('DOMContentLoaded', function() {
     fetch('csp-config.json')
         .then(response => response.json())
@@ -38,11 +53,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function sendOTP() {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const loginUrl = appConfig.api.Login;  
     console.log("otp is sending")
     var userIdentity = document.getElementById("userIdentity").value;
     console.log(userIdentity);
 
-    fetch('http://localhost:5270/api/auth/sendOTP', {
+    fetch(`${loginUrl}/api/auth/sendOTP`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

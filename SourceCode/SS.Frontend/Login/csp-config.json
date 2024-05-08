@@ -20,5 +20,20 @@
         "http://localhost:8081",
         "http://localhost:5293"
     ],
-    "imgSrc": ["'self'", "data:"]
+    "imgSrc": ["'self'", "data:"], 
+    "api": {
+        "Login": "http://localhost:5270",
+        "Registration": "http://localhost:5041",
+        "UserProfile": "http://localhost:5048",
+        "AccountDeletion": "http://localhost:5198",
+        "AccountRecovery": "http://localhost:5176",
+        "Waitlist": "http://localhost:5099",
+        "SpaceBookingCenter": "http://localhost:5005",
+        "Confirmation": "http://localhost:5001",
+        "PersonalOverview": "http://localhost:5275",
+        "TaskManagerHub": "http://localhost:8089",
+        "CompanyAPI": "http://localhost:5279",
+        "EmailConfirmation": "http://localhost:5116",
+        "SpaceManager": "http://localhost:8081"
+    }  
 }
