@@ -1,6 +1,21 @@
-
-
 document.addEventListener('DOMContentLoaded', function() {
+    fetch('csp-config.json')
+        .then(response => response.json())
+        .then(cspConfig => {
+            const cspContent = [
+                `default-src ${cspConfig.defaultSrc.join(' ')}`,
+                `script-src ${cspConfig.scriptSrc.join(' ')}`,
+                `style-src ${cspConfig.styleSrc.join(' ')}`,
+                `connect-src ${cspConfig.connectSrc.join(' ')}`,
+                `img-src ${cspConfig.imgSrc.join(' ')}`
+            ].join('; ');
+
+            const meta = document.createElement('meta');
+            meta.httpEquiv = "Content-Security-Policy";
+            meta.content = cspContent;
+            document.head.appendChild(meta);
+        })
+        .catch(error => console.error('Failed to load CSP configuration:', error));
     const accessToken = sessionStorage.getItem('accessToken');
     if (accessToken) {
         hideAllSections();
@@ -14,6 +29,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // No valid token, show login
         hideAllSections();
         document.getElementById("homepageGen").style.display = "none";
+        document.getElementById("userNav").style.display = "none";
+        document.getElementById("CMview").style.display = "none";
+        document.getElementById("welcomeSection").style.display = "none";
         document.getElementById("noLogin").style.display = "block";
         document.getElementById("sendOTPSection").style.display = "block";
     }
@@ -133,7 +151,6 @@ function authenticateUser() {
 
 function logout() {
     console.log("logout clicked")
-    console.log("logout clicked")
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('idToken');
     sessionStorage.removeItem('userIdentity');
@@ -160,7 +177,6 @@ function getLogin(){
     hideAllSections();
     document.getElementById('sendOTPSection').style.display = 'block';
     document.getElementById('noLogin').style.display = 'block';
-
 }
 
 function getAbout(){
@@ -184,9 +200,7 @@ function spaceBookingCenterAccess() {
 function registrationAccess() {
     hideAllSections();
     document.getElementById('Registration').style.display = 'block';
-    document.getElementById('noLogin').style.display = 'block';
-
-    
+    document.getElementById('noLogin').style.display = 'block';    
 }
 
 function taskHubAccess() {
@@ -203,6 +217,7 @@ function waitlistAccess() {
     hideAllSections();
     document.getElementById('waitlistView').style.display = 'block';
 }
+
 function spaceManagerAccess() {
     hideAllSections();
     document.getElementById('spaceManagerView').style.display = 'block';
