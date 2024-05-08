@@ -24,21 +24,28 @@ function sendOTP() {
     var userIdentity = document.getElementById("userIdentity").value;
     console.log(userIdentity);
 
-    $.ajax({
-        url: 'http://localhost:5270/api/auth/sendOTP',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ userIdentity: userIdentity }),
-        success: function (response) {
-            hideAllSections();
-            document.getElementById("sendOTPSection").style.display = "none";
-            document.getElementById("enterOTPSection").style.display = "block";
-            document.getElementById("noLogin").style.display = "block";
-
+    fetch('http://localhost:5270/api/auth/sendOTP', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         },
-        error: function (xhr, status, error) {
-            alert('Error sending verification code.');
+        body: JSON.stringify({ userIdentity: userIdentity })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        return response.json();
+    })
+    .then(data => {
+        hideAllSections();
+        document.getElementById("sendOTPSection").style.display = "none";
+        document.getElementById("enterOTPSection").style.display = "block";
+        document.getElementById("noLogin").style.display = "block";
+    })
+    .catch(error => {
+        console.error('Error sending verification code:', error);
+        alert('Error sending verification code.');
     });
 }
 
