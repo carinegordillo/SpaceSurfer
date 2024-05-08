@@ -70,84 +70,64 @@ function sendOTP() {
 function authenticateUser() {
     var otp = document.getElementById("otp").value;
     var userIdentity = document.getElementById("userIdentity").value;
-    $.ajax({
-        url: 'http://localhost:5270/api/auth/authenticate',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ userIdentity: userIdentity, proof: otp }),
-        success: function (response) {
-            var accessToken = response.accessToken;
-            var idToken = response.idToken;
-            sessionStorage.setItem('accessToken', accessToken);
-            sessionStorage.setItem('idToken', idToken);
-            document.getElementById("enterOTPSection").style.display = "none";
-            document.getElementById("successResult").style.display = "none";
 
-            var accessToken = sessionStorage.getItem('accessToken');
-
-            $.ajax({
-                url: 'http://localhost:5270/api/auth/getRole',
-                type: 'POST',
-                contentType: 'application/json',
-                data: accessToken,
-                success: function (response) {
-                    showModal("You're logged in!");
-                    sessionStorage.setItem('role', response);
-                    if (response === "2") {
-                        showModal("You're logged in!");
-                        hideAllSections();
-                        document.getElementById("homepageGen").style.display = "block";
-                        document.getElementById("userNav").style.display = "block";
-                        document.getElementById("CMview").style.display = "block";
-                        document.getElementById("FMview").style.display = "none";
-                        sessionStorage.setItem('userIdentity', userIdentity);
-                        document.getElementById("identity").style.display = "block";
-                        document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
-                        document.getElementById("welcomeSection").style.display = "block";
-
-                    } else if (response === "3"){
-                        showModal("You're logged in!");
-                        hideAllSections();
-                        document.getElementById("homepageGen").style.display = "block";
-                        document.getElementById("userNav").style.display = "block";
-                        document.getElementById("FMview").style.display = "block";
-                        document.getElementById("CMview").style.display = "none";
-                        sessionStorage.setItem('userIdentity', userIdentity);
-                        document.getElementById("identity").style.display = "block";
-                        document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
-                        document.getElementById("welcomeSection").style.display = "block";
-                    } else if (response === "4" || response === "5"){
-                        showModal("You're logged in!");
-                        hideAllSections();
-                        document.getElementById("homepageGen").style.display = "block";
-                        document.getElementById("userNav").style.display = "block";
-                        document.getElementById("FMview").style.display = "none";
-                        document.getElementById("CMview").style.display = "none";
-                        sessionStorage.setItem('userIdentity', userIdentity);
-                        document.getElementById("identity").style.display = "block";
-                        document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
-                        document.getElementById("welcomeSection").style.display = "block";
-                    }
-                    else {
-                        showModal("You're logged in!");
-                        hideAllSections();
-                        document.getElementById("homepageGen").style.display = "block";
-                        document.getElementById("userNav").style.display = "block";
-                        sessionStorage.setItem('userIdentity', userIdentity);
-                        document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
-                        document.getElementById("welcomeSection").style.display = "block";
-                     }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error fetching role:', error);
-                }
-            });
+    fetch('http://localhost:5270/api/auth/authenticate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         },
-        error: function (xhr, status, error) {
-            showModal('Incorrect verification code. Please double-check and try again.');
-        }
+        body: JSON.stringify({ userIdentity: userIdentity, proof: otp })
+    })
+    .then(response => response.json())
+    .then(data => {
+        var accessToken = data.accessToken;
+        var idToken = data.idToken;
+        sessionStorage.setItem('accessToken', accessToken);
+        sessionStorage.setItem('idToken', idToken);
+        document.getElementById("enterOTPSection").style.display = "none";
+        document.getElementById("successResult").style.display = "none";
+
+        return fetch('http://localhost:5270/api/auth/getRole', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: accessToken
+        });
+    })
+    .then(response => response.text())
+    .then(role => {
+        showModal("You're logged in!");
+        sessionStorage.setItem('role', role);
+        manageUserViews(role, userIdentity);
+    })
+    .catch(error => {
+        showModal('Incorrect verification code. Please double-check and try again.');
+        console.error('Error during authentication:', error);
     });
 }
+
+function manageUserViews(role, userIdentity) {
+    hideAllSections();
+    document.getElementById("homepageGen").style.display = "block";
+    document.getElementById("userNav").style.display = "block";
+    sessionStorage.setItem('userIdentity', userIdentity);
+    document.getElementById("identity").style.display = "block";
+    document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
+    document.getElementById("welcomeSection").style.display = "block";
+
+    if (role === "2") {
+        document.getElementById("CMview").style.display = "block";
+        document.getElementById("FMview").style.display = "none";
+    } else if (role === "3") {
+        document.getElementById("FMview").style.display = "block";
+        document.getElementById("CMview").style.display = "none";
+    } else if (role === "4" || role === "5") {
+        document.getElementById("FMview").style.display = "none";
+        document.getElementById("CMview").style.display = "none";
+    }
+}
+
 
 function logout() {
     console.log("logout clicked")
