@@ -767,3 +767,48 @@ button:hover {
 .close-button:hover {
     background-color: #0056b3; /* Darker blue on hover */
 }
+
+#approvalFormContainer {
+
+    width: 50%;
+    box-sizing: border-box; /* Includes padding and border in width */
+}
+
+#deactivateUserSectionContainer {
+
+    width: 50%;
+    box-sizing: border-box; /* Includes padding and border in width */
+}
+
+
+.user-requests-view-container{
+
+    max-height: 100%;
+    overflow-y: auto;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+}
+
+#approvalForm {
+    flex-grow: 2;
+    margin-right: 20px;
+}
+
+#deactivateUserSection {
+    flex-grow: 1;
+    padding: 10px;
+    border-left: 1px solid #ccc;
+}
+
+#pendingRequests {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+button, input[type="text"] {
+    width: 100%;
+    margin-top: 10px;
+}

@@ -44,6 +44,7 @@ builder.Services.AddTransient<IUserManagementDao, UserManagementDao>();
 builder.Services.AddTransient<IAccountRecoveryModifier, AccountRecoveryModifier>();
 builder.Services.AddTransient<IProfileModifier, ProfileModifier>();
 builder.Services.AddTransient<IAccountRecovery, AccountRecovery>();
+builder.Services.AddTransient<IAccountDisabler, AccountDisabler>();
 
 
 builder.Services.AddCors(options =>

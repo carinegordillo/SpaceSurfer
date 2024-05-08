@@ -14,8 +14,11 @@ namespace AccountManagement.Controllers;
 public class RecoverRequestController : ControllerBase
 {
     private readonly IAccountRecovery _accountRecovery;
-    public RecoverRequestController (IAccountRecovery AccountRecovery){
+    private IAccountDisabler _accountDisabler;
+
+    public RecoverRequestController (IAccountRecovery AccountRecovery, IAccountDisabler AccountDisabler){
         _accountRecovery = AccountRecovery;
+        _accountDisabler = AccountDisabler;
     }
 
 
@@ -43,4 +46,137 @@ public class RecoverRequestController : ControllerBase
         // Return the list of results as JSON 
         return Ok(response);
     }
+
+    [Route("getAllRequests")]
+    [HttpGet]
+    public async Task<ActionResult<List<UserRequestModel>>> GetAllRequests(){
+
+        var response = await _accountRecovery.ReadUserRequests();
+
+        if (response.HasError)
+        {
+            Console.WriteLine(response.ErrorMessage);
+            return StatusCode(500, response.ErrorMessage);
+        }
+
+        List<UserRequestModel> requestList = new List<UserRequestModel>();
+
+        if (response.ValuesRead != null)
+        {
+            foreach (DataRow row in response.ValuesRead.Rows)
+            {
+                var userRequest = new UserRequestModel
+                {
+                    RequestId = Convert.ToInt32(row["request_id"]),
+                    UserHash = Convert.ToString(row["userHash"]),
+                    RequestDate = Convert.ToDateTime(row["requestDate"]),
+                    Status = Convert.ToString(row["status"]),
+                    RequestType = Convert.ToString(row["requestType"]),
+                    ResolveDate = row["resolveDate"] != DBNull.Value ? Convert.ToDateTime(row["resolveDate"]) : (DateTime?)null,
+                    AdditionalInformation = row["additionalInformation"] != DBNull.Value ? Convert.ToString(row["additionalInformation"]) : null
+                };
+                requestList.Add(userRequest);
+            }
+        }
+
+        return Ok(requestList);
+    }
+
+    [Route("acceptRequests")]
+    [HttpPost]
+    public async Task<IActionResult> AcceptRequests([FromBody] List<string> userHashes)
+    {
+        // Initialize a list to hold the result for each requestId
+        var results = new List<object>();
+
+        foreach (var requestId in userHashes)
+        {
+            var response = await _accountRecovery.RecoverAccount(requestId, true);
+            if (response.HasError)
+            {
+                Console.WriteLine($"Error processing request {requestId}: {response.ErrorMessage}");
+                results.Add(new { RequestId = requestId, Success = false, Message = response.ErrorMessage });
+            }
+            else
+            {
+                results.Add(new { RequestId = requestId, Success = true, Message = "Request accepted successfully" });
+            }
+        }
+        // Return the list of results as JSON 
+        return Ok(results);
+    }
+
+    [Route("denyRequests")]
+    [HttpPost]
+    public async Task<IActionResult> DenyRequests([FromBody] List<string> userHashes)
+    {
+        // Initialize a list to hold the result for each requestId
+        var results = new List<object>();
+
+        foreach (var requestId in userHashes)
+        {
+            var response = await _accountRecovery.RecoverAccount(requestId, false);
+            if (response.HasError)
+            {
+                Console.WriteLine($"Error processing request {requestId}: {response.ErrorMessage}");
+                results.Add(new { RequestId = requestId, Success = false, Message = response.ErrorMessage });
+            }
+            else
+            {
+                results.Add(new { RequestId = requestId, Success = true, Message = "Request accepted successfully" });
+            }
+        }
+        // Return the list of results as JSON 
+        return Ok(results);
+    }
+
+    [Route("disableAccount")]
+    [HttpPost]
+    public async Task<IActionResult> DisableUserAccount([FromBody] string userName)
+    {
+        if (string.IsNullOrEmpty(userName))
+        {
+            return BadRequest("User name must be provided.");
+        }
+
+        var response = await _accountDisabler.DisableAccount(userName);
+        Console.WriteLine(response.HasError);
+        if (response.HasError)
+        {
+            Console.WriteLine("Error disabling account");
+            return Ok(new { success = false, message = "Failed to Disable account." });
+        }
+        else
+        {
+            Console.WriteLine($"Disable request for user: {userName} was successful");
+            return Ok(new { success = true, message = "Account Successfully disabled." });
+        }
+    }
+
+    [Route("deleteRequestByUserHash")]
+    [HttpPost]
+    public async Task<IActionResult> DisableUserAccount([FromBody] List<string> userHashes)
+    {
+        var results = new List<object>();
+
+        foreach (var userHash in userHashes)
+        {
+            var response = await _accountRecovery. deleteUserRequestByuserHash(userHash);
+            if (response.HasError)
+            {
+                Console.WriteLine($"Error processing request {userHash}: {response.ErrorMessage}");
+                results.Add(new { RequestId = userHash, Success = false, Message = response.ErrorMessage });
+            }
+            else
+            {
+                results.Add(new { RequestId = userHash, Success = true, Message = "Request accepted successfully" });
+            }
+        }
+        return Ok(results);
+    }
+
+
+
+
+
 }

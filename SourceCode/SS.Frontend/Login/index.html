@@ -8,8 +8,7 @@
     <link rel="stylesheet" href="style.css">
      <link rel="stylesheet" href="PersonalOverviewStyle.css">
     <!--<link rel="stylesheet" href="/Waitlist/style.css"> -->
-    <script src="UserProfile.js"></script>
-    <script src="accountRecovery.js"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 
@@ -35,9 +34,10 @@
                 </div>
                 <div id="homepageGen" class="nav-items" style="display: none;">
                     <div class="nav-item" type="button" onclick="getHomePage()">Home</div>
-                    <div class="nav-item" type="button" onclick="getUserProfile()">Profile</div>
+                    <div class="nav-item" type="button" onclick="initProfile()">Profile</div>
                     <div class="nav-item" type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</div>
                     <div class="nav-item" type="button" onclick="waitlistAccess()">Waitlist</div>
+                    <div class="nav-item" type="button" onclick="initUserRequests()">User Requests</div>
                     <div class="nav-item" type="button" onclick="personalOverviewAccess()" data-testid="personal-overview-view">Personal Overview</div>
                     <div class="nav-item" type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</div>
                     <div class="nav-item" type="button" id="identity"></div>
@@ -67,14 +67,31 @@
         </div>
     </section>
 
-    <section id="accountRecoverySection"  class="recoveryForm" >
-            <form id="recoveryForm">
-                <label for="email" class="login-title">Account Recovery</label>
-                <input type="email" id="email" name="email" required placeholder="Enter your email">
-                <textarea id="additionalInformation" name="additionalInformation" required placeholder="Please add additional "></textarea>
-                <button type="submit">Send Recovery Request</button>
-            </form>
-    </section>
+<!-- Account Recovery Section -->
+<section id="accountRecoverySection" class="recoveryForm" style="display: none;">
+    <form id="recoveryForm">
+        <label for="email" class="login-title">Account Recovery</label>
+        <input type="email" id="userRecoveryIdentity" name="userRecoveryIdentity" required placeholder="Enter your email">
+        <button type="button" onclick="sendRecoveryOTP()">Send Recovery OTP</button>
+    </form>
+</section>
+
+<!-- Enter OTP Section -->
+<section id="enterAccountRecoveryOTPSection" class="form-container" style="display: none;">
+    <form id="enterOTPForm">
+        <label for="otp">Enter Verification Code</label>
+        <input type="text" id="RecoveryOtp" name="RecoveryOtp" required placeholder="Verification code">
+        <button type="button" onclick="authenticateRecoveryUser()">Verify OTP</button>
+    </form>
+</section>
+
+<!-- Additional Information Section -->
+<section id="additionalInfoSection" class="form-container" style="display: none;">
+    <form id="additionalInfoForm">
+        <textarea id="additionalInformation" name="additionalInformation" required placeholder="Please add additional "></textarea>
+        <button type="submit" onclick="sendRecoveryRequest(event)">Submit Recovery Request</button>
+    </form>
+</section>
 
     <section id="welcomeSection" style="display: none;">
         <div class="container">
@@ -115,6 +132,7 @@
         </div>
     </section>
 
+    
     <!--Personal Overview Center View-->
     <section id="personalOverviewCenter" class="homepage-container" style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
@@ -323,8 +341,37 @@
     </section>
 
 
+<section id="userRequestsView"  class="homepage-container" style="display: none;">
+    <div class="user-requests-view-container">
+        <div id="approvalFormContainer">
+            <form id="approvalForm">
+                <button id="loadRequestsButton">Refresh Pending Requests</button>
+                <div id="filterButtons">
+                    <button type="button" id="showPending">Show Pending</button>
+                    <button type="button" id="showApproved">Show Approved</button>
+                    <button type="button" id="showDenied">Show Denied</button>
+                </div>
+                <div id="pendingRequests" class="dynamic-content"></div>
+                <button id="approveRequestsBtn" type="submit">Approve Selected Requests</button>
+                <button id="denyRequestsBtn" type="submit">Deny Selected Requests</button>
+                <button id="deleteRequestsBtn" type="submit">Delete Selected Requests</button>
+            </form>
+        </div>
+        <div id="deactivateUserSectionContainer">
+            <section id="deactivateUserSection">
+                <h3>Deactivate User Account</h3>
+                <input type="text" id="userHashInput" placeholder="Enter User Hash" />
+                <button id="deactivateUserBtn">Deactivate User</button>
+            </section>
+        </div>
+    </div>
+</section>
+
+    
+
+
     <!--Manager Homepage-->
-    <section id="homepageManager" class="homepage-container" style="display: none;">
+    <section id="homepageManager"  style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview </button>
@@ -430,10 +477,13 @@
     <script src="waitlistScript.js"></script>
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
+    <script src="UserProfile.js"></script>
+    <script src="accountRecovery.js"></script>
     <!--<script src="../SpaceManager/pages/SpaceManager.js"></script>-->
 
 
 </body>
 
 </html>
+
 

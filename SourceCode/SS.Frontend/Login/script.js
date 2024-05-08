@@ -119,6 +119,7 @@ function logout() {
     document.getElementById("welcomeSection").style.display = "none";
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById("accountRecoverySection").style.display = "none";
+    document.getElementById("userRequestsView").style.display = "none";
 
 }
 
@@ -138,6 +139,7 @@ function getUserProfile(){
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
     document.getElementById("accountRecoverySection").style.display = "none";
+    document.getElementById("userRequestsView").style.display = "none";
 
 }
 
@@ -157,6 +159,7 @@ function spaceBookingCenterAccess() {
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
     document.getElementById("accountRecoverySection").style.display = "none";
+    document.getElementById("userRequestsView").style.display = "none";
 }
 
 
@@ -177,6 +180,7 @@ function taskHubAccess() {
     document.getElementById("welcomeSection").style.display = "none";
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById("accountRecoverySection").style.display = "none";
+    document.getElementById("userRequestsView").style.display = "none";
 }
 
 function personalOverviewAccess() {
@@ -195,6 +199,7 @@ function personalOverviewAccess() {
     document.getElementById("welcomeSection").style.display = "none";
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById("accountRecoverySection").style.display = "none";
+    document.getElementById("userRequestsView").style.display = "none";
 }
     // Hide other sections if needed
 function waitlistAccess() {
@@ -213,6 +218,7 @@ function waitlistAccess() {
     document.getElementById("welcomeSection").style.display = "none";
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById("accountRecoverySection").style.display = "none";
+    document.getElementById("userRequestsView").style.display = "none";
 }
 function getHomePage() {
     document.getElementById("welcomeSection").style.display = "block";
@@ -227,4 +233,5 @@ function getHomePage() {
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById('userProfileView').style.display = 'none';
     document.getElementById("accountRecoverySection").style.display = "none";
+    document.getElementById("userRequestsView").style.display = "none";
 }
