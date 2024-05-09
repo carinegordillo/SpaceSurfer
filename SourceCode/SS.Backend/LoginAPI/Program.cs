@@ -37,26 +37,26 @@ builder.Services.AddTransient<SSAuthService>(provider =>
     )
 );
 
-//adding archiving 
-//builder.Services.AddTransient<ITargetArchivingDestination, S3ArchivingDestination>();
-//builder.Services.AddSingleton<MonthlyArchivingService>();
+adding archiving 
+builder.Services.AddTransient<ITargetArchivingDestination, S3ArchivingDestination>();
+builder.Services.AddSingleton<MonthlyArchivingService>();
 
 
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
-//var archivingService = app.Services.GetRequiredService<MonthlyArchivingService>();
+var archivingService = app.Services.GetRequiredService<MonthlyArchivingService>();
 
-//app.Lifetime.ApplicationStarted.Register(() => {
-//    Console.WriteLine("Application is starting. MonthlyArchivingService is being started...");
-//    archivingService.Start();
-//});
+app.Lifetime.ApplicationStarted.Register(() => {
+    Console.WriteLine("Application is starting. MonthlyArchivingService is being started...");
+    archivingService.Start();
+});
 
-//app.Lifetime.ApplicationStopping.Register(() => {
-//    Console.WriteLine("Application is stopping. MonthlyArchivingService is being stopped...");
-//    archivingService.Stop();
-//});
+app.Lifetime.ApplicationStopping.Register(() => {
+    Console.WriteLine("Application is stopping. MonthlyArchivingService is being stopped...");
+    archivingService.Stop();
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
