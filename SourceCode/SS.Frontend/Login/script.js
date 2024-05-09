@@ -181,43 +181,12 @@ function getUserProfile(){
     console.log("get userprofile clicked  clicked");
     hideAllSections();
     document.getElementById('userProfileView').style.display = 'block';
-
-    // document.getElementById('homepageGen').style.display = 'none';
-    // document.getElementById('homepageManager').style.display = 'none';
-    document.getElementById('sendOTPSection').style.display = 'none';
-    document.getElementById('enterOTPSection').style.display = 'none';
-    document.getElementById('successResult').style.display = 'none';
-    document.getElementById('failResult').style.display = 'none';
-    document.getElementById("taskManagerView").style.display = "none";
-    document.getElementById('personalOverviewCenter').style.display = 'none';
-    document.getElementById('waitlistView').style.display = 'none';
-    document.getElementById('spaceBookingView').style.display = 'none';
-    document.getElementById("welcomeSection").style.display = "none";
-    document.getElementById("accountRecoverySection").style.display = "none";
-    document.getElementById("userRequestsView").style.display = "none";
-
-
 }
+
 
 function spaceBookingCenterAccess() {
     hideAllSections();
     document.getElementById('spaceBookingView').style.display = 'block';
-
-    // document.getElementById('homepageGen').style.display = 'none';
-    // document.getElementById('homepageManager').style.display = 'none';
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById('sendOTPSection').style.display = 'none';
-    document.getElementById('enterOTPSection').style.display = 'none';
-    document.getElementById('successResult').style.display = 'none';
-    document.getElementById('failResult').style.display = 'none';
-    document.getElementById("taskManagerView").style.display = "none";
-    document.getElementById('personalOverviewCenter').style.display = 'none';
-    document.getElementById('waitlistView').style.display = 'none';
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById("welcomeSection").style.display = "none";
-    document.getElementById("accountRecoverySection").style.display = "none";
-    document.getElementById("userRequestsView").style.display = "none";
-
 }
 
 function registrationAccess() {
@@ -231,67 +200,16 @@ function registrationAccess() {
 function taskHubAccess() {
     hideAllSections();
     document.getElementById('taskManagerView').style.display = 'block';
-
-    
-// do an if user role is whatever then display the manager page 
-    // document.getElementById('homepageGen').style.display = 'block';
-    // document.getElementById('homepageManager').style.display = 'none';
-    document.getElementById('sendOTPSection').style.display = 'none';
-    document.getElementById('enterOTPSection').style.display = 'none';
-    document.getElementById('successResult').style.display = 'none';
-    document.getElementById('failResult').style.display = 'none';
-    document.getElementById('personalOverviewCenter').style.display = 'none';
-    document.getElementById('spaceBookingView').style.display = 'none';
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById('waitlistView').style.display = 'none';
-    document.getElementById("welcomeSection").style.display = "none";
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById("accountRecoverySection").style.display = "none";
-    document.getElementById("userRequestsView").style.display = "none";
-
 }
 
 function personalOverviewAccess() {
     hideAllSections();
     document.getElementById('personalOverviewCenter').style.display = 'block';
-
-    // document.getElementById('homepageGen').style.display = 'block';
-    // document.getElementById('homepageManager').style.display = 'none';
-    document.getElementById('sendOTPSection').style.display = 'none';
-    document.getElementById('enterOTPSection').style.display = 'none';
-    document.getElementById('successResult').style.display = 'none';
-    document.getElementById('failResult').style.display = 'none';
-    document.getElementById('waitlistView').style.display = 'none';
-    document.getElementById("taskManagerView").style.display = "none";
-    document.getElementById('spaceBookingView').style.display = 'none';
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById("welcomeSection").style.display = "none";
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById("accountRecoverySection").style.display = "none";
-    document.getElementById("userRequestsView").style.display = "none";
-
 }
 
 function waitlistAccess() {
     hideAllSections();
     document.getElementById('waitlistView').style.display = 'block';
-
-
-    // document.getElementById('homepageGen').style.display = 'block';
-    // document.getElementById('homepageManager').style.display = 'none';
-    document.getElementById('sendOTPSection').style.display = 'none';
-    document.getElementById('enterOTPSection').style.display = 'none';
-    document.getElementById('successResult').style.display = 'none';
-    document.getElementById('failResult').style.display = 'none';
-    document.getElementById('personalOverviewCenter').style.display = 'none';
-    document.getElementById("taskManagerView").style.display = "none";
-    document.getElementById('spaceBookingView').style.display = 'none';
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById("welcomeSection").style.display = "none";
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById("accountRecoverySection").style.display = "none";
-    document.getElementById("userRequestsView").style.display = "none";
-
 }
 function spaceManagerAccess() {
     hideAllSections();
