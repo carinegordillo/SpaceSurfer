@@ -330,6 +330,26 @@ namespace SS.Backend.UserManagement
             return response;
         }
 
+        public async Task<Response> DeleteRequestWhere(string whereClause, object whereClauseval, string tableName){
+            Response response = new Response();
+            var commandBuilder = new CustomSqlCommandBuilder();
+
+            DeleteOnlyBuiltSqlCommands deleteOnlysqlCommands = new DeleteOnlyBuiltSqlCommands(commandBuilder);
+
+            SqlCommand command = deleteOnlysqlCommands.DeleteRowWhere(whereClause, whereClauseval, "userRequests");
+            
+            response = await _sqldao.SqlRowsAffected(command);
+
+            if (response.HasError == false){
+                response.ErrorMessage += "- DeleteRequestWhere- command successful -";
+            }
+            else{
+                 response.ErrorMessage += $"- DeleteRequestWhere- {command.CommandText} -  command not successful -";
+
+            }
+            return response;
+        }
+
     }
 
 
