@@ -89,7 +89,7 @@ function sendOTP() {
 function authenticateUser() {
     var otp = document.getElementById("otp").value;
     var userIdentity = document.getElementById("userIdentity").value;
-
+    const loginUrl = appConfig.api.Login; 
     fetch(`${loginUrl}/api/auth/authenticate`, {
         method: 'POST',
         headers: {
