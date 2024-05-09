@@ -200,20 +200,20 @@ function createUserProtectionUI() {
     requestDataButton.textContent = 'Request Data';
     requestDataButton.addEventListener('click', function () {
         document.getElementById('requestDataSection').style.display = 'block';
-        document.getElementById('deleteDataSection').style.display = 'none';
+        //document.getElementById('deleteDataSection').style.display = 'none';
         document.getElementById('verifyOTPSection').style.display = 'none';
     });
 
-    const deleteDataButton = document.createElement('button');
-    deleteDataButton.textContent = 'Delete Data';
-    deleteDataButton.addEventListener('click', function () {
-        document.getElementById('deleteDataSection').style.display = 'block';
-        document.getElementById('requestDataSection').style.display = 'none';
-        document.getElementById('verifyOTPSection').style.display = 'none';
-    });
+    //const deleteDataButton = document.createElement('button');
+    //deleteDataButton.textContent = 'Delete Data';
+    //deleteDataButton.addEventListener('click', function () {
+    //    document.getElementById('deleteDataSection').style.display = 'block';
+    //    document.getElementById('requestDataSection').style.display = 'none';
+    //    document.getElementById('verifyOTPSection').style.display = 'none';
+    //});
 
     contentContainer.appendChild(requestDataButton);
-    contentContainer.appendChild(deleteDataButton);
+    //contentContainer.appendChild(deleteDataButton);
 
     const requestDataSection = document.createElement('section');
     requestDataSection.id = 'requestDataSection';
@@ -264,10 +264,10 @@ function createUserProtectionUI() {
         sendCode();
     });
 
-    document.getElementById('deleteDataForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        deleteData();
-    });
+    //document.getElementById('deleteDataForm').addEventListener('submit', function (event) {
+    //    event.preventDefault();
+    //    deleteData();
+    //});
 
     const verifyOTPForm = document.getElementById('verifyOTPForm');
     if (verifyOTPForm) {
