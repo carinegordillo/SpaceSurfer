@@ -80,9 +80,13 @@ async function fetchUserProfile(email) {
     //     logout();
     //     return;
     // }
-
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const profileUrl = appConfig.api.UserProfile; 
     try {
-        const response = await fetch(`http://localhost:5048/api/profile/getUserProfile?email=${encodeURIComponent(email)}`);
+        const response = await fetch(`${profileUrl}/api/profile/getUserProfile?email=${encodeURIComponent(email)}`);
         const data = await response.json();
         return data.length > 0 ? data[0] : null;
     } catch (error) {
@@ -159,10 +163,15 @@ async function saveProfileChanges() {
         firstname: document.getElementById('firstName').value,
         lastname: document.getElementById('lastName').value,
     };
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const profileUrl = appConfig.api.UserProfile; 
 
     try {
         const accessToken = sessionStorage.getItem('accessToken');
-        const response = await fetch('http://localhost:5048/api/profile/updateUserProfile', {
+        const response = await fetch(`${profileUrl}/api/profile/updateUserProfile`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -198,8 +207,13 @@ function cancelEditProfile() {
 }
 
 async function checkTokenExpiration(accessToken) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const bookingUrl = appConfig.api.SpaceBookingCenter; 
     try {
-        const response = await fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/checkTokenExp', {
+        const response = await fetch(`${bookingUrl}/api/v1/spaceBookingCenter/reservations/checkTokenExp`, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
