@@ -1,21 +1,9 @@
-const baseUrl = "http://localhost:5116/api/v1/reservationConfirmation";
-
-// function logout() {
-//     sessionStorage.removeItem('accessToken');
-//     sessionStorage.removeItem('idToken');
-//     document.getElementById("homepageGen").style.display = "none";
-//     document.getElementById("homepageManager").style.display = "none";
-//     document.getElementById("sendOTPSection").style.display = "block";
-
-//     const existingModal = document.querySelector('.modal-content');
-//         if (existingModal) {
-//             existingModal.remove();
-//         }
-//     const modalBackdrop = document.querySelector('.modal-backdrop');
-//     if (modalBackdrop) {
-//         modalBackdrop.style.display = 'none';
-//     }
-// }
+if (!appConfig) {
+    console.error('Configuration is not loaded!');
+    return;
+}
+const reservationConfirmationUrl = appConfig.api.EmailConfirmation; 
+const baseUrl = `${reservationConfirmationUrl}/api/v1/reservationConfirmation`;
 
 function checkTokenExpiration(accessToken) {
     try {
