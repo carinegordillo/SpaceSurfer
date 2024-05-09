@@ -1,5 +1,4 @@
 let appConfig = null;
-
 function loadConfig() {
     fetch('csp-config.json')  
         .then(response => response.json())
@@ -91,7 +90,7 @@ function authenticateUser() {
     var otp = document.getElementById("otp").value;
     var userIdentity = document.getElementById("userIdentity").value;
 
-    fetch('http://localhost:5270/api/auth/authenticate', {
+    fetch(`${loginUrl}/api/auth/authenticate`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
