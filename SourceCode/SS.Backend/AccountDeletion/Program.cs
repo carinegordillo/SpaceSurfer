@@ -1,83 +1,69 @@
-using Microsoft.Net.Http.Headers;
 using SS.Backend.DataAccess;
+using SS.Backend.Security;
 using SS.Backend.Services.DeletingService;
+using SS.Backend.Services.LoggingService;
+using SS.Backend.SharedNamespace;
 
-// Creates a new web application builder
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+
+var baseDirectory = AppContext.BaseDirectory;
+var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+
+builder.Services.AddTransient<ConfigService>(provider => new ConfigService(configFilePath));
+builder.Services.AddTransient<ISqlDAO, SqlDAO>();
+builder.Services.AddTransient<CustomSqlCommandBuilder>();
+builder.Services.AddTransient<IDatabaseHelper, DatabaseHelper>();
+builder.Services.AddTransient<IAccountDeletion, AccountDeletion>();
+builder.Services.AddTransient<GenOTP>();
+builder.Services.AddTransient<Hashing>();
+builder.Services.AddTransient<Response>();
+builder.Services.AddTransient<LogEntry>();
+builder.Services.AddTransient<ILogTarget, SqlLogTarget>();
+builder.Services.AddTransient<Logger>();
+builder.Services.AddTransient<SqlDAO>();
+
+
+builder.Services.AddTransient<SSAuthService>(provider =>
+    new SSAuthService(
+        provider.GetRequiredService<GenOTP>(),
+        provider.GetRequiredService<Hashing>(),
+        provider.GetRequiredService<SqlDAO>(),
+        provider.GetRequiredService<Logger>()
+    )
+);
+
+
+// Learn more about configuring Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add transient services for logging
-// builder.Services.AddTransient<SqlLogTarget>();
-
-// Adding authorization services
-builder.Services.AddAuthorization();
-
-//// Get the root directory where the application is located
-//var rootDirectory = Directory.GetParent(path: Directory.GetCurrentDirectory()).Parent.FullName;
-
-//// Specify the relative path to your config file from the root directory
-//var configFilePath = Path.Combine(rootDirectory, "Configs", "config.local.txt");
-
-// Base Directory of the file
-var baseDirectory = AppContext.BaseDirectory;
-
-var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-
-var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-
-// Adding configuration service
-builder.Services.AddSingleton(new ConfigService(configFilePath));
-
-// Register services for dependency injection
-builder.Services.AddTransient<IAccountDeletion, AccountDeletion>();
-
-
-// builds the application
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.Use((context, next) =>
 {
-    // Enables Swagger and the SwaggerUI
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
-app.UseRouting();
-
-// Middleware to handle CORS preflight requests
-app.Use(async (context, next) =>
-{
-    // Get the origin header from the request
-    var origin = context.Request.Headers[HeaderNames.Origin].ToString();
-
-    var allowedOrigins = new[] { "http://localhost:3000" };
+    context.Response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:3000");
+    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
 
 
-    if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
-    {
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowOrigin, origin);
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowMethods, "POST, OPTIONS");
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowHeaders, "Content-Type, Accept");
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowCredentials, "true");
-    }
     if (context.Request.Method == "OPTIONS")
     {
-        context.Response.StatusCode = StatusCodes.Status200OK;
-        await context.Response.CompleteAsync();
+        context.Response.Headers.Append("Access-Control-Max-Age", "86400");
+        context.Response.StatusCode = 204;
+        return Task.CompletedTask;
     }
-    else
-    {
-        await next();
-    }
+
+    return next();
 });
 
-// Maps the controller endpoints
+app.UseMiddleware<AuthorizationMiddleware>();
+
 app.MapControllers();
 
-// runs the application
 app.Run();

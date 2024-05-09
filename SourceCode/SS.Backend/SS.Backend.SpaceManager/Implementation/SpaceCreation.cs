@@ -19,11 +19,11 @@ namespace SS.Backend.SpaceManager
         {
             _spaceManagerDao = spaceManagerDao;
         }
-        public async Task<Response> CreateSpace(string hashedUsername, CompanyFloor? companyFloor)
+        public async Task<Response> CreateSpace(CompanyFloor? companyFloor)
         {
             Response response = new Response();
            // Attempt to retrieve the company ID using the hashed username
-            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(hashedUsername);
+            var companyIDResponse = await _spaceManagerDao.GetCompanyIDByHashedUsername(companyFloor.hashedUsername);
 
             // Validate the response for errors or empty data
             if (companyIDResponse.HasError || companyIDResponse.ValuesRead == null || companyIDResponse.ValuesRead.Rows.Count == 0)
@@ -110,33 +110,6 @@ namespace SS.Backend.SpaceManager
                     }
                 }
             }
-
-            if (floorInsertResponse.HasError == false)
-            {
-                LogEntry entry = new LogEntry()
-
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Info",
-                    username = hashedUsername,
-                    category = "Data Store",
-                    description = "Successful floor creation"
-                };
-                //await logger.SaveData(entry);
-            }
-            else
-            {
-                LogEntry entry = new LogEntry()
-
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Error",
-                    username = hashedUsername,
-                    category = "Data Store",
-                    description = "Error inserting floor info in data store."
-                };
-                // await logger.SaveData(entry);
-            }
             
             // Return response based on overall operation success or specific error handling
             return floorInsertResponse; 
@@ -146,7 +119,6 @@ namespace SS.Backend.SpaceManager
         public List<Dictionary<string, object>> ListSpace(CompanyFloor? companyFloor)
         {
             var listOfDicts = new List<Dictionary<string, object>>();
-
             if (companyFloor?.FloorSpaces != null)
             {
                 foreach (var space in companyFloor.FloorSpaces)
@@ -159,7 +131,6 @@ namespace SS.Backend.SpaceManager
                     listOfDicts.Add(spaceDict);
                 }
             }
-
             return listOfDicts;
         }
     }

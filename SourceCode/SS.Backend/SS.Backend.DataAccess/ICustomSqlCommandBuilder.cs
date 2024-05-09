@@ -1,3 +1,4 @@
+﻿
 ﻿using Microsoft.Data.SqlClient;
 
 namespace SS.Backend.DataAccess
@@ -17,9 +18,12 @@ namespace SS.Backend.DataAccess
         ICustomSqlCommandBuilder SelectColumns(params string[] columns);
         ICustomSqlCommandBuilder From(string tableName);
         ICustomSqlCommandBuilder BeginDelete(string tableName);
+        ICustomSqlCommandBuilder BeginDeleteFrom(string tableName);
         ICustomSqlCommandBuilder Join(string joinTable, string fromColumn, string toColumn);
+        ICustomSqlCommandBuilder InnerJoin(string joinTable, string fromColumn, string toColumn);
         ICustomSqlCommandBuilder BeginStoredProcedure(string storedProcedureName);
         ICustomSqlCommandBuilder OrderBy(string tableName);
+        ICustomSqlCommandBuilder GroupBy(string tableName);
         ICustomSqlCommandBuilder AddParameters(Dictionary<string, object> parameters);
         SqlCommand Build();
 

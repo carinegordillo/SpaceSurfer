@@ -161,11 +161,11 @@ document.querySelectorAll('.accordion').forEach(function(button) {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    if (!localStorage.getItem('accessToken')) {
-        // Redirect if accessToken not found
-        window.location.href = '../UnAuthnAbout/about.html';
-        return; 
-    }
+    // if (!localStorage.getItem('accessToken')) {
+    //     // Redirect if accessToken not found
+    //     window.location.href = '../UnAuthnAbout/about.html';
+    //     return; 
+    // }
     document.getElementById('loadRequestsButton').addEventListener('click', function() {
         fetch('http://localhost:8081/api/SpaceManager/createSpace')
             .then(response => response.json())

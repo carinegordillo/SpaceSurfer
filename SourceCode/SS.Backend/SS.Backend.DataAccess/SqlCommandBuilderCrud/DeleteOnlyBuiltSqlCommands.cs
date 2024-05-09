@@ -22,6 +22,16 @@ namespace SS.Backend.DataAccess
             return deleteCommand;
         }
 
+        public SqlCommand DeleteRowWhere(string whereClause, object whereClauseval, string tableName)
+        {
+
+            SqlCommand deleteCommand = _customSqlCommandBuilder.BeginDelete(tableName).Where($"{whereClause} = '{whereClauseval}'").Build();
+
+            
+            
+            return deleteCommand;
+        }
+
         
     }
 }

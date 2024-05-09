@@ -1,112 +1,74 @@
 using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
-// using System.Data.SqlClient;
-using SS.Backend.Services.AccountCreationService;
-using System.Diagnostics;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using System.Text.Json;
+using SS.Backend.UserManagement;
+using System.Diagnostics;
 
 namespace SS.Backend.Tests.AccountCreationTest
 {
     [TestClass]
     public class AccountCreationTests
     {
-        private async Task CleanupTestData()
+        private ConfigService _configService;
+        private AccountCreation  _accountCreation;
+
+        private UserManagementDao _userManagementDao;
+        private SqlDAO _sqlDao;
+
+
+        [TestInitialize]
+        public void Setup()
         {
-            // var SAUser = Credential.CreateSAUser();
-            // var connectionString = string.Format(@"Data Source=localhost\SpaceSurfer;Initial Catalog=SS_Server;User Id={0};Password={1};", SAUser.user, SAUser.pass);
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
             var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            _configService = new ConfigService(configFilePath);
+            _sqlDao = new SqlDAO(_configService);
 
-            ConfigService configFile = new ConfigService(configFilePath);
-            var connectionString = configFile.GetConnectionString();
+            _userManagementDao = new UserManagementDao(_sqlDao);
+            _accountCreation = new AccountCreation(_userManagementDao);
+        }
+
+        [TestCleanup]
+        public async Task TestCleanup()
+        {
+            await CleanupTestData();
+        }
+
+        private async Task CleanupTestData()
+        {
+           
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    await connection.OpenAsync().ConfigureAwait(false);
-
-                    string sql = $"DELETE FROM dbo.Logs WHERE [Username] = 'test@email'";
-
-                    using (SqlCommand command = new SqlCommand(sql, connection))
-                    {
-                        await command.ExecuteNonQueryAsync().ConfigureAwait(false);
-                    }
-                }
+                string sqlCMD = "DELETE FROM dbo.taskHub WHERE hashedUsername = '074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o='";
+                var cmd = new SqlCommand(sqlCMD);
+                var response = await _sqlDao.SqlRowsAffected(cmd);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception during test cleanup: {ex}");
             }
         }
-
-        // [TestMethod]
-        // public async Task ReadPepperFileContents_Success()
-        // {
-        //     string filePath = "C:/Users/kayka/Downloads/pepper.txt";
-        //     SealedPepperDAO pepperDao = new SealedPepperDAO(filePath);
-        //     string pepper = await pepperDao.ReadPepperAsync();
-        //     Console.WriteLine($"Pepper content: {pepper}");
-        //     Assert.IsFalse(string.IsNullOrEmpty(pepper), "The pepper file should not be empty.");
-        // }
-
-
-        // [TestMethod]
-        // public async Task isTHISVALID()
-        // {
-        //     // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
-        //     UserInfo userInfo = new UserInfo();
-        //     UserPepper userPepper = new UserPepper();
-        //     AccountCreation accountcreation = new AccountCreation(userInfo);
-        //     Hashing hashing = new Hashing();
-        //     Stopwatch timer = new Stopwatch();
-
-        //     string configFilePath = "C:/Users/kayka/Downloads/config.local.txt";
-        //     ConfigService configService = new ConfigService(configFilePath);
-        //     var builder = new CustomSqlCommandBuilder();
-
-        //     SealedPepperDAO pepperDao = new SealedPepperDAO("C:/Users/kayka/Downloads/pepper.txt");
-        //     string pepper = await pepperDao.ReadPepperAsync();
-
-        //     //username must be unique in database
-        //     var validUserInfo = new UserInfo
-        //     {
-        //         username = "memem@hotmail.com",
-        //         dob = new DateTime(1990, 1, 1),
-        //         firstname = "vgggggggggggggggggggggggggggggkjkjjjjhjjjjjjjjjjjjhjfffgf",
-        //         lastname = "k", 
-        //         role = 1,
-        //         status = "yes", 
-        //         backupEmail = "test@backup.com"
-        //     };
-
-
-        //     timer.Start();
-        //     string didPASS = accountcreation.CheckUserInfoValidity(validUserInfo);
-        //     timer.Stop();
-
-        //     // Assert.IsFalse(response.HasError, response.ErrorMessage);
-        //     // Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-        //     await CleanupTestData().ConfigureAwait(false);
-          
-        // }
-
-
-
+        
         [TestMethod]
         public async Task CreateUserAccount_Success()
         {
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
             UserInfo userInfo = new UserInfo();
-            AccountCreation accountCreation = new AccountCreation();
+            //AccountCreation accountCreation = new AccountCreation();
             Stopwatch timer = new Stopwatch();
 
             //username must be unique in database
             var validUserInfo = new UserInfo
             {
-                username = "letstrythisout@hotmail.com",
+                username = "newregisttraion@hotmail.com",
                 dob = new DateTime(1990, 1, 1),
-                firstname = "employee",
+                firstname = "new",
                 lastname = "setup", 
                 role = 4,
                 status = "no", 
@@ -114,28 +76,62 @@ namespace SS.Backend.Tests.AccountCreationTest
             };
 
             timer.Start();
-            var response = await accountCreation.CreateUserAccount(validUserInfo, null);
+            var response = await _accountCreation.CreateUserAccount(validUserInfo, null, null);
             timer.Stop();
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            await CleanupTestData().ConfigureAwait(false);
+            //await CleanupTestData().ConfigureAwait(false);
           
         }
 
         [TestMethod]
-        public async Task VerifyAccount_Success()
+        public async Task CreateEmployeeAccount_Success()
         {
-            AccountCreation accountCreation = new AccountCreation();
+            // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
+            UserInfo userInfo = new UserInfo();
+            //AccountCreation accountCreation = new AccountCreation();
             Stopwatch timer = new Stopwatch();
 
+            //username must be unique in database
+            var validUserInfo = new UserInfo
+            {
+                username = "newestemployee@hotmail.com",
+                dob = new DateTime(1990, 1, 1),
+                firstname = "newest",
+                lastname = "employee", 
+                role = 4,
+                status = "no", 
+                backupEmail = "COMBININGEVERYTHING@backup.com"
+            };
+            var manager_hashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
+
             timer.Start();
-            var response = await accountCreation.VerifyAccount("kay.kayale@student.csulb.edu");
+            var response = await _accountCreation.CreateUserAccount(validUserInfo, null, manager_hashedUsername);
             timer.Stop();
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            await CleanupTestData().ConfigureAwait(false);
+            //await CleanupTestData().ConfigureAwait(false);
+          
+        }
+        
+        
+
+
+        [TestMethod]
+        public async Task VerifyAccount_Success()
+        {
+            //AccountCreation accountCreation = new AccountCreation();
+            Stopwatch timer = new Stopwatch();
+
+            timer.Start();
+            var response = await _accountCreation.VerifyAccount("kay.kayale@student.csulb.edu");
+            timer.Stop();
+
+            Assert.IsFalse(response.HasError, response.ErrorMessage);
+            Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
+            //await CleanupTestData().ConfigureAwait(false);
           
         }
 
@@ -144,7 +140,7 @@ namespace SS.Backend.Tests.AccountCreationTest
         public async Task CreateManagerAccount_Success()
         {
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
-            AccountCreation accountcreation = new AccountCreation();
+            //AccountCreation accountCreation = new AccountCreation();
             Stopwatch timer = new Stopwatch();
             //username must be unique in database
             var validUserInfo = new UserInfo
@@ -169,12 +165,12 @@ namespace SS.Backend.Tests.AccountCreationTest
 
             
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo, validCompanyInfo);
+            var response = await _accountCreation.CreateUserAccount(validUserInfo, validCompanyInfo, null);
             timer.Stop();
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            await CleanupTestData().ConfigureAwait(false);
+            //await CleanupTestData().ConfigureAwait(false);
           
         }
 
@@ -183,7 +179,7 @@ namespace SS.Backend.Tests.AccountCreationTest
         public async Task CreateUserAccount_InvalidUsername()
         {
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
-            AccountCreation accountcreation = new AccountCreation();
+            //AccountCreation accountCreation = new AccountCreation();
             Hashing hashing = new Hashing();
             Stopwatch timer = new Stopwatch();
 
@@ -198,12 +194,12 @@ namespace SS.Backend.Tests.AccountCreationTest
                 backupEmail = "test@backup.com"
             };
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
+            var response = await _accountCreation.CreateUserAccount(validUserInfo, null, null);
             timer.Stop();
 
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            await CleanupTestData().ConfigureAwait(false);
+            //await CleanupTestData().ConfigureAwait(false);
         }
 
 
@@ -211,7 +207,7 @@ namespace SS.Backend.Tests.AccountCreationTest
         public async Task CreateUserAccount_InvalidFirstName()
         {
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
-            AccountCreation accountcreation = new AccountCreation();
+            //AccountCreation accountCreation = new AccountCreation();
             Hashing hashing = new Hashing();
             Stopwatch timer = new Stopwatch();
 
@@ -226,12 +222,12 @@ namespace SS.Backend.Tests.AccountCreationTest
                 backupEmail = "test@backup.com"
             };
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
+            var response = await _accountCreation.CreateUserAccount(validUserInfo, null, null);
             timer.Stop();
 
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            await CleanupTestData().ConfigureAwait(false);
+            //await CleanupTestData().ConfigureAwait(false);
           
         }
 
@@ -240,7 +236,7 @@ namespace SS.Backend.Tests.AccountCreationTest
         public async Task CreateUserAccount_InvalidLastName()
         {
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
-            AccountCreation accountcreation = new AccountCreation();
+            //AccountCreation accountCreation = new AccountCreation();
             Hashing hashing = new Hashing();
             Stopwatch timer = new Stopwatch();
 
@@ -255,12 +251,12 @@ namespace SS.Backend.Tests.AccountCreationTest
                 backupEmail = "test@backup.com"
             };
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
+            var response = await _accountCreation.CreateUserAccount(validUserInfo, null, null);
             timer.Stop();
 
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            await CleanupTestData().ConfigureAwait(false);
+            //await CleanupTestData().ConfigureAwait(false);
           
         }
 
@@ -269,7 +265,7 @@ namespace SS.Backend.Tests.AccountCreationTest
         public async Task CreateUserAccount_InvalidRole()
         {
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
-            AccountCreation accountcreation = new AccountCreation();
+            //AccountCreation accountCreation = new AccountCreation();
             Hashing hashing = new Hashing();
             Stopwatch timer = new Stopwatch();
 
@@ -284,11 +280,11 @@ namespace SS.Backend.Tests.AccountCreationTest
                 backupEmail = "test@backup.com"
             };
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
+            var response = await _accountCreation.CreateUserAccount(validUserInfo, null, null);
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            await CleanupTestData().ConfigureAwait(false);
+            //await CleanupTestData().ConfigureAwait(false);
           
         }
 
@@ -298,7 +294,7 @@ namespace SS.Backend.Tests.AccountCreationTest
         public async Task CreateUserAccount_InvaliStatus()
         {
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
-            AccountCreation accountcreation = new AccountCreation();
+            //AccountCreation accountCreation = new AccountCreation();
             Hashing hashing = new Hashing();
             Stopwatch timer = new Stopwatch();
             var validUserInfo = new UserInfo{
@@ -312,11 +308,11 @@ namespace SS.Backend.Tests.AccountCreationTest
             };
 
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
+            var response = await _accountCreation.CreateUserAccount(validUserInfo, null, null);
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            await CleanupTestData().ConfigureAwait(false);
+            //await CleanupTestData().ConfigureAwait(false);
           
         }
 
@@ -324,7 +320,7 @@ namespace SS.Backend.Tests.AccountCreationTest
         public async Task CreateUserAccount_InvalidBackupEmail()
         {
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
-            AccountCreation accountcreation = new AccountCreation();
+            //AccountCreation accountCreation = new AccountCreation();
             Hashing hashing = new Hashing();
             Stopwatch timer = new Stopwatch();
             var validUserInfo = new UserInfo{
@@ -338,11 +334,11 @@ namespace SS.Backend.Tests.AccountCreationTest
             };
 
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
+            var response = await _accountCreation.CreateUserAccount(validUserInfo, null, null);
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            await CleanupTestData().ConfigureAwait(false);
+            //await CleanupTestData().ConfigureAwait(false);
         }
 
 
@@ -351,7 +347,7 @@ namespace SS.Backend.Tests.AccountCreationTest
         {
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
 
-            AccountCreation accountcreation = new AccountCreation();
+            //AccountCreation accountCreation = new AccountCreation();
             Hashing hashing = new Hashing();
             Stopwatch timer = new Stopwatch();
 
@@ -366,18 +362,18 @@ namespace SS.Backend.Tests.AccountCreationTest
             };
 
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
+            var response = await _accountCreation.CreateUserAccount(validUserInfo, null, null);
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsFalse(timer.ElapsedMilliseconds <= 1);
-            await CleanupTestData().ConfigureAwait(false);
+            //await CleanupTestData().ConfigureAwait(false);
         }
 
         [TestMethod]
         public async Task CreateUserAccount_InvalidTableData()
         {
             // AccountCreation accountcreation = new AccountCreation(SqlDAO sqlDao, ICustomSqlCommandBuilder commandBuilder);
-            AccountCreation accountcreation = new AccountCreation();
+            //AccountCreation accountCreation = new AccountCreation();
             Stopwatch timer = new Stopwatch();
 
             var validUserInfo = new UserInfo{
@@ -391,11 +387,11 @@ namespace SS.Backend.Tests.AccountCreationTest
             };
 
             timer.Start();
-            var response = await accountcreation.CreateUserAccount(validUserInfo, null);
+            var response = await _accountCreation.CreateUserAccount(validUserInfo, null, null);
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            await CleanupTestData().ConfigureAwait(false);
+            //await CleanupTestData().ConfigureAwait(false);
         }
 
     

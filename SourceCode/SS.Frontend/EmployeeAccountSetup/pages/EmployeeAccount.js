@@ -1,50 +1,10 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle loading of requests
-    document.getElementById('loadRequestsButton').addEventListener('click', function() {
-        fetch('http://localhost:8080/api/registration/createAccount')
-            .then(response => response.json())
-            .then(data => {
-                const recoveryRequestsList = document.getElementById('recoveryRequestsList');
-                recoveryRequestsList.innerHTML = ''; // Empty the list
-                data.forEach(function(request) {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = `Name: ${request.firstname}, Last Name: ${request.lastname}`;
-                    if (request.resolveDate) {
-                        listItem.textContent += `, Resolve Date: ${request.resolveDate}`;
-                    }
-                    recoveryRequestsList.appendChild(listItem);
-                });
-            })
-            .catch(error => console.error('Error:', error));
-    });
 
-    // Handle form submission
-    document.getElementById('accountCreationForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        submitAccountCreationForm();
-    });
-
-    // Initialize display state for additional fields upon page load
-    // updateAdditionalFieldsDisplay();
+document.getElementById('employeeForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    submiEmployeeCreationForm();
 });
 
-function handleCheckboxChange(checkedBox) {
-    // Logic to ensure only one checkbox is checked
-    if (checkedBox.id === "isCompany") {
-        document.getElementById('isFacility').checked = false;
-    } else if (checkedBox.id === "isFacility") {
-        document.getElementById('isCompany').checked = false;
-    }
-    updateAdditionalFieldsDisplay();
-}
-
-// function updateAdditionalFieldsDisplay() {
-//     // Update the display of additional fields based on checkbox state
-//     let additionalFields = document.getElementById('additionalFields');
-//     additionalFields.style.display = document.getElementById('isCompany').checked || document.getElementById('isFacility').checked ? 'block' : 'none';
-// }
-
-function submitAccountCreationForm() {
+function submitEmployeeCreationForm() {
     var userInfo = {
         username: document.getElementById('username').value,
         dob: document.getElementById('dob').value,
@@ -54,7 +14,6 @@ function submitAccountCreationForm() {
         status: "no",
         backupEmail: "",
     };
-
     var companyInfo = {
         companyName: '',
         address: '',
@@ -62,24 +21,10 @@ function submitAccountCreationForm() {
         closingHours: '',
         daysOpen: ''
     };
-
-    // If either checkbox is checked, populate companyInfo with actual values
-    // if (document.getElementById('isCompany').checked || document.getElementById('isFacility').checked) {
-    //     companyInfo = {
-    //         companyName: document.getElementById('companyName').value,
-    //         address: document.getElementById('address').value,
-    //         openingHours: document.getElementById('openingHours').value,
-    //         closingHours: document.getElementById('closingHours').value,
-    //         daysOpen: Array.from(document.querySelectorAll("input[name='daysOpen']:checked")).map(cb => cb.value).join(', ')
-    //     };
-    // }
-
     var accountCreationRequest = {
         userInfo: userInfo,
         companyInfo: companyInfo
     };
-    console.log("THIS IS THE REQUEST", accountCreationRequest)
-    console.log("THIS ISI THE USERINOF ", accountCreationRequest.userInfo)
     fetch('http://localhost:8080/api/registration/postAccount', {
         method: 'POST',
         headers: {
