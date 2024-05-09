@@ -133,10 +133,14 @@ async function handleDeleteReservationFormSubmit(event) {
 
     var parsedIdToken = JSON.parse(idToken);
     var userHash = parsedIdToken.Username; 
-
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const BookingCenterUrl = appConfig.api.SpaceBookingCenter; 
 
     try {
-        const response = await fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/DeleteReservation`, {
+        const response = await fetch(`${BookingCenterUrl}/api/v1/spaceBookingCenter/reservations/DeleteReservation`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -217,9 +221,13 @@ function getUsersActiveReservations(username) {
     var parsedIdToken = JSON.parse(idToken);
     var username = parsedIdToken.Username;
 
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const BookingCenterUrl = appConfig.api.SpaceBookingCenter; 
    
-   
-    const url = `http://localhost:5005/api/v1/spaceBookingCenter/reservations/ListActiveReservations?userName=${encodeURIComponent(username)}`;
+    const url = `${BookingCenterUrl}/api/v1/spaceBookingCenter/reservations/ListActiveReservations?userName=${encodeURIComponent(username)}`;
 
     fetch(url, {
         method: 'GET',
@@ -246,8 +254,12 @@ function getUsersActiveReservations(username) {
 }
 
 function getUsersReservations(userName, accessToken) {
-   
-    const url = `http://localhost:5005/api/v1/spaceBookingCenter/reservations/ListReservations?userName=${encodeURIComponent(userName)}`;
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const BookingCenterUrl = appConfig.api.SpaceBookingCenter; 
+    const url = `${BookingCenterUrl}/api/v1/spaceBookingCenter/reservations/ListReservations?userName=${encodeURIComponent(userName)}`;
 
     fetch(url, {
         method: 'GET',
@@ -420,9 +432,13 @@ async function submitModification(reservation) {
         status: reservation.status,
         userHash: username
     };
-
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const BookingCenterUrl = appConfig.api.SpaceBookingCenter; 
     try {
-        const response = await fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/UpdateReservation`, {
+        const response = await fetch(`${BookingCenterUrl}/api/v1/spaceBookingCenter/reservations/UpdateReservation`, {
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -523,9 +539,14 @@ function showCancelModal(reservation) {
         status: reservation.status,
         userHash: username
     };
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const BookingCenterUrl = appConfig.api.SpaceBookingCenter; 
 
     try {
-        const response =  await fetch(`http://localhost:5005/api/v1/spaceBookingCenter/reservations/CancelReservation`, {
+        const response =  await fetch(`${BookingCenterUrl}/api/v1/spaceBookingCenter/reservations/CancelReservation`, {
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -565,8 +586,12 @@ function getUsersReservationID(companyID, floorID, spaceID, startTime, endTime, 
     console.log(floorID);
     console.log(startTime);
     console.log(endTime);
-    
-    const url = `http://localhost:5005/api/v1/spaceBookingCenter/reservations/ListReservations?userName=${encodeURIComponent(userName)}`;
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const BookingCenterUrl = appConfig.api.SpaceBookingCenter; 
+    const url = `${BookingCenterUrl}/api/v1/spaceBookingCenter/reservations/ListReservations?userName=${encodeURIComponent(userName)}`;
     
     fetch(url, {
         method: 'GET',
@@ -619,8 +644,12 @@ async function sendConfirmation(reservation) {
         logout();
         return;
     }
-    
-    const url = `http://localhost:5116/api/v1/reservationConfirmation/SendConfirmation?ReservationID=${encodeURIComponent(reservationID)}`;
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const EmailConfirmationUrl = appConfig.api.EmailConfirmation; 
+    const url = `${EmailConfirmationUrl}/api/v1/reservationConfirmation/SendConfirmation?ReservationID=${encodeURIComponent(reservationID)}`;
     try {
         const response = await fetch(url, {
             method: 'POST',
@@ -728,8 +757,12 @@ async function confirmReservation(reservationID, code) {
         logout();
         return;
     }
-
-    const url = `http://localhost:5116/api/v1/reservationConfirmation/ConfirmReservation?reservationID=${reservationID}&otp=${encodeURIComponent(code)}`;
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const EmailConfirmationUrl = appConfig.api.EmailConfirmation; 
+    const url = `${EmailConfirmationUrl}/api/v1/reservationConfirmation/ConfirmReservation?reservationID=${reservationID}&otp=${encodeURIComponent(code)}`;
     try {
         const response = await fetch(url, {
             method: 'POST',
@@ -774,8 +807,12 @@ async function resendEmail(reservation) {
         logout();
         return;
     }
-    
-    const url = `http://localhost:5116/api/v1/reservationConfirmation/ResendConfirmation?reservationID=${encodeURIComponent(reservationID)}`;
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const EmailConfirmationUrl = appConfig.api.EmailConfirmation; 
+    const url = `${EmailConfirmationUrl}/api/v1/reservationConfirmation/ResendConfirmation?reservationID=${encodeURIComponent(reservationID)}`;
     try {
         const response = await fetch(url, {
             method: 'POST',
@@ -925,9 +962,13 @@ function checkAvailability() {
         return;
     }
 
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const BookingCenterUrl = appConfig.api.SpaceBookingCenter; 
 
-
-    const apiUrl = `http://localhost:5005/api/v1/spaceBookingCenter/reservations/CheckAvailability?companyId=${companyId}&startTime=${startTime}&endTime=${endTime}`;
+    const apiUrl = `${BookingCenterUrl}/api/v1/spaceBookingCenter/reservations/CheckAvailability?companyId=${companyId}&startTime=${startTime}&endTime=${endTime}`;
     fetch(apiUrl, {
         method: 'GET',
         headers: {
@@ -975,8 +1016,13 @@ async function fetchCompanies() {
         return;
     }
 
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const CompanyUrl = appConfig.api.CompanyAPI; 
     try {
-        const response = await fetch(`http://localhost:5279/api/v1/spaceBookingCenter/companies/ListCompanies`, {
+        const response = await fetch(`${CompanyUrl}/api/v1/spaceBookingCenter/companies/ListCompanies`, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -1038,9 +1084,13 @@ async function fetchFloorPlans(companyID) {
         logout();
         return;
     }
-
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const CompanyUrl = appConfig.api.CompanyAPI; 
     try {
-        const response = await fetch(`http://localhost:5279/api/v1/spaceBookingCenter/companies/FloorPlans/${companyID}`, {
+        const response = await fetch(`${CompanyUrl}/api/v1/spaceBookingCenter/companies/FloorPlans/${companyID}`, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -1105,8 +1155,13 @@ async function fetchFloorPlans(companyID) {
 }
 
 async function checkTokenExpiration(accessToken) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const SpaceBookingCenterUrl = appConfig.api.SpaceBookingCenter; 
     try {
-        const response = await fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/checkTokenExp', {
+        const response = await fetch(`${SpaceBookingCenterUrl}/api/v1/spaceBookingCenter/reservations/checkTokenExp`, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -1148,9 +1203,13 @@ async function handleReservationCreationFormSubmit(event) {
     };
 
     const requestData = JSON.stringify(reservationData);
-
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const SpaceBookingCenterUrl = appConfig.api.SpaceBookingCenter; 
     try {
-        const response =  await fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/CreateReservation', {
+        const response =  await fetch(`${SpaceBookingCenterUrl}/api/v1/spaceBookingCenter/reservations/CreateReservation`, {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -1290,9 +1349,13 @@ async function joinWaitlist() {
     };
 
     const requestData = JSON.stringify(reservationData);
-
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const SpaceBookingCenterUrl = appConfig.api.SpaceBookingCenter; 
     try {
-        const response = await fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/addToWaitlist', {
+        const response = await fetch(`${SpaceBookingCenterUrl}/api/v1/spaceBookingCenter/reservations/addToWaitlist`, {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
