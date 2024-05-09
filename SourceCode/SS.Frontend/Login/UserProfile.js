@@ -226,34 +226,3 @@ async function checkTokenExpiration(accessToken) {
         return false;
     }
 }
-
-
-
-function logout() {
-    console.log("logout clicked")
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('idToken');
-    sessionStorage.removeItem('userIdentity')
-    var identityDiv = document.getElementById("identity");
-    if (identityDiv) {
-        console.log("Identity element found, current display:", identityDiv.style.display);
-        identityDiv.style.display = "none";
-        console.log("Identity should now be hidden, new display:", identityDiv.style.display);
-    } else {
-        console.log("Identity element not found");
-    }
-    document.getElementById("sendOTPSection").style.display = "block";
-    document.getElementById("noLogin").style.display = "block";
-    document.getElementById("homepageGen").style.display = "none";
-    document.getElementById("homepageManager").style.display = "none";
-    document.getElementById("taskManagerView").style.display = "none";
-    document.getElementById('personalOverviewCenter').style.display = 'none';
-    document.getElementById('spaceBookingView').style.display = 'none';
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById('waitlistView').style.display = 'none';
-    document.getElementById("welcomeSection").style.display = "none";
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById("accountRecoverySection").style.display = "none";
-    document.getElementById("userRequestsView").style.display = "none";
-
-}
