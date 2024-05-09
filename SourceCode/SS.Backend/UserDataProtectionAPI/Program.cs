@@ -5,6 +5,7 @@ using Microsoft.Net.Http.Headers;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
 using SS.Backend.UserDataProtection;
+using SS.Backend.Services.DeletingService;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,7 @@ builder.Services.AddTransient<Response>();
 builder.Services.AddTransient<LogEntry>();
 builder.Services.AddTransient<ILogTarget, SqlLogTarget>();
 builder.Services.AddTransient<Logger>();
+builder.Services.AddTransient<IAccountDeletion, AccountDeletion>();
 builder.Services.AddTransient<SSAuthService>(provider =>
     new SSAuthService(
         provider.GetRequiredService<GenOTP>(),

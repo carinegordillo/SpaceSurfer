@@ -11,6 +11,7 @@ async function accessData() {
     }
 
     try {
+        console.log(JSON.stringify(username));
         const response = await fetch(`http://localhost:5084/api/userDataProtection/accessData`, {
             method: 'POST',
             headers: {
@@ -65,49 +66,50 @@ function showAccessSuccessMessage() {
     modal.style.display = 'block';
 }
 
-async function deleteData() {
-    var accessToken = sessionStorage.getItem('accessToken');
-    var idToken = sessionStorage.getItem('idToken');
-    var parsedIdToken = JSON.parse(idToken);
-    var username = parsedIdToken.Username;
+//async function deleteData() {
+//    var accessToken = sessionStorage.getItem('accessToken');
+//    var idToken = sessionStorage.getItem('idToken');
+//    var parsedIdToken = JSON.parse(idToken);
+//    var username = parsedIdToken.Username;
 
-    const isTokenExp = checkTokenExpiration(accessToken);
-    if (!isTokenExp) {
-        logout();
-        return;
-    }
+//    const isTokenExp = checkTokenExpiration(accessToken);
+//    if (!isTokenExp) {
+//        logout();
+//        return;
+//    }
 
-    try {
-        const response = await fetch(`http://localhost:5084/api/userDataProtection/deleteData`, {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + accessToken,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(username)
-        });
+//    try {
+//        console.log(JSON.stringify(username));
+//        const response = await fetch(`http://localhost:5084/api/userDataProtection/deleteData`, {
+//            method: 'POST',
+//            headers: {
+//                'Authorization': 'Bearer ' + accessToken,
+//                'Content-Type': 'application/json'
+//            },
+//            body: JSON.stringify(username)
+//        });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+//        if (!response.ok) {
+//            throw new Error(`HTTP error! status: ${response.status}`);
+//        }
 
-        var data = await response;
+//        var data = await response;
 
-        if (data.newToken) {
-            accessToken = data.newToken;
-            sessionStorage.setItem('accessToken', accessToken);
-            console.log('New access token stored:', accessToken);
-        }
+//        if (data.newToken) {
+//            accessToken = data.newToken;
+//            sessionStorage.setItem('accessToken', accessToken);
+//            console.log('New access token stored:', accessToken);
+//        }
 
-        if (response.ok) {
-            showDeleteSuccessMessage();
-            console.log('Successfully deleted data.');
-        }
+//        if (response.ok) {
+//            showDeleteSuccessMessage();
+//            console.log('Successfully deleted data.');
+//        }
 
-    } catch (error) {
-        console.error('Error deleting data:', error);
-    }
-}
+//    } catch (error) {
+//        console.error('Error deleting data:', error);
+//    }
+//}
 
 function showDeleteSuccessMessage() {
     const modal = document.createElement('div');
@@ -228,20 +230,20 @@ function createUserProtectionUI() {
     `;
     contentContainer.appendChild(requestDataSection);
 
-    const deleteDataSection = document.createElement('section');
-    deleteDataSection.id = 'deleteDataSection';
-    deleteDataSection.classList.add('form-container');
-    deleteDataSection.style.display = 'none';
-    deleteDataSection.innerHTML = `
-        <h2>Delete Your Data</h2>
-        <p>By deleting your data, you acknowledge that all your personal data will be permanently removed from our system. This action is irreversible.</p>
-        <form id="deleteDataForm">
-            <label for="deleteUsername">Enter Your Username:</label>
-            <input type="text" id="deleteUsername" name="deleteUsername" required>
-            <button type="submit">Delete Data</button>
-        </form>
-    `;
-    contentContainer.appendChild(deleteDataSection);
+    //const deleteDataSection = document.createElement('section');
+    //deleteDataSection.id = 'deleteDataSection';
+    //deleteDataSection.classList.add('form-container');
+    //deleteDataSection.style.display = 'none';
+    //deleteDataSection.innerHTML = `
+    //    <h2>Delete Your Data</h2>
+    //    <p>By deleting your data, you acknowledge that all your personal data will be permanently removed from our system. This action is irreversible.</p>
+    //    <form id="deleteDataForm">
+    //        <label for="deleteUsername">Enter Your Username:</label>
+    //        <input type="text" id="deleteUsername" name="deleteUsername" required>
+    //        <button type="submit">Delete Data</button>
+    //    </form>
+    //`;
+    //contentContainer.appendChild(deleteDataSection);
 
     const verifyOTPSection = document.createElement('section');
     verifyOTPSection.id = 'verifyOTPSection';
