@@ -23,6 +23,8 @@ function updateAdditionalFieldsDisplay() {
 }
 
 function submitAccountCreationForm() {
+    const irvineZipCodes = ["92602", "92603", "92604", "92606", "92612", "92614", "92616", "92617", "92618", "92619", "92620", "92623", "92650", "92697", "92709", "92710"];
+
     var userInfo = {
         username: document.getElementById('username').value,
         dob: document.getElementById('dob').value,
@@ -41,7 +43,6 @@ function submitAccountCreationForm() {
         daysOpen: ''
     };
 
-    // If either checkbox is checked, populate companyInfo with actual values
     if (document.getElementById('isCompany').checked || document.getElementById('isFacility').checked) {
         companyInfo = {
             companyName: document.getElementById('companyName').value,
@@ -52,17 +53,27 @@ function submitAccountCreationForm() {
         };
     }
 
+    const zipCode = companyInfo.address.split(',').pop().trim();
+
+    if (!irvineZipCodes.includes(zipCode)) {
+        showModal('Error: Company must be located in Irvine, California.');
+        return; 
+    }
+
     var accountCreationRequest = {
         userInfo: userInfo,
         companyInfo: companyInfo
     };
-    console.log("THIS IS THE REQUEST", accountCreationRequest)
-    console.log("THIS ISI THE USERINOF ", accountCreationRequest.userInfo)
+    
+    console.log("THIS IS THE REQUEST", accountCreationRequest);
+
     if (!appConfig) {
         console.error('Configuration is not loaded!');
         return;
     }
+
     const RegistrationUrl = appConfig.api.Registration; 
+
     fetch(`${RegistrationUrl}/api/registration/postAccount`, {
         method: 'POST',
         headers: {
@@ -72,13 +83,11 @@ function submitAccountCreationForm() {
     })
     .then(response => response.json())
     .then(data => {
-        // alert('Account created successfully!');
         showModal('Account created successfully! You may now login');
         getLogin();
     })
     .catch(error => {
         console.error('Error:', error);
-        // alert('Error creating account. ' + error.message);
         showModal('Error creating account. ' + error.message);
     });
 }
