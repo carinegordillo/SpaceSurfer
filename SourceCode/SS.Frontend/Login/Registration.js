@@ -58,7 +58,12 @@ function submitAccountCreationForm() {
     };
     console.log("THIS IS THE REQUEST", accountCreationRequest)
     console.log("THIS ISI THE USERINOF ", accountCreationRequest.userInfo)
-    fetch('http://localhost:5041/api/registration/postAccount', {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const RegistrationUrl = appConfig.api.Registration; 
+    fetch(`${RegistrationUrl}/api/registration/postAccount`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -106,7 +111,12 @@ function submitEmployeeCreationForm() {
         companyInfo: companyInfo,
         manager_hashedUsername : JSON.parse(sessionStorage.getItem('idToken')).Username
     };
-    fetch('http://localhost:5041/api/registration/postAccount', {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const RegistrationUrl = appConfig.api.Registration; 
+    fetch(`${RegistrationUrl}/api/registration/postAccount`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
