@@ -118,16 +118,17 @@ nav {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    background-color: #dde1e7; /* Light blue background */
-    color: #788AA3; /* Dark grey text */
+    background-color: #E2E2D3; /* Light blue background corrected to more accurate description */
+    color: #7a796c; /* Text color */
     padding: 10px 20px; /* Adjust padding as needed */
-    border-radius: 5px; /* Rounded corners for a "button-like" appearance */
+    border-radius: 15px; /* Rounded corners for a "button-like" appearance */
     cursor: pointer;
     transition: all 0.3s ease; /* Smooth transition for hover effects */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     margin: 4px;
     text-align: center;
     white-space: nowrap; /* Keep text on one line */
+    border: 1.5px solid #FF2E57; /* Define border width and style along with color */
 }
 
 .nav-container {
@@ -149,7 +150,7 @@ nav {
 
 .nav-item:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
-    background-color: #c4c9d1; /* Slightly darker background on hover */
+    background-color: #AFAEA0; /* Slightly darker background on hover */
     transform: translateY(-2px); /* Lift button on hover */
 }
 
@@ -215,7 +216,70 @@ form {
     flex-direction: column;
 }
 
+/* #accountCreationForm {
+    width: 100%; 
+    max-width: 500px; 
+    background: rgb(205, 216, 247);
+    padding: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 45px;
+    text-align: center; 
+} */
+#additionalFields {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
 
+#additionalFields div {
+    flex-basis: 48%; /* Adjusts the basis to less than 50% to account for margins */
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+    #additionalFields {
+        flex-direction: column;
+    }
+    #additionalFields div {
+        flex-basis: 100%; /* Full width on smaller screens */
+    }
+}
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Space between rows */
+}
+
+.form-row label {
+    margin-right: 10px; /* Space between label and input */
+    flex-basis: 25%; /* Adjust as needed */
+    text-align: right; /* Align the text to the right */
+}
+
+.form-row input[type="text"],
+.form-row input[type="email"],
+.form-row input[type="date"],
+.form-row input[type="time"] {
+    flex-grow: 1; /*Input field takes up remaining space*/
+}
+
+label {
+    display: flex;
+    margin-bottom: 0px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="date"],
+input[type="time"] {
+    width: 50%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #040d46;
+    box-sizing: border-box; 
+}
 /* Overall container styling */
 .container {
     display: flex;
@@ -231,25 +295,24 @@ form {
 .loginForm {
     border-radius: 25px;
     padding: 40px;
-    margin-right: 75px; /* Add space between the form and the welcome label */
-    background-color: white;
-    color: #fff; /* This color won't be visible on a white background, consider changing */
-    width: 300px;
-    height: 300px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    display: flex; /* Use flexbox to align children */
-    align-items: center; /* Center-align the flex items horizontally */
-    justify-content: center; /* Center-align the flex items vertically */
+    margin-right: 75px; /* Space between the form and the welcome label */
+    background-color: #E2E2D3;
+    color: #666; /* Adjusted for better visibility */
+    width: max-width; /* Keeps width fixed, change to max-width if desired */
+    min-height: 300px; /* Ensures it doesn't get smaller than 300px high */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 20px;
 }
 
-/* Style for form elements */
 .loginForm form {
     display: flex;
     flex-direction: column;
-    gap: 5px; /* Space between form items */
-    justify-content: center; /* Centers form items vertically */
-    height: 100%; /* Take full height of parent */
-    color: #666; /* For visible text, choose a contrasting color */
+    gap: 5px;
+    justify-content: center;
+    align-items: center; /* Added for horizontal centering */
 }
 
 
@@ -273,7 +336,13 @@ form {
 .login-title {
     font-size: 3em; /* This sets the font size to 200% of the base font size */
     margin-bottom: 20px; /* Adds space below the title for better spacing */
-    color: #788AA3; 
+    color: #7a796c; 
+    text-align: center;
+}
+.register-title {
+    font-size: 1.5em; /* This sets the font size to 200% of the base font size */
+    margin-bottom: 20px; /* Adds space below the title for better spacing */
+    color: #7a796c; 
     text-align: center;
 }
 /* Style for the large label */
@@ -354,13 +423,17 @@ input {
 
 
 .task-container {
-    background: rgb(205, 216, 247);
+    background: #E2E2D3;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-#accountCreationForm h2 {
+/* #accountCreationForm h2 {
+    color: #333;
+    font-size: 24px;
+} */
+#TaskForm h2 {
     color: #333;
     font-size: 24px;
 }
@@ -381,7 +454,7 @@ input[type="date"],
 input[type="number"],
 textarea,
 select {
-    width: 100%;
+    width: 80%;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -412,7 +485,7 @@ button:hover {
     justify-content: space-between; 
 }
 
-.task-list-section, .task-form-section {
+.task-list-section, .space-form-section {
     flex: 1; 
     padding: 20px; 
     box-sizing: border-box; 
@@ -422,7 +495,7 @@ button:hover {
     border-right: 1px solid #ccc; 
 }
 
-.task-form-section {
+.space-form-section {
     padding-left: 40px;
 }
 
@@ -656,7 +729,127 @@ input[type="checkbox"] {
     text-decoration: line-through;
     color: grey;
 }
+.hovering {
+    animation: hoverAnimation 2s ease-in-out infinite;
+}
 
+@keyframes hoverAnimation {
+    0%, 100% {
+        transform: translateY(0); /* Start and end at the original position */
+    }
+    50% {
+        transform: translateY(-20px); /* Move up by 20 pixels */
+    }
+}
+
+/* .task-container {
+    display: flex;
+    flex-direction: column;
+} */
+
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 20px;
+}
+
+.homepage-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    background-color: #f4f4f8;
+}
+
+.space-list-section, .space-form-section {
+    flex: 1;
+    background: #ffffff;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+h2, h4 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.space-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.btn-primary {
+    background-color: #4CAF50;
+}
+
+.btn-primary:hover {
+    background-color: #45a049;
+}
+
+.btn-danger {
+    background-color: #f44336;
+}
+
+.btn-danger:hover {
+    background-color: #e53935;
+}
+
+.btn-add, .btn-modify {
+    background-color: #2196F3;
+}
+
+.btn-add:hover, .btn-modify:hover {
+    background-color: #1e88e5;
+}
+
+.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 15px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    transition: 0.4s;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.accordion.active, .accordion:hover {
+    background-color: #ccc;
+}
+
+.image-preview {
+    /* border: 1px solid #ccc; */
+    padding: 2px;
+    /* border-radius: 4px; */
+    /* margin-top: 10px; */
+}
+
+.space-container {
+    border: 1px dashed #ccc;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+}
 /*User profile */
 
 .profile {

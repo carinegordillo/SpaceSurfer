@@ -84,6 +84,7 @@ namespace SS.Backend.Services.PersonalOverviewService
                         category = "Data Store",
                         description = "Unsuccessful Reservation Retrieval or No Existing Reservations"
                     };
+                    await logger.SaveData(errorEntry);
                 }
             }
             catch (Exception ex)
@@ -91,6 +92,16 @@ namespace SS.Backend.Services.PersonalOverviewService
                 // If an error occurs error
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
+
+                LogEntry errorEntry = new LogEntry()
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = username,
+                    category = "Data",
+                    description = "Service Error In PersonalOverview To Get Reservations"
+                };
+                await logger.SaveData(errorEntry);
             }
 
             return reservationList;
@@ -98,18 +109,18 @@ namespace SS.Backend.Services.PersonalOverviewService
 
         public async Task<Response> DeleteUserReservationsAsync(string username, int reservationID)
         {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+
+            // initializes a new instance of the logger
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
 
             Response response = new Response();
 
             try
             {
-                var baseDirectory = AppContext.BaseDirectory;
-                var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-                var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-                configService = new ConfigService(configFilePath);
-
-                // initializes a new instance of the logger
-                Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
 
                 response = await _personalOverviewDAO.DeleteReservation(username, reservationID);
 
@@ -148,7 +159,17 @@ namespace SS.Backend.Services.PersonalOverviewService
             {
                 response.HasError = true;
                 response.ErrorMessage += $"Encountered an error deleting the reservation:{ex.Message}";
-                return response;
+
+                LogEntry errorEntry = new LogEntry()
+                {
+                    timestamp = DateTime.UtcNow,
+                    level = "Error",
+                    username = username,
+                    category = "Data",
+                    description = "Service Error In PersonalOverview To Delete Reservaion"
+                };
+
+                await logger.SaveData(errorEntry);
             }
 
             return response;

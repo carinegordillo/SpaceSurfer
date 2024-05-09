@@ -388,21 +388,21 @@ async function checkTokenExpiration(accessToken) {
     }
 }
 
-function logout() {
-    console.log("logout cliced")
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('idToken');
-    sessionStorage.removeItem('userIdentity')
-    var identityDiv = document.getElementById("identity");
-    if (identityDiv) {
-        console.log("Identity element found, current display:", identityDiv.style.display);
-        identityDiv.style.display = "none";
-        console.log("Identity should now be hidden, new display:", identityDiv.style.display);
-    } else {
-        console.log("Identity element not found");
-    }
-    document.getElementById("homepageGen").style.display = "none";
-    document.getElementById("homepageManager").style.display = "none";
-    document.getElementById("sendOTPSection").style.display = "block";
-    document.getElementById("taskManagerView").style.display = "none";
-}
+// function logout() {
+//     console.log("logout cliced")
+//     sessionStorage.removeItem('accessToken');
+//     sessionStorage.removeItem('idToken');
+//     sessionStorage.removeItem('userIdentity')
+//     var identityDiv = document.getElementById("identity");
+//     if (identityDiv) {
+//         console.log("Identity element found, current display:", identityDiv.style.display);
+//         identityDiv.style.display = "none";
+//         console.log("Identity should now be hidden, new display:", identityDiv.style.display);
+//     } else {
+//         console.log("Identity element not found");
+//     }
+//     document.getElementById("homepageGen").style.display = "none";
+//     document.getElementById("homepageManager").style.display = "none";
+//     document.getElementById("sendOTPSection").style.display = "block";
+//     document.getElementById("taskManagerView").style.display = "none";
+// }
