@@ -66,6 +66,22 @@ namespace AuthAPI.Controllers
             }
         }
 
+        [HttpPost("verifyCode")]
+        public async Task<IActionResult> verifyCode([FromBody] AuthenticationRequest request)
+        {
+
+            var response = await _authService.verifyCode(request);
+
+            if (response.HasError)
+            {
+                return BadRequest(response.ErrorMessage);
+            }
+            else
+            {
+                return Ok();
+            }
+        }
+
         [HttpPost("getRole")]
         public IActionResult GetRole([FromBody] Jwt token)
         {

@@ -239,3 +239,5 @@ function hideAllSections() {
     document.getElementById("accountRecoverySection").style.display = "none";
     document.getElementById("userRequestsView").style.display = "none";
 }
+
+
