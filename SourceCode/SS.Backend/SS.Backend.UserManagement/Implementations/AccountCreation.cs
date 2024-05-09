@@ -141,9 +141,7 @@ namespace SS.Backend.UserManagement
                 Dear {userInfo.firstname},
 
                 An account with your email has recently been registered within Space Surfer. 
-                In order to enjoy and utilize the application please follow the url below in order to verify your account. 
-
-                http://localhost:3000/VerifyAccount/index.html
+                In order to enjoy and utilize the application please check your inbox for a one time password used to verify your account. 
 
                 If you have any questions or need assistance, please don't hesitate to contact us at spacesurfers5@gmail.com.
 

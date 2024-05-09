@@ -161,6 +161,14 @@
     <!--Registration-->
     <section id="Registration" style="display: none;">
         <div class = "container">
+            <section id="enterRegistrationOTPSection"  style="display: none;">
+                <form id="enterOTPForm" class = "loginForm">
+                    <label for="otp">Enter Verification Code</label>
+                    <input type="text" id="registrationUsername" name="registrationUsername" required placeholder="Username">
+                    <input type="text" id="registrationOtp" name="registrationOtp" required placeholder="Verification code">
+                    <button type="button" onclick="authenticateRegisterUser(username)">Verify OTP</button>
+                </form>
+            </section>
             <form id="accountCreationForm" class = "loginForm">
                 <label class="register-title">Register to SpaceSurfer🤙</label>
                 <input type="text" id="username" name="username" placeholder="Email" required>
