@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("homepageGen").style.display = "none";
         document.getElementById("noLogin").style.display = "block";
         document.getElementById("sendOTPSection").style.display = "block";
-        document.getElementById("accountRecoverySection").style.display = "none";
     }
 });
 
@@ -147,19 +146,6 @@ function logout() {
     document.getElementById("FMview").style.display = "none";
     document.getElementById("CMview").style.display = "none";
     document.getElementById("homepageGen").style.display = "none";
-
-    document.getElementById("homepageManager").style.display = "none";
-    document.getElementById("taskManagerView").style.display = "none";
-    document.getElementById('personalOverviewCenter').style.display = 'none';
-    document.getElementById('spaceBookingView').style.display = 'none';
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById('waitlistView').style.display = 'none';
-    document.getElementById("welcomeSection").style.display = "none";
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById("accountRecoverySection").style.display = "none";
-    document.getElementById("userRequestsView").style.display = "none";
-
-
 }
 
 function getLogin(){
@@ -167,7 +153,6 @@ function getLogin(){
     hideAllSections();
     document.getElementById('sendOTPSection').style.display = 'block';
     document.getElementById('noLogin').style.display = 'block';
-
 }
 
 function getAbout(){
@@ -193,8 +178,6 @@ function registrationAccess() {
     hideAllSections();
     document.getElementById('Registration').style.display = 'block';
     document.getElementById('noLogin').style.display = 'block';
-
-    
 }
 
 function taskHubAccess() {
@@ -250,12 +233,9 @@ function hideAllSections() {
     document.getElementById('Registration').style.display = 'none';
     document.getElementById('spaceManagerView').style.display = 'none';
     document.getElementById('userProfileView').style.display = 'none';
-
-    document.getElementById("accountRecoverySection").style.display = "none";
-    document.getElementById("userRequestsView").style.display = "none";
-
     document.getElementById('noLogin').style.display = 'none';
     document.getElementById('confirmationView').style.display = 'none';
     document.getElementById('systemObservability').style.display = 'none';
-
+    document.getElementById("accountRecoverySection").style.display = "none";
+    document.getElementById("userRequestsView").style.display = "none";
 }
