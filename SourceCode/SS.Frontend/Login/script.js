@@ -191,6 +191,7 @@ function getUserProfile(){
     document.getElementById('userProfileView').style.display = 'block';
 }
 
+
 function spaceBookingCenterAccess() {
     hideAllSections();
     document.getElementById('spaceBookingView').style.display = 'block';
@@ -259,4 +260,8 @@ function hideAllSections() {
     document.getElementById('noLogin').style.display = 'none';
     document.getElementById('confirmationView').style.display = 'none';
     document.getElementById('systemObservability').style.display = 'none';
+    document.getElementById("accountRecoverySection").style.display = "none";
+    document.getElementById("userRequestsView").style.display = "none";
 }
+
+

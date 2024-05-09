@@ -17,6 +17,7 @@
 	  <ProjectReference Include="..\SS.Backend.SpaceManager\SS.Backend.SpaceManager.csproj" />
 	  <ProjectReference Include="..\SS.Backend.ReservationManagement\SS.Backend.ReservationManagement.csproj" />
 	  <ProjectReference Include="..\SS.Backend.ReservationManagers\SS.Backend.ReservationManagers.csproj" />
+	  <ProjectReference Include="..\SS.Backend.UserDataProtection\SS.Backend.UserDataProtection.csproj" />
   </ItemGroup>
 
 </Project>
