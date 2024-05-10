@@ -91,6 +91,8 @@ async function fetchUserProfile(email) {
     }
 }
 
+
+
 function displayUserProfile(userProfile) {
     isEditing = false; // Set edit mode to false when displaying profile
 
@@ -188,14 +190,13 @@ async function saveProfileChanges() {
     }
 }
 
-
-
-
-
 function cancelEditProfile() {
     isEditing = false; // Set edit mode to false
     initProfile();
 }
+
+
+
 
 async function checkTokenExpiration(accessToken) {
     try {

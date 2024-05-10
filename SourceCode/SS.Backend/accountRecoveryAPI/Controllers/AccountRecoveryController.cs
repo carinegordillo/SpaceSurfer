@@ -176,7 +176,26 @@ public class RecoverRequestController : ControllerBase
     }
 
 
+    [Route("getUserAccountDetails")]
+    [HttpGet]
+    public async Task<ActionResult> getUserAccountDetails([FromQuery] string email)
+    {
+        try
+        {
+            var userAccountDetails = await _accountRecovery.ReadUserAccount(email);
 
+            if (userAccountDetails == null)
+            {
+                return NotFound("User not found.");
+            }
 
+            return Ok(userAccountDetails);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return StatusCode(500, ex.Message);
+        }
+    }
 
 }

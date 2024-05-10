@@ -10,12 +10,12 @@ document.addEventListener('click', function (event) {
 });
 
 function showRecoveryForm() {
-    window.alert("in here")
+
     // Hide the OTP section and show the recovery form section
     document.getElementById("accountRecoverySection").style.display = "block";
     document.getElementById('sendOTPSection').style.display = 'none';
 
-    window.alert("Recovery clicked");
+
 
     const recoveryForm = document.getElementById('recoveryForm');
     recoveryForm.addEventListener('submit', sendRecoveryRequest);
@@ -72,6 +72,7 @@ function sendRecoveryOTP() {
 function authenticateRecoveryUser() {
     var otp = document.getElementById("RecoveryOtp").value;
     var userIdentity = document.getElementById("userRecoveryIdentity").value;
+
 
     $.ajax({
         url: 'http://localhost:5270/api/auth/authenticate',
@@ -327,6 +328,7 @@ function approveRequestsByUserHash(userHashes) {
         return response.json();
     })
     .then(data => {
+        alert("Successfully approved requests")
         console.log('Successfully approved requests:', data);
         fetchUserRequests(); // Refresh the data after approval
     })
@@ -348,6 +350,7 @@ function denyRequestsByUserHash(userHashes) {
         return response.json();
     })
     .then(data => {
+        alert("Successfully denied requests")
         console.log('Successfully denied requests:', data);
         fetchUserRequests(); // Refresh the data after denial
     })

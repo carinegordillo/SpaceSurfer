@@ -1,4 +1,4 @@
-
+using System.Data;
 using SS.Backend.SharedNamespace;
 
 
@@ -25,9 +25,13 @@ namespace SS.Backend.UserManagement
          */
 
 
-        public async Task<Response> createRecoveryRequest(string userHash, string additionalInfo = "")
+        public async Task<Response> createRecoveryRequest(string email, string additionalInfo = "")
         {
-    
+
+            string userHash = await _userManagementDao.GetHashByEmail(email);
+
+            Console.WriteLine(userHash);
+
             var userRequest = new UserRequestModel
             {
                 UserHash = userHash,
@@ -75,6 +79,7 @@ namespace SS.Backend.UserManagement
         public async Task<Response> RecoverAccount(string userHash, bool adminDecision)
         {
             Response response = new Response();
+
 
             if (adminDecision)
             {
@@ -125,7 +130,7 @@ namespace SS.Backend.UserManagement
             return response;
         }
 
-         public async Task<Response> ReadUserPendingRequests(){
+        public async Task<Response> ReadUserPendingRequests(){
 
             
             Response response = new Response();
@@ -173,13 +178,15 @@ namespace SS.Backend.UserManagement
             return response;
 
         }
+
         public async Task<Response> deleteUserRequestByuserHash(string userHash){
             Response response = new Response();
-            
+   
             response = await _userManagementDao.DeleteRequestWhere("userHash", userHash, "dbo.userRequests");
 
             if (response.HasError == false)
             {
+                
                 response.ErrorMessage += "- deleteUserRequestByuserHash successful. -";
             }
             else
@@ -190,6 +197,59 @@ namespace SS.Backend.UserManagement
             return response;
             
         }
+
+        public async Task<UserAccountDetails> ReadUserAccount(string userHash)
+        {
+            UserAccountDetails userAccountDetails = null;
+
+            try
+            {
+                var activeResponse = await _userManagementDao.readTableWhere("hashedUsername", userHash, "dbo.activeAccount");
+
+                if (!activeResponse.HasError)
+                {
+                    string isActive = null;
+
+                    foreach (DataRow row in activeResponse.ValuesRead.Rows)
+                    {
+                        isActive = Convert.ToString(row["isActive"]);
+                    }
+                    string username = await _userManagementDao.GetEmailByHash(userHash);
+
+                    var userResponse = await _userManagementDao.readTableWhere("username", username, "dbo.userAccount");
+
+                    if (!userResponse.HasError)
+                    {
+                        foreach (DataRow row in userResponse.ValuesRead.Rows)
+                        {
+                            userAccountDetails = new UserAccountDetails
+                            {
+                                UserId = Convert.ToInt32(row["user_id"]),
+                                Username = Convert.ToString(row["username"]),
+                                BirthDate = Convert.ToDateTime(row["birthDate"]),
+                                CompanyId = row["companyID"] == DBNull.Value ? (int?)null : Convert.ToInt32(row["companyID"]),
+                                IsActive = isActive
+                            };
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Couldn't read userAccount: " + userResponse.ErrorMessage);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Couldn't read activeAccount: " + activeResponse.ErrorMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Exception occurred: " + ex.Message);
+            }
+
+            return userAccountDetails;
+        }
+
 
 
     }
