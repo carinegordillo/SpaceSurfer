@@ -33,35 +33,6 @@ document.getElementById('initAppButton').addEventListener('click', function () {
     });
 });
 
-// function logout() {
-//     console.log('SPACEBOOKING CENTER LOGOUT')
-//     sessionStorage.removeItem('accessToken');
-//     sessionStorage.removeItem('idToken');
-//     sessionStorage.removeItem('userIdentity')
-//     var identityDiv = document.getElementById("identity");
-//     if (identityDiv) {
-//         console.log("Identity element found, current display:", identityDiv.style.display);
-//         identityDiv.style.display = "none";
-//         console.log("Identity should now be hidden, new display:", identityDiv.style.display);
-//     } else {
-//         console.log("Identity element not found");
-//     }
-//     document.getElementById("taskManagerView").style.display = "none";
-//     document.getElementById("homepageGen").style.display = "none";
-//     document.getElementById("homepageManager").style.display = "none";
-//     document.getElementById("sendOTPSection").style.display = "block";
-
-//     const existingModal = document.querySelector('.modal-content');
-//         if (existingModal) {
-//             existingModal.remove();
-//         }
-//     const modalBackdrop = document.querySelector('.modal-backdrop');
-//     if (modalBackdrop) {
-//         modalBackdrop.style.display = 'none';
-//     }
-// }
-
-
 
 function initSidebar() {
     const sidebar = document.querySelector('.sidebar');

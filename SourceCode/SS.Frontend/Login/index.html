@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="spaceBookingCenter.css"> 
-        <link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="confirmStyle.css">
-        <link rel="stylesheet" href="PersonalOverviewStyle.css">
+    <link rel="stylesheet" href="spaceBookingCenter.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="confirmStyle.css">
+    <link rel="stylesheet" href="PersonalOverviewStyle.css">
     <!--<link rel="stylesheet" href="/Waitlist/style.css"> -->
-<body class = "main-content">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/Chart.min.js"></script>
+</head>
+
+<body class="main-content">
     <header>
         <nav>
             <div class="header-content">
@@ -21,26 +24,26 @@
             </div>
             <div class="nav-container">
                 <!-- unauthorized user view -->
-                <div id="noLogin" class="nav-items"  style="display: none;">
+                <div id="noLogin" class="nav-items" style="display: none;">
                     <div class="nav-item" id="navAbout" onclick="getAbout()">About</div>
                     <div class="nav-item" id="navRegister" onclick="registrationAccess()">Register</div>
                     <div class="nav-item" id="navLogin" onclick="getLogin()">Login</div>
                 </div>
                 <!-- company manager view -->
-                <div id = "CMview" style = "display:none;"> 
+                <div id="CMview" style="display:none;">
                     <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
                     <div class="nav-item" type="button" onclick="employeeSetupAccess()">Employee Account Setup</div>
-                    <div class="nav-item" type="button" onclick="SOAccess()">systemObservability</div>
+                    <div class="nav-item" type="button" onclick="SOAccess()">System Observability</div>
                 </div>
                 <!-- facility manager view -->
-                <div id = "FMview" style = "display:none;"> 
+                <div id="FMview" style="display:none;">
                     <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
                 </div>
                 <!-- general nav all users can see -->
                 <div id="homepageGen" class="nav-items" style="display: none;">
 
                     <div class="nav-item" type="button" onclick="getHomePage()">
-                        <i class="fas fa-home">Home</i> 
+                        <i class="fas fa-home">Home</i>
                     </div>
                     <div class="nav-item" type="button" onclick="initProfile()">Profile</div>
 
@@ -56,7 +59,7 @@
                     <div class="nav-item" type="button" onclick="getUserProfile()">Profile</div>
                     <div class="nav-item" type="button" onclick="logout()">Logout</div>
                 </div>
-                
+
             </div>
         </nav>
     </header>
@@ -68,14 +71,14 @@
                     <label for="userIdentity" class="login-title">Login!</label>
                     <input type="text" id="userIdentity" name="userIdentity" required placeholder="Enter your username">
                     <button type="button" onclick="sendOTP()">Send Verification</button>
-                    <a href="#" class="recover-link" >Recover an account</a>
+                    <a href="#" class="recover-link">Recover an account</a>
                     <a href="#" class="recover-link" onclick="registrationAccess()">Don't have an account? Register Now!</a>
                 </form>
             </section>
             <!-- <div class="welcome-label">
                 Welcome to SpaceSurfer!
             </div> -->
-            <img src="images/astroText.png" alt="Astro" class = "hovering">
+            <img src="images/astroText.png" alt="Astro" class="hovering">
         </div>
     </section>
 
@@ -86,16 +89,16 @@
                     <label class="login-title">About</label>
                     <div class="about-section">
                         <p>Welcome to <strong>Space Surfer</strong> - Your Premier Space Reservation Platform!</p>
-                        
+
                         <h3>Who We Are</h3>
                         <p>Space Surfer is a cutting-edge platform designed to simplify the way individuals and businesses reserve spaces for various purposes. Whether you're booking a conference room, securing a spot in a co-working space, or claiming a seat at a local event, Space Surfer offers a seamless, intuitive reservation experience that puts your convenience first.</p>
-                        
+
                         <h3>Our Mission</h3>
                         <p>Our mission at Space Surfer is to revolutionize space booking by making it as easy and stress-free as possible. We believe that finding and securing the right space, whether for work, leisure, or special events, should be straightforward and hassle-free. Space Surfer leverages advanced technology to connect space providers with users, ensuring efficient transactions and satisfied outcomes.</p>
-                        
+
                         <h3>Our Vision</h3>
                         <p>Looking ahead, Space Surfer aims to expand its reach by incorporating more diverse spaces and offering enhanced features that anticipate and meet our users' evolving needs. We are committed to continuous improvement and innovation to remain at the forefront of the space reservation industry.</p>
-                        
+
                         <h3>Join Us</h3>
                         <p>Ready to get started? Join Space Surfer today and experience the ultimate in space booking convenience. For questions or further information, please contact us at <a href="mailto:spacesurfers5@gmail.com">support@spacesurfer.com</a>.</p>
                         
@@ -106,7 +109,7 @@
             <!-- <div class="welcome-label">
                 Welcome to SpaceSurfer!
             </div> -->
-            <img src="images/astronaut.png" alt="Astro" class = "hovering">
+            <img src="images/astronaut.png" alt="Astro" class="hovering">
 
         </div>
     </section>
@@ -140,7 +143,7 @@
 
     <section id="welcomeSection" style="display: none;">
         <div class="container">
-            <img src="images/astronaut.png" alt="Astro" class = "hovering">
+            <img src="images/astronaut.png" alt="Astro" class="hovering">
         </div>
     </section>
 
@@ -179,29 +182,29 @@
                 <input type="hidden" id="role" name="role">
                 <input type="hidden" id="status" name="status">
                 <input type="text" id="backupEmail" name="backupEmail" placeholder="Backup Email">
-                
+
                 <label class="register-title">Are You A Company/Facility?</label>
                 <div class="form-row" style="display: flex; justify-content: center;">
-                <input type="checkbox" id="isCompany" name="isCompany" onchange="handleCheckboxChange(this)" >
-                <label for="isCompany">Company</label>
-        
-                <input type="checkbox" id="isFacility" name="isFacility" onchange="handleCheckboxChange(this)" >
-                <label for="isFacility">Facility</label>
+                    <input type="checkbox" id="isCompany" name="isCompany" onchange="handleCheckboxChange(this)">
+                    <label for="isCompany">Company</label>
+
+                    <input type="checkbox" id="isFacility" name="isFacility" onchange="handleCheckboxChange(this)">
+                    <label for="isFacility">Facility</label>
                 </div>
-                
+
                 <div id="additionalFields" style="display: none;">
                     <label for="name">Company/Facility Name:</label>
                     <input type="text" id="companyName" name="name"><br>
         
                     <label for="location">Company Zipcode:</label>
                     <input type="text" id="address" name="location"><br>
-        
+
                     <label for="openingHours">Opening Hours:</label>
                     <input type="time" id="openingHours" name="openingHours"> <br>
-        
+
                     <label for="closingHours">Closing Hours:</label>
                     <input type="time" id="closingHours" name="closingHours"><br>
-        
+
                     <fieldset id="daysOpen">
                         <legend>Days Open:</legend>
                         <label><input type="checkbox" name="daysOpen" value="Monday"> Monday</label><br>
@@ -217,13 +220,13 @@
                 <!-- <button id="loadRequestsButton" onclick="testingRegistration()">Load Requests</button>
                 <ul id="recoveryRequestsList"></ul> -->
             </form>
-            <img src="images/astroText.png" alt="Astro" class = "hovering">
-        </div>  
+            <img src="images/astroText.png" alt="Astro" class="hovering">
+        </div>
     </section>
-    
+
     <section id="employeeSetup" style="display: none;">
-        <div id = "registerView" class = "container"  >
-            <form id="employeeForm" class = "loginForm">
+        <div id="registerView" class="container">
+            <form id="employeeForm" class="loginForm">
                 <label class="login-title">Register Employee to Space Surfer</label>
                 <input type="text" id="employeeusername" name="employeeusername" placeholder="Username" required>
                 <input type="date" id="employeedob" name="employeedob" placeholder="Date of Birth" required><br>
@@ -260,12 +263,15 @@
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <div id="calendar-container">
             <h3 id="POC">Personal Overview Center</h3>
+            <input type="hidden" id="current-view" name="current-view" value="">
+
+
             <!-- Add the prompt element -->
             <p id="view-prompt">Please select a view before confirming.</p>
 
             <div id="calendar-header">
-                <button id="calendar-button">Calendar</button>
-                <button id="list-button">List</button>
+                <button type="button" onclick="calendarView()" id="calendar-button">Calendar</button>
+                <button type="button" onclick="listView()" id="list-button">List</button>
             </div>
             <div id="date-filter">
                 <label for="from-date">From:</label>
@@ -273,13 +279,13 @@
                 <label for="to-date">To:</label>
                 <input type="date" id="to-date">
             </div>
-            <button id="confirm-button">Confirm Selection</button>
+            <button type="button" onclick="confirmSelection()" id="confirm-button">Confirm Selection</button>
 
             <div id="calendar-poc">
                 <div id="month-info-container">
-                    <div id="prev-month">&lt;</div>
+                    <button type="button" onclick="changeMonth(-1)" id="prev-month">&lt;</button>
                     <div id="month-year"></div>
-                    <div id="next-month">&gt;</div>
+                    <button type="button" onclick="changeMonth(1)" id="next-month">&gt;</button>
                 </div>
                 <table>
                     <thead>
@@ -305,7 +311,7 @@
             <form id="delete-reservation-form" class="delete-form">
                 <label for="reservation-id">Enter Reservation ID to Delete:</label>
                 <input type="number" id="reservation-id" name="reservation-id" required>
-                <button type="button" id="reservation-delete-button">Delete Reservation</button>
+                <button type="button" onclick="fetchReservationDeletion()" id="reservation-delete-button">Delete Reservation</button>
             </form>
         </div>
 
@@ -387,7 +393,7 @@
 
     <!--Task Manager View-->
     <section id="taskManagerView" class="homepage-container" style="display: none;">
-        <div  class="task-container">
+        <div class="task-container">
             <div id="TaskForm" class="flex-container">
                 <div class="task-list-section">
                     <h2>Task Manager Hub🤙</h2>
@@ -475,7 +481,7 @@
                 <div class="space-list-section">
                     <h2>Space Manager🤙</h2>
                     <ul id="spaceList"></ul>
-                    <button id = "companyList">Companies List</button>
+                    <button id="companyList">Companies List</button>
                     <div id="floorPlanContent" class="floor-plans-container"></div>
                 </div>
               
@@ -516,26 +522,23 @@
             </div>
         </div>
     </section>
-    
-    <section id = "systemObservability" class = "homepage-container" style = "display: none;">
+
+    <section id="systemObservability" class="homepage-container" style="display: none;">
         <label>System Observability Dashboard</label>
-    
-        <button id="fetchInformation">Fetch System Information</button>
         <div id="informationDisplay"></div>
+        <label for="timeSpan-select">Select time span:</label>
+        <select id="timeSpan">
+            <option value="6 months">6 months</option>
+            <option value="12 months">12 months</option>
+            <option value="24 months">24 months</option>
+        </select>
+        <button type="button" onclick="updateTimeSpan()">Confirm Timespan</button>
 
-        <h2>Log View Duration</h2>
-        <form id="viewDurationForm">
-            <input type="text" id="viewName" placeholder="View Name">
-            <input type="number" id="durationInSeconds" placeholder="Duration in Seconds">
-            <button type="submit">Submit View Duration</button>
-        </form>
+        <div id="systemObservabilityContainer">
+            <canvas id="loginsTrendChart"></canvas>
+            <canvas id="registrationsTrendChart"></canvas>
+        </div>
 
-        <h2>Log Feature Use</h2>
-        <form id="featureUseForm">
-            <input type="text" id="featureName" placeholder="Feature Name">
-            <button type="submit">Submit Feature Use</button>
-        </form>
-    
     </section>
 
 <section id="userRequestsView"  class="homepage-container" style="display: none;">
@@ -578,6 +581,7 @@
         <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
         <button type="button" onclick="logout()">Logout</button>
     </section>
+
 
     <footer>
         <p>Designed and Developed by the PixelPals Team</p>
@@ -624,6 +628,7 @@
     <script src="waitlistScript.js"></script>
     <script src="PersonalOverviewFunctions.js"></script>
     <script src="spaceBookingCenter.js"></script>
+    <script src="SystemObservabilityFunctions.js"></script>
     <script src="cpraScript.js"></script>
     <script src = "SpaceManager.js"></script>
     <script src="accountRecovery.js"></script>

@@ -364,5 +364,73 @@ namespace SS.Backend.UserManagement
             return response;
         }
 
+        public async Task<string> GetEmailByHash(string hashedUsername)
+        {
+            string userUsername = null;
+            Response tablesresponse = new Response();
+            var builder = new CustomSqlCommandBuilder();
+            var command = builder.BeginSelect()
+                                .SelectColumns("username")
+                                .From("dbo.userHash")
+                                .Where("hashedUsername = @HashedUsername")
+                                .AddParameters(new Dictionary<string, object>
+                                {
+                                    { "HashedUsername", hashedUsername}
+                                })
+                                .Build();
+
+            var username = await _sqldao.ReadSqlResult(command);
+
+            if (!username.HasError)
+            {
+                foreach (DataRow row in username.ValuesRead.Rows)
+                {
+                    
+                    userUsername = Convert.ToString(row["username"]);
+                    
+                }
+            }
+            else
+            {
+                throw new Exception("Couldn't read userHash: " + username.ErrorMessage);
+            }
+
+            return userUsername;
+        }
+
+        public async Task<string> GetHashByEmail(string email)
+        {
+            string userUsername = null;
+            Response tablesresponse = new Response();
+            var builder = new CustomSqlCommandBuilder();
+            var command = builder.BeginSelect()
+                                .SelectColumns("hashedUsername")
+                                .From("dbo.userHash")
+                                .Where("username = @username")
+                                .AddParameters(new Dictionary<string, object>
+                                {
+                                    { "username", email}
+                                })
+                                .Build();
+
+            var username = await _sqldao.ReadSqlResult(command);
+
+            if (!username.HasError)
+            {
+                foreach (DataRow row in username.ValuesRead.Rows)
+                {
+                    
+                    userUsername = Convert.ToString(row["hashedUsername"]);
+                    
+                }
+            }
+            else
+            {
+                throw new Exception("Couldn't read userHash: " + username.ErrorMessage);
+            }
+
+            return userUsername;
+        }
+
     }
 }

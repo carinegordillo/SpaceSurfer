@@ -86,9 +86,10 @@ function sendOTP() {
     });
 }
 
-function authenticateUser() {
+async function authenticateUser() {
     var otp = document.getElementById("otp").value;
     var userIdentity = document.getElementById("userIdentity").value;
+    var userIsActive = false;
     const loginUrl = appConfig.api.Login; 
     fetch(`${loginUrl}/api/auth/authenticate`, {
         method: 'POST',
@@ -115,15 +116,61 @@ function authenticateUser() {
         });
     })
     .then(response => response.text())
-    .then(role => {
-        showModal("You're logged in!");
-        sessionStorage.setItem('role', role);
-        manageUserViews(role, userIdentity);
+    .then(async role => {
+        const accountInfo = await fetchUserAccount();
+
+            if (accountInfo) {
+                userIsActive = await getActivityStatus(accountInfo.isActive);
+            }
+            console.log(userIsActive)
+            if(userIsActive){
+                showModal("You're logged in!");
+                sessionStorage.setItem('role', role);
+                manageUserViews(role, userIdentity);
+            }else{
+                console.log(userIsActive)
+                showModal('Sorry, your account is not active. Please submit a recovery request.');
+                console.log("account is not active")
+                logout()
+            }
     })
     .catch(error => {
         showModal('Incorrect verification code. Please double-check and try again.');
         console.error('Error during authentication:', error);
     });
+}
+async function fetchUserAccount() {
+    const idToken = sessionStorage.getItem('idToken');
+    
+        if (!idToken) {
+            console.error('idToken not found in sessionStorage');
+            return;
+        }
+        const parsedIdToken = JSON.parse(idToken);
+
+        // Log parsed object for debugging
+        console.log('Parsed idToken:', parsedIdToken);
+
+        if (!parsedIdToken || !parsedIdToken.Username) {
+            console.error('Parsed idToken does not have Username');
+            return;
+        }
+
+        const email = parsedIdToken.Username;
+
+    try {
+        const response = await fetch(`http://localhost:5176/api/requestRecovery/getUserAccountDetails?email=${encodeURIComponent(email)}`);
+        const data = await response.json();
+        console.log(data)
+        return data || null;
+    } catch (error) {
+        console.error('Error fetching user Account:', error);
+        return null;
+    }
+}
+
+async function getActivityStatus(activityStatus) {
+    return activityStatus.toLowerCase() === 'yes';
 }
 
 function manageUserViews(role, userIdentity) {
