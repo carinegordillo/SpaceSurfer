@@ -8,6 +8,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using System.Text.Json;
+using SS.Backend.Services.LoggingService;
+
 
 namespace SS.Backend.Tests.TaskManagerHubTests
 {
@@ -17,9 +19,10 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         private TaskManagerHubManager _taskManagerHubManager;
         private ConfigService _configService;
         private TaskManagerHubService  _taskManagerHubService;
-
         private TaskManagerHubRepo _taskManagerHubRepo;
         private SqlDAO _sqlDao;
+        private ILogTarget _logTarget;
+        private ILogger _logger;
 
         [TestInitialize]
         public void Setup()
@@ -29,10 +32,10 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
             _configService = new ConfigService(configFilePath);
             _sqlDao = new SqlDAO(_configService);
-
+            _logger = new Logger(_logTarget);
             _taskManagerHubRepo = new TaskManagerHubRepo(_sqlDao);
-            _taskManagerHubService = new TaskManagerHubService(_taskManagerHubRepo);
-            _taskManagerHubManager = new TaskManagerHubManager(_taskManagerHubService);
+            _taskManagerHubService = new TaskManagerHubService(_taskManagerHubRepo, _logger);
+            _taskManagerHubManager = new TaskManagerHubManager(_taskManagerHubService, _logger);
         }
 
         [TestCleanup]
