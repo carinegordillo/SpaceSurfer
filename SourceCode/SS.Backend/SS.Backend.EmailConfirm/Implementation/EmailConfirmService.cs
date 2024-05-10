@@ -4,7 +4,8 @@ using System.Data;
 using System;
 using System.IO;
 using System.Text;
-
+using SS.Backend.Services.LoggingService;
+using System.Diagnostics.CodeAnalysis;
 
 
 namespace SS.Backend.EmailConfirm
@@ -12,10 +13,15 @@ namespace SS.Backend.EmailConfirm
     public class EmailConfirmService : IEmailConfirmService
     {
         private readonly IEmailConfirmDAO _emailDAO;
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
 
-        public EmailConfirmService(IEmailConfirmDAO emailDAO)
+        public EmailConfirmService(IEmailConfirmDAO emailDAO, ILogger logger)
         {
             _emailDAO = emailDAO;
+            _logger = logger;
+            logEntry = logBuilder.Build();
         }
 
         public async Task<(string ics, string otp, string body, Response res)> CreateConfirmation(int reservationID)
@@ -126,7 +132,6 @@ namespace SS.Backend.EmailConfirm
                             <li>End Time: <strong>{endTime}</strong></li>
                         </ul>
                         <p>To confirm your reservation, head over to SpaceSurfer --&gt; Space Booking Center --&gt; Active Reservations, and confirm your Reservation with this code:</p>
-                        <p><strong>{otp}</strong></p>
                         <p><strong>{otp}</strong></p>
                         <p>Best,<br>PixelPals</p>
                     </body>
@@ -333,9 +338,12 @@ namespace SS.Backend.EmailConfirm
         public async Task<Response> ConfirmReservation(int reservationID, string otp)
         {
             var response = await _emailDAO.GetConfirmInfo(reservationID);
+            string? username = null;
             
             if (!response.HasError && response.ValuesRead != null && response.ValuesRead.Rows.Count > 0)
             {
+                var reservation = await _emailDAO.GetReservationInfo(reservationID);
+                username = reservation.ValuesRead.Rows[0]["userHash"].ToString();
                 DataRow statusRow = response.ValuesRead.Rows[0];
                 var reservationOtp = statusRow["reservationOTP"].ToString();
                 var confirmStatus = statusRow["confirmStatus"].ToString();
@@ -352,7 +360,7 @@ namespace SS.Backend.EmailConfirm
                 if (confirmStatus.Trim().Equals("yes", StringComparison.OrdinalIgnoreCase)) 
                 {
                     response.HasError = true;
-                    response.ErrorMessage += "Unable to confirmation Email. Reservation is already confirmed.";
+                    response.ErrorMessage += "Unable to confirm. Reservation is already confirmed.";
                     return response;
                 }
                 else
@@ -394,6 +402,20 @@ namespace SS.Backend.EmailConfirm
             }
             response.HasError = false;
             response.ErrorMessage = "Reservation confirmed successfully.";
+
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Reservation {reservationID} confirmed successfully.").User(username).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to confirm reservation {reservationID}.").User(username).Build();  
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
             return response;
         }
     }

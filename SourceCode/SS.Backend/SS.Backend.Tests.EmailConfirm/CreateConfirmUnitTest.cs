@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System;
 using Microsoft.Data.SqlClient;
 using System.Diagnostics;
+using SS.Backend.Services.LoggingService;
 
 namespace SS.Backend.Tests.EmailConfirm;
 
@@ -18,6 +19,8 @@ public class CreateConfirmUnitTest
     private IEmailConfirmDAO _emailDAO;
     private SqlDAO _sqlDao;
     private ConfigService _configService;
+    private ILogTarget _logTarget;
+    private ILogger _logger;
 
     [TestInitialize]
     public void Setup()
@@ -28,8 +31,9 @@ public class CreateConfirmUnitTest
         var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
         _configService = new ConfigService(configFilePath);
         _sqlDao = new SqlDAO(_configService);
+        _logger = new Logger(_logTarget);
         _emailDAO = new EmailConfirmDAO(_sqlDao);
-        _emailConfirm = new EmailConfirmService(_emailDAO);
+        _emailConfirm = new EmailConfirmService(_emailDAO, _logger);
     }
 
     private async Task CleanupTestData()
