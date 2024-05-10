@@ -49,40 +49,8 @@ namespace SS.Backend.UserManagement
                                 errorMsg += "Invalid date of birth; ";
                             }
                             break;
-                        // case "companyName":
-                        //     if (userInfo.role == 2 || userInfo.role == 3)
-                        //     {
-                        //         if (!IsValidCompanyName(value as string))
-                        //         {
-                        //             errorMsg += $"Invalid {prop.Name.ToLower()}; ";
-                        //         }
-                        //         break;
-                        //     }
-                        //     break;
-
-                        // case "address":
-                        //     if (userInfo.role == 2 || userInfo.role == 3)
-                        //     {
-                        //         if (!IsValidAddress(value as string))
-                        //         {
-                        //             errorMsg += $"Invalid {prop.Name.ToLower()}; ";
-                        //         }
-                        //         break;
-                        //     }
-                        //     break;
-                            // case "openingHours":
-                            // case "closingHours":
-                            // case "daysOpen": //check if these need their own function
-                            //     if (CheckNullWhiteSpace(value as string))
-                            //     {
-                            //         errorMsg += $"Invalid {prop.Name.ToLower()}; ";
-                            //     }
-                            //     break;
                     }
-
-
                 }
-                
             }
             return string.IsNullOrEmpty(errorMsg) ? "Pass" : errorMsg;
         }
@@ -115,54 +83,11 @@ namespace SS.Backend.UserManagement
             var validEndDate = DateTime.Now;
             return dateOfBirth >= validStartDate && dateOfBirth <= validEndDate;
         }
-        // private bool IsValidCompanyName(string? name)
-        // {
-        //     return
-        //         name.Length >= 1 &&
-        //         name.Length <= 60;
-        // }
         private bool IsValidAddress(string? name)
         {
             //implement Geolocation API
             return name == "Irvine";
         }
-
-        //this method takes builds a dictionary with several sql commands to insert all at once 
-        public async Task<Response> InsertIntoMultipleTables(Dictionary<string, Dictionary<string, object>> tableData)
-        {
-
-            
-            // SealedSqlDAO SQLDao = new SealedSqlDAO(temp);
-            var baseDirectory = AppContext.BaseDirectory;
-            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-            ConfigService configService = new ConfigService(configFilePath);
-            SqlDAO SQLDao = new SqlDAO(configService);
-
-            var builder = new CustomSqlCommandBuilder();
-            Response tablesresponse = new Response();
-
-            //for each table 
-            foreach (var tableEntry in tableData)
-            {
-                string tableName = tableEntry.Key;
-                Dictionary<string, object> parameters = tableEntry.Value;
-                var insertCommand = builder.BeginInsert(tableName)
-                    .Columns(parameters.Keys)
-                    .Values(parameters.Keys)
-                    .AddParameters(parameters)
-                    .Build();
-
-                tablesresponse = await SQLDao.SqlRowsAffected(insertCommand);
-                if (tablesresponse.HasError)
-                {
-                    tablesresponse.ErrorMessage += $"{tableName}: error inserting data; ";
-                    return tablesresponse;
-                }
-            }
-            return tablesresponse;
-        }
-
 
         public async Task<Response> CreateUserAccount(UserInfo userInfo, CompanyInfo? companyInfo, string? manager_hashedUsername)
         {
@@ -216,12 +141,10 @@ namespace SS.Backend.UserManagement
                 Dear {userInfo.firstname},
 
                 An account with your email has recently been registered within Space Surfer. 
-                In order to enjoy and utilize the application please follow the url below in order to verify your account. 
-
-                http://localhost:3000/VerifyAccount/index.html
+                In order to enjoy and utilize the application please check your inbox for a one time password used to verify your account. 
 
                 If you have any questions or need assistance, please don't hesitate to contact us at spacesurfers5@gmail.com.
-
+                http://localhost:3000/Login/index.html/?employee
                 Thank you for choosing SpaceSurfer.
 
                 Best regards,

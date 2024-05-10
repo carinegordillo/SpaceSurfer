@@ -159,6 +159,11 @@ document.querySelectorAll('.accordion').forEach(function(button) {
 
 
 document.getElementById('spaceCreationForm').addEventListener('submit', function(e) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const SpaceManagerUrl = appConfig.api.SpaceManager; 
     e.preventDefault();
     const companyFloor = {
         hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,
@@ -166,12 +171,17 @@ document.getElementById('spaceCreationForm').addEventListener('submit', function
         FloorPlanImage: document.getElementById('imageBase64').value,
         FloorSpaces: collectSpacesAndTimeLimits()
     };
-    sendData('http://localhost:8081/api/SpaceManager/postSpace', companyFloor);
+    sendData(`${SpaceManagerUrl}/api/SpaceManager/postSpace`, companyFloor);
     document.getElementById('spaceCreationForm').reset();
 });
 
 document.getElementById('modifySpaceForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const SpaceManagerUrl = appConfig.api.SpaceManager; 
     const modifications = collectSpacesAndTimeLimitsToModify();
     modifications.forEach(modification => {
         const request = {
@@ -179,39 +189,54 @@ document.getElementById('modifySpaceForm').addEventListener('submit', function(e
             spaceID: modification.spaceID,
             newTimeLimit: modification.newTimeLimit
         };
-        sendData('http://localhost:8081/api/SpaceManager/modifyTimeLimits', request);
+        sendData(`${SpaceManagerUrl}/api/SpaceManager/modifyTimeLimits`, request);
         document.getElementById('modifySpaceForm').reset();
 
     });
 });
 
 document.getElementById('modifyImage').addEventListener('click', function() {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const SpaceManagerUrl = appConfig.api.SpaceManager; 
     const newFloor = {
         hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,
         FloorPlanName: document.getElementById('modifyFloorPlanName').value,
         FloorPlanImage: document.getElementById('modifyImageBase64').value
     };
-    sendData('http://localhost:8081/api/SpaceManager/modifyFloorPlan', newFloor);
+    sendData(`${SpaceManagerUrl}/api/SpaceManager/modifyFloorPlan`, newFloor);
 });
 
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('deleteSpace')) {
+        if (!appConfig) {
+            console.error('Configuration is not loaded!');
+            return;
+        }
+        const SpaceManagerUrl = appConfig.api.SpaceManager; 
         const spaceID = e.target.closest('.spaceRowModify').querySelector('.modifySpaceID').value;
         const request = {
             hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,
             spaceID: spaceID
         }
-        sendData('http://localhost:8081/api/SpaceManager/deleteSpace', request);
+        sendData(`${SpaceManagerUrl}/api/SpaceManager/deleteSpace`, request);
     }
 });
 
 document.getElementById('deleteFloor').addEventListener('click', function() {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const SpaceManagerUrl = appConfig.api.SpaceManager; 
     const FloorPlanName = document.getElementById('modifyFloorPlanName').value;
     const request = {
         hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,
         FloorPlanName: FloorPlanName
     }
-    sendData('http://localhost:8081/api/SpaceManager/deleteFloor', request);
+    sendData(`${SpaceManagerUrl}/api/SpaceManager/deleteFloor`, request);
 });
 
 
@@ -248,6 +273,11 @@ document.getElementById('companyList').addEventListener('click', function () {
 });
 
 function fetchFloorPlan() {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const CompanyAPIUrl = appConfig.api.CompanyAPI; 
     console.log("sending request");
     const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
     let accessToken = sessionStorage.getItem('accessToken');
@@ -257,7 +287,7 @@ function fetchFloorPlan() {
         return;
     }
 
-    const url = `http://localhost:5279/api/v1/spaceBookingCenter/companies/FloorPlanManager?hashedUsername=${encodeURIComponent(userName)}`;
+    const url = `${CompanyAPIUrl}/api/v1/spaceBookingCenter/companies/FloorPlanManager?hashedUsername=${encodeURIComponent(userName)}`;
     fetch(url, {
         method: 'GET',
         headers: {

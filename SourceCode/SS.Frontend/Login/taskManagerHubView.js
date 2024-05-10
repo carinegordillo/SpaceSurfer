@@ -32,8 +32,12 @@ function fetchAndDisplayTasks() {
     }
 
     const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
-
-    fetch(`http://localhost:8089/api/v1/taskManagerHub/ListTasks?userName=${encodeURIComponent(userName)}`, {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const taskUrl = appConfig.api.TaskManagerHub; 
+    fetch(`${taskUrl}/api/v1/taskManagerHub/ListTasks?userName=${encodeURIComponent(userName)}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -74,8 +78,8 @@ function fetchAndScoreTasks() {
     }
 
     const userName = JSON.parse(sessionStorage.getItem('idToken')).Username;
-
-    fetch(`http://localhost:8089/api/v1/taskManagerHub/ScoreTasks?userName=${encodeURIComponent(userName)}`, {
+    const taskUrl = appConfig.api.TaskManagerHub; 
+    fetch(`${taskUrl}/api/v1/taskManagerHub/ScoreTasks?userName=${encodeURIComponent(userName)}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -222,7 +226,8 @@ function createTask(task) {
         logout();
         return;
     }
-    fetch('http://localhost:8089/api/v1/taskManagerHub/CreateTask', {
+    const taskUrl = appConfig.api.TaskManagerHub; 
+    fetch(`${taskUrl}/api/v1/taskManagerHub/CreateTask`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -259,7 +264,8 @@ function deleteTask(taskTitle, userName) {
         logout();
         return;
     }
-    fetch(`http://localhost:8089/api/v1/taskManagerHub/DeleteTask`, {
+    const taskUrl = appConfig.api.TaskManagerHub; 
+    fetch(`${taskUrl}/api/v1/taskManagerHub/DeleteTask`, {
         method: 'POST', // Change to 'DELETE' if your server supports it
         headers: {
             'Content-Type': 'application/json',
@@ -339,8 +345,8 @@ function modifyTask(originalTitle, userName, updatedFields) {
         TaskTitle: originalTitle,
         FieldsToUpdateJson: JSON.stringify(updatedFields)
     };
-
-    fetch('http://localhost:8089/api/v1/taskManagerHub/ModifyTask', {
+    const taskUrl = appConfig.api.TaskManagerHub; 
+    fetch(`${taskUrl}/api/v1/taskManagerHub/ModifyTask`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -374,8 +380,9 @@ function showModal(message) {
 
 
 async function checkTokenExpiration(accessToken) {
+    const waitlistUrl = appConfig.api.Waitlist; 
     try {
-        const response = await fetch('http://localhost:5099/api/auth/checkTokenExp', {
+        const response = await fetch(`${waitlistUrl}/api/auth/checkTokenExp`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
@@ -387,22 +394,3 @@ async function checkTokenExpiration(accessToken) {
         return false;
     }
 }
-
-// function logout() {
-//     console.log("logout cliced")
-//     sessionStorage.removeItem('accessToken');
-//     sessionStorage.removeItem('idToken');
-//     sessionStorage.removeItem('userIdentity')
-//     var identityDiv = document.getElementById("identity");
-//     if (identityDiv) {
-//         console.log("Identity element found, current display:", identityDiv.style.display);
-//         identityDiv.style.display = "none";
-//         console.log("Identity should now be hidden, new display:", identityDiv.style.display);
-//     } else {
-//         console.log("Identity element not found");
-//     }
-//     document.getElementById("homepageGen").style.display = "none";
-//     document.getElementById("homepageManager").style.display = "none";
-//     document.getElementById("sendOTPSection").style.display = "block";
-//     document.getElementById("taskManagerView").style.display = "none";
-// }

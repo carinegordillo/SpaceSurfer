@@ -12,5 +12,6 @@ namespace SS.Backend.UserManagement
         public  Task<Response> ReadDummyTable();
         public  Task<Response> sendDummyRequest(string name, string position);
         public  Task<Response> deleteUserRequestByuserHash(string userHash);
+        public  Task<UserAccountDetails> ReadUserAccount(string userHash);
     }
 }

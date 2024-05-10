@@ -1,7 +1,12 @@
 
 function checkTokenExpiration(accessToken) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const waitlistUrl = appConfig.api.Waitlist;  
     try {
-        var response = fetch('http://localhost:5099/api/waitlist/checkTokenExp', {
+        var response = fetch(`${waitlistUrl}/api/waitlist/checkTokenExp`, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -29,9 +34,13 @@ async function displayWaitlistedReservations() {
         logout();
         return;
     }
-
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const waitlistUrl = appConfig.api.Waitlist;  
     try {
-        const response = await fetch(`http://localhost:5099/api/waitlist/getWaitlists`, {
+        const response = await fetch(`${waitlistUrl}/api/waitlist/getWaitlists`, {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -104,8 +113,13 @@ async function displayReservationDetails(reservation) {
     var compName = reservation.companyName
     var data;
     console.log(compName);
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const waitlistUrl = appConfig.api.Waitlist;  
     try {
-        const response = await fetch(`http://localhost:5099/api/waitlist/getFloorplan?cid=${reservation.companyID}&fid=${reservation.floorID}`, {
+        const response = await fetch(`${waitlistUrl}/api/waitlist/getFloorplan?cid=${reservation.companyID}&fid=${reservation.floorID}`, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -168,9 +182,13 @@ async function getReservationId(reservation) {
     var sid = reservation.spaceID;
     var stime = reservation.startTime;
     var etime = reservation.endTime;
-
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const waitlistUrl = appConfig.api.Waitlist;  
     try {
-        const response = await fetch(`http://localhost:5099/api/waitlist/getResId`, {
+        const response = await fetch(`${waitlistUrl}/api/waitlist/getResId`, {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -274,11 +292,16 @@ async function leaveWaitlist(confirm, reservation) {
         logout();
         return;
     }
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const waitlistUrl = appConfig.api.Waitlist;  
 
     if (confirm) {
         try {
             var resId = await getReservationId(reservation);
-            const response = await fetch(`http://localhost:5099/api/waitlist/leaveWaitlist`, {
+            const response = await fetch(`${waitlistUrl}/api/waitlist/leaveWaitlist`, {
                 method: 'POST',
                 headers: {
                     'Authorization': 'Bearer ' + accessToken,
