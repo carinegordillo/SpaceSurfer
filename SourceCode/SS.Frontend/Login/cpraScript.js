@@ -12,7 +12,12 @@ async function accessData() {
 
     try {
         console.log(JSON.stringify(username));
-        const response = await fetch(`http://localhost:5084/api/userDataProtection/accessData`, {
+        if (!appConfig) {
+            console.error('Configuration is not loaded!');
+            return;
+        }
+        const CPRAUrl = appConfig.api.CPRA;  
+        const response = await fetch(`${CPRAUrl}/api/userDataProtection/accessData`, {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -139,8 +144,12 @@ function showDeleteSuccessMessage() {
 function sendCode() {
     var userIdentity = document.getElementById("userIdentity").value;
     console.log(userIdentity);
-
-    fetch('http://localhost:5270/api/auth/sendOTP', {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const LoginUrl = appConfig.api.Login;  
+    fetch(`${LoginUrl}/api/auth/sendOTP`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -168,8 +177,12 @@ function verifyUser() {
     var parsedIdToken = JSON.parse(idToken);
     var username = parsedIdToken.Username;
     var otp = document.getElementById('access_otp').value;
-
-    fetch('http://localhost:5270/api/auth/verifyCode', {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const LoginUrl = appConfig.api.Login;
+    fetch(`${LoginUrl}/api/auth/verifyCode`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

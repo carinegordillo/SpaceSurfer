@@ -100,8 +100,8 @@
                         <p>Looking ahead, Space Surfer aims to expand its reach by incorporating more diverse spaces and offering enhanced features that anticipate and meet our users' evolving needs. We are committed to continuous improvement and innovation to remain at the forefront of the space reservation industry.</p>
 
                         <h3>Join Us</h3>
-                        <p>Ready to get started? Join Space Surfer today and experience the ultimate in space booking convenience. For questions or further information, please contact us at <a href="mailto:support@spacesurfer.com">support@spacesurfer.com</a>.</p>
-
+                        <p>Ready to get started? Join Space Surfer today and experience the ultimate in space booking convenience. For questions or further information, please contact us at <a href="mailto:spacesurfers5@gmail.com">support@spacesurfer.com</a>.</p>
+                        
                         <p>Thank you for choosing Space Surfer — where your space is just a click away!</p>
                     </div>
                 </form>
@@ -115,31 +115,31 @@
     </section>
 
 
-<!-- Account Recovery Section -->
-<section id="accountRecoverySection" class="recoveryForm" style="display: none;">
-    <form id="recoveryForm">
-        <label for="email" class="login-title">Account Recovery</label>
-        <input type="email" id="userRecoveryIdentity" name="userRecoveryIdentity" required placeholder="Enter your email">
-        <button type="button" onclick="sendRecoveryOTP()">Send Recovery OTP</button>
-    </form>
-</section>
+    <!-- Account Recovery Section -->
+    <section id="accountRecoverySection" class="recoveryForm" style="display: none;">
+        <form id="recoveryForm">
+            <label for="email" class="login-title">Account Recovery</label>
+            <input type="email" id="userRecoveryIdentity" name="userRecoveryIdentity" required placeholder="Enter your email">
+            <button type="button" onclick="sendRecoveryOTP()">Send Recovery OTP</button>
+        </form>
+    </section>
 
-<!-- Enter OTP Section -->
-<section id="enterAccountRecoveryOTPSection" class="form-container" style="display: none;">
-    <form id="enterOTPForm">
-        <label for="otp">Enter Verification Code</label>
-        <input type="text" id="RecoveryOtp" name="RecoveryOtp" required placeholder="Verification code">
-        <button type="button" onclick="authenticateRecoveryUser()">Verify OTP</button>
-    </form>
-</section>
+    <!-- Enter OTP Section -->
+    <section id="enterAccountRecoveryOTPSection" class="form-container" style="display: none;">
+        <form id="enterOTPForm">
+            <label for="otp">Enter Verification Code</label>
+            <input type="text" id="RecoveryOtp" name="RecoveryOtp" required placeholder="Verification code">
+            <button type="button" onclick="authenticateRecoveryUser()">Verify OTP</button>
+        </form>
+    </section>
 
-<!-- Additional Information Section -->
-<section id="additionalInfoSection" class="form-container" style="display: none;">
-    <form id="additionalInfoForm">
-        <textarea id="additionalInformation" name="additionalInformation" required placeholder="Please add additional "></textarea>
-        <button type="submit" onclick="sendRecoveryRequest(event)">Submit Recovery Request</button>
-    </form>
-</section>
+    <!-- Additional Information Section -->
+    <section id="additionalInfoSection" class="form-container" style="display: none;">
+        <form id="additionalInfoForm">
+            <textarea id="additionalInformation" name="additionalInformation" required placeholder="Please add additional "></textarea>
+            <button type="submit" onclick="sendRecoveryRequest(event)">Submit Recovery Request</button>
+        </form>
+    </section>
 
     <section id="welcomeSection" style="display: none;">
         <div class="container">
@@ -163,8 +163,16 @@
     </section>
     <!--Registration-->
     <section id="Registration" style="display: none;">
-        <div class="container">
-            <form id="accountCreationForm" class="loginForm">
+        <div class = "container">
+            <section id="enterRegistrationOTPSection"  style="display: none;">
+                <form id="enterOTPForm" class = "loginForm">
+                    <label for="otp">Enter Verification Code</label>
+                    <input type="text" id="registrationUsername" name="registrationUsername" required placeholder="Username">
+                    <input type="text" id="registrationOtp" name="registrationOtp" required placeholder="Verification code">
+                    <button type="button" onclick="authenticateRegisterUser(username)">Verify OTP</button>
+                </form>
+            </section>
+            <form id="accountCreationForm" class = "loginForm">
                 <label class="register-title">Register to SpaceSurfer🤙</label>
                 <input type="text" id="username" name="username" placeholder="Email" required>
                 <input type="date" id="dob" name="dob" placeholder="Date of Birth" required>
@@ -187,8 +195,8 @@
                 <div id="additionalFields" style="display: none;">
                     <label for="name">Company/Facility Name:</label>
                     <input type="text" id="companyName" name="name"><br>
-
-                    <label for="location">Location:</label>
+        
+                    <label for="location">Company Zipcode:</label>
                     <input type="text" id="address" name="location"><br>
 
                     <label for="openingHours">Opening Hours:</label>
@@ -220,15 +228,15 @@
         <div id="registerView" class="container">
             <form id="employeeForm" class="loginForm">
                 <label class="login-title">Register Employee to Space Surfer</label>
-                <input type="text" id="username" name="username" placeholder="Username" required>
-                <input type="date" id="dob" name="dob" placeholder="Date of Birth" required><br>
-                <input type="text" id="firstname" name="firstName" placeholder="First Name" required>
-                <input type="text" id="lastname" name="lastName" placeholder="Last Name" required>
+                <input type="text" id="employeeusername" name="employeeusername" placeholder="Username" required>
+                <input type="date" id="employeedob" name="employeedob" placeholder="Date of Birth" required><br>
+                <input type="text" id="employeefirstname" name="employeefirstName" placeholder="First Name" required>
+                <input type="text" id="employeelastname" name="employeelastName" placeholder="Last Name" required>
                 <!-- <input type="text" id="role" name="role" placeholder="Role" required> -->
-                <input type="hidden" id="role" name="role">
-                <input type="hidden" id="status" name="status">
-                <input type="hidden" id="backupEmail" name="backupEmail"> <br>
-
+                <input type="hidden" id="employeerole" name="employeerole">
+                <input type="hidden" id="employeestatus" name="employeestatus">
+                <input type="hidden" id="employeebackupEmail" name="employeebackupEmail"> <br>
+        
                 <button id="postAccount" type="submit">Create Employee Account</button>
                 <ul id="recoveryRequestsList"></ul>
             </form>

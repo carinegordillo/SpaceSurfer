@@ -80,9 +80,13 @@ async function fetchUserProfile(email) {
     //     logout();
     //     return;
     // }
-
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const profileUrl = appConfig.api.UserProfile; 
     try {
-        const response = await fetch(`http://localhost:5048/api/profile/getUserProfile?email=${encodeURIComponent(email)}`);
+        const response = await fetch(`${profileUrl}/api/profile/getUserProfile?email=${encodeURIComponent(email)}`);
         const data = await response.json();
         return data.length > 0 ? data[0] : null;
     } catch (error) {
@@ -161,10 +165,15 @@ async function saveProfileChanges() {
         firstname: document.getElementById('firstName').value,
         lastname: document.getElementById('lastName').value,
     };
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const profileUrl = appConfig.api.UserProfile; 
 
     try {
         const accessToken = sessionStorage.getItem('accessToken');
-        const response = await fetch('http://localhost:5048/api/profile/updateUserProfile', {
+        const response = await fetch(`${profileUrl}/api/profile/updateUserProfile`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -199,8 +208,13 @@ function cancelEditProfile() {
 
 
 async function checkTokenExpiration(accessToken) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const bookingUrl = appConfig.api.SpaceBookingCenter; 
     try {
-        const response = await fetch('http://localhost:5005/api/v1/spaceBookingCenter/reservations/checkTokenExp', {
+        const response = await fetch(`${bookingUrl}/api/v1/spaceBookingCenter/reservations/checkTokenExp`, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -212,35 +226,4 @@ async function checkTokenExpiration(accessToken) {
         console.error('Error:', error);
         return false;
     }
-}
-
-
-
-function logout() {
-    console.log("logout clicked")
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('idToken');
-    sessionStorage.removeItem('userIdentity')
-    var identityDiv = document.getElementById("identity");
-    if (identityDiv) {
-        console.log("Identity element found, current display:", identityDiv.style.display);
-        identityDiv.style.display = "none";
-        console.log("Identity should now be hidden, new display:", identityDiv.style.display);
-    } else {
-        console.log("Identity element not found");
-    }
-    document.getElementById("sendOTPSection").style.display = "block";
-    document.getElementById("noLogin").style.display = "block";
-    document.getElementById("homepageGen").style.display = "none";
-    document.getElementById("homepageManager").style.display = "none";
-    document.getElementById("taskManagerView").style.display = "none";
-    document.getElementById('personalOverviewCenter').style.display = 'none';
-    document.getElementById('spaceBookingView').style.display = 'none';
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById('waitlistView').style.display = 'none';
-    document.getElementById("welcomeSection").style.display = "none";
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById("accountRecoverySection").style.display = "none";
-    document.getElementById("userRequestsView").style.display = "none";
-
 }

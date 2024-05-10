@@ -1,4 +1,9 @@
-// Event delegation
+if (!appConfig) {
+    console.error('Configuration is not loaded!');
+    return;
+}
+const loginUrl = appConfig.api.Login;  
+const recoveryUrl = appConfig.api.AccountRecovery;  
 document.addEventListener('click', function (event) {
     // Check if the clicked element has the class 'recover-link'
     if (event.target && event.target.classList.contains('recover-link')) {
@@ -52,19 +57,27 @@ function createAndShowModal(message) {
 function sendRecoveryOTP() {
     var userIdentity = document.getElementById("userRecoveryIdentity").value;
 
-    $.ajax({
-        url: 'http://localhost:5270/api/auth/sendOTP',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ userIdentity: userIdentity }),
-        success: function (response) {
-            alert('OTP sent. Check your email for the verification code.');
-            document.getElementById("accountRecoverySection").style.display = "none";
-            document.getElementById("enterAccountRecoveryOTPSection").style.display = "block";
+    fetch(`${loginUrl}/api/auth/sendOTP`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         },
-        error: function (xhr, status, error) {
-            alert('Error sending verification code.');
+        body: JSON.stringify({ userIdentity: userIdentity })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        return response.json();
+    })
+    .then(data => {
+        alert('OTP sent. Check your email for the verification code.');
+        document.getElementById("accountRecoverySection").style.display = "none";
+        document.getElementById("enterAccountRecoveryOTPSection").style.display = "block";
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error sending verification code.');
     });
 }
 
@@ -72,21 +85,28 @@ function sendRecoveryOTP() {
 function authenticateRecoveryUser() {
     var otp = document.getElementById("RecoveryOtp").value;
     var userIdentity = document.getElementById("userRecoveryIdentity").value;
-
-
-    $.ajax({
-        url: 'http://localhost:5270/api/auth/authenticate',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ userIdentity: userIdentity, proof: otp }),
-        success: function (response) {
-            alert("OTP verified successfully. Please provide additional information.");
-            document.getElementById("enterAccountRecoveryOTPSection").style.display = "none";
-            document.getElementById("additionalInfoSection").style.display = "block";
+    
+    fetch(`${loginUrl}/api/auth/authenticate`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         },
-        error: function (xhr, status, error) {
-            alert('Invalid OTP. Please try again.');
+        body: JSON.stringify({ userIdentity: userIdentity, proof: otp })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        return response.json();
+    })
+    .then(data => {
+        alert("OTP verified successfully. Please provide additional information.");
+        document.getElementById("enterAccountRecoveryOTPSection").style.display = "none";
+        document.getElementById("additionalInfoSection").style.display = "block";
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Invalid OTP. Please try again.');
     });
 }
 
@@ -105,23 +125,29 @@ function sendRecoveryRequest(event) {
     console.log(email);
     console.log(additionalInformation);
 
-    $.ajax({
-        url: 'http://localhost:5176/api/requestRecovery/sendRecoveryRequest',
-        type: 'POST',
-        contentType: 'application/x-www-form-urlencoded',
-        data: formData.toString(),
-        success: function (response) {
-            alert('Recovery request sent successfully. Please wait for admin to approve your request.');
-            document.getElementById("additionalInfoSection").style.display = "none";
-            document.getElementById("accountRecoverySection").style.display = "none";
-            document.getElementById("noLogin").style.display = "block";
-            document.getElementById("sendOTPSection").style.display = "block";
-            
-
+    fetch(`${recoveryUrl}/api/requestRecovery/sendRecoveryRequest`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
         },
-        error: function (xhr, status, error) {
-            alert('Error sending recovery request. Try again later');
+        body: formData.toString()
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        return response.json();
+    })
+    .then(data => {
+        alert('Recovery request sent successfully. Please wait for admin to approve your request.');
+        document.getElementById("additionalInfoSection").style.display = "none";
+        document.getElementById("accountRecoverySection").style.display = "none";
+        document.getElementById("noLogin").style.display = "block";
+        document.getElementById("sendOTPSection").style.display = "block";
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error sending recovery request. Try again later');
     });
 }
 
@@ -220,7 +246,7 @@ async function fetchUserRequests() {
     }
 
     try {
-        const response = await fetch(`http://localhost:5176/api/requestRecovery/getAllRequests`);
+        const response = await fetch(`${recoveryUrl}/api/requestRecovery/getAllRequests`);
         const data = await response.json();
         window.allRequests = data; // Store all requests globally to enable filtering
         allRequests = data;
@@ -318,7 +344,7 @@ function approveRequestsByUserHash(userHashes) {
     if (userHashes.length === 0) return; 
     console.log('Approving requests for users:', userHashes);
 
-    fetch('http://localhost:5176/api/requestRecovery/acceptRequests', {
+    fetch(`${recoveryUrl}/api/requestRecovery/acceptRequests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userHashes),
@@ -340,7 +366,7 @@ function denyRequestsByUserHash(userHashes) {
     if (userHashes.length === 0) return; // Skip if no requests to deny
     console.log('Denying requests for users:', userHashes);
 
-    fetch('http://localhost:5176/api/requestRecovery/denyRequests', {
+    fetch(`${recoveryUrl}/api/requestRecovery/denyRequests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userHashes),
@@ -368,7 +394,7 @@ document.getElementById('deactivateUserBtn').addEventListener('click', function(
 });
 
 function deactivateUserAccount(userHash) {
-    fetch('http://localhost:5176/api/requestRecovery/disableAccount', {
+    fetch(`${recoveryUrl}/api/requestRecovery/disableAccount`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userHash)  // Send the userHash as a JSON string
@@ -393,7 +419,7 @@ function deleteRequestsByUserHash(userHashes) {
     if (userHashes.length === 0) return; 
     console.log('Deleting Completed User Requests:', userHashes);
 
-    fetch('http://localhost:5176/api/requestRecovery/deleteRequestByUserHash', {
+    fetch(`${recoveryUrl}/api/requestRecovery/deleteRequestByUserHash`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userHashes),
@@ -407,33 +433,4 @@ function deleteRequestsByUserHash(userHashes) {
         console.log('Successfully deleted requests:', data);
         fetchUserRequests(); // Refresh the data after approval
     })
-}
-
-function logout() {
-    console.log("logout clicked")
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('idToken');
-    sessionStorage.removeItem('userIdentity')
-    var identityDiv = document.getElementById("identity");
-    if (identityDiv) {
-        console.log("Identity element found, current display:", identityDiv.style.display);
-        identityDiv.style.display = "none";
-        console.log("Identity should now be hidden, new display:", identityDiv.style.display);
-    } else {
-        console.log("Identity element not found");
-    }
-    document.getElementById("sendOTPSection").style.display = "block";
-    document.getElementById("noLogin").style.display = "block";
-    document.getElementById("homepageGen").style.display = "none";
-    document.getElementById("homepageManager").style.display = "none";
-    document.getElementById("taskManagerView").style.display = "none";
-    document.getElementById('personalOverviewCenter').style.display = 'none';
-    document.getElementById('spaceBookingView').style.display = 'none';
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById('waitlistView').style.display = 'none';
-    document.getElementById("welcomeSection").style.display = "none";
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById("accountRecoverySection").style.display = "none";
-    document.getElementById("userRequestsView").style.display = "none";
-
 }

@@ -19,8 +19,13 @@ async function fetchUserReservations(fromDateValue, toDateValue) {
         console.error('Access token not found.');
         return;
     }
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const OverviewUrl = appConfig.api.PersonalOverview; 
 
-    const url = `http://localhost:5275/api/v1/PersonalOverview/Reservations?fromDate=${fromDateValue}&toDate=${toDateValue}`;
+    const url = `${OverviewUrl}/api/v1/PersonalOverview/Reservations?fromDate=${fromDateValue}&toDate=${toDateValue}`;
 
     try {
         const response = await fetch(url, {
@@ -83,8 +88,13 @@ async function fetchReservationDeletion() {
         errorPrompt.style.display = "block";
         return;
     }
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const OverviewUrl = appConfig.api.PersonalOverview; 
 
-    const url = `http://localhost:5275/api/v1/PersonalOverview/ReservationDeletion?ReservationID=${reservationIDValue}`;
+    const url = `${OverviewUrl}/api/v1/PersonalOverview/ReservationDeletion?ReservationID=${reservationIDValue}`;
 
     try {
         const response = await fetch(url, {

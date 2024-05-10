@@ -1,6 +1,35 @@
-
+let appConfig = null;
+function loadConfig() {
+    fetch('csp-config.json')  
+        .then(response => response.json())
+        .then(config => {
+            appConfig = config;  
+            console.log('Configuration loaded successfully.');
+        })
+        .catch(error => {
+            console.error('Failed to load configuration:', error);
+        });
+}
+document.addEventListener('DOMContentLoaded', loadConfig);
 
 document.addEventListener('DOMContentLoaded', function() {
+    fetch('csp-config.json')
+        .then(response => response.json())
+        .then(cspConfig => {
+            const cspContent = [
+                `default-src ${cspConfig.defaultSrc.join(' ')}`,
+                `script-src ${cspConfig.scriptSrc.join(' ')}`,
+                `style-src ${cspConfig.styleSrc.join(' ')}`,
+                `connect-src ${cspConfig.connectSrc.join(' ')}`,
+                `img-src ${cspConfig.imgSrc.join(' ')}`
+            ].join('; ');
+
+            const meta = document.createElement('meta');
+            meta.httpEquiv = "Content-Security-Policy";
+            meta.content = cspContent;
+            document.head.appendChild(meta);
+        })
+        .catch(error => console.error('Failed to load CSP configuration:', error));
     const accessToken = sessionStorage.getItem('accessToken');
     if (accessToken) {
         hideAllSections();
@@ -14,133 +43,99 @@ document.addEventListener('DOMContentLoaded', function() {
         // No valid token, show login
         hideAllSections();
         document.getElementById("homepageGen").style.display = "none";
+        document.getElementById("userNav").style.display = "none";
+        document.getElementById("CMview").style.display = "none";
+        document.getElementById("welcomeSection").style.display = "none";
         document.getElementById("noLogin").style.display = "block";
         document.getElementById("sendOTPSection").style.display = "block";
     }
 });
 
 function sendOTP() {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const loginUrl = appConfig.api.Login;  
     console.log("otp is sending")
     var userIdentity = document.getElementById("userIdentity").value;
     console.log(userIdentity);
 
-    $.ajax({
-        url: 'http://localhost:5270/api/auth/sendOTP',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ userIdentity: userIdentity }),
-        success: function (response) {
-            hideAllSections();
-            document.getElementById("sendOTPSection").style.display = "none";
-            document.getElementById("enterOTPSection").style.display = "block";
-            document.getElementById("noLogin").style.display = "block";
-
+    fetch(`${loginUrl}/api/auth/sendOTP`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         },
-        error: function (xhr, status, error) {
-            alert('Error sending verification code.');
+        body: JSON.stringify({ userIdentity: userIdentity })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        return response.json();
+    })
+    .then(data => {
+        hideAllSections();
+        document.getElementById("sendOTPSection").style.display = "none";
+        document.getElementById("enterOTPSection").style.display = "block";
+        document.getElementById("noLogin").style.display = "block";
+    })
+    .catch(error => {
+        console.error('Error sending verification code:', error);
+        alert('Error sending verification code.');
     });
 }
 
-function authenticateUser() {
+async function authenticateUser() {
     var otp = document.getElementById("otp").value;
     var userIdentity = document.getElementById("userIdentity").value;
     var userIsActive = false;
-    $.ajax({
-        url: 'http://localhost:5270/api/auth/authenticate',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ userIdentity: userIdentity, proof: otp }),
-        success: async function (response) {
-            var accessToken = response.accessToken;
-            var idToken = response.idToken;
-            sessionStorage.setItem('accessToken', accessToken);
-            sessionStorage.setItem('idToken', idToken);
-            document.getElementById("enterOTPSection").style.display = "none";
-            document.getElementById("successResult").style.display = "none";
-
-            var accessToken = sessionStorage.getItem('accessToken');
-
-            const accountInfo = await fetchUserAccount();
+    const loginUrl = appConfig.api.Login; 
+    fetch(`${loginUrl}/api/auth/authenticate`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userIdentity: userIdentity, proof: otp })
+    })
+    .then(response => response.json())
+    .then(data => {
+        var accessToken = data.accessToken;
+        var idToken = data.idToken;
+        sessionStorage.setItem('accessToken', accessToken);
+        sessionStorage.setItem('idToken', idToken);
+        document.getElementById("enterOTPSection").style.display = "none";
+        document.getElementById("successResult").style.display = "none";
+        return fetch(`${loginUrl}/api/auth/getRole`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: accessToken
+        });
+    })
+    .then(response => response.text())
+    .then(async role => {
+        const accountInfo = await fetchUserAccount();
 
             if (accountInfo) {
                 userIsActive = await getActivityStatus(accountInfo.isActive);
             }
             console.log(userIsActive)
             if(userIsActive){
-                console.log("the user is active")
-                $.ajax({
-                    url: 'http://localhost:5270/api/auth/getRole',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: accessToken,
-                    success: function (response) {
-                        
-                        
-                        showModal("You're logged in!");
-                        sessionStorage.setItem('role', response);
-                        if (response === "2") {
-                        
-                            showModal("You're logged in!");
-                            hideAllSections();
-
-                            document.getElementById("homepageGen").style.display = "block";
-                            document.getElementById("userNav").style.display = "block";
-                            document.getElementById("CMview").style.display = "block";
-                            document.getElementById("FMview").style.display = "none";
-                            sessionStorage.setItem('userIdentity', userIdentity);
-                            document.getElementById("identity").style.display = "block";
-                            document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
-                            document.getElementById("welcomeSection").style.display = "block";
-
-                        } else if (response === "3"){
-                            showModal("You're logged in!");
-                            hideAllSections();
-                            document.getElementById("homepageGen").style.display = "block";
-                            document.getElementById("userNav").style.display = "block";
-                            document.getElementById("FMview").style.display = "block";
-                            document.getElementById("CMview").style.display = "none";
-                            sessionStorage.setItem('userIdentity', userIdentity);
-                            document.getElementById("identity").style.display = "block";
-                            document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
-                            document.getElementById("welcomeSection").style.display = "block";
-                        } else if (response === "4" || response === "5"){
-                            showModal("You're logged in!");
-                            hideAllSections();
-                            document.getElementById("homepageGen").style.display = "block";
-                            document.getElementById("userNav").style.display = "block";
-                            document.getElementById("FMview").style.display = "none";
-                            document.getElementById("CMview").style.display = "none";
-                            sessionStorage.setItem('userIdentity', userIdentity);
-                            document.getElementById("identity").style.display = "block";
-                            document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
-                            document.getElementById("welcomeSection").style.display = "block";
-                        }
-                        else {
-                            showModal("You're logged in!");
-                            hideAllSections();
-                            document.getElementById("homepageGen").style.display = "block";
-                            document.getElementById("userNav").style.display = "block";
-                            sessionStorage.setItem('userIdentity', userIdentity);
-                            document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
-                            document.getElementById("welcomeSection").style.display = "block";
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error fetching role:', error);
-                    }
-                });
-            }
-            else{
+                showModal("You're logged in!");
+                sessionStorage.setItem('role', role);
+                manageUserViews(role, userIdentity);
+            }else{
                 console.log(userIsActive)
                 showModal('Sorry, your account is not active. Please submit a recovery request.');
                 console.log("account is not active")
                 logout()
             }
-        },
-        error: function (xhr, status, error) {
-            showModal('Incorrect verification code. Please double-check and try again.');
-        }
+    })
+    .catch(error => {
+        showModal('Incorrect verification code. Please double-check and try again.');
+        console.error('Error during authentication:', error);
     });
 }
 async function fetchUserAccount() {
@@ -163,7 +158,8 @@ async function fetchUserAccount() {
         const email = parsedIdToken.Username;
 
     try {
-        const response = await fetch(`http://localhost:5176/api/requestRecovery/getUserAccountDetails?email=${encodeURIComponent(email)}`);
+        const recoveryUrl = appConfig.api.AccountRecovery;  
+        const response = await fetch(`${recoveryUrl}/api/requestRecovery/getUserAccountDetails?email=${encodeURIComponent(email)}`);
         const data = await response.json();
         console.log(data)
         return data || null;
@@ -177,8 +173,29 @@ async function getActivityStatus(activityStatus) {
     return activityStatus.toLowerCase() === 'yes';
 }
 
+function manageUserViews(role, userIdentity) {
+    hideAllSections();
+    document.getElementById("homepageGen").style.display = "block";
+    document.getElementById("userNav").style.display = "block";
+    sessionStorage.setItem('userIdentity', userIdentity);
+    document.getElementById("identity").style.display = "block";
+    document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
+    document.getElementById("welcomeSection").style.display = "block";
+
+    if (role === "2") {
+        document.getElementById("CMview").style.display = "block";
+        document.getElementById("FMview").style.display = "none";
+    } else if (role === "3") {
+        document.getElementById("FMview").style.display = "block";
+        document.getElementById("CMview").style.display = "none";
+    } else if (role === "4" || role === "5") {
+        document.getElementById("FMview").style.display = "none";
+        document.getElementById("CMview").style.display = "none";
+    }
+}
+
+
 function logout() {
-    console.log("logout clicked")
     console.log("logout clicked")
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('idToken');
@@ -230,7 +247,7 @@ function spaceBookingCenterAccess() {
 function registrationAccess() {
     hideAllSections();
     document.getElementById('Registration').style.display = 'block';
-    document.getElementById('noLogin').style.display = 'block';
+    document.getElementById('noLogin').style.display = 'block';    
 }
 
 function taskHubAccess() {
@@ -247,6 +264,7 @@ function waitlistAccess() {
     hideAllSections();
     document.getElementById('waitlistView').style.display = 'block';
 }
+
 function spaceManagerAccess() {
     hideAllSections();
     document.getElementById('spaceManagerView').style.display = 'block';
@@ -291,6 +309,7 @@ function hideAllSections() {
     document.getElementById('systemObservability').style.display = 'none';
     document.getElementById("accountRecoverySection").style.display = "none";
     document.getElementById("userRequestsView").style.display = "none";
+    document.getElementById("enterRegistrationOTPSection").style.display = "none";
 }
 
 

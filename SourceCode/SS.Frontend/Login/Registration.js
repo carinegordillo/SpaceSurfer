@@ -23,6 +23,8 @@ function updateAdditionalFieldsDisplay() {
 }
 
 function submitAccountCreationForm() {
+    const irvineZipCodes = ["92602", "92603", "92604", "92606", "92612", "92614", "92616", "92617", "92618", "92619", "92620", "92623", "92650", "92697", "92709", "92710"];
+
     var userInfo = {
         username: document.getElementById('username').value,
         dob: document.getElementById('dob').value,
@@ -41,7 +43,6 @@ function submitAccountCreationForm() {
         daysOpen: ''
     };
 
-    // If either checkbox is checked, populate companyInfo with actual values
     if (document.getElementById('isCompany').checked || document.getElementById('isFacility').checked) {
         companyInfo = {
             companyName: document.getElementById('companyName').value,
@@ -50,15 +51,30 @@ function submitAccountCreationForm() {
             closingHours: document.getElementById('closingHours').value,
             daysOpen: Array.from(document.querySelectorAll("input[name='daysOpen']:checked")).map(cb => cb.value).join(', ')
         };
+        const zipCode = companyInfo.address.split(',').pop().trim();
+
+        if (!irvineZipCodes.includes(zipCode)) {
+            showModal('Error: Company must be located in Irvine, California.');
+            return; 
+        }
     }
+
 
     var accountCreationRequest = {
         userInfo: userInfo,
         companyInfo: companyInfo
     };
-    console.log("THIS IS THE REQUEST", accountCreationRequest)
-    console.log("THIS ISI THE USERINOF ", accountCreationRequest.userInfo)
-    fetch('http://localhost:8080/api/registration/postAccount', {
+    
+    console.log("THIS IS THE REQUEST", accountCreationRequest);
+
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+
+    const RegistrationUrl = appConfig.api.Registration; 
+
+    fetch(`${RegistrationUrl}/api/registration/postAccount`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -67,17 +83,15 @@ function submitAccountCreationForm() {
     })
     .then(response => response.json())
     .then(data => {
-        // alert('Account created successfully!');
-        showModal('Account created successfully! You may now login');
-        getLogin();
+        showModal('Account successfully submitted! Check your email for OTP to verify accunt');
+        sendRegistrationOTP(userInfo.username);
+        // getLogin();
     })
     .catch(error => {
         console.error('Error:', error);
-        // alert('Error creating account. ' + error.message);
         showModal('Error creating account. ' + error.message);
     });
 }
-
 
 document.getElementById('employeeForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -106,7 +120,12 @@ function submitEmployeeCreationForm() {
         companyInfo: companyInfo,
         manager_hashedUsername : JSON.parse(sessionStorage.getItem('idToken')).Username
     };
-    fetch('http://localhost:8080/api/registration/postAccount', {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const RegistrationUrl = appConfig.api.Registration; 
+    fetch(`${RegistrationUrl}/api/registration/postAccount`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -120,6 +139,71 @@ function submitEmployeeCreationForm() {
     .catch(error => {
         console.error('Error:', error);
         alert('Error creating account. ' + error.message);
+    });
+}
+
+function sendRegistrationOTP(userIdentity) {
+    const loginUrl = appConfig.api.Login;  
+    fetch(`${loginUrl}/api/auth/sendOTP`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userIdentity: userIdentity })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("accountCreationForm").style.display = "none";
+        document.getElementById("enterRegistrationOTPSection").style.display = "block";
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showModal('Error sending verification code.');
+    });
+}
+
+function authenticateRegisterUser() {
+    var otp = document.getElementById("registrationOtp").value;
+    var userIdentity = document.getElementById("registrationUsername").value;
+    const loginUrl = appConfig.api.Login; // Ensure loginUrl is defined in your appConfig or locally
+
+    fetch(`${loginUrl}/api/auth/authenticate`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userIdentity: userIdentity, proof: otp })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const RegistrationUrl = appConfig.api.Registration; 
+        return fetch(`${RegistrationUrl}/api/registration/verifyAccount`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ Username: userIdentity })
+        });
+    })
+    .then(verifyResponse => {
+        if (!verifyResponse.ok) {
+            throw new Error('Network response was not ok during account verification');
+        }
+        return verifyResponse.json();
+    })
+    .then(verifyData => {
+        showModal("Account verified successfully. You may now login.");
+        document.getElementById("enterRegistrationOTPSection").style.display = "none";
+        getLogin(); 
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showModal('Error during OTP verification or account finalization: ' + error.message);
     });
 }
 
