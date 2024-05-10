@@ -1,4 +1,5 @@
 const { exec } = require('child_process');
+const { kill } = require('process');
 
 function killProcess(processname, port) {
     const command = process.platform === 'win32' ? 
@@ -26,3 +27,4 @@ killProcess("RegistrationAPI",8080);
 killProcess("LoginAPI",5270);
 killProcess("userProfileAPI",5048);
 killProcess("TMH",8089)
+killProcess("Account Recovery",5176)
