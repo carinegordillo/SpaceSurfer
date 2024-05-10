@@ -63,7 +63,7 @@
             </div>
         </nav>
     </header>
-  
+
     <section id="sendOTPSection" style="display: none;">
         <div class="container">
             <section id="sendOTPSection" class="loginForm">
@@ -101,7 +101,7 @@
 
                         <h3>Join Us</h3>
                         <p>Ready to get started? Join Space Surfer today and experience the ultimate in space booking convenience. For questions or further information, please contact us at <a href="mailto:spacesurfers5@gmail.com">support@spacesurfer.com</a>.</p>
-                        
+
                         <p>Thank you for choosing Space Surfer — where your space is just a click away!</p>
                     </div>
                 </form>
@@ -163,16 +163,16 @@
     </section>
     <!--Registration-->
     <section id="Registration" style="display: none;">
-        <div class = "container">
-            <section id="enterRegistrationOTPSection"  style="display: none;">
-                <form id="enterOTPForm" class = "loginForm">
+        <div class="container">
+            <section id="enterRegistrationOTPSection" style="display: none;">
+                <form id="enterOTPForm" class="loginForm">
                     <label for="otp">Enter Verification Code</label>
                     <input type="text" id="registrationUsername" name="registrationUsername" required placeholder="Username">
                     <input type="text" id="registrationOtp" name="registrationOtp" required placeholder="Verification code">
                     <button type="button" onclick="authenticateRegisterUser(username)">Verify OTP</button>
                 </form>
             </section>
-            <form id="accountCreationForm" class = "loginForm">
+            <form id="accountCreationForm" class="loginForm">
                 <label class="register-title">Register to SpaceSurfer🤙</label>
                 <input type="text" id="username" name="username" placeholder="Email" required>
                 <input type="date" id="dob" name="dob" placeholder="Date of Birth" required>
@@ -195,7 +195,7 @@
                 <div id="additionalFields" style="display: none;">
                     <label for="name">Company/Facility Name:</label>
                     <input type="text" id="companyName" name="name"><br>
-        
+
                     <label for="location">Company Zipcode:</label>
                     <input type="text" id="address" name="location"><br>
 
@@ -236,7 +236,7 @@
                 <input type="hidden" id="employeerole" name="employeerole">
                 <input type="hidden" id="employeestatus" name="employeestatus">
                 <input type="hidden" id="employeebackupEmail" name="employeebackupEmail"> <br>
-        
+
                 <button id="postAccount" type="submit">Create Employee Account</button>
                 <ul id="recoveryRequestsList"></ul>
             </form>
@@ -257,7 +257,7 @@
         </div>
     </section>
 
-    
+
     <!--Personal Overview Center View-->
     <section id="personalOverviewCenter" class="homepage-container" style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
@@ -381,7 +381,7 @@
     <section id="cpraView" class="homepage-container" style="display: none;">
         <div id="contentContainer"></div>
     </section>
-  
+
     <!--Confirmation View-->
     <section id="confirmationView" class="homepage-container" style="display: none;">
         <button id="initConfirmationsButton" data-testid="initConfirmation-view">Initialize Confirmations</button>
@@ -416,7 +416,7 @@
                         <ul id="taskListCompleted"></ul>
                     </div>
                 </div>
-              
+
                 <!-- Task Creation Form -->
                 <div class="task-form-section">
                     <h2>Create Task</h2>
@@ -473,7 +473,7 @@
             </div>
         </div>
     </section>
-  
+
     <!--Space Manager-->
     <section id="spaceManagerView" class="homepage-container" style="display: none;">
         <div class="task-container">
@@ -484,7 +484,7 @@
                     <button id="companyList">Companies List</button>
                     <div id="floorPlanContent" class="floor-plans-container"></div>
                 </div>
-              
+
                 <div class="space-form-section">
                     <button class="accordion">Upload Space</button>
                     <form id="spaceCreationForm" class="space-form" style="display:none">
@@ -541,38 +541,38 @@
 
     </section>
 
-<section id="userRequestsView"  class="homepage-container" style="display: none;">
-    <div class="user-requests-view-container">
-        <div id="approvalFormContainer">
-            <form id="approvalForm">
-                <button id="loadRequestsButton">Refresh Pending Requests</button>
-                <div id="filterButtons">
-                    <button type="button" id="showPending">Show Pending</button>
-                    <button type="button" id="showApproved">Show Approved</button>
-                    <button type="button" id="showDenied">Show Denied</button>
-                </div>
-                <div id="pendingRequests" class="dynamic-content"></div>
-                <button id="approveRequestsBtn" type="submit">Approve Selected Requests</button>
-                <button id="denyRequestsBtn" type="submit">Deny Selected Requests</button>
-                <button id="deleteRequestsBtn" type="submit">Delete Selected Requests</button>
-            </form>
+    <section id="userRequestsView" class="homepage-container" style="display: none;">
+        <div class="user-requests-view-container">
+            <div id="approvalFormContainer">
+                <form id="approvalForm">
+                    <button id="loadRequestsButton">Refresh Pending Requests</button>
+                    <div id="filterButtons">
+                        <button type="button" id="showPending">Show Pending</button>
+                        <button type="button" id="showApproved">Show Approved</button>
+                        <button type="button" id="showDenied">Show Denied</button>
+                    </div>
+                    <div id="pendingRequests" class="dynamic-content"></div>
+                    <button id="approveRequestsBtn" type="submit">Approve Selected Requests</button>
+                    <button id="denyRequestsBtn" type="submit">Deny Selected Requests</button>
+                    <button id="deleteRequestsBtn" type="submit">Delete Selected Requests</button>
+                </form>
+            </div>
+            <div id="deactivateUserSectionContainer">
+                <section id="deactivateUserSection">
+                    <h3>Deactivate User Account</h3>
+                    <input type="text" id="userHashInput" placeholder="Enter User Hash" />
+                    <button id="deactivateUserBtn">Deactivate User</button>
+                </section>
+            </div>
         </div>
-        <div id="deactivateUserSectionContainer">
-            <section id="deactivateUserSection">
-                <h3>Deactivate User Account</h3>
-                <input type="text" id="userHashInput" placeholder="Enter User Hash" />
-                <button id="deactivateUserBtn">Deactivate User</button>
-            </section>
-        </div>
-    </div>
-</section>
+    </section>
 
 
 
 
 
     <!--Manager Homepage-->
-    <section id="homepageManager"  style="display: none;">
+    <section id="homepageManager" style="display: none;">
         <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
         <button type="button" onclick="confirmationAccess()">Confirmations</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
@@ -630,9 +630,10 @@
     <script src="spaceBookingCenter.js"></script>
     <script src="SystemObservabilityFunctions.js"></script>
     <script src="cpraScript.js"></script>
-    <script src = "SpaceManager.js"></script>
+    <script src="SpaceManager.js"></script>
     <script src="accountRecovery.js"></script>
-    <script src = "UserProfile.js"></script>
+    <script src="UserProfile.js"></script>
+    <script src="SystemObservabilityGen.js"></script>
 
 </body>
 </html>
