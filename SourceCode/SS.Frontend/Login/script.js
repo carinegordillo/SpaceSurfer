@@ -145,6 +145,7 @@ async function authenticateUser() {
 }
 async function fetchUserAccount() {
     const idToken = sessionStorage.getItem('idToken');
+    console.log("in fetch user account")
     
         if (!idToken) {
             console.error('idToken not found in sessionStorage');

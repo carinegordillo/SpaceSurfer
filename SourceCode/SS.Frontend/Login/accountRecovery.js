@@ -77,7 +77,6 @@ function sendRecoveryOTP() {
     });
 }
 
-// Function to authenticate the user with the provided OTP
 function authenticateRecoveryUser() {
     if (!appConfig) {
         console.log('Configuration is not loaded!');
@@ -111,7 +110,7 @@ function authenticateRecoveryUser() {
     });
 }
 
-// Function to submit the final recovery request
+
 function sendRecoveryRequest(event) {
     if (!appConfig) {
         console.log('Configuration is not loaded!');
@@ -159,8 +158,45 @@ function sendRecoveryRequest(event) {
 
 
 
+// get the user acccount
 
-// Function to initialize user requests and add event listeners to filter buttons
+// async function fetchUserAccount() {
+//     const idToken = sessionStorage.getItem('idToken');
+    
+//         if (!idToken) {
+//             console.error('idToken not found in sessionStorage');
+//             return;
+//         }
+//         const parsedIdToken = JSON.parse(idToken);
+
+//         // Log parsed object for debugging
+//         console.log('Parsed idToken:', parsedIdToken);
+
+//         if (!parsedIdToken || !parsedIdToken.Username) {
+//             console.error('Parsed idToken does not have Username');
+//             return;
+//         }
+
+//         const email = parsedIdToken.Username;
+
+//     try {
+//         const response = await fetch(`http://localhost:5176/api/requestRecovery/getUserAccountDetails?email=${encodeURIComponent(email)}`);
+//         const data = await response.json();
+//         console.log(data)
+//         return data || null;
+//     } catch (error) {
+//         console.error('Error fetching user Account:', error);
+//         return null;
+//     }
+// }
+
+//if there is a userAcccount.CompanyID
+
+//add the comapny intot he list of reservable places
+
+
+
+
 let allRequests = [];
 
 async function initUserRequests() {
