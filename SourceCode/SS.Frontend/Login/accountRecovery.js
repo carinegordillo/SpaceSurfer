@@ -1,4 +1,3 @@
-
 document.addEventListener('click', function (event) {
     // Check if the clicked element has the class 'recover-link'
     if (event.target && event.target.classList.contains('recover-link')) {
@@ -14,9 +13,6 @@ function showRecoveryForm() {
     // Hide the OTP section and show the recovery form section
     document.getElementById("accountRecoverySection").style.display = "block";
     document.getElementById('sendOTPSection').style.display = 'none';
-
-
-
     const recoveryForm = document.getElementById('recoveryForm');
     recoveryForm.addEventListener('submit', sendRecoveryRequest);
 }

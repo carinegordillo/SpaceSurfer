@@ -15,7 +15,7 @@ function handlePath(fullUrl) {
                 verifyEmployee();
                 break;
             default:
-                console.log('No handler for this path');
+                console.log('No employee handler for this path');
         }
     }
 }
