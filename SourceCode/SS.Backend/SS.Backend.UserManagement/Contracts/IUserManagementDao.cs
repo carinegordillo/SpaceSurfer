@@ -11,7 +11,9 @@ namespace SS.Backend.UserManagement
         public Task<Response> createAccountRecoveryRequest(UserRequestModel userRequest, string tableName);
         public  Task<Response> sendRequest(string name, string position);
         public  Task<Response> readTableWhere(string whereClause, object whereClauseval, string tableName);
+        public  Task<Response> DeleteRequestWhere(string whereClause, object whereClauseval, string tableName);
         public Task<Response> CreateAccount(UserInfo userInfo, CompanyInfo? companyInfo, string? manager_hashedUsername);
         public  Task<Response> getEmployeeCompanyID(UserInfo userInfo, string manager_hashedUsername);
+
     }
 }

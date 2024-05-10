@@ -5,14 +5,30 @@ let isEditing = false;
 
 
 function initProfile() {
-    const idToken = sessionStorage.getItem('idToken');
-    
-    if (!idToken) {
-        console.error('idToken not found in sessionStorage');
-        return;
-    }
+    document.getElementById('userProfileView').style.display = 'block';
+
+    document.getElementById("userRequestsView").style.display = "none";
+
+    console.log("get userReuests clicked  clicked");
+
+    document.getElementById('sendOTPSection').style.display = 'none';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById('failResult').style.display = 'none';
+    document.getElementById("taskManagerView").style.display = "none";
+    document.getElementById('personalOverviewCenter').style.display = 'none';
+    document.getElementById('waitlistView').style.display = 'none';
+    document.getElementById('spaceBookingView').style.display = 'none';
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById("accountRecoverySection").style.display = "none";
 
     try {
+        const idToken = sessionStorage.getItem('idToken');
+    
+        if (!idToken) {
+            console.error('idToken not found in sessionStorage');
+            return;
+        }
         const parsedIdToken = JSON.parse(idToken);
 
         // Log parsed object for debugging
@@ -178,7 +194,7 @@ async function saveProfileChanges() {
 
 function cancelEditProfile() {
     isEditing = false; // Set edit mode to false
-    initProfile(); // Re-fetch and display the profile to cancel edits
+    initProfile();
 }
 
 async function checkTokenExpiration(accessToken) {
@@ -197,9 +213,33 @@ async function checkTokenExpiration(accessToken) {
     }
 }
 
-// function logout() {
-//     sessionStorage.removeItem('accessToken');
-//     sessionStorage.removeItem('idToken');
-//     // Redirect to login or handle logout UI changes
-// }
-initProfile();
+
+
+function logout() {
+    console.log("logout clicked")
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('idToken');
+    sessionStorage.removeItem('userIdentity')
+    var identityDiv = document.getElementById("identity");
+    if (identityDiv) {
+        console.log("Identity element found, current display:", identityDiv.style.display);
+        identityDiv.style.display = "none";
+        console.log("Identity should now be hidden, new display:", identityDiv.style.display);
+    } else {
+        console.log("Identity element not found");
+    }
+    document.getElementById("sendOTPSection").style.display = "block";
+    document.getElementById("noLogin").style.display = "block";
+    document.getElementById("homepageGen").style.display = "none";
+    document.getElementById("homepageManager").style.display = "none";
+    document.getElementById("taskManagerView").style.display = "none";
+    document.getElementById('personalOverviewCenter').style.display = 'none';
+    document.getElementById('spaceBookingView').style.display = 'none';
+    document.getElementById('userProfileView').style.display = 'none';
+    document.getElementById('waitlistView').style.display = 'none';
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('userProfileView').style.display = 'none';
+    document.getElementById("accountRecoverySection").style.display = "none";
+    document.getElementById("userRequestsView").style.display = "none";
+
+}
