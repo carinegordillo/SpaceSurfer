@@ -10,5 +10,6 @@ namespace SS.Backend.SharedNamespace
         public TimeSpan OpeningHours { get; set; }
         public TimeSpan ClosingHours { get; set; }
         public string? DaysOpen { get; set; }
+        public int? CompanyType { get; set; }
     }
 }

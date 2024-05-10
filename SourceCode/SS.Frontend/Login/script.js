@@ -32,10 +32,12 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Failed to load CSP configuration:', error));
     const accessToken = sessionStorage.getItem('accessToken');
     if (accessToken) {
+        var userEmail = document.getElementById("userIdentity").value;
+        var role = sessionStorage.getItem('role');
         hideAllSections();
         document.getElementById("homepageGen").style.display = "block";
         document.getElementById("userNav").style.display = "block";
-        document.getElementById("CMview").style.display = "block";
+        manageUserViews(role, userEmail);
         document.getElementById("welcomeSection").style.display = "block";
         document.getElementById("identity").textContent = `Logged in as: ${sessionStorage.getItem('userIdentity')}`;
 
@@ -45,6 +47,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("homepageGen").style.display = "none";
         document.getElementById("userNav").style.display = "none";
         document.getElementById("CMview").style.display = "none";
+        document.getElementById("FMview").style.display = "none";
+        document.getElementById("SAview").style.display = "none";
         document.getElementById("welcomeSection").style.display = "none";
         document.getElementById("noLogin").style.display = "block";
         document.getElementById("sendOTPSection").style.display = "block";
@@ -89,6 +93,7 @@ function sendOTP() {
 async function authenticateUser() {
     var otp = document.getElementById("otp").value;
     var userIdentity = document.getElementById("userIdentity").value;
+    sessionStorage.setItem('userIdentity', userIdentity);
     var userIsActive = false;
     const loginUrl = appConfig.api.Login; 
     fetch(`${loginUrl}/api/auth/authenticate`, {
@@ -140,6 +145,7 @@ async function authenticateUser() {
 }
 async function fetchUserAccount() {
     const idToken = sessionStorage.getItem('idToken');
+    console.log("in fetch user account")
     
         if (!idToken) {
             console.error('idToken not found in sessionStorage');
@@ -176,7 +182,7 @@ function manageUserViews(role, userIdentity) {
     hideAllSections();
     document.getElementById("homepageGen").style.display = "block";
     document.getElementById("userNav").style.display = "block";
-    sessionStorage.setItem('userIdentity', userIdentity);
+    // sessionStorage.setItem('userIdentity', userIdentity);
     document.getElementById("identity").style.display = "block";
     document.getElementById("identity").textContent = `Logged in as: ${userIdentity}`;
     document.getElementById("welcomeSection").style.display = "block";
@@ -188,6 +194,10 @@ function manageUserViews(role, userIdentity) {
         document.getElementById("FMview").style.display = "block";
         document.getElementById("CMview").style.display = "none";
     } else if (role === "4" || role === "5") {
+        document.getElementById("FMview").style.display = "none";
+        document.getElementById("CMview").style.display = "none";
+    } else if (role === "1") {
+        document.getElementById("SAview").style.display = "block";
         document.getElementById("FMview").style.display = "none";
         document.getElementById("CMview").style.display = "none";
     }
@@ -214,6 +224,7 @@ function logout() {
     document.getElementById("userNav").style.display = "none";
     document.getElementById("FMview").style.display = "none";
     document.getElementById("CMview").style.display = "none";
+    document.getElementById("SAview").style.display = "none";
     document.getElementById("homepageGen").style.display = "none";
 }
 
@@ -246,6 +257,8 @@ function spaceBookingCenterAccess() {
 function registrationAccess() {
     hideAllSections();
     document.getElementById('Registration').style.display = 'block';
+    document.getElementById("accountCreationForm").style.display = "block";
+    document.getElementById("enterRegistrationOTPSection").style.display = "none";
     document.getElementById('noLogin').style.display = 'block';    
 }
 
