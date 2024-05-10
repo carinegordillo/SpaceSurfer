@@ -1,4 +1,7 @@
-document.getElementById('initAppButton').addEventListener('click', function () {
+function initSpaceBookingCenter(){
+
+    spaceBookingCenterAccess()
+    getReservationCenter()
     initSidebar();
     const formContainer = document.querySelector('.space-form-container');
     if (formContainer) {
@@ -32,15 +35,28 @@ document.getElementById('initAppButton').addEventListener('click', function () {
             fetchFloorPlans(companyID);
         }
     });
-});
+}
+
+function hideAllSBCSections() {
+    const sections = document.querySelectorAll('.reservation-center-container, .reservation-container');
+    sections.forEach(section => section.style.display = 'none');
+}
 
 
 function initSidebar() {
     const sidebar = document.querySelector('.sidebar');
     sidebar.innerHTML = '';
     const buttons = [
-        { id: 'loadReservationCenter', text: 'Reserve Now', onClickFunction: () => getReservationCenter() },
-        { id: 'loadReservationOverview', text: 'Your Reservations', onClickFunction: () => getReservtionOverview() }
+        { id: 'loadReservationCenter', text: 'Reserve Now', onClickFunction: () => {
+            hideAllSBCSections();
+            document.querySelector('.reservation-center-container').style.display = 'flex';
+            getReservationCenter();
+        }},
+        { id: 'loadReservationOverview', text: 'Your Reservations', onClickFunction: () => {
+            hideAllSBCSections();
+            document.querySelector('.reservation-container').style.display = 'block';
+            getReservationOverview();
+        }}
     ];
 
     buttons.forEach(({ id, text, onClickFunction }) => {
@@ -52,18 +68,28 @@ function initSidebar() {
     });
 }
 
-
-
-function initReservationOverviewButtons() {
-    
-    document.getElementById('reserveNowBtn').addEventListener('click', handleReserveNowClick);
-    document.getElementById('yourReservationsBtn').addEventListener('click', handleYourReservationsClick);
-}
-
-
-
+// Function to fetch and display the reservation center
 function getReservationCenter() {
+    hideAllSBCSections();
+    document.querySelector('.reservation-center-container').style.display = 'flex';
+    const formContainer = document.querySelector('.space-form-container');
+    if (formContainer) {
+        formContainer.innerHTML = '';
+        const reservationForm = createReservationForm();
 
+        reservationForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            var accessToken = sessionStorage.getItem('accessToken');
+            if (!accessToken) {
+                console.error('Access token is not available.');
+                return;
+            }
+            handleReservationCreationFormSubmit(event);
+
+        });
+        formContainer.appendChild(reservationForm);
+
+    }
     fetchCompanies();
     document.getElementById('companiesList').addEventListener('click', function (event) {
         if (event.target && event.target.nodeName === "LI") {
@@ -71,9 +97,20 @@ function getReservationCenter() {
             fetchFloorPlans(companyID);
         }
     });
-    
     document.getElementById('reservationForm').addEventListener('submit', handleReservationCreationFormSubmit);    
 }
+function getReservationOverview() {
+    hideAllSBCSections();
+    document.querySelector('.reservation-container').style.display = 'block';
+    reservationOverviewButtons();
+    const deleteFormContainer = document.querySelector('.space-form-container');
+    if (deleteFormContainer) {
+        deleteFormContainer.innerHTML = ''; // Clear previous content
+        const deleteReservationForm = createDeleteReservationForm();
+        deleteFormContainer.appendChild(deleteReservationForm);
+    }
+}
+
 
 function createDeleteReservationForm() {
     const form = document.createElement('form');
@@ -171,8 +208,11 @@ function reservationOverviewButtons() {
     var idToken = sessionStorage.getItem('idToken');
     var parsedIdToken = JSON.parse(idToken);
     var username = parsedIdToken.Username;
+
     const buttons = [
-        { id: 'loadActiveReservationsBtn', text: 'Active Reservations', onClickFunction: () => getUsersActiveReservations(username) },
+        { id: 'loadActiveReservationsBtn', text: 'Active Reservations', onClickFunction: () => filterReservationsByStatus('Active') },
+        { id: 'loadPassedReservationsBtn', text: 'Passed Reservations', onClickFunction: () => filterReservationsByStatus('Passed') },
+        { id: 'loadCancelledReservationsBtn', text: 'Cancelled Reservations', onClickFunction: () => filterReservationsByStatus('Cancelled') },
         { id: 'loadAllReservationsBtn', text: 'All Reservations', onClickFunction: () => getUsersReservations(username, accessToken) }
     ];
 
@@ -184,6 +224,24 @@ function reservationOverviewButtons() {
         content.appendChild(button);
     });
 }
+
+function filterReservationsByStatus(statusFilter) {
+    const container = document.querySelector('.reservation-list');
+    const allReservations = container.querySelectorAll('.reservation-card');
+
+    allReservations.forEach(card => {
+        const statusElement = card.querySelector('.status-0, .status-1, .status-2');
+        if (statusElement) {
+            const statusText = statusElement.textContent.split(': ')[1];
+            if (statusText === statusFilter || statusFilter === 'All') {
+                card.style.display = ''; 
+            } else {
+                card.style.display = 'none'; 
+            }
+        }
+    });
+}
+
 
 
 
@@ -554,11 +612,7 @@ function showCancelModal(reservation) {
 }
 
 function getUsersReservationID(companyID, floorID, spaceID, startTime, endTime, userName, accessToken) {
-    console.log(companyID);
-    console.log(spaceID);
-    console.log(floorID);
-    console.log(startTime);
-    console.log(endTime);
+
     if (!appConfig) {
         console.error('Configuration is not loaded!');
         return;
@@ -654,24 +708,15 @@ async function sendConfirmation(reservation) {
 
 //////////////Reservation Confirmation//////////////
 function showModal(message, isSuccess = true) {
-    const modalElement = document.createElement('div');
-    modalElement.style.position = 'fixed';
-    modalElement.style.top = '20%';
-    modalElement.style.left = '50%';
-    modalElement.style.transform = 'translate(-50%, -50%)';
-    modalElement.style.zIndex = '1000';
-    modalElement.style.padding = '20px';
-    modalElement.style.backgroundColor = isSuccess ? 'lightgreen' : 'salmon';
-    modalElement.innerText = message;
+    var modal = document.getElementById('modal');
+    var modalMessage = document.getElementById('modal-message');
+    modalMessage.textContent = message;
+    modal.style.display = 'block';
 
-    const closeButton = document.createElement('button');
-    closeButton.innerText = 'Close';
+    var closeButton = document.querySelector('.close-button');
     closeButton.onclick = function() {
-        modalElement.remove();
+        modal.style.display = 'none';
     };
-    modalElement.appendChild(closeButton);
-
-    document.body.appendChild(modalElement);
 }
 
 function showConfirmationModal(reservation) {
@@ -1035,10 +1080,16 @@ async function fetchCompanies() {
         const companiesList = document.getElementById('companiesList');
         companiesList.innerHTML = '';
 
+
         data.forEach(company => {
+            let htmlContent ='';
             const li = document.createElement('li');
             li.classList.add('company-item');
-            const htmlContent = `
+            if (company.companyType === 2) {
+                li.classList.add('user-company'); 
+                htmlContent= ' <h5>Your Workplace</h5>'
+            }
+            htmlContent += `
                 <div class="company-name clickable" data-company-id="${company.companyID}">${company.companyName}</div>
                 <div class="company-info">
                     <p class="company-address">Address: ${company.address}</p>

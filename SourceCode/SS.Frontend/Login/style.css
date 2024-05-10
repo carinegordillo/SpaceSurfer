@@ -1005,3 +1005,8 @@ button, input[type="text"] {
     width: 100%;
     margin-top: 10px;
 }
+
+.user-company {
+    background-color: #e0f7fa; 
+    border: 2px solid #00796b; 
+}

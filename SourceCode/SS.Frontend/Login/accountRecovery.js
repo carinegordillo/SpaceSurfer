@@ -1,9 +1,4 @@
-if (!appConfig) {
-    console.error('Configuration is not loaded!');
-    return;
-}
-const loginUrl = appConfig.api.Login;  
-const recoveryUrl = appConfig.api.AccountRecovery;  
+
 document.addEventListener('click', function (event) {
     // Check if the clicked element has the class 'recover-link'
     if (event.target && event.target.classList.contains('recover-link')) {
@@ -55,6 +50,13 @@ function createAndShowModal(message) {
 
 // Function to send OTP based on user email
 function sendRecoveryOTP() {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return "error";
+    }
+    
+    const loginUrl = appConfig.api.Login;  
+    const recoveryUrl = appConfig.api.AccountRecovery;  
     var userIdentity = document.getElementById("userRecoveryIdentity").value;
 
     fetch(`${loginUrl}/api/auth/sendOTP`, {
@@ -82,6 +84,13 @@ function sendRecoveryOTP() {
 }
 
 function authenticateRecoveryUser() {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return "error";
+    }
+    
+    const loginUrl = appConfig.api.Login;  
+    const recoveryUrl = appConfig.api.AccountRecovery;  
     var otp = document.getElementById("RecoveryOtp").value;
     var userIdentity = document.getElementById("userRecoveryIdentity").value;
     
@@ -112,6 +121,13 @@ function authenticateRecoveryUser() {
 
 function sendRecoveryRequest(event) {
     event.preventDefault();
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return "error";
+    }
+    
+    const loginUrl = appConfig.api.Login;  
+    const recoveryUrl = appConfig.api.AccountRecovery;  
 
     var email = document.getElementById("userRecoveryIdentity").value;
     var additionalInformation = document.getElementById("additionalInformation").value;
@@ -194,23 +210,11 @@ function sendRecoveryRequest(event) {
 let allRequests = [];
 
 async function initUserRequests() {
+    hideAllSections();
     document.getElementById("userRequestsView").style.display = "block";
 
     console.log("get userReuests clicked  clicked");
-    document.getElementById('userProfileView').style.display = 'none';
     
-    // document.getElementById('homepageGen').style.display = 'none';
-    // document.getElementById('homepageManager').style.display = 'none';
-    document.getElementById('sendOTPSection').style.display = 'none';
-    document.getElementById('enterOTPSection').style.display = 'none';
-    document.getElementById('successResult').style.display = 'none';
-    document.getElementById('failResult').style.display = 'none';
-    document.getElementById("taskManagerView").style.display = "none";
-    document.getElementById('personalOverviewCenter').style.display = 'none';
-    document.getElementById('waitlistView').style.display = 'none';
-    document.getElementById('spaceBookingView').style.display = 'none';
-    document.getElementById("welcomeSection").style.display = "none";
-    document.getElementById("accountRecoverySection").style.display = "none";
 
     
 
@@ -274,6 +278,14 @@ document.addEventListener('click', function (event) {
 
 // Function to fetch user requests
 async function fetchUserRequests() {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return "error";
+    }
+    
+    const loginUrl = appConfig.api.Login;  
+    const recoveryUrl = appConfig.api.AccountRecovery;  
+
     const accessToken = sessionStorage.getItem('accessToken');
     const isTokenValid = await checkTokenExpiration(accessToken);
     if (!isTokenValid) {
@@ -377,6 +389,13 @@ function filterRequestsByStatus(status) {
 
 
 function approveRequestsByUserHash(userHashes) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return "error";
+    }
+    
+    const loginUrl = appConfig.api.Login;  
+    const recoveryUrl = appConfig.api.AccountRecovery;  
     if (userHashes.length === 0) return; 
     console.log('Approving requests for users:', userHashes);
 
@@ -399,6 +418,13 @@ function approveRequestsByUserHash(userHashes) {
 
 // Function to deny user requests
 function denyRequestsByUserHash(userHashes) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return "error";
+    }
+    
+    const loginUrl = appConfig.api.Login;  
+    const recoveryUrl = appConfig.api.AccountRecovery;  
     if (userHashes.length === 0) return; // Skip if no requests to deny
     console.log('Denying requests for users:', userHashes);
 
@@ -430,6 +456,13 @@ document.getElementById('deactivateUserBtn').addEventListener('click', function(
 });
 
 function deactivateUserAccount(userHash) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return "error";
+    }
+    
+    const loginUrl = appConfig.api.Login;  
+    const recoveryUrl = appConfig.api.AccountRecovery;  
     fetch(`${recoveryUrl}/api/requestRecovery/disableAccount`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -452,6 +485,13 @@ function deactivateUserAccount(userHash) {
 }
 
 function deleteRequestsByUserHash(userHashes) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return "error";
+    }
+    
+    const loginUrl = appConfig.api.Login;  
+    const recoveryUrl = appConfig.api.AccountRecovery;  
     if (userHashes.length === 0) return; 
     console.log('Deleting Completed User Requests:', userHashes);
 
