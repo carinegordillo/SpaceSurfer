@@ -234,7 +234,7 @@ namespace SS.Backend.UserManagement
                         }
                     }
                 }
-            } else if (userInfo.role == 2 || userInfo.role == 3){
+            } else if (userInfo.role == 2){
                 var companyProfile_success_parameters = new Dictionary<string, object>
                 {
                     {"hashedUsername", validPepper.hashedUsername},
@@ -280,6 +280,25 @@ namespace SS.Backend.UserManagement
                         }
                     }
                 }
+            } else if(userInfo.role == 3){
+                var companyProfile_success_parameters = new Dictionary<string, object>
+                {
+                    {"hashedUsername", validPepper.hashedUsername},
+                    {"companyName", companyInfo.companyName},
+                    {"address", companyInfo.address},
+                    {"openingHours", companyInfo.openingHours},
+                    {"closingHours", companyInfo.closingHours},
+                    {"daysOpen", companyInfo.daysOpen}, 
+                    {"companyType", userInfo.role}
+                };
+                tableData.Add("companyProfile", companyProfile_success_parameters);
+                
+                userAccount_success_parameters = new Dictionary<string, object>
+                {
+                    { "username", userInfo.username},
+                    {"birthDate", userInfo.dob},
+                };
+                tableData.Add("userAccount", userAccount_success_parameters);
             }
             foreach (var tableEntry in tableData)
             {
