@@ -106,8 +106,7 @@ async function authenticateUser() {
         sessionStorage.setItem('idToken', idToken);
         document.getElementById("enterOTPSection").style.display = "none";
         document.getElementById("successResult").style.display = "none";
-
-        return fetch('http://localhost:5270/api/auth/getRole', {
+        return fetch(`${loginUrl}/api/auth/getRole`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -159,7 +158,8 @@ async function fetchUserAccount() {
         const email = parsedIdToken.Username;
 
     try {
-        const response = await fetch(`http://localhost:5176/api/requestRecovery/getUserAccountDetails?email=${encodeURIComponent(email)}`);
+        const recoveryUrl = appConfig.api.AccountRecovery;  
+        const response = await fetch(`${recoveryUrl}/api/requestRecovery/getUserAccountDetails?email=${encodeURIComponent(email)}`);
         const data = await response.json();
         console.log(data)
         return data || null;
