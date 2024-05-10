@@ -154,7 +154,6 @@ async function fetchUserAccount() {
             console.error('Parsed idToken does not have Username');
             return;
         }
-
         const email = parsedIdToken.Username;
 
     try {

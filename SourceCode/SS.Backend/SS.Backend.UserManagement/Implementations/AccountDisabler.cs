@@ -35,7 +35,7 @@ namespace SS.Backend.UserManagement
             }
 
             //logging
-            if (response.HasError == false)
+            if (result.HasError == false)
             {
                 logEntry = logBuilder.Info().DataStore().Description($"Disabled account successfully.").User(userhash).Build();
             }

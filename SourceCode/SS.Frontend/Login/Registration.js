@@ -1,3 +1,40 @@
+window.onload = function() {
+    handlePath(window.location.href);  // Changed to href to include the full URL
+};
+
+function handlePath(fullUrl) {
+    const url = new URL(fullUrl);
+    const pathSegments = url.pathname.split('/').filter(p => p);
+
+    // Check if the 'employee' query parameter is present
+    if (url.searchParams.has('employee')) {
+        verifyEmployee();
+    } else if (pathSegments.length) {
+        switch (pathSegments[0]) {
+            case 'employee':
+                verifyEmployee();
+                break;
+            default:
+                console.log('No handler for this path');
+        }
+    }
+}
+
+function verifyEmployee() {
+    hideAllSections();
+    document.getElementById("homepageGen").style.display = "none";
+    document.getElementById("userNav").style.display = "none";
+    document.getElementById("CMview").style.display = "none";
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById("noLogin").style.display = "block";
+    // document.getElementById("sendOTPSection").style.display = "block";
+    console.log('Fetching details for employee:');
+    document.getElementById("Registration").style.display = "block";
+    document.getElementById("accountCreationForm").style.display = "none";
+    document.getElementById("enterRegistrationOTPSection").style.display = "block";
+    authenticateRegisterUser();
+}
+
 
 document.getElementById('accountCreationForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -95,31 +132,42 @@ function submitAccountCreationForm() {
 
 document.getElementById('employeeForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    submiEmployeeCreationForm();
+    submitEmployeeCreationForm();
 });
 
 function submitEmployeeCreationForm() {
-    var userInfo = {
-        username: document.getElementById('username').value,
-        dob: document.getElementById('dob').value,
-        firstname: document.getElementById('firstname').value,
-        lastname: document.getElementById('lastname').value,
+    if (!appConfig) {
+        console.error('Configuration in register is not loaded!');
+        return;
+    }
+    var employeeuserInfo = {
+        username: document.getElementById('employeeusername').value,
+        dob: document.getElementById('employeedob').value,
+        firstname: document.getElementById('employeefirstname').value,
+        lastname: document.getElementById('employeelastname').value,
         role: 4,
         status: "no",
         backupEmail: "",
     };
-    var companyInfo = {
+    // Assuming you have a way to define or retrieve userIdentity
+    var userIdentity = employeeuserInfo.username; 
+
+    var employeecompanyInfo = {
         companyName: '',
         address: '',
         openingHours: '',
         closingHours: '',
         daysOpen: ''
     };
-    var accountCreationRequest = {
-        userInfo: userInfo,
-        companyInfo: companyInfo,
-        manager_hashedUsername : JSON.parse(sessionStorage.getItem('idToken')).Username
+    var managerHashedUsername = JSON.parse(sessionStorage.getItem('idToken')).Username;
+
+    var employeeCreationRequest = {
+        userInfo: employeeuserInfo,
+        companyInfo: employeecompanyInfo, 
+        manager_hashedUsername: managerHashedUsername
     };
+    
+    console.log("THIS IS THE REQUEST", employeeCreationRequest);
     if (!appConfig) {
         console.error('Configuration is not loaded!');
         return;
@@ -130,15 +178,36 @@ function submitEmployeeCreationForm() {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(accountCreationRequest),
+        body: JSON.stringify(employeeCreationRequest),
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+          // Convert non-JSON response to error
+          return response.text().then(text => Promise.reject(new Error(text)));
+        }
+        return response.json();
+      })
     .then(data => {
-        alert('Account created successfully!');
+        const loginUrl = appConfig.api.Login;  
+        fetch(`${loginUrl}/api/auth/sendOTP`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userIdentity: userIdentity })
+        })
+        .then(response => response.json())
+        .then(data => {
+            showModal('Account successfully submitted! Check employee email for OTP to verify account');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showModal('Error sending verification code.');
+        });
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error creating account. ' + error.message);
+        showModal('Error creating account. ' + error.message);
     });
 }
 
