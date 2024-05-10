@@ -63,7 +63,7 @@ namespace SS.Backend.UserManagement
             Console.WriteLine(table1Result.ErrorMessage + " " + table2Result.ErrorMessage + " - Enable Account -");
             
             //logging
-            if (response.HasError == false)
+            if (table1Result.HasError == false)
             {
                 logEntry = logBuilder.Info().DataStore().Description($"Enable account successfully.").User(hashedUsername).Build();
             }
@@ -139,13 +139,13 @@ namespace SS.Backend.UserManagement
             }
 
             //logging
-            if (response.HasError == false)
+            if (result.HasError == false)
             {
-                logEntry = logBuilder.Info().DataStore().Description($"Update Account status successfully.").User(userHash).Build();
+                logEntry = logBuilder.Info().DataStore().Description($"Update Account status successfully.").User(userhash).Build();
             }
             else
             {
-                logEntry = logBuilder.Error().DataStore().Description($"Failed to update account status.").User(userHash).Build();
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to update account status.").User(userhash).Build();
             }
             if (logEntry != null && _logger != null)
             {

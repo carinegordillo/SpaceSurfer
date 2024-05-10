@@ -89,12 +89,6 @@ namespace SS.Backend.UserManagement
             var validEndDate = DateTime.Now;
             return dateOfBirth >= validStartDate && dateOfBirth <= validEndDate;
         }
-        private bool IsValidAddress(string? name)
-        {
-            //implement Geolocation API
-            return name == "Irvine";
-        }
-
         public async Task<Response> CreateUserAccount(UserInfo userInfo, CompanyInfo? companyInfo, string? manager_hashedUsername)
         {
             Response response = new Response();
@@ -103,7 +97,6 @@ namespace SS.Backend.UserManagement
             {
                 response.HasError = true;
                 response.ErrorMessage = "Invalid User Info entry: " + validationMessage;
-                Console.WriteLine("VALIDATION!!!!! ", response.ErrorMessage);
                 return response;
             }
 
@@ -113,10 +106,6 @@ namespace SS.Backend.UserManagement
                 response  = await _userManagementDao.CreateAccount(userInfo, companyInfo, manager_hashedUsername);
             }
 
-            
-            Console.WriteLine("THIS IS THE REPONSE:::::", response.ErrorMessage);
-
-            //logging
             if (response.HasError == false)
             {
                 logEntry = logBuilder.Info().DataStore().Description($"Successful account creation.").User(userInfo.username).Build();
