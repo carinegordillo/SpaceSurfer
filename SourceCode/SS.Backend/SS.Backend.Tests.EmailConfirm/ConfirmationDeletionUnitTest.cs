@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System;
 using Microsoft.Data.SqlClient;
 using System.Diagnostics;
+using SS.Backend.Services.LoggingService;
 
 namespace SS.Backend.Tests.EmailConfirm;
 
@@ -20,6 +21,8 @@ public class ConfirmationDeletionUnitTest
     private ConfigService _configService;
     private EmailConfirmList _confirmList;
     private ConfirmationDeletion _confirmDelete;
+    private ILogTarget _logTarget;
+    private ILogger _logger;
 
     [TestInitialize]
     public void Setup()
@@ -30,10 +33,11 @@ public class ConfirmationDeletionUnitTest
         var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
         _configService = new ConfigService(configFilePath);
         _sqlDao = new SqlDAO(_configService);
+        _logger = new Logger(_logTarget);
         _emailDAO = new EmailConfirmDAO(_sqlDao);
-        _emailConfirm = new EmailConfirmService(_emailDAO);
+        _emailConfirm = new EmailConfirmService(_emailDAO, _logger);
         _confirmList = new EmailConfirmList(_emailDAO);
-        _confirmDelete = new ConfirmationDeletion(_emailDAO, _confirmList);
+        _confirmDelete = new ConfirmationDeletion(_emailDAO, _confirmList, _logger);
     }
 
     private async Task CleanupTestData(int reservationID)

@@ -14,12 +14,15 @@ namespace SS.Backend.EmailConfirm
         private readonly IEmailConfirmService _emailConfirm;
         private readonly IEmailConfirmDAO _emailDao;
         private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
 
         public EmailConfirmSender(IEmailConfirmService emailConfirm, IEmailConfirmDAO emailDao, ILogger logger)
         {
             _emailConfirm = emailConfirm;
             _emailDao = emailDao;
             _logger = logger;
+            logEntry = logBuilder.Build();
         }
 
         public async Task<Response> SendConfirmation (UserReservationsModel reservation)
@@ -75,27 +78,16 @@ namespace SS.Backend.EmailConfirm
             //logging
             if (result.HasError == false)
             {
-                LogEntry entry = new LogEntry
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Info",
-                    username = reservation.UserHash,
-                    category = "Data Store",
-                    description = "Confirmation email sent successfully."
-                };
-                //await _logger.SaveData(entry);
+                logEntry = logBuilder.Info().DataStore().Description($"Confirmation email sent successfully.").User(reservation.UserHash).Build();
             }
             else
             {
-                LogEntry entry = new LogEntry
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Error",
-                    username = reservation.UserHash,
-                    category = "Data Store",
-                    description = "Confirmation email failed."
-                };
-                //await _logger.SaveData(entry);
+                logEntry = logBuilder.Info().DataStore().Description($"Confirmation email failed to send.").User(reservation.UserHash).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
             }
             return result;
         }
@@ -152,29 +144,16 @@ namespace SS.Backend.EmailConfirm
             //logging
             if (result.HasError == false)
             {
-                LogEntry entry = new LogEntry()
-
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Info",
-                    username = reservation.UserHash,
-                    category = "Data Store",
-                    description = "Confirmation email resent successfully."
-                };
-                //await _logger.SaveData(entry);
+                logEntry = logBuilder.Info().DataStore().Description($"Confirmation email resent successfully.").User(reservation.UserHash).Build();
             }
             else
             {
-                LogEntry entry = new LogEntry()
-
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Error",
-                    username = reservation.UserHash,
-                    category = "Data Store",
-                    description = "Resending confirmation email failed."
-                };
-                //await _logger.SaveData(entry);
+                logEntry = logBuilder.Info().DataStore().Description($"Confirmation email failed to resend.").User(reservation.UserHash).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
             }
             return result;
         }
