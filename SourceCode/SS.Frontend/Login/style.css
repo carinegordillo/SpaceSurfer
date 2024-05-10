@@ -120,7 +120,7 @@ nav {
     align-items: center;
     background-color: #E2E2D3; /* Light blue background corrected to more accurate description */
     color: #7a796c; /* Text color */
-    padding: 10px 20px; /* Adjust padding as needed */
+    padding: 5px 10px; /* Adjust padding as needed */
     border-radius: 15px; /* Rounded corners for a "button-like" appearance */
     cursor: pointer;
     transition: all 0.3s ease; /* Smooth transition for hover effects */
