@@ -225,14 +225,14 @@
         <div id = "registerView" class = "container"  >
             <form id="employeeForm" class = "loginForm">
                 <label class="login-title">Register Employee to Space Surfer</label>
-                <input type="text" id="username" name="username" placeholder="Username" required>
-                <input type="date" id="dob" name="dob" placeholder="Date of Birth" required><br>
-                <input type="text" id="firstname" name="firstName" placeholder="First Name" required>
-                <input type="text" id="lastname" name="lastName" placeholder="Last Name" required>
+                <input type="text" id="employeeusername" name="employeeusername" placeholder="Username" required>
+                <input type="date" id="employeedob" name="employeedob" placeholder="Date of Birth" required><br>
+                <input type="text" id="employeefirstname" name="employeefirstName" placeholder="First Name" required>
+                <input type="text" id="employeelastname" name="employeelastName" placeholder="Last Name" required>
                 <!-- <input type="text" id="role" name="role" placeholder="Role" required> -->
-                <input type="hidden" id="role" name="role">
-                <input type="hidden" id="status" name="status">
-                <input type="hidden" id="backupEmail" name="backupEmail"> <br>
+                <input type="hidden" id="employeerole" name="employeerole">
+                <input type="hidden" id="employeestatus" name="employeestatus">
+                <input type="hidden" id="employeebackupEmail" name="employeebackupEmail"> <br>
         
                 <button id="postAccount" type="submit">Create Employee Account</button>
                 <ul id="recoveryRequestsList"></ul>
@@ -626,7 +626,7 @@
     <script src="spaceBookingCenter.js"></script>
     <script src="cpraScript.js"></script>
     <script src = "SpaceManager.js"></script>
-  <script src="accountRecovery.js"></script>
+    <script src="accountRecovery.js"></script>
     <script src = "UserProfile.js"></script>
 
 </body>

@@ -36,6 +36,7 @@
         "CompanyAPI": "http://localhost:5279",
         "EmailConfirmation": "http://localhost:5116",
         "SpaceManager": "http://localhost:8081", 
-        "CPRA" : "http://localhost:5084"
+        "CPRA" : "http://localhost:5084", 
+        "SystemObservability": "http://localhost:5295"
     }  
 }

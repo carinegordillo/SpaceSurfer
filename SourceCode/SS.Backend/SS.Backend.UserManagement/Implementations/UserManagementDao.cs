@@ -101,8 +101,6 @@ namespace SS.Backend.UserManagement
             return response;
         }
 
-
-
         public async Task<Response> sendRequest(string employeeName, string position)
         {
             
@@ -287,42 +285,19 @@ namespace SS.Backend.UserManagement
                 }
             }
 
-//             if (companyInfo != null)
-//             {
-// #pragma warning disable CS8604 // Possible null reference argument.
-//                 var companyProfile_success_parameters = new Dictionary<string, object>
-//                 {
-//                     {"hashedUsername", validPepper.hashedUsername},
-//                     {"companyName", companyInfo.companyName},
-//                     {"address", companyInfo.address},
-//                     {"openingHours", companyInfo.openingHours},
-//                     {"closingHours", companyInfo.closingHours},
-//                     {"daysOpen", companyInfo.daysOpen}, 
-//                     {"companyType", userInfo.role}
-//                 };
-// #pragma warning restore CS8604 // Possible null reference argument.
-
-//                 // Add the companyProfile dictionary to tableData
-//                 tableData.Add("companyProfile", companyProfile_success_parameters);
-//             }
-
-            // Iterate through each table entry in the provided data
             foreach (var tableEntry in tableData)
             {
-                string tableName = tableEntry.Key; // Table name
-                Dictionary<string, object> parameters = tableEntry.Value; // Parameters for the table
+                string tableName = tableEntry.Key;
+                Dictionary<string, object> parameters = tableEntry.Value; 
 
-                // Build the INSERT SQL command for each table
                 var insertCommand = builder.BeginInsert(tableName)
-                    .Columns(parameters.Keys) // Specify columns
-                    .Values(parameters.Keys) // Specify values (same as columns for parameterized queries)
-                    .AddParameters(parameters) // Add parameters
+                    .Columns(parameters.Keys) 
+                    .Values(parameters.Keys) 
+                    .AddParameters(parameters) 
                     .Build();
 
-                // Execute the INSERT command
                 tablesresponse = await _sqldao.SqlRowsAffected(insertCommand);
 
-                // Check for errors and return if any
                 if (tablesresponse.HasError)
                 {
                     tablesresponse.ErrorMessage += $"{tableName}: error inserting data; ";
@@ -340,36 +315,30 @@ namespace SS.Backend.UserManagement
             Response response = new Response();
 
             try {
-                // Build the SQL query to fetch companyID
                 var builder = new CustomSqlCommandBuilder();
                 var parameters = new Dictionary<string, object> {
                     {"hashedUsername", manager_hashedUsername}
                 };
 
                 var selectCommand = builder.BeginSelect()
-                                        .SelectColumns("companyID") // Assuming 'companyID' is the column you want to fetch
+                                        .SelectColumns("companyID") 
                                         .From("companyProfile")
                                         .Where("hashedUsername = @hashedUsername")
-                                        .AddParameters(parameters) // Safe parameter binding using a dictionary
+                                        .AddParameters(parameters) 
                                         .Build();
 
-                // Execute the query
                 var queryResponse = await SQLDao.ReadSqlResult(selectCommand);
                 if (queryResponse.HasError) {
-                    // Handle errors, e.g., no such user or SQL errors
                     response.HasError = true;
                     response.ErrorMessage = "Failed to retrieve company ID: " + queryResponse.ErrorMessage;
                 } else if (queryResponse.ValuesRead != null && queryResponse.ValuesRead.Rows.Count > 0) {
-                    // Set the response properties accordingly
                     response.ValuesRead = queryResponse.ValuesRead;
                     response.HasError = false;
                 } else {
-                    // Handle the case where no rows were returned
                     response.HasError = true;
                     response.ErrorMessage = "No company associated with the provided manager username.";
                 }
             } catch (Exception ex) {
-                // Exception handling, if something unexpected occurs
                 response.HasError = true;
                 response.ErrorMessage = $"An unexpected error occurred: {ex.Message}";
             }
@@ -391,12 +360,9 @@ namespace SS.Backend.UserManagement
             }
             else{
                  response.ErrorMessage += $"- DeleteRequestWhere- {command.CommandText} -  command not successful -";
-
             }
             return response;
         }
 
     }
-
-
 }

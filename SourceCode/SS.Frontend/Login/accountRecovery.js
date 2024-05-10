@@ -85,7 +85,7 @@ function sendRecoveryOTP() {
 function authenticateRecoveryUser() {
     var otp = document.getElementById("RecoveryOtp").value;
     var userIdentity = document.getElementById("userRecoveryIdentity").value;
-
+    
     fetch(`${loginUrl}/api/auth/authenticate`, {
         method: 'POST',
         headers: {

@@ -262,6 +262,7 @@ function hideAllSections() {
     document.getElementById('systemObservability').style.display = 'none';
     document.getElementById("accountRecoverySection").style.display = "none";
     document.getElementById("userRequestsView").style.display = "none";
+    document.getElementById("enterRegistrationOTPSection").style.display = "none";
 }
 
 
