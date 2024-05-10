@@ -117,7 +117,9 @@ namespace SS.Backend.UserManagement
 
             string? targetEmail = userInfo.username;
             string? subject = $@"Verify your Space Surfer Account";
-            string? msg = $@"
+            string ?msg = "";
+            if (userInfo.role == 4){
+                msg = $@"
                 Dear {userInfo.firstname},
 
                 An account with your email has recently been registered within Space Surfer. 
@@ -129,6 +131,22 @@ namespace SS.Backend.UserManagement
 
                 Best regards,
                 SpaceSurfer Team";
+            } else{
+                msg = $@"
+                Dear {userInfo.firstname},
+
+                An account with your email has recently been registered within Space Surfer. 
+                In order to enjoy and utilize the application please check your inbox for a one time password used to verify your account. 
+
+                If you have any questions or need assistance, please don't hesitate to contact us at spacesurfers5@gmail.com.
+  
+                Thank you for choosing SpaceSurfer.
+
+                Best regards,
+                SpaceSurfer Team";
+
+            }
+            
 
             try
             {
