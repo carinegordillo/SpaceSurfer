@@ -29,11 +29,17 @@
                     <div class="nav-item" id="navRegister" onclick="registrationAccess()">Register</div>
                     <div class="nav-item" id="navLogin" onclick="getLogin()">Login</div>
                 </div>
+                <!-- system admin view -->
+                <div id="SAview" style="display:none;">
+                    <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
+                    <div class="nav-item" type="button" onclick="employeeSetupAccess()">Employee Account Setup</div>
+                    <div class="nav-item" type="button" onclick="SOAccess()">System Observability</div>
+                </div>
                 <!-- company manager view -->
                 <div id="CMview" style="display:none;">
                     <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
                     <div class="nav-item" type="button" onclick="employeeSetupAccess()">Employee Account Setup</div>
-                    <div class="nav-item" type="button" onclick="SOAccess()">System Observability</div>
+                    <!-- <div class="nav-item" type="button" onclick="SOAccess()">System Observability</div>  -->
                 </div>
                 <!-- facility manager view -->
                 <div id="FMview" style="display:none;">
@@ -41,10 +47,6 @@
                 </div>
                 <!-- general nav all users can see -->
                 <div id="homepageGen" class="nav-items" style="display: none;">
-
-                    <div class="nav-item" type="button" onclick="getHomePage()">
-                        <i class="fas fa-home">Home</i>
-                    </div>
                     <div class="nav-item" type="button" onclick="initProfile()">Profile</div>
 
                     <div class="nav-item" type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</div>
@@ -56,6 +58,9 @@
                 </div>
                 <div id="userNav" class="nav-items" style="display: none;">
                     <div class="nav-item" type="button" id="identity"></div>
+                    <div class="nav-item" type="button" onclick="getHomePage()">
+                        <i class="fas fa-home">Home</i>
+                    </div>
                     <div class="nav-item" type="button" onclick="getUserProfile()" data-testid="profile-view">Profile</div>
                     <div class="nav-item" type="button" onclick="logout()">Logout</div>
                 </div>
