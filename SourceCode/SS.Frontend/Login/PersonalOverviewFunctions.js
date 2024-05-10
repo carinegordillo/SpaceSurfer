@@ -1,16 +1,3 @@
-
-// Sets current date
-const currentDate = new Date();
-var currentView = null;
-var reservations = [];
-
-document.getElementById('prev-month').addEventListener('click', () => changeMonth(-1));
-document.getElementById('next-month').addEventListener('click', () => changeMonth(1));
-document.getElementById('calendar-button').addEventListener('click', calendarView);
-document.getElementById('list-button').addEventListener('click', listView);
-document.getElementById('confirm-button').addEventListener('click', confirmSelection);
-document.getElementById('reservation-delete-button').addEventListener('click', fetchReservationDeletion);
-
 // Function to fetch user reservations from the API
 async function fetchUserReservations(fromDateValue, toDateValue) {
     var accessToken = sessionStorage.getItem('accessToken');
@@ -49,7 +36,13 @@ async function fetchUserReservations(fromDateValue, toDateValue) {
         }
 
         const data = await response.json();
+        if (data.newToken)
+        {
+            return data.reservations.reservation;
+        }
+
         return data;
+
     }
     catch (error) {
         throw new Error(`Error fetching user reservations: ${error.message}`);
@@ -125,6 +118,7 @@ async function fetchReservationDeletion() {
 
 // Function to apply date filter and fetch reservations
 async function applyDateFilter() {
+    var reservations = [];
     var fromDateValue = document.getElementById('from-date').value;
     var toDateValue = document.getElementById('to-date').value;
 
@@ -135,11 +129,16 @@ async function applyDateFilter() {
         console.error(error.message);
     }
 
+    return reservations;
 }
 
 // Function to handle user selection and trigger reservation fetching
 async function confirmSelection() {
+    setCurrentDate();
+    var currentView = document.getElementById('current-view').value;
 
+    // Get the current date
+    currentDate = getCurrentDate();
     // Check if a view is selected
     if (!currentView) {
         // Show the prompt
@@ -147,17 +146,18 @@ async function confirmSelection() {
         return; // Stops execution
     }
 
+    var reservations = []
     // Handle user selection
-    await applyDateFilter();
+    reservations = await applyDateFilter();
 
     if (currentView === 'list') {
-        displayReservationList();
+        displayReservationList(reservations);
         document.getElementById('calendar-poc').style.display = 'none';
         document.getElementById('reservation-list-poc').style.display = 'block';
         document.getElementById('view-prompt').style.display = 'none';
     }
     if (currentView === 'calendar') {
-        createCalendar(currentDate.getFullYear(), currentDate.getMonth());
+        createCalendar(currentDate.getFullYear(), currentDate.getMonth(), reservations);
         document.getElementById('reservation-list-poc').style.display = 'none';
         document.getElementById('calendar-poc').style.display = 'block';
         document.getElementById('view-prompt').style.display = 'none';
@@ -168,7 +168,7 @@ async function confirmSelection() {
 
 // Function to switch to calendar view
 function calendarView() {
-    currentView = 'calendar';
+    document.getElementById('current-view').value = 'calendar';
     document.getElementById('calendar-button').classList.add('selected-button');
     document.getElementById('list-button').classList.remove('selected-button');
 
@@ -176,12 +176,12 @@ function calendarView() {
 
 // Function to switch to reservation list view
 function listView() {
-    currentView = 'list';
+    document.getElementById('current-view').value = 'list';
     document.getElementById('list-button').classList.add('selected-button');
     document.getElementById('calendar-button').classList.remove('selected-button');
 }
 
-function displayReservationList() {
+function displayReservationList(reservations) {
 
     var container = document.querySelector("#reservation-list-poc");
     container.innerHTML = "";
@@ -249,11 +249,20 @@ function addReservation(reservation, div) {
 }
 
 
-function changeMonth(offset) {
+async function changeMonth(offset) {
+    var currentDate = getCurrentDate();
+    var reservations = [];
+
     currentDate.setMonth(currentDate.getMonth() + offset);
-    createCalendar(currentDate.getFullYear(), currentDate.getMonth());
+    sessionStorage.setItem('currentDate', currentDate);
+
+    reservations = await applyDateFilter();
+
+    createCalendar(currentDate.getFullYear(), currentDate.getMonth(), reservations);
 }
-function createCalendar(year, month) {
+
+function createCalendar(year, month, reservations) {
+
     const calendarBody = document.querySelector('#calendar-poc tbody');
     const monthYearContainer = document.querySelector('#month-year');
 
@@ -372,4 +381,20 @@ function isSameDay(date1, date2) {
         date1.getMonth() === date2.getMonth() &&
         date1.getDate() === date2.getDate()
     );
+}
+
+function setCurrentDate()
+{
+    // Check if currentDate exists in sessionStorage
+    if (!sessionStorage.getItem('currentDate')) {
+        // currentDate doesn't exist, create it with the current date
+        var currentDate = new Date();
+        sessionStorage.setItem('currentDate', currentDate);
+    }
+}
+
+function getCurrentDate()
+{
+    var currentDate = sessionStorage.getItem('currentDate');
+    return new Date(currentDate);
 }
