@@ -59,11 +59,11 @@ document.addEventListener('click', function (event) {
 
 async function fetchUserProfile(email) {
     const accessToken = sessionStorage.getItem('accessToken');
-    const isTokenValid = await checkTokenExpiration(accessToken);
-    if (!isTokenValid) {
-        logout();
-        return;
-    }
+    // const isTokenValid = await checkTokenExpiration(accessToken);
+    // if (!isTokenValid) {
+    //     logout();
+    //     return;
+    // }
 
     try {
         const response = await fetch(`http://localhost:5048/api/profile/getUserProfile?email=${encodeURIComponent(email)}`);
@@ -197,9 +197,9 @@ async function checkTokenExpiration(accessToken) {
     }
 }
 
-function logout() {
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('idToken');
-    // Redirect to login or handle logout UI changes
-}
+// function logout() {
+//     sessionStorage.removeItem('accessToken');
+//     sessionStorage.removeItem('idToken');
+//     // Redirect to login or handle logout UI changes
+// }
 initProfile();
