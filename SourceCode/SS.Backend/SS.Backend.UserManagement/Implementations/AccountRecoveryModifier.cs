@@ -2,6 +2,7 @@ using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using SS.Backend.SharedNamespace;
+using SS.Backend.Services.LoggingService;
 
 
 namespace SS.Backend.UserManagement
@@ -10,10 +11,16 @@ namespace SS.Backend.UserManagement
     {
 
         private IUserManagementDao _userManagementDao;
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
 
-        public AccountRecoveryModifier(IUserManagementDao userManagementDao)
+        public AccountRecoveryModifier(IUserManagementDao userManagementDao, ILogger logger)
         {
             _userManagementDao = userManagementDao;
+            _logger = logger;
+            logEntry = logBuilder.Build();
+            
         }
 
         /* 
@@ -54,6 +61,20 @@ namespace SS.Backend.UserManagement
             }
 
             Console.WriteLine(table1Result.ErrorMessage + " " + table2Result.ErrorMessage + " - Enable Account -");
+            
+            //logging
+            if (table1Result.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Enable account successfully.").User(hashedUsername).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to enable account.").User(hashedUsername).Build();
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
 
             return table1Result;
 
@@ -82,7 +103,19 @@ namespace SS.Backend.UserManagement
                 response.ErrorMessage += e.Message + "- Resolve Request  Failed -"; 
             }
             
-
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully resolve request.").User(userHash).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to resolve request.").User(userHash).Build();
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
 
             return response;
         }
@@ -103,6 +136,20 @@ namespace SS.Backend.UserManagement
             else{
                  result.ErrorMessage += "- Could not update account status to pending - ";
 
+            }
+
+            //logging
+            if (result.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Update Account status successfully.").User(userhash).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to update account status.").User(userhash).Build();
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
             }
             return result;
         }

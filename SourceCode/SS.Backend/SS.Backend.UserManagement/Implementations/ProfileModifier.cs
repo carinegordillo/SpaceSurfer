@@ -12,6 +12,7 @@ namespace SS.Backend.UserManagement
         private readonly IUserManagementDao _userManagementDao;
         private readonly ILogger _logger;
         private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
 
         
         public ProfileModifier(IUserManagementDao userManagementDao, ILogger logger)
@@ -22,7 +23,6 @@ namespace SS.Backend.UserManagement
 
         public async Task<Response> ModifyProfile(EditableUserProfile userInfo)
         {
-            LogEntry logEntry;
             
             var response = new Response();
             var modifyResponse = new Response();
@@ -121,7 +121,7 @@ namespace SS.Backend.UserManagement
                 response.ErrorMessage = "No changes made to the profile";
             }
 
-            if (logEntry != null)
+            if (logEntry != null && _logger != null)
             {
                
                 _logger.SaveData(logEntry);

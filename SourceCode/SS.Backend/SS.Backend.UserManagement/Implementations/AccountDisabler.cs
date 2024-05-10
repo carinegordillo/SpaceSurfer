@@ -2,6 +2,7 @@ using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using SS.Backend.SharedNamespace;
+using SS.Backend.Services.LoggingService;
 
 
 namespace SS.Backend.UserManagement
@@ -10,9 +11,14 @@ namespace SS.Backend.UserManagement
     {
 
         private readonly IUserManagementDao _userManagementDao;
-        public AccountDisabler(IUserManagementDao userManagementDao)
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
+        public AccountDisabler(IUserManagementDao userManagementDao, ILogger logger)
         {
             _userManagementDao = userManagementDao;
+            _logger = logger;
+            logEntry = logBuilder.Build();
         }
 
 
@@ -26,6 +32,20 @@ namespace SS.Backend.UserManagement
             else{
                  result.ErrorMessage += "- Could not update account status to disabled - ";
 
+            }
+
+            //logging
+            if (result.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Disabled account successfully.").User(userhash).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Error disabling account.").User(userhash).Build();
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
             }
             return result;
         }

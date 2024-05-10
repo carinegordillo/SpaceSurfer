@@ -2,6 +2,7 @@ using SS.Backend.SharedNamespace;
 using Microsoft.Data.SqlClient;
 using SS.Backend.ReservationManagement;
 using System.Data;
+using SS.Backend.Services.LoggingService;
 
 
 namespace SS.Backend.EmailConfirm
@@ -10,11 +11,16 @@ namespace SS.Backend.EmailConfirm
     {
         private readonly IEmailConfirmDAO _emailDao;
         private readonly IEmailConfirmList _emailList;
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
 
-        public ConfirmationDeletion(IEmailConfirmDAO emailDao, IEmailConfirmList emailList)
+        public ConfirmationDeletion(IEmailConfirmDAO emailDao, IEmailConfirmList emailList, ILogger logger)
         {
             _emailDao = emailDao;
             _emailList = emailList;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            logEntry = logBuilder.Info().Build();
         }
 
         public async Task<Response> CancelConfirmedReservation (string hashedUsername, int reservationID)
@@ -55,16 +61,35 @@ namespace SS.Backend.EmailConfirm
                 response.HasError = true;
                 response.ErrorMessage = $"Unable to get list of user's reservation confirmations.";
             }
+
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Reservation {reservationID} confirmation canceled successfully.").User(hashedUsername).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to cancel reservation {reservationID} confirmation.").User(hashedUsername).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
             return response;
         }
 
         public async Task<Response> DeleteConfirmedReservation (int reservationID)
         {
+            string? username = null;
             Response response = new Response();
             var confirmTable = "ConfirmReservations";
             response = await _emailDao.DeleteReservation(confirmTable, reservationID);
             if (!response.HasError)
             {
+                var reservation = await _emailDao.GetReservationInfo(reservationID);
+                username = reservation.ValuesRead.Rows[0]["userHash"].ToString();
+                
                 var reservationTable = "Reservations";
                 response = await _emailDao.DeleteReservation(reservationTable, reservationID);
                 if (response.HasError)
@@ -80,6 +105,20 @@ namespace SS.Backend.EmailConfirm
                 response.ErrorMessage = $"Unable to delete Reservation {reservationID} from Confirmation database table.";
             }
 
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Reservation {reservationID} confirmation deleted successfully.").User(username).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to delete reservation {reservationID} confirmation.").User(username).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
             return response;
             
         }         
