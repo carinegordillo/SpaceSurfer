@@ -19,7 +19,8 @@
         "http://localhost:5116",
         "http://localhost:8081",
         "http://localhost:5293", 
-        "http://localhost:5084"
+        "http://localhost:5084", 
+        "http://localhost:5295"
     ],
     "imgSrc": ["'self'", "data:"], 
     "api": {
