@@ -37,7 +37,7 @@ pid9=$!
 
 
 dotnet run --project ../SS.Backend/accountRecoveryAPI/accountRecoveryAPI.csproj &
-pid9=$!
+pid10=$!
 
-wait  $pid1 $pid2 $pid3 $pid4 $pid5 $pid6 $pid7 $pid8 $pid9
+wait  $pid1 $pid2 $pid3 $pid4 $pid5 $pid6 $pid7 $pid8 $pid9 $pid10
 disown
