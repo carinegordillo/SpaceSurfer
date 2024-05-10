@@ -1,11 +1,10 @@
-if (!appConfig) {
-    console.error('Configuration is not loaded!');
-    return;
-}
-const reservationConfirmationUrl = appConfig.api.EmailConfirmation; 
-const baseUrl = `${reservationConfirmationUrl}/api/v1/reservationConfirmation`;
-
 function checkTokenExpiration(accessToken) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const reservationConfirmationUrl = appConfig.api.EmailConfirmation; 
+    const baseUrl = `${reservationConfirmationUrl}/api/v1/reservationConfirmation`;
     try {
         var response = fetch(`${baseUrl}/checkTokenExp`, {
             method: 'GET',
@@ -25,6 +24,12 @@ function checkTokenExpiration(accessToken) {
 
 // Function to handle sending a confirmation
 async function sendConfirmation(reservationID) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const reservationConfirmationUrl = appConfig.api.EmailConfirmation; 
+    const baseUrl = `${reservationConfirmationUrl}/api/v1/reservationConfirmation`;
     var accessToken = sessionStorage.getItem('accessToken');
     var idToken = sessionStorage.getItem('idToken');
     var parsedIdToken = JSON.parse(idToken);
@@ -67,6 +72,12 @@ async function sendConfirmation(reservationID) {
 
 // Function to handle resending a confirmation
 async function resendConfirmation(reservationID) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const reservationConfirmationUrl = appConfig.api.EmailConfirmation; 
+    const baseUrl = `${reservationConfirmationUrl}/api/v1/reservationConfirmation`;
     var accessToken = sessionStorage.getItem('accessToken');
     var idToken = sessionStorage.getItem('idToken');
     var parsedIdToken = JSON.parse(idToken);
@@ -107,6 +118,12 @@ async function resendConfirmation(reservationID) {
 
 // Function to handle confirming a reservation
 async function confirmReservation(reservationID, otp) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const reservationConfirmationUrl = appConfig.api.EmailConfirmation; 
+    const baseUrl = `${reservationConfirmationUrl}/api/v1/reservationConfirmation`;
     var accessToken = sessionStorage.getItem('accessToken');
     var idToken = sessionStorage.getItem('idToken');
     var parsedIdToken = JSON.parse(idToken);
@@ -148,6 +165,12 @@ async function confirmReservation(reservationID, otp) {
 
 // Function to handle deleting a confirmation
 async function deleteConfirmation(reservationID) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const reservationConfirmationUrl = appConfig.api.EmailConfirmation; 
+    const baseUrl = `${reservationConfirmationUrl}/api/v1/reservationConfirmation`;
     var accessToken = sessionStorage.getItem('accessToken');
     var idToken = sessionStorage.getItem('idToken');
     var parsedIdToken = JSON.parse(idToken);
@@ -186,6 +209,12 @@ async function deleteConfirmation(reservationID) {
 
 // Function to handle canceling a confirmation
 async function cancelConfirmation(hashedUsername, reservationID) {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const reservationConfirmationUrl = appConfig.api.EmailConfirmation; 
+    const baseUrl = `${reservationConfirmationUrl}/api/v1/reservationConfirmation`;
     var accessToken = sessionStorage.getItem('accessToken');
     var idToken = sessionStorage.getItem('idToken');
     var parsedIdToken = JSON.parse(idToken);
@@ -230,6 +259,12 @@ async function cancelConfirmation(hashedUsername, reservationID) {
 
 // Function to handle listing all confirmations for a user
 async function listConfirmations() {
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const reservationConfirmationUrl = appConfig.api.EmailConfirmation; 
+    const baseUrl = `${reservationConfirmationUrl}/api/v1/reservationConfirmation`;
     var accessToken = sessionStorage.getItem('accessToken');
     var idToken = sessionStorage.getItem('idToken');
     if (!idToken) {
