@@ -2,6 +2,7 @@ document.getElementById('initAppButton').addEventListener('click', function () {
     initSidebar();
     const formContainer = document.querySelector('.space-form-container');
     if (formContainer) {
+        formContainer.innerHTML = '';
         const reservationForm = createReservationForm();
 
         reservationForm.addEventListener('submit', function (event) {
@@ -36,6 +37,7 @@ document.getElementById('initAppButton').addEventListener('click', function () {
 
 function initSidebar() {
     const sidebar = document.querySelector('.sidebar');
+    sidebar.innerHTML = '';
     const buttons = [
         { id: 'loadReservationCenter', text: 'Reserve Now', onClickFunction: () => getReservationCenter() },
         { id: 'loadReservationOverview', text: 'Your Reservations', onClickFunction: () => getReservtionOverview() }
@@ -938,7 +940,6 @@ function updateSpaceAvailabilityUI(data) {
 }
 
 async function fetchCompanies() {
-
     const accessToken = sessionStorage.getItem('accessToken');
     const isTokenValid = checkTokenExpiration(accessToken);
     if (!isTokenValid) {
@@ -946,14 +947,42 @@ async function fetchCompanies() {
         return;
     }
 
+    const accountInfo = await fetchUserAccount();
+
+    if (accountInfo) {
+        const userIsActive = await getActivityStatus(accountInfo.isActive);
+    }
+
+    const userRole = sessionStorage.getItem('role');
+    console.log(userRole);
+
     try {
-        const response = await fetch(`http://localhost:5279/api/v1/spaceBookingCenter/companies/ListCompanies`, {
+        let response;
+        let url;
+
+        if (userRole === '1') {
+            console.log("this is an admin");
+            url = `http://localhost:5279/api/v1/spaceBookingCenter/companies/ListCompanies`;
+        } else {
+            console.log('not admin');
+            if (accountInfo.companyId !== null && accountInfo.companyId !== undefined) {
+                console.log("this is an employee user");
+                url = `http://localhost:5279/api/v1/spaceBookingCenter/companies/ListCompaniesForUsers?companyID=${accountInfo.companyId}`;
+            } else {
+                console.log("this is a general user");
+                url = `http://localhost:5279/api/v1/spaceBookingCenter/companies/ListCompaniesForUsers`;
+            }
+        }
+
+        response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
                 'Content-Type': 'application/json'
             }
         });
+    
+        
         const data = await response.json();
         console.log('Received companies data:', data);
         if (data.newToken) {

@@ -26,5 +26,5 @@ killProcess("SpaceBookingCenterAPI",5005);
 killProcess("RegistrationAPI",8080);
 killProcess("LoginAPI",5270);
 killProcess("userProfileAPI",5048);
-killProcess("TMH",8089)
-killProcess("Account Recovery",5176)
+killProcess("TMH",8089);
+killProcess("Account Recovery",5176);
