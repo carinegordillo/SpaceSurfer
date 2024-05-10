@@ -69,7 +69,7 @@ namespace SS.Backend.EmailConfirm
             }
             else
             {
-                logEntry = logBuilder.Info().DataStore().Description($"Failed to cancel reservation {reservationID} confirmation.").User(hashedUsername).Build();
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to cancel reservation {reservationID} confirmation.").User(hashedUsername).Build();
                 
             }
             if (logEntry != null && _logger != null)
@@ -112,7 +112,7 @@ namespace SS.Backend.EmailConfirm
             }
             else
             {
-                logEntry = logBuilder.Info().DataStore().Description($"Failed to delete reservation {reservationID} confirmation.").User(username).Build();
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to delete reservation {reservationID} confirmation.").User(username).Build();
                 
             }
             if (logEntry != null && _logger != null)

@@ -1,5 +1,6 @@
 using System.Data;
 using SS.Backend.SharedNamespace;
+using SS.Backend.Services.LoggingService;
 
 
 namespace SS.Backend.UserManagement
@@ -8,11 +9,15 @@ namespace SS.Backend.UserManagement
     {
         private IAccountRecoveryModifier _accountRecoveryModifier;
         private IUserManagementDao _userManagementDao;
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
 
-        public AccountRecovery(IAccountRecoveryModifier accountRecoveryModifier, IUserManagementDao userManagementDao)
+        public AccountRecovery(IAccountRecoveryModifier accountRecoveryModifier, IUserManagementDao userManagementDao, ILogger logger)
         {
             _accountRecoveryModifier = accountRecoveryModifier;
             _userManagementDao = userManagementDao;
+            _logger = logger;
         }
 
         /*
@@ -64,6 +69,20 @@ namespace SS.Backend.UserManagement
                 response.ErrorMessage += "Failed to initiate recovery request.";
             }
             
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Initiated recovery request successfully.").User(userHash).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to initiate recovery request.").User(userHash).Build();
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
+            
             return response;
         }
         
@@ -100,6 +119,20 @@ namespace SS.Backend.UserManagement
                 response = await _accountRecoveryModifier.ResolveRequest(userHash, "Denied");
                 response.ErrorMessage = "Recovery request denied by admin.";
                 
+            }
+
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Successful account recovery request.").User(userHash).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to recover account.").User(userHash).Build();
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
             }
             return response;
             
@@ -192,6 +225,20 @@ namespace SS.Backend.UserManagement
             else
             {
                 response.ErrorMessage += "- deleteUserRequestByuserHash Failed - ";
+            }
+
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Delete user request by user hash successfully.").User(userHash).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to delete user request by user hash.").User(userHash).Build();
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
             }
 
             return response;

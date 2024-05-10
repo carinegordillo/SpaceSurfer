@@ -82,7 +82,7 @@ namespace SS.Backend.EmailConfirm
             }
             else
             {
-                logEntry = logBuilder.Info().DataStore().Description($"Confirmation email failed to send.").User(reservation.UserHash).Build();
+                logEntry = logBuilder.Error().DataStore().Description($"Confirmation email failed to send.").User(reservation.UserHash).Build();
                 
             }
             if (logEntry != null && _logger != null)

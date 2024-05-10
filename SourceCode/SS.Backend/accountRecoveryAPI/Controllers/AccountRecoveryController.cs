@@ -65,6 +65,7 @@ public class RecoverRequestController : ControllerBase
         {
             foreach (DataRow row in response.ValuesRead.Rows)
             {
+#pragma warning disable CS8601 // Possible null reference assignment.
                 var userRequest = new UserRequestModel
                 {
                     RequestId = Convert.ToInt32(row["request_id"]),
@@ -75,6 +76,7 @@ public class RecoverRequestController : ControllerBase
                     ResolveDate = row["resolveDate"] != DBNull.Value ? Convert.ToDateTime(row["resolveDate"]) : (DateTime?)null,
                     AdditionalInformation = row["additionalInformation"] != DBNull.Value ? Convert.ToString(row["additionalInformation"]) : null
                 };
+#pragma warning restore CS8601 // Possible null reference assignment.
                 requestList.Add(userRequest);
             }
         }

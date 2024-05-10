@@ -11,9 +11,15 @@ namespace SS.Backend.UserManagement
     public class AccountCreation : IAccountCreation
     {
         private IUserManagementDao _userManagementDao;
-        public AccountCreation(IUserManagementDao userManagementDao)
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
+        
+        public AccountCreation(IUserManagementDao userManagementDao, ILogger logger)
         {
             _userManagementDao = userManagementDao;
+            _logger = logger;
+            logEntry = logBuilder.Build();
         }
 
 
@@ -110,29 +116,14 @@ namespace SS.Backend.UserManagement
             
             Console.WriteLine("THIS IS THE REPONSE:::::", response.ErrorMessage);
 
+            //logging
             if (response.HasError == false)
             {
-                LogEntry entry = new LogEntry()
-
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Info",
-                    username = userInfo.username,
-                    category = "Data Store",
-                    description = "Successful account creation"
-                };
-                //await logger.SaveData(entry);
+                logEntry = logBuilder.Info().DataStore().Description($"Successful account creation.").User(userInfo.username).Build();
             }
             else
             {
-                LogEntry entry = new LogEntry()
-                {
-                    timestamp = DateTime.UtcNow,
-                    level = "Error",
-                    username = userInfo.username,
-                    category = "Data Store",
-                    description = "Error inserting user in data store."
-                };
+                logEntry = logBuilder.Error().DataStore().Description($"Error inserting user in data store.").User(userInfo.username).Build();
             }
 
             string? targetEmail = userInfo.username;
@@ -160,6 +151,11 @@ namespace SS.Backend.UserManagement
             {
                 response.HasError = true;
                 response.ErrorMessage = ex.Message;
+            }
+
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
             }
 
             return response;
@@ -211,6 +207,21 @@ namespace SS.Backend.UserManagement
             {
                 response.ErrorMessage += "Update isActive operation successful; ";
             }
+
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Successful account verification.").User(username).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Error verifying aacount.").User(username).Build();
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
+
             return response;
         }
 

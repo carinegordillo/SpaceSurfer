@@ -410,7 +410,7 @@ namespace SS.Backend.EmailConfirm
             }
             else
             {
-                logEntry = logBuilder.Info().DataStore().Description($"Failed to confirm reservation {reservationID}.").User(username).Build();  
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to confirm reservation {reservationID}.").User(username).Build();  
             }
             if (logEntry != null && _logger != null)
             {
