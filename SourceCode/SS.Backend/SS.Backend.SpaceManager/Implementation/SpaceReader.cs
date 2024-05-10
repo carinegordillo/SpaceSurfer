@@ -135,8 +135,10 @@ namespace SS.Backend.SpaceManager
                     Address = Convert.ToString(row["address"]).Trim(),
                     OpeningHours = TimeSpan.Parse(Convert.ToString(row["openingHours"])),
                     ClosingHours = TimeSpan.Parse(Convert.ToString(row["closingHours"])),
-                    DaysOpen = Convert.ToString(row["daysOpen"]).Trim()
+                    DaysOpen = Convert.ToString(row["daysOpen"]).Trim(),
+                    CompanyType = row["companyType"] != DBNull.Value ? (int?)Convert.ToInt32(row["companyType"]) : null,
                 };
+                Console.WriteLine(companyInfo.CompanyType);
                 companyInfos.Add(companyInfo);
             }
 
