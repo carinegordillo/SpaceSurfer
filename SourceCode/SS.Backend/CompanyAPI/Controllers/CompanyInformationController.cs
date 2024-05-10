@@ -97,6 +97,77 @@ public class CompanyInfoController : ControllerBase
 
     }
 
+    [HttpGet("ListCompaniesForUsers")]
+    public async Task<IActionResult> ListCompaniesForUsers([FromQuery] int? companyID = null)
+    {
+        string? accessToken = HttpContext.Request.Headers["Authorization"];
+        if (accessToken != null && accessToken.StartsWith("Bearer "))
+        {
+            accessToken = accessToken.Substring("Bearer ".Length).Trim();
+            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+
+            if (claimsJson != null)
+            {
+                var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+
+                if (claims.TryGetValue("Role", out var role) && role == "1" || role == "2" || role == "3" || role == "4" || role == "5")
+                {
+                    bool closeToExpTime = _authService.CheckExpTime(accessToken);
+                    if (closeToExpTime)
+                    {
+                        SSPrincipal principal = new SSPrincipal();
+                        principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
+                        principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
+                        var newToken = _authService.CreateJwt(Request, principal);
+                        try
+                        {
+                        
+                           var companies = await _spaceReader.GetAvailableCompaniesForUser(companyID);
+                            return Ok(new { companies, newToken });
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Internal server error: " + ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var companies = await _spaceReader.GetAvailableCompaniesForUser(companyID);
+                            foreach (var company in companies)
+                            {
+                                Console.WriteLine(company.CompanyName);
+                                company.CompanyName = company.CompanyName.Trim();
+                            }
+                            return Ok(companies);
+                        }
+                        catch (Exception ex)
+                        {
+                            return StatusCode(500, "Internal server error: " + ex.Message);
+                        }
+                    }
+                }
+                else
+                {
+                    return BadRequest("Unauthorized role.");
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid token.");
+            }
+        }
+        else
+        {
+            return BadRequest("Unauthorized. Access token is missing or invalid.");
+        }
+
+
+    }
+
+
+
 
     [HttpGet("FloorPlans/{companyId}")]
     public async Task<IActionResult> GetCompanyFloorPlans(int companyId)

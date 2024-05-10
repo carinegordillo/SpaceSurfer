@@ -27,5 +27,6 @@ killProcess("RegistrationAPI",5041);
 killProcess("LoginAPI",5270);
 killProcess("userProfileAPI",5048);
 killProcess("TMH",8089);
-killProcess("EmailConfirmationsAPI",5116);
+killProcess("EmailConfirmationsAPI",5116);;
 killProcess("Account Recovery",5176);
+;

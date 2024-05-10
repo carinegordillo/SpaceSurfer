@@ -34,19 +34,7 @@ namespace SS.Backend.SpaceManager
             if (!response.HasError && response.ValuesRead != null)
             {
 
-                foreach (DataRow row in response.ValuesRead.Rows)
-                {
-                    var companyInfo = new CompanyInfoWithID
-                    {
-                        CompanyID = Convert.ToInt32(row["companyID"]),
-                        CompanyName = Convert.ToString(row["companyName"]).Trim(),
-                        Address = Convert.ToString(row["address"]).Trim(),
-                        OpeningHours = TimeSpan.Parse(Convert.ToString(row["openingHours"])),
-                        ClosingHours = TimeSpan.Parse(Convert.ToString(row["closingHours"])),
-                        DaysOpen = Convert.ToString(row["daysOpen"]).Trim(),
-                    };
-                    companyInfos.Add(companyInfo);
-                }
+                companyInfos = ConvertToCompanyInfoList(response.ValuesRead);
             }
             else
             {
@@ -56,7 +44,104 @@ namespace SS.Backend.SpaceManager
             return companyInfos;
         }
 
+        public async Task<IEnumerable<CompanyInfoWithID>> GetAvailableCompaniesForUser(int? employeeCompanyID)
+        {
+            var companies = await GetAllFacilities();
 
+            if (employeeCompanyID.HasValue)
+            {
+                Console.WriteLine("This is an employee");
+                Console.WriteLine(employeeCompanyID.Value);
+                var employeeCompany = await GetEmployeeCompany(employeeCompanyID.Value);
+                companies.InsertRange(0, employeeCompany);
+            }
+
+            return companies;
+        }
+
+        public async Task<List<CompanyInfoWithID>> GetAllFacilities()
+        {
+            var companyInfos = new List<CompanyInfoWithID>();
+            var commandBuilder = new CustomSqlCommandBuilder();
+            var command = commandBuilder.BeginStoredProcedure("GetFacilitiesInfoPROD").Build();
+
+            try
+            {
+                var response = await _spaceManagerDao.ExecuteReadCompanyTables(command);
+
+                if (!response.HasError && response.ValuesRead != null)
+                {
+                    companyInfos = ConvertToCompanyInfoList(response.ValuesRead);
+                }
+                else
+                {
+                    Console.WriteLine("No data found or error occurred.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error executing stored procedure: {ex.Message}");
+            }
+
+            return companyInfos;
+        }
+
+        public async Task<List<CompanyInfoWithID>> GetEmployeeCompany(int companyID)
+        {
+            var companyInfos = new List<CompanyInfoWithID>();
+            var commandBuilder = new CustomSqlCommandBuilder();
+
+            var parameters = new Dictionary<string, object>
+            {
+                {"CompanyID", companyID}
+            };
+
+
+            var command = commandBuilder.BeginStoredProcedure("GetEmployeeCompanyInfoPROD")
+                                        .AddParameters(parameters)
+                                        .Build();
+
+            try
+            {
+                var response = await _spaceManagerDao.ExecuteReadCompanyTables(command);
+
+                if (!response.HasError && response.ValuesRead != null)
+                {
+                    companyInfos = ConvertToCompanyInfoList(response.ValuesRead);
+                }
+                else
+                {
+                    Console.WriteLine("No data found or error occurred.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error executing stored procedure: {ex.Message}");
+            }
+
+            return companyInfos;
+        }
+
+        private List<CompanyInfoWithID> ConvertToCompanyInfoList(DataTable dataTable)
+        {
+            var companyInfos = new List<CompanyInfoWithID>();
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                var companyInfo = new CompanyInfoWithID
+                {
+                    CompanyID = Convert.ToInt32(row["companyID"]),
+                    CompanyName = Convert.ToString(row["companyName"]).Trim(),
+                    Address = Convert.ToString(row["address"]).Trim(),
+                    OpeningHours = TimeSpan.Parse(Convert.ToString(row["openingHours"])),
+                    ClosingHours = TimeSpan.Parse(Convert.ToString(row["closingHours"])),
+                    DaysOpen = Convert.ToString(row["daysOpen"]).Trim()
+                };
+                companyInfos.Add(companyInfo);
+            }
+
+            return companyInfos;
+        }
 
 
         public async Task<IEnumerable<CompanyFloorStrImage>> GetCompanyFloorsAsync(int companyId)
@@ -148,7 +233,5 @@ namespace SS.Backend.SpaceManager
             }
             return imageBytes;
         }
-
-
     }
 }
