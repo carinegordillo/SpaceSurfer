@@ -107,9 +107,6 @@ namespace SS.Backend.UserManagement
                 response  = await _userManagementDao.CreateAccount(userInfo, companyInfo, manager_hashedUsername);
             }
 
-            
-            Console.WriteLine("THIS IS THE REPONSE:::::", response.ErrorMessage);
-
             if (response.HasError == false)
             {
                 LogEntry entry = new LogEntry()

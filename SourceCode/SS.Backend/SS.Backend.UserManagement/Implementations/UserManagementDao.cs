@@ -203,8 +203,6 @@ namespace SS.Backend.UserManagement
                 { "activeAccount", activeAccount_success_parameters}, 
                 {"userHash", hashedAccount_success_parameters}
             };
-            Console.WriteLine("TABLE DATE ",  tableData);
-
             if (userInfo.role == 1 || userInfo.role == 5) {
                 userAccount_success_parameters = new Dictionary<string, object>
                 {
@@ -218,7 +216,6 @@ namespace SS.Backend.UserManagement
                 if (companyIDResponse.HasError || companyIDResponse.ValuesRead.Rows.Count == 0) {
                     return new Response { HasError = true, ErrorMessage = companyIDResponse.ErrorMessage ?? "Failed to fetch company ID" };
                 }
-            
                 if(companyIDResponse.ValuesRead != null)
                 {
                     foreach (DataRow row in companyIDResponse.ValuesRead.Rows)
@@ -284,7 +281,6 @@ namespace SS.Backend.UserManagement
                     }
                 }
             }
-
             foreach (var tableEntry in tableData)
             {
                 string tableName = tableEntry.Key;
