@@ -136,7 +136,7 @@ app.Use((context, next) =>
 
 
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseMiddleware<AuthorizationMiddleware>();
 
