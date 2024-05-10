@@ -49,7 +49,7 @@
                     <div id="FMview" style="display:none;">
                         <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
                     </div>
-                    <div class="nav-item" type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</div>
+                    <div class="nav-item" type="button" onclick="initSpaceBookingCenter()">Space Booking Center</div>
                     <div class="nav-item" type="button" onclick="confirmationAccess()" data-testid="confirmation-view">Confirmations</div>
                     <div class="nav-item" type="button" onclick="waitlistAccess()">Waitlist</div>
                     <div class="nav-item" type="button" onclick="initUserRequests()">User Requests</div>
@@ -266,7 +266,7 @@
     
     <!--Personal Overview Center View-->
     <section id="personalOverviewCenter" class="homepage-container" style="display: none;">
-        <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
+        <button type="button" onclick="initSpaceBookingCenter()">Space Booking Center</button>
         <div id="calendar-container">
             <h3 id="POC">Personal Overview Center</h3>
             <input type="hidden" id="current-view" name="current-view" value="">
@@ -331,20 +331,15 @@
     </div>
 
     <!--Space Booking View-->
-    <section id="spaceBookingView" class="homepage-container" style="display: none;">
-        <button id="initAppButton">Initialize spaceBookingCenter</button>
-        <button type="button" onclick="waitlistAccess()">Waitlist</button>
-        <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
-        <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
-        <button type="button" onclick="logout()">Logout</button>
+    <section id="spaceBookingView"  class="homepage-container" style="display: none;">
         <div id="accessTokenContainer"></div>
         <div class="space-booking-center-container">
             <div class="sidebar"></div>
-            <div class="dynamic-content">
+            <div class="reservation-container">
                 <div class="reservation-buttons"></div>
                 <div class="reservation-list"></div>
             </div>
-            <div class="space-booking-center-container">
+            <div class="reservation-center-container">
                 <div class="company-info">
                     <div id="companies">
                         <h2>Companies</h2>
@@ -358,15 +353,12 @@
                 <div class="space-form-container" id="space-form-container"></div>
             </div>
         </div>
-        <!-- <div>
-            <button type="button" onclick="logout()">Logout</button>
-        </div> -->
     </section>
 
     <!--Waitlist View-->
     <section id="waitlistView" class="homepage-container" data-testid="waitlist-view" style="display: none;">
         <button id="initWaitlistButton" data-testid="init-waitlist-button">Initialize Waitlist</button>
-        <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
+        <button type="button" onclick="initSpaceBookingCenter()">Space Booking Center</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
         <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
         <div class="container">
@@ -579,7 +571,7 @@
 
     <!--Manager Homepage-->
     <section id="homepageManager"  style="display: none;">
-        <button type="button" onclick="spaceBookingCenterAccess()">Space Booking Center</button>
+        <button type="button" onclick="initSpaceBookingCenter()">Space Booking Center</button>
         <button type="button" onclick="confirmationAccess()">Confirmations</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
         <button type="button" onclick="cpraAccess()">User Data Protection</button>
@@ -628,6 +620,7 @@
     </template>
 
     <script src="script.js"></script>
+    <script src="accountRecovery.js"></script>
     <script src="confirmedReservations.js"></script>
     <script src="Registration.js"></script>
     <script src="taskManagerHubView.js"></script>
@@ -637,7 +630,7 @@
     <script src="SystemObservabilityFunctions.js"></script>
     <script src="cpraScript.js"></script>
     <script src = "SpaceManager.js"></script>
-    <script src="accountRecovery.js"></script>
+    
     <script src = "UserProfile.js"></script>
 
 </body>
