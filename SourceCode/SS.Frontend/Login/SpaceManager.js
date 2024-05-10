@@ -210,12 +210,12 @@ document.getElementById('modifyImage').addEventListener('click', function() {
 });
 
 document.addEventListener('click', function(e) {
-    if (!appConfig) {
-        console.error('Configuration is not loaded!');
-        return;
-    }
-    const SpaceManagerUrl = appConfig.api.SpaceManager; 
     if (e.target.classList.contains('deleteSpace')) {
+        if (!appConfig) {
+            console.error('Configuration is not loaded!');
+            return;
+        }
+        const SpaceManagerUrl = appConfig.api.SpaceManager; 
         const spaceID = e.target.closest('.spaceRowModify').querySelector('.modifySpaceID').value;
         const request = {
             hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,

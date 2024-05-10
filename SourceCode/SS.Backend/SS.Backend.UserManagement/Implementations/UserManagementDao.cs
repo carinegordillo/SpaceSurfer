@@ -158,6 +158,8 @@ namespace SS.Backend.UserManagement
             UserPepper userPepper = new UserPepper();
             Hashing hashing = new Hashing();
             string pepper = "DA06";
+            var builder = new CustomSqlCommandBuilder();
+            Response tablesresponse = new Response();
 
 
 #pragma warning disable CS8604 // Possible null reference argument.
@@ -205,7 +207,7 @@ namespace SS.Backend.UserManagement
             };
             Console.WriteLine("TABLE DATE ",  tableData);
 
-            if (userInfo.role != 4) {
+            if (userInfo.role == 1 || userInfo.role == 5) {
                 userAccount_success_parameters = new Dictionary<string, object>
                 {
                     { "username", userInfo.username},
@@ -237,11 +239,7 @@ namespace SS.Backend.UserManagement
                         }
                     }
                 }
-            }
-
-            if (companyInfo != null)
-            {
-#pragma warning disable CS8604 // Possible null reference argument.
+            } else if (userInfo.role == 2 || userInfo.role == 3){
                 var companyProfile_success_parameters = new Dictionary<string, object>
                 {
                     {"hashedUsername", validPepper.hashedUsername},
@@ -249,16 +247,64 @@ namespace SS.Backend.UserManagement
                     {"address", companyInfo.address},
                     {"openingHours", companyInfo.openingHours},
                     {"closingHours", companyInfo.closingHours},
-                    {"daysOpen", companyInfo.daysOpen}
+                    {"daysOpen", companyInfo.daysOpen}, 
+                    {"companyType", userInfo.role}
                 };
-#pragma warning restore CS8604 // Possible null reference argument.
+                var insertCompanyProfileCommand = builder.BeginInsert("companyProfile")
+                    .Columns(companyProfile_success_parameters.Keys)
+                    .Values(companyProfile_success_parameters.Keys)
+                    .AddParameters(companyProfile_success_parameters)
+                    .Build();
 
-                // Add the companyProfile dictionary to tableData
-                tableData.Add("companyProfile", companyProfile_success_parameters);
+                tablesresponse = await _sqldao.SqlRowsAffected(insertCompanyProfileCommand);
+                if (tablesresponse.HasError)
+                {
+                    tablesresponse.ErrorMessage += "companyProfile: error inserting data; ";
+                    return tablesresponse;
+                }
+                var companyIDResponse = await getEmployeeCompanyID(userInfo, validPepper.hashedUsername);
+                if (companyIDResponse.HasError || companyIDResponse.ValuesRead.Rows.Count == 0) {
+                    return new Response { HasError = true, ErrorMessage = companyIDResponse.ErrorMessage ?? "Failed to fetch company ID for manager" };
+                }
+            
+                if(companyIDResponse.ValuesRead != null)
+                {
+                    foreach (DataRow row in companyIDResponse.ValuesRead.Rows)
+                    {
+                        int companyID = Convert.ToInt32(row["companyID"]);
+                        if (companyID > 0)
+                        {
+                            userAccount_success_parameters = new Dictionary<string, object>
+                            {
+                                { "username", userInfo.username},
+                                {"birthDate", userInfo.dob},
+                                {"companyID", companyID}
+                            };
+                            tableData.Add("userAccount", userAccount_success_parameters);
+                            
+                        }
+                    }
+                }
             }
 
-            var builder = new CustomSqlCommandBuilder();
-            Response tablesresponse = new Response();
+//             if (companyInfo != null)
+//             {
+// #pragma warning disable CS8604 // Possible null reference argument.
+//                 var companyProfile_success_parameters = new Dictionary<string, object>
+//                 {
+//                     {"hashedUsername", validPepper.hashedUsername},
+//                     {"companyName", companyInfo.companyName},
+//                     {"address", companyInfo.address},
+//                     {"openingHours", companyInfo.openingHours},
+//                     {"closingHours", companyInfo.closingHours},
+//                     {"daysOpen", companyInfo.daysOpen}, 
+//                     {"companyType", userInfo.role}
+//                 };
+// #pragma warning restore CS8604 // Possible null reference argument.
+
+//                 // Add the companyProfile dictionary to tableData
+//                 tableData.Add("companyProfile", companyProfile_success_parameters);
+//             }
 
             // Iterate through each table entry in the provided data
             foreach (var tableEntry in tableData)
