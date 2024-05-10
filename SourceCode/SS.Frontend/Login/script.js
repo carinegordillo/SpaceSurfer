@@ -1,4 +1,6 @@
+let viewStartTimer = null;
 let appConfig = null;
+
 function loadConfig() {
     fetch('csp-config.json')  
         .then(response => response.json())
@@ -201,6 +203,8 @@ function manageUserViews(role, userIdentity) {
         document.getElementById("FMview").style.display = "none";
         document.getElementById("CMview").style.display = "none";
     }
+
+    startTimer('Dashboard View');
 }
 
 
@@ -233,6 +237,7 @@ function getLogin(){
     hideAllSections();
     document.getElementById('sendOTPSection').style.display = 'block';
     document.getElementById('noLogin').style.display = 'block';
+    startTimer('Login View');
 }
 
 function getAbout(){
@@ -240,18 +245,21 @@ function getAbout(){
     hideAllSections();
     document.getElementById('UnAuthnAbout').style.display = 'block';
     document.getElementById('noLogin').style.display = 'block';
+    startTimer('About View');
 }
 
 function getUserProfile(){
     console.log("get userprofile clicked  clicked");
     hideAllSections();
     document.getElementById('userProfileView').style.display = 'block';
+    startTimer('User Profile View');
 }
 
 
 function spaceBookingCenterAccess() {
     hideAllSections();
     document.getElementById('spaceBookingView').style.display = 'block';
+    startTimer('Space Booking Center View');
 }
 
 function registrationAccess() {
@@ -265,44 +273,59 @@ function registrationAccess() {
 function taskHubAccess() {
     hideAllSections();
     document.getElementById('taskManagerView').style.display = 'block';
+    startTimer('Task Manager Hub View');
 }
 
 function personalOverviewAccess() {
     hideAllSections();
-    document.getElementById('personalOverviewCenter').style.display = 'block';
+    document.getElementById('personalOverviewCenter').style.display = 'block'; 
+    startTimer('Personal Overview View');
 }
 
 function waitlistAccess() {
     hideAllSections();
     document.getElementById('waitlistView').style.display = 'block';
+    startTimer('Waitlist View');
 }
 
 function spaceManagerAccess() {
     hideAllSections();
     document.getElementById('spaceManagerView').style.display = 'block';
+    startTimer('Space Manager View');
 }
 
 function getHomePage() {
     hideAllSections();
     document.getElementById("welcomeSection").style.display = "block";
+    startTimer('Home View');
 }
 
 function employeeSetupAccess() {
     hideAllSections();
     document.getElementById('employeeSetup').style.display = 'block';
+    startTimer('Employee Setup View');
 }
 
 function confirmationAccess() {
     hideAllSections();
     document.getElementById('confirmationView').style.display = 'block';
+    startTimer('Confirmation View');
 }
 
 function SOAccess() {
     hideAllSections();
     document.getElementById('systemObservability').style.display = 'block';
+    startTimer('System Observability View');
 }
 
 function hideAllSections() {
+    const currentView = sessionStorage.getItem('currentView');
+
+    if (currentView)
+    {
+        endTimerAndInsertDuration(currentView);
+    }
+
     document.getElementById('employeeSetup').style.display = 'none';
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById('sendOTPSection').style.display = 'none';
@@ -324,4 +347,85 @@ function hideAllSections() {
     document.getElementById("enterRegistrationOTPSection").style.display = "none";
 }
 
+function startTimer(viewName) {
+    const viewStartTime = new Date(); 
 
+    sessionStorage.setItem('viewStartTime', viewStartTime.getTime());
+    sessionStorage.setItem('currentView', viewName)
+}
+
+function clearTimer() {
+
+    sessionStorage.removeItem('viewStartTime');
+    sessionStorage.removeItem('currentView');
+}
+
+function endTimerAndInsertDuration(viewName) {
+    const viewStartTime = sessionStorage.getItem('viewStartTime');
+    const currentView = sessionStorage.getItem('currentView');
+    if (viewStartTime && currentView === viewName) {
+        const durationInSeconds = Math.round((new Date() - new Date(parseInt(viewStartTime))) / 1000);
+        fetchInsertViewDuration(viewName, durationInSeconds)
+            .then(() => {
+                console.log(`Inserted view duration for ${currentView}: ${durationInSeconds} seconds`);
+            })
+            .catch(error => {
+                console.error(`Error inserting view duration for ${currentView}:`, error);
+            });
+    }
+    clearTimer();
+}
+
+
+// Function to insert the view duration insertion data for each view
+async function fetchInsertViewDuration(viewName, duration) {
+    // Retrieve tokens from sessionStorage
+    var accessToken = sessionStorage.getItem('accessToken');
+    var idToken = sessionStorage.getItem('idToken');
+    var parsedIdToken = JSON.parse(idToken);
+    var username = parsedIdToken.Username;
+
+    // Check if tokens are present
+    if (!idToken) {
+        console.error('ID token not found.');
+        return;
+    }
+
+    if (!username) {
+        console.error('Username not found in token.');
+        return;
+    }
+
+    if (!accessToken) {
+        console.error('Access token not found.');
+        return;
+    }
+
+    // Construct the URL with the provided view name and duration
+    const url = `http://localhost:5295/api/v1/SystemObservability/ViewDurationInsertion?viewName=${viewName}&durationInSeconds=${duration}`;
+
+    try {
+        // Fetch data from the API
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ` + accessToken,
+                'Content-Type': "application/json",
+            }
+        });
+
+        // Parse and return the response data
+        const data = await response.json();
+
+        // Check if there's any error in the response
+        if (data.hasError) {
+            throw new Error(`Error inserting the view duration: ${response.status}`);
+        }
+
+        return data;
+    }
+    catch (error) {
+        // Catch and log any errors that occur during the process
+        throw new Error(`Caught an error inserting the view duration: ${error.message}`);
+    }
+}

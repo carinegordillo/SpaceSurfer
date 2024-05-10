@@ -1,4 +1,4 @@
-import { fetchInsertUsedFeature, fetchInsertViewDuration } from "./SystemObservabilityGen";
+let intervalId = null;
 
 // Function to fetch analysis data
 async function fetchAnalysis(timeSpan) {

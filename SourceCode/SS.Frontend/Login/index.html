@@ -30,7 +30,6 @@
                     <div class="nav-item" id="navRegister" onclick="registrationAccess()">Register</div>
                     <div class="nav-item" id="navLogin" onclick="getLogin()">Login</div>
                 </div>
-                
                 <!-- general nav all users can see -->
                 <div id="homepageGen" style="display: none;">
                     <!-- system admin view -->
@@ -63,6 +62,7 @@
                     </div>
                     <div class="nav-item" type="button" onclick="initProfile()">Profile</div>
                     <div class="nav-item" type="button" onclick="logout()">Logout</div>
+
                 </div>
                 </div>
 
@@ -285,7 +285,7 @@
                 <label for="to-date">To:</label>
                 <input type="date" id="to-date">
             </div>
-            <button type="button" onclick="confirmSelection()" id="confirm-button">Confirm Selection</button>
+            <button type="button" onclick="confirmSelection(); fetchInsertUsedFeature('Personal Overview')" id="confirm-button">Confirm Selection</button>
 
             <div id="calendar-poc">
                 <div id="month-info-container">
@@ -317,7 +317,7 @@
             <form id="delete-reservation-form" class="delete-form">
                 <label for="reservation-id">Enter Reservation ID to Delete:</label>
                 <input type="number" id="reservation-id" name="reservation-id" required>
-                <button type="button" onclick="fetchReservationDeletion()" id="reservation-delete-button">Delete Reservation</button>
+                <button type="button" onclick="fetchReservationDeletion(); fetchInsertUsedFeature('Personal Overview')" id="reservation-delete-button">Delete Reservation</button>
             </form>
         </div>
 
@@ -530,7 +530,7 @@
             <option value="12 months">12 months</option>
             <option value="24 months">24 months</option>
         </select>
-        <button type="button" onclick="updateTimeSpan()">Confirm Timespan</button>
+        <button type="button" id="so-timespan-button" onclick="updateTimeSpan(); fetchInsertUsedFeature('System Observability')">Confirm Timespan</button>
 
         <div id="systemObservabilityContainer">
             <canvas id="loginsTrendChart"></canvas>
