@@ -246,6 +246,8 @@ function spaceBookingCenterAccess() {
 function registrationAccess() {
     hideAllSections();
     document.getElementById('Registration').style.display = 'block';
+    document.getElementById("accountCreationForm").style.display = "block";
+    document.getElementById("enterRegistrationOTPSection").style.display = "none";
     document.getElementById('noLogin').style.display = 'block';    
 }
 

@@ -485,11 +485,15 @@ button:hover {
     justify-content: space-between; 
 }
 
-.task-list-section, .space-form-section {
-    flex: 1; 
-    padding: 20px; 
-    box-sizing: border-box; 
+.task-list-section, .task-form-section {
+    flex: 1;
+    background: #ffffff;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
 }
+
+
 
 .task-list-section {
     border-right: 1px solid #ccc; 
@@ -900,7 +904,7 @@ button {
 input, textarea {
     display: block;
     margin-bottom: 10px;
-    width: 100%;
+    /* width: 100%; */
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -1002,6 +1006,6 @@ button:hover {
 }
 
 button, input[type="text"] {
-    width: 100%;
+    /* width: 100%; */
     margin-top: 10px;
 }
