@@ -153,7 +153,6 @@ function getLogin(){
     hideAllSections();
     document.getElementById('sendOTPSection').style.display = 'block';
     document.getElementById('noLogin').style.display = 'block';
-
 }
 
 function getAbout(){
@@ -169,6 +168,7 @@ function getUserProfile(){
     document.getElementById('userProfileView').style.display = 'block';
 }
 
+
 function spaceBookingCenterAccess() {
     hideAllSections();
     document.getElementById('spaceBookingView').style.display = 'block';
@@ -178,8 +178,6 @@ function registrationAccess() {
     hideAllSections();
     document.getElementById('Registration').style.display = 'block';
     document.getElementById('noLogin').style.display = 'block';
-
-    
 }
 
 function taskHubAccess() {
@@ -238,4 +236,8 @@ function hideAllSections() {
     document.getElementById('noLogin').style.display = 'none';
     document.getElementById('confirmationView').style.display = 'none';
     document.getElementById('systemObservability').style.display = 'none';
+    document.getElementById("accountRecoverySection").style.display = "none";
+    document.getElementById("userRequestsView").style.display = "none";
 }
+
+

@@ -173,6 +173,23 @@ namespace SS.Backend.UserManagement
             return response;
 
         }
+        public async Task<Response> deleteUserRequestByuserHash(string userHash){
+            Response response = new Response();
+            
+            response = await _userManagementDao.DeleteRequestWhere("userHash", userHash, "dbo.userRequests");
+
+            if (response.HasError == false)
+            {
+                response.ErrorMessage += "- deleteUserRequestByuserHash successful. -";
+            }
+            else
+            {
+                response.ErrorMessage += "- deleteUserRequestByuserHash Failed - ";
+            }
+
+            return response;
+            
+        }
 
 
     }
