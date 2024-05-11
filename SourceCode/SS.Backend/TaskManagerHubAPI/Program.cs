@@ -51,11 +51,6 @@ builder.Services.AddTransient<ITaskManagerHubRepo, TaskManagerHubRepo>();
 builder.Services.AddTransient<ITaskManagerHubService, TaskManagerHubService>();
 builder.Services.AddTransient<ITaskManagerHubManager, TaskManagerHubManager>();
 
-//Mangers Setup
-// builder.Services.AddTransient<IReservationCreationManager, ReservationCreationManager>();
-
-
-//security
 
 builder.Services.AddTransient<GenOTP>();
 builder.Services.AddTransient<Hashing>();
@@ -104,14 +99,6 @@ app.Use((context, next) =>
 });
 
 
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-//     app.UseDeveloperExceptionPage();
-// }
-
-//app.UseHttpsRedirection();
 
 app.UseMiddleware<AuthorizationMiddleware>();
 
