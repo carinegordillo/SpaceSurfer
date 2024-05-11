@@ -42,7 +42,6 @@ namespace SS.Backend.Services.LoggingService
             {
                 errorMsg = "Pass";
             }
-            Console.WriteLine("CheckLogValidity: " + errorMsg);
             return errorMsg;
         }
 
