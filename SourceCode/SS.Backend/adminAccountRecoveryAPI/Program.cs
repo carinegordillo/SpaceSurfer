@@ -7,6 +7,7 @@ using SS.Backend.SharedNamespace;
 using SS.Backend.Services.LoggingService;
 using System.Text.Json;
 using Microsoft.Net.Http.Headers;
+using SS.Backend.Security;
 
 
 
@@ -49,8 +50,22 @@ builder.Services.AddTransient<IAccountRecovery, AccountRecovery>();
 builder.Services.AddTransient<IAccountDisabler, AccountDisabler>();
 
 
+builder.Services.AddTransient<SSAuthService>(provider =>
+    new SSAuthService(
+        provider.GetRequiredService<GenOTP>(),
+        provider.GetRequiredService<Hashing>(),
+        provider.GetRequiredService<SqlDAO>(),
+        provider.GetRequiredService<Logger>()
+    )
+);
 
 var app = builder.Build();
+
+
+
+
+
+
 
 // get localhost cofig file path
 var corsConfigFilePath = Path.Combine(projectRootDirectory, "Configs", "originsConfig.json");
@@ -70,9 +85,6 @@ Console.WriteLine(allowedOrigin);
 app.Use(async (context, next) =>
 {
     var origin = context.Request.Headers[HeaderNames.Origin].ToString();
-
-    Console.WriteLine("IN HERERREEER ");
-    Console.WriteLine(allowedOrigin);
 
     var allowedOrigins = new[] {allowedOrigin};
 
@@ -95,6 +107,8 @@ app.Use(async (context, next) =>
 });
 
 
+
+app.UseMiddleware<AuthorizationMiddleware>();
 
 
 app.MapControllers();

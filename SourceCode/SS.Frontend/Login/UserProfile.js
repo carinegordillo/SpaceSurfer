@@ -140,7 +140,7 @@ function displayUserProfile(userProfile) {
     leftPanel.innerHTML = `
         <h2>Profile</h2>
         <p>Name: <span id="displayFirstName">${userProfile.firstName}</span> <span id="displayLastName">${userProfile.lastName}</span></p>
-        <p>Bio: <span id="displayAbout">${userProfile.about || "User biography not provided."}</span></p>
+        <p><span id="displayAbout">${userProfile.about || " "}</span></p>
         <button id="editProfile">Edit Profile</button>
     `;
 

@@ -72,7 +72,7 @@ builder.Services.AddTransient<SSAuthService>(provider =>
 );
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
@@ -101,13 +101,7 @@ app.Use((httpContext, next) =>
 
 //app.UseStaticFiles();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseDeveloperExceptionPage();
-}
+
 
 //app.UseHttpsRedirection();
 //app.UseMiddleware<AuthZMiddleware>();
