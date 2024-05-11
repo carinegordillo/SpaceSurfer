@@ -85,9 +85,9 @@ namespace SS.Backend.UserManagement
                 return false;
             }
 
-            var validStartDate = new DateTime(1970, 1, 1);
-            var validEndDate = DateTime.Now;
-            return dateOfBirth >= validStartDate && dateOfBirth <= validEndDate;
+            var validStartDate = new DateTime(1970, 1, 1); 
+            var minimumAgeDate = DateTime.Today.AddYears(-13); 
+            return dateOfBirth >= validStartDate && dateOfBirth <= minimumAgeDate;
         }
         public async Task<Response> CreateUserAccount(UserInfo userInfo, CompanyInfo? companyInfo, string? manager_hashedUsername)
         {
@@ -126,7 +126,7 @@ namespace SS.Backend.UserManagement
                 In order to enjoy and utilize the application please check your inbox for a one time password used to verify your account. 
 
                 If you have any questions or need assistance, please don't hesitate to contact us at spacesurfers5@gmail.com.
-                http://localhost:3000/Login/index.html/?employee
+                http://13.56.13.54/Login/index.html/?employee
                 Thank you for choosing SpaceSurfer.
 
                 Best regards,
