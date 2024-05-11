@@ -57,80 +57,50 @@ async function updateTimeSpan() {
     var newTimeSpan = document.getElementById('timeSpan').value;
     const acceptedValues = ["6 months", "12 months", "24 months"];
 
-    var interval = sessionStorage.getItem('intervalId')
-
-    if (interval)
-    {
-        clearInterval(parseInt(interval));
-        sessionStorage.removeItem('intervalId');
+    if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
     }
 
-    if (acceptedValues.includes(newTimeSpan))
-    {
+    if (acceptedValues.includes(newTimeSpan)) {
         timeSpan = newTimeSpan;
 
-    // Call getAnalysisInformation every 60 seconds
-    var intervalId = setInterval(async () => {
+        // Call getAllData every 60 seconds
+        intervalId = setInterval(async () => {
+            await getAllData(timeSpan);
+        }, 60000);
 
-        analysis = await fetchAnalysis(timeSpan);
-
-        // Login
-        var loginsData = analysis.loginsCount;
-        var loginLabels = loginsData.map(item => `${item.month}, ${item.year}`);
-        var successfulLogins = loginsData.map(item => item.successfulLogins);
-        var failedLogins = loginsData.map(item => item.failedLogins);
-
-        // Registration
-        var registrationData = analysis.registrationCount;
-        var registrationLabels = registrationData.map(item => `${item.month}, ${item.year}`);
-        var successfulRegistrations = loginsData.map(item => item.successfulRegistrations);
-        var failedRegistrations = loginsData.map(item => item.failedRegistrations);
-
-        // Update logins trend chart
-        updateLoginsTrendChart(loginLabels, successfulLogins, failedLogins);
-        updateRegistrationTrendChart(registrationLabels, successfulRegistrations, failedRegistrations);
-
-        createTopListData(analysis);
-
-    }, 60000);
-
-    sessionStorage.setItem('intervalId', intervalId);
-
-
-
-
-
-        if (intervalId) {
-            // If interval is already running, clear it and start a new one
-            clearInterval(intervalId);
-            intervalId = null;
-        }
-
-        analysis = await fetchAnalysis(timeSpan);
-
-        // Login
-        var loginsData = analysis.loginsCount;
-        var loginLabels = loginsData.map(item => `${item.month}, ${item.year}`);
-        var successfulLogins = loginsData.map(item => item.successfulLogins);
-        var failedLogins = loginsData.map(item => item.failedLogins);
-
-        // Registration
-        var registrationData = analysis.registrationCount;
-        var registrationLabels = registrationData.map(item => `${item.month}, ${item.year}`);
-        var successfulRegistrations = registrationData.map(item => item.successfulRegistrations);
-        var failedRegistrations = registrationData.map(item => item.failedRegistrations);
-
-        // Update logins trend chart
-        updateLoginsTrendChart(loginLabels, successfulLogins, failedLogins);
-        updateRegistrationTrendChart(registrationLabels, successfulRegistrations, failedRegistrations);
-
-        createTopListData(analysis);
-
-    }
-    else {
+        // Initial fetch
+        await getAllData(timeSpan);
+    } else {
         console.error("Invalid time span value. Accepted values are: 6 months, 12 months, 24 months");
     }
 }
+
+
+async function getAllData(timesSpan) {
+    analysis = await fetchAnalysis(timeSpan);
+
+    // Login
+    var loginsData = analysis.loginsCount;
+    var loginLabels = loginsData.map(item => `${item.month}, ${item.year}`);
+    var successfulLogins = loginsData.map(item => item.successfulLogins);
+    var failedLogins = loginsData.map(item => item.failedLogins);
+
+    // Registration
+    var registrationData = analysis.registrationCount;
+    var registrationLabels = registrationData.map(item => `${item.month}, ${item.year}`);
+    var successfulRegistrations = registrationData.map(item => item.successfulRegistrations);
+    var failedRegistrations = registrationData.map(item => item.failedRegistrations);
+
+    // Update logins trend chart
+    updateLoginsTrendChart(loginLabels, successfulLogins, failedLogins);
+    updateRegistrationTrendChart(registrationLabels, successfulRegistrations, failedRegistrations);
+
+    createTopListData(analysis);
+
+}
+
 
 function updateLoginsTrendChart(labels, successfulLogins, failedLogins) {
     var ctx = document.getElementById('loginsTrendChart').getContext('2d');
@@ -278,12 +248,25 @@ function createTopListData(analysis) {
                 listContainer.removeChild(listContainer.firstChild);
             }
 
-            // Create and append new list items
+            // Create and append new numbered list items
             for (let i = 0; i < Math.min(topItemsList.length, 3); i++) {
                 const item = topItemsList[i];
-                const li = document.createElement('li');
-                li.textContent = `${item.companyName || item.viewName || item.featureName}: ${item.durationInSeconds || item.usageCount || item.reservationCount}`;
-                listContainer.appendChild(li);
+                const ul = document.createElement('ul');
+                const span = document.createElement('span');
+                span.textContent = `${item.companyName || item.viewName || item.featureName}: ${item.durationInSeconds || item.usageCount || item.reservationCount || item.spaceCount}`;
+                ul.appendChild(span);
+                listContainer.appendChild(ul);
+
+                // Highlight the first item
+                if (i === 0) {
+                    ul.style.fontWeight = 'bold';
+                }
+
+                // Add number to list item
+                const number = document.createElement('span');
+                number.textContent = i + 1;
+                number.style.marginRight = '5px';
+                ul.insertBefore(number, span);
             }
         }
     }
