@@ -374,13 +374,7 @@ function endTimerAndInsertDuration(viewName) {
 
     if (viewStartTime && currentView === viewName) {
         const durationInSeconds = Math.round((new Date() - new Date(parseInt(viewStartTime))) / 1000);
-        fetchInsertViewDuration(viewName, durationInSeconds)
-            .then(() => {
-                console.log(`Inserted view duration for ${currentView}: ${durationInSeconds} seconds`);
-            })
-            .catch(error => {
-                console.error(`Error inserting view duration for ${currentView}:`, error);
-            });
+        fetchInsertViewDuration(viewName, durationInSeconds);
     }
     clearTimer();
 }
