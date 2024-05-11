@@ -46,7 +46,14 @@ builder.Services.AddTransient<Logger>();
 builder.Services.AddTransient<SqlDAO>();
 
 
-
+builder.Services.AddTransient<SSAuthService>(provider =>
+    new SSAuthService(
+        provider.GetRequiredService<GenOTP>(),
+        provider.GetRequiredService<Hashing>(),
+        provider.GetRequiredService<SqlDAO>(),
+        provider.GetRequiredService<Logger>()
+    )
+);
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 
@@ -70,9 +77,6 @@ Console.WriteLine(allowedOrigin);
 app.Use(async (context, next) =>
 {
     var origin = context.Request.Headers[HeaderNames.Origin].ToString();
-
-    Console.WriteLine("IN HERERREEER ");
-    Console.WriteLine(allowedOrigin);
 
     var allowedOrigins = new[] {allowedOrigin};
 
