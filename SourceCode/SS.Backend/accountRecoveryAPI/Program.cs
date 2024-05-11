@@ -5,6 +5,8 @@ using SS.Backend.DataAccess;
 
 using SS.Backend.SharedNamespace;
 using SS.Backend.Services.LoggingService;
+using System.Text.Json;
+using Microsoft.Net.Http.Headers;
 
 
 
@@ -47,32 +49,53 @@ builder.Services.AddTransient<IAccountRecovery, AccountRecovery>();
 builder.Services.AddTransient<IAccountDisabler, AccountDisabler>();
 
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod());
-});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-//     app.UseDeveloperExceptionPage();
+// get localhost cofig file path
+var corsConfigFilePath = Path.Combine(projectRootDirectory, "Configs", "originsConfig.json");
+string allowedOrigin= "coudl not connect to config file";
+
+if (File.Exists(corsConfigFilePath))
+{
+    string configJson = File.ReadAllText(corsConfigFilePath);
     
-    
-// }
+    JsonDocument doc = JsonDocument.Parse(configJson);
+    JsonElement root = doc.RootElement.GetProperty("Origin");
+    allowedOrigin = root.GetProperty("CorsAllowedOrigin").GetString() ?? "NA";
+}
 
-// app.UseHttpsRedirection();
+Console.WriteLine("Cors Allowed Origin: ");
+Console.WriteLine(allowedOrigin);
+app.Use(async (context, next) =>
+{
+    var origin = context.Request.Headers[HeaderNames.Origin].ToString();
 
-app.UseCors("AllowSpecificOrigin");
+    Console.WriteLine("IN HERERREEER ");
+    Console.WriteLine(allowedOrigin);
 
-//fix this
-app.UseAuthorization();
+    var allowedOrigins = new[] {allowedOrigin};
+
+    if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
+    {
+        context.Response.Headers.Append("Access-Control-Allow-Origin", origin);
+        context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+        context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+        context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+    }
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.StatusCode = StatusCodes.Status200OK;
+        await context.Response.CompleteAsync();
+    }
+    else
+    {
+        await next();
+    }
+});
+
+
+
 
 app.MapControllers();
 
