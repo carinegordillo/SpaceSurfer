@@ -7,7 +7,7 @@ using SS.Backend.ReservationManagers;
 using SS.Backend.DataAccess;
 using SS.Backend.SpaceManager;
 using SS.Backend.Waitlist;
-
+using System.Text.Json;
 using SS.Backend.Security;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
@@ -25,8 +25,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
-
-
 
 
 var baseDirectory = AppContext.BaseDirectory;
@@ -57,7 +55,6 @@ builder.Services.AddTransient<SqlDAO>();
 //Repo Setup
 builder.Services.AddTransient<IReservationManagementRepository, ReservationManagementRepository>();
 
-
 //Services Setup
 builder.Services.AddTransient<IReservationCreatorService, ReservationCreatorService>();
 builder.Services.AddTransient<IReservationCancellationService, ReservationCancellationService>();
@@ -70,7 +67,6 @@ builder.Services.AddTransient<IReservationDeletionService, ReservationDeletionSe
 //spaceMAnger setup
 builder.Services.AddTransient<ISpaceManagerDao, SpaceManagerDao>();
 builder.Services.AddTransient<ISpaceReader, SpaceReader>();
-
 
 //Mangers Setup
 builder.Services.AddTransient<IReservationCreationManager, ReservationCreationManager>();
@@ -102,23 +98,42 @@ builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-app.Use((context, next) =>
-{
-    
-    context.Response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:3000");
-    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
-    context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+// get localhost cofig file path
+var corsConfigFilePath = Path.Combine(projectRootDirectory, "Configs", "originsConfig.json");
+string allowedOrigin= "coudl not connect to config file";
 
+if (File.Exists(corsConfigFilePath))
+{
+    string configJson = File.ReadAllText(corsConfigFilePath);
     
+    JsonDocument doc = JsonDocument.Parse(configJson);
+    JsonElement root = doc.RootElement.GetProperty("Origin");
+    allowedOrigin = root.GetProperty("CorsAllowedOrigin").GetString() ?? "NA";
+}
+
+Console.WriteLine("Cors Allowed Origin: ");
+Console.WriteLine(allowedOrigin);
+app.Use(async (context, next) =>
+{
+    var origin = context.Request.Headers[HeaderNames.Origin].ToString();
+    var allowedOrigins = new[] {allowedOrigin};
+
+    if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
+    {
+        context.Response.Headers.Append("Access-Control-Allow-Origin", origin);
+        context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Accept");
+        context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+    }
     if (context.Request.Method == "OPTIONS")
     {
-        context.Response.Headers.Append("Access-Control-Max-Age", "86400"); 
-        context.Response.StatusCode = 204; 
-        return Task.CompletedTask;
+        context.Response.StatusCode = StatusCodes.Status200OK;
+        await context.Response.CompleteAsync();
     }
-
-    return next();
+    else
+    {
+        await next();
+    }
 });
 
 
