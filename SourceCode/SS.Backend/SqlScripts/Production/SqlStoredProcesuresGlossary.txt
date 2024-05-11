@@ -1,7 +1,36 @@
 
+CheckConflictingReservationsAutoID:
+- Description: This stored procedure checks for conflicting reservations within a specified time range for a given company, floor plan, and space in the NewAutoIDReservations table. It returns the IDs of any conflicting reservations. It can exclude a specific reservation from the check if an ID is provided.
 
-CheckConflictingReservations:
-    This stored procedure checks if there are any conflicting reservations for a given floor plan, space, and time range.
-    It returns the reservation IDs of the conflicting reservations.
-    If a reservation ID is provided to exclude, it will exclude that reservation from the check.
-    This is useful when updating a reservation, as the reservation being updated should not conflict with itself. 
+CheckConflictingReservationsManualID:
+- Description: Similar to CheckConflictingReservationsAutoID, this procedure checks for conflicts in the NewManualIDReservations table. It returns reservation IDs that overlap with the specified time range for a given company, floor plan, and space, excluding a specified reservation if provided.
+
+CheckConflictingReservationsPROD:
+- Description: This stored procedure checks for reservation conflicts in the reservations table. It identifies overlapping reservations for a specific company, floor plan, and space within a proposed time range and can exclude a specified reservation from the check.
+
+DeleteReservationPROD:
+- Description: This procedure deletes a reservation from the reservations table based on the provided reservation ID and user hash. It includes error handling and returns the number of rows deleted or an error message if an issue occurs.
+
+GetCompanyFloorPROD:
+- Description: This procedure retrieves floor plan details and associated spaces for a specified company from the companyFloor and companyFloorSpaces tables. It returns the floor plan ID, name, image, space ID, and time limit.
+
+GetCompanyInfoPROD:
+- Description: This stored procedure selects and returns company profile information from the companyProfile table, including company ID, name, address, opening and closing hours, days open, and company type.
+
+GetEmployeeCompanyInfoPROD:
+- Description: This procedure retrieves the profile information of a specific company by its ID from the companyProfile table. It returns details such as company ID, name, address, operating hours, days open, and company type.
+
+GetFacilitiesInfoPROD:
+- Description: This stored procedure selects information for facilities with a company type of 3 from the companyProfile table. It returns company details including ID, name, address, and operating hours.
+
+InsertCompanyFloor:
+- Description: This procedure inserts a new floor plan for a company into the companyFloor table, including the company ID, floor plan name, and an image of the floor plan.
+
+UpdateReservationStatusAutoID:
+- Description: This procedure updates the status of reservations in the NewAutoIDReservations table to 'Passed' for reservations that have ended and are currently marked as 'Active'.
+
+UpdateReservationStatusManualID:
+- Description: Similar to UpdateReservationStatusAutoID, this procedure updates the status of reservations in the NewManualIDReservations table to 'Passed' for reservations with an end time earlier than the current system time and an 'Active' status.
+
+UpdateReservationStatusesPROD:
+- Description: This stored procedure updates the status of 'Active' reservations in the reservations table to 'Passed' if their end time is less than the current system date and time.
