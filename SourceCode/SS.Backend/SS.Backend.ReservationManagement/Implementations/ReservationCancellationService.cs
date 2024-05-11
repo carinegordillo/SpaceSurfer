@@ -52,7 +52,7 @@ public class ReservationCancellationService : IReservationCancellationService
                 response.ErrorMessage += $"- CancelReservationAsync - command successful {response.ErrorMessage} -";
                 response.HasError = false;
 
-                logEntry = builder.Info().DataStore().Description($"CancelReservationAsync - command successful {reservationID} ").Build();
+                logEntry = builder.Info().DataStore().Description($"CancelReservationAsync - command successful {reservationID}").User("N/A").Build();
 
                  
 
@@ -63,7 +63,7 @@ public class ReservationCancellationService : IReservationCancellationService
                 response.ErrorMessage += $"- CancelReservationAsync - command : {updateCommand.CommandText} not successful - {response.ErrorMessage} -";
                 response.HasError = true;
 
-                logEntry = builder.Error().DataStore().Description($"Could not cancel Reservation {reservationID} - CancelReservationAsync - command : {updateCommand.CommandText} not successful ").Build();
+                logEntry = builder.Error().DataStore().Description($"Could not cancel Reservation {reservationID} - CancelReservationAsync - command : {updateCommand.CommandText} not successful ").User("N/A").Build();
 
             }
             _reservationManagementRepository.LogTask(logEntry);

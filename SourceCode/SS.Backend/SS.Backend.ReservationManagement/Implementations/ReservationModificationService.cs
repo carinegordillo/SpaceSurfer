@@ -2,6 +2,7 @@ using SS.Backend.DataAccess;
 using SS.Backend.SharedNamespace;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using SS.Backend.Services.LoggingService;
 
 namespace SS.Backend.ReservationManagement
 {
@@ -11,10 +12,15 @@ namespace SS.Backend.ReservationManagement
     public class ReservationModificationService : IReservationModificationService
     {
         private IReservationManagementRepository _reservationManagementRepository;
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
 
-        public ReservationModificationService(IReservationManagementRepository reservationManagementRepository)
+        public ReservationModificationService(IReservationManagementRepository reservationManagementRepository, ILogger logger)
         {
             _reservationManagementRepository = reservationManagementRepository;
+            _logger = logger;
+            logEntry = logBuilder.Build();
         }
 
         /// <summary>
@@ -47,12 +53,19 @@ namespace SS.Backend.ReservationManagement
 
             if (response.HasError == false)
             {
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully modified time for reservation {userReservationsModel.ReservationID}.").User(userReservationsModel.UserHash).Build();
                 response.HasError = false;
             }
             else
             {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to modify time for reservation {userReservationsModel.ReservationID}.").User(userReservationsModel.UserHash).Build();
                 response.HasError = true;
                 response.ErrorMessage = $"- CreateReservationWithManualIDAsync - command : {UpdateReservationCommand.CommandText} not successful - ";
+            }
+
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
             }
 
             return response;

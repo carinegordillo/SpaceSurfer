@@ -10,14 +10,16 @@ namespace SS.Backend.ReservationManagement{
 public class ReservationDeletionService : IReservationDeletionService
 {
         private IReservationManagementRepository _reservationManagementRepository;
+        private readonly ILogger _logger;
         private LogEntryBuilder logBuilder = new LogEntryBuilder();
-
         private LogEntry logEntry;
 
 
-        public ReservationDeletionService(IReservationManagementRepository reservationManagementRepository)
+        public ReservationDeletionService(IReservationManagementRepository reservationManagementRepository, ILogger logger)
         {
             _reservationManagementRepository = reservationManagementRepository;
+            _logger = logger;
+            logEntry = logBuilder.Build();
             
         }
 
@@ -37,16 +39,21 @@ public class ReservationDeletionService : IReservationDeletionService
 
             if (response.HasError == false)
             {
-                logEntry = logBuilder.Info().DataStore().Description($"Successfully deleted reservation ({reservationID})").Build();
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully deleted reservation ({reservationID})").User(userHash).Build();
                 response.ErrorMessage += $"- DeleteReservationAsync - command successful {response.ErrorMessage} -";
                 response.HasError = false;
             }
             else
             {
                 response.ErrorMessage += $"- DeleteReservationAsync - command : {command.CommandText} not successful - {response.ErrorMessage} -";
-                logEntry = logBuilder.Error().DataStore().Description($"Successfully deleted reservation ({reservationID})").Build();
+                logEntry = logBuilder.Error().DataStore().Description($"Successfully deleted reservation ({reservationID})").User(userHash).Build();
                 response.HasError = true;
 
+            }
+
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
             }
             return response;
         }
