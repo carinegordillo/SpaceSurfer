@@ -36,6 +36,7 @@
                     <div id="SAview" style="display:none;">
                         <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
                         <div class="nav-item" type="button" onclick="SOAccess()">System Observability</div>
+                        <div class="nav-item" type="button" onclick="initUserRequests()">User Requests</div>
                     </div>
                     <!-- company manager view -->
                     <div id="CMview" style="display:none;">
@@ -579,6 +580,10 @@
                     <button id="deleteRequestsBtn" type="submit">Delete Selected Requests</button>
                 </form>
             </div>
+            <div id="filterByUsernameContainer">
+                <input type="text" id="usernameInput" placeholder="Enter Username" />
+                <button id="filterByUsernameBtn">Filter by Username</button>
+            </div>
             <div id="deactivateUserSectionContainer">
             <section id="deactivateUserSection">
                 <h3>Deactivate User Account</h3>
@@ -586,10 +591,7 @@
                 <button id="deactivateUserBtn">Deactivate User</button>
             </section>
             </div>
-            <div id="filterByUsernameContainer">
-                <input type="text" id="usernameInput" placeholder="Enter Username" />
-                <button id="filterByUsernameBtn">Filter by Username</button>
-            </div>
+            
         </div>
     </section>
 
