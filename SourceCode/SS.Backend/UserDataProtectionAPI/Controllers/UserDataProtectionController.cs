@@ -16,13 +16,14 @@ namespace UserDataProtectionAPI.Controllers
     {
         private readonly SSAuthService _authService;
         private readonly UserDataProtection _userDataProtection;
-        private readonly IAccountDeletion _accountDeletion;
+        //private readonly IAccountDeletion _accountDeletion;
 
-        public UserDataProtectionController(SSAuthService authService, UserDataProtection userDataProtection, IAccountDeletion accountDeletionService)
+        //public UserDataProtectionController(SSAuthService authService, UserDataProtection userDataProtection, IAccountDeletion accountDeletionService)
+        public UserDataProtectionController(SSAuthService authService, UserDataProtection userDataProtection)
         {
             _authService = authService;
             _userDataProtection = userDataProtection;
-            _accountDeletion = accountDeletionService;
+            //_accountDeletion = accountDeletionService;
         }
 
         [HttpPost("accessData")]
@@ -151,144 +152,81 @@ namespace UserDataProtectionAPI.Controllers
             }
         }
 
-        //[HttpPost("deleteData")]
-        //public async Task<IActionResult> deleteData([FromBody] string userHash)
-        //{
-        //    string? accessToken = HttpContext.Request.Headers["Authorization"];
-        //    if (accessToken != null && accessToken.StartsWith("Bearer "))
-        //    {
-        //        accessToken = accessToken.Substring("Bearer ".Length).Trim();
-        //        var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
+        [HttpPost("deleteData")]
+        public async Task<IActionResult> DeleteData([FromBody] string userHash)
+        {
+            string? accessToken = HttpContext.Request.Headers["Authorization"];
 
-        //        if (claimsJson != null)
-        //        {
-        //            var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
+            if (string.IsNullOrWhiteSpace(accessToken) || !accessToken.StartsWith("Bearer "))
+            {
+                return BadRequest("Unauthorized. Access token is missing or invalid.");
+            }
 
-        //            if (claims.TryGetValue("Role", out var role) && (role == "1" || role == "2" || role == "3"))
-        //            {
-        //                bool closeToExpTime = _authService.CheckExpTime(accessToken);
-        //                if (closeToExpTime)
-        //                {
-        //                    SSPrincipal principal = new SSPrincipal();
-        //                    principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
-        //                    principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
-        //                    var newToken = _authService.CreateJwt(Request, principal);
+            accessToken = accessToken.Substring("Bearer ".Length).Trim();
+            var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
 
-        //                    try
-        //                    {
-        //                        Console.WriteLine("--- Begin account deletion endpoint ---");
-        //                        Console.WriteLine("Attempting to access data.");
-        //                        string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SpaceSurfers_UserData");
-        //                        var userData = await _userDataProtection.accessData_Manager(userHash);
-        //                        Console.WriteLine("Successfully accessed data.");
-        //                        await _userDataProtection.WriteToFile_Manager(userData, outputPath);
-        //                        Console.WriteLine("Successfully wrote to file.");
-        //                        await _userDataProtection.sendAccessEmail(userData, outputPath);
-        //                        Console.WriteLine("Successfully sent email.");
-        //                        Console.WriteLine("Deleting data.");
-        //                        var response = await _accountDeletion.DeleteAccount(userHash);
+            if (string.IsNullOrEmpty(claimsJson))
+            {
+                return BadRequest("Invalid token.");
+            }
 
-        //                        return Ok(newToken);
-        //                    }
-        //                    catch (Exception ex)
-        //                    {
-        //                        return StatusCode(500, ex.Message);
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    try
-        //                    {
-        //                        Console.WriteLine("--- Begin account deletion endpoint ---");
-        //                        Console.WriteLine("Attempting to access data.");
-        //                        string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SpaceSurfers_UserData");
-        //                        var userData = await _userDataProtection.accessData_Manager(userHash);
-        //                        Console.WriteLine("Successfully accessed data.");
-        //                        await _userDataProtection.WriteToFile_Manager(userData, outputPath);
-        //                        Console.WriteLine("Successfully wrote to file.");
-        //                        await _userDataProtection.sendAccessEmail(userData, outputPath);
-        //                        Console.WriteLine("Successfully sent email.");
-        //                        Console.WriteLine("Deleting data.");
-        //                        var response = await _accountDeletion.DeleteAccount(userHash);
-        //                        return Ok();
-        //                    }
-        //                    catch (Exception ex)
-        //                    {
-        //                        return StatusCode(500, ex.Message);
-        //                    }
+            var claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsJson);
 
-        //                }
-        //            }
+            if (!claims.TryGetValue("Role", out var role))
+            {
+                return BadRequest("Role not found in claims.");
+            }
 
-        //            else if (role == "4" || role == "5")
-        //            {
-        //                bool closeToExpTime = _authService.CheckExpTime(accessToken);
-        //                if (closeToExpTime)
-        //                {
-        //                    SSPrincipal principal = new SSPrincipal();
-        //                    principal.UserIdentity = _authService.ExtractSubjectFromToken(accessToken);
-        //                    principal.Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken);
-        //                    var newToken = _authService.CreateJwt(Request, principal);
+            bool closeToExpTime = _authService.CheckExpTime(accessToken);
+            var outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SpaceSurfers_UserData");
 
-        //                    try
-        //                    {
-        //                        Console.WriteLine("--- Begin account deletion endpoint ---");
-        //                        string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SpaceSurfers_UserData");
-        //                        var userData = await _userDataProtection.accessData_GeneralUser(userHash);
-        //                        Console.WriteLine("Successfully accessed data.");
-        //                        await _userDataProtection.WriteToFile_GeneralUser(userData, outputPath);
-        //                        Console.WriteLine("Successfully wrote to file.");
-        //                        await _userDataProtection.sendAccessEmail(userData, outputPath);
-        //                        Console.WriteLine("Successfully sent email.");
-        //                        Console.WriteLine("Deleting data.");
-        //                        var response = await _accountDeletion.DeleteAccount(userHash);
+            try
+            {
+                var userData = new UserDataModel();
+                if (role == "1" || role == "2" || role == "3")
+                {
+                    userData = await _userDataProtection.accessData_Manager(userHash);
+                    await _userDataProtection.WriteToFile_Manager(userData, outputPath);
+                }
+                else if (role == "4" || role == "5")
+                {
+                    Console.WriteLine("Attempting to access data.");
+                    userData = await _userDataProtection.accessData_GeneralUser(userHash);
+                    Console.WriteLine("Attempting to write to file.");
+                    await _userDataProtection.WriteToFile_GeneralUser(userData, outputPath);
+                }
+                else
+                {
+                    return BadRequest("Invalid role.");
+                }
 
-        //                        return Ok(newToken);
-        //                    }
-        //                    catch (Exception ex)
-        //                    {
-        //                        return StatusCode(500, ex.Message);
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    try
-        //                    {
-        //                        Console.WriteLine("--- Begin account deletion endpoint ---");
-        //                        string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SpaceSurfers_UserData");
-        //                        var userData = await _userDataProtection.accessData_GeneralUser(userHash);
-        //                        Console.WriteLine("Successfully accessed data.");
-        //                        await _userDataProtection.WriteToFile_GeneralUser(userData, outputPath);
-        //                        Console.WriteLine("Successfully wrote to file.");
-        //                        await _userDataProtection.sendAccessEmail(userData, outputPath);
-        //                        Console.WriteLine("Successfully sent email.");
-        //                        Console.WriteLine("Deleting data.");
-        //                        var response = await _accountDeletion.DeleteAccount(userHash);
-        //                        return Ok();
-        //                    }
-        //                    catch (Exception ex)
-        //                    {
-        //                        return StatusCode(500, ex.Message);
-        //                    }
+                Console.WriteLine("Attempting to send delete email.");
+                Console.WriteLine("Output path: " + outputPath);
+                await _userDataProtection.sendDeleteEmail(userData, outputPath);
+                Console.WriteLine("Attempting to delete logs.");
+                await _userDataProtection.deleteData(userHash);
+                Console.WriteLine("Successfully deleted data.");
 
-        //                }
-        //            }
-        //            else
-        //            {
-        //                return BadRequest("Unauthorized role.");
-        //            }
+                if (closeToExpTime)
+                {
+                    var principal = new SSPrincipal
+                    {
+                        UserIdentity = _authService.ExtractSubjectFromToken(accessToken),
+                        Claims = _authService.ExtractClaimsFromToken_Dictionary(accessToken)
+                    };
+                    var newToken = _authService.CreateJwt(Request, principal);
 
-        //        }
-        //        else
-        //        {
-        //            return BadRequest("Invalid token.");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return BadRequest("Unauthorized. Access token is missing or invalid.");
-        //    }
-        //}
+                    return Ok(newToken);
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
 
         [HttpGet("checkTokenExp")]
         public IActionResult checkTokenExp()
