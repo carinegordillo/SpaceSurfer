@@ -4,23 +4,17 @@ using System.Data;
 using SS.Backend.SharedNamespace;
 using SS.Backend.DataAccess;
 using SS.Backend.TaskManagerHub;
-// using System.Text.Json.Serialization;
-// using SS.Backend.ReservationManagers;
-using System.Text.Json;
-
-
 using SS.Backend.Security;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using SS.Backend.Services.LoggingService;
 using System.Text;
-
+using System.Text.Json;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -72,7 +66,7 @@ builder.Services.AddTransient<SSAuthService>(provider =>
 );
 
 var app = builder.Build();
-// get localhost cofnig file path
+// get localhost cofig file path
 var corsConfigFilePath = Path.Combine(projectRootDirectory, "Configs", "originsConfig.json");
 string allowedOrigin= "coudl not connect to config file";
 
@@ -89,7 +83,6 @@ Console.WriteLine("Cors Allowed Origin: ");
 Console.WriteLine(allowedOrigin);
 app.Use(async (context, next) =>
 {
-    // Get the origin header from the request
     var origin = context.Request.Headers[HeaderNames.Origin].ToString();
 
     Console.WriteLine("IN HERERREEER ");
@@ -97,12 +90,12 @@ app.Use(async (context, next) =>
 
     var allowedOrigins = new[] {allowedOrigin};
 
-
     if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
     {
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowOrigin, origin);
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowMethods, "GET, POST, OPTIONS");
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowHeaders, "Content-Type, Accept");
+        context.Response.Headers.Append("Access-Control-Allow-Origin", origin);
+        context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Accept");
+        context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
     }
     if (context.Request.Method == "OPTIONS")
     {
@@ -114,8 +107,6 @@ app.Use(async (context, next) =>
         await next();
     }
 });
-
-
 
 app.UseMiddleware<AuthorizationMiddleware>();
 
