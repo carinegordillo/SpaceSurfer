@@ -236,9 +236,9 @@ form {
 }
 
 @media (max-width: 768px) {
-    .container {
+    /* .container {
         width: 95%;
-    }
+    } */
     #additionalFields {
         flex-direction: column;
     }
@@ -289,6 +289,7 @@ input[type="time"] {
     color: #666a86; /* Darker text color for contrast */
     font-family: 'Arial', sans-serif;
     padding-top: 60px;
+    width: 100%; 
 }
 
 /* Style for the form section */
@@ -1031,4 +1032,31 @@ button, input[type="text"] {
 }
 #deactivateUserBtn:hover {
     background-color: #f03737; /* Green background */
+}
+
+
+@media (max-width: 768px) { 
+    .main-content, .img {
+        transform: scale(0.8);
+        transform-origin: top center;
+    }
+    .container{
+        flex-direction: column;
+    }
+    .nav-container{
+        width:100%
+    }
+}
+
+@media (max-width: 480px) { 
+    .main-content, .img {
+        transform: scale(0.8);
+        transform-origin: top left;
+    }
+    .container{
+        flex-direction: column;
+    }
+    .nav-container{
+        width:100%
+    }
 }
