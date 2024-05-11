@@ -334,7 +334,7 @@ function renderRequests(data) {
         }
 
         card.innerHTML = `
-            <h4>User Hash: ${request.userHash}</h4>
+            <h4>User Name: ${request.userName}</h4>
             <p>Request Date: ${new Date(request.requestDate).toLocaleString()}</p>
             <p>Status: ${request.status}</p>
             <p>Request Type: ${request.requestType}</p>
@@ -346,26 +346,6 @@ function renderRequests(data) {
     });
 }
 
-function deleteRequestsByUserHash(userHashes) {
-    window.alert("deleting request")
-    // if (userHashes.length === 0) return; // Skip if no requests to delete
-    // console.log('Deleting requests for users:', userHashes);
-
-    // fetch('http://localhost:5176/api/requestRecovery/deleteRequests', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(userHashes),
-    // })
-    // .then(response => {
-    //     if (!response.ok) throw new Error('Network response was not ok');
-    //     return response.json();
-    // })
-    // .then(data => {
-    //     console.log('Successfully deleted requests:', data);
-    //     fetchUserRequests(); // Refresh the data after deletion
-    // })
-    // .catch(error => console.error('Error deleting requests:', error));
-}
 
 function filterRequestsByStatus(status) {
     console.log("Filtering by status:", status);

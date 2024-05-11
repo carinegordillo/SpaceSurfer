@@ -51,35 +51,12 @@ public class RecoverRequestController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<UserRequestModel>>> GetAllRequests(){
 
-        var response = await _accountRecovery.ReadUserRequests();
-
-        if (response.HasError)
-        {
-            Console.WriteLine(response.ErrorMessage);
-            return StatusCode(500, response.ErrorMessage);
-        }
+    
 
         List<UserRequestModel> requestList = new List<UserRequestModel>();
 
-        if (response.ValuesRead != null)
-        {
-            foreach (DataRow row in response.ValuesRead.Rows)
-            {
-#pragma warning disable CS8601 // Possible null reference assignment.
-                var userRequest = new UserRequestModel
-                {
-                    RequestId = Convert.ToInt32(row["request_id"]),
-                    UserHash = Convert.ToString(row["userHash"]),
-                    RequestDate = Convert.ToDateTime(row["requestDate"]),
-                    Status = Convert.ToString(row["status"]),
-                    RequestType = Convert.ToString(row["requestType"]),
-                    ResolveDate = row["resolveDate"] != DBNull.Value ? Convert.ToDateTime(row["resolveDate"]) : (DateTime?)null,
-                    AdditionalInformation = row["additionalInformation"] != DBNull.Value ? Convert.ToString(row["additionalInformation"]) : null
-                };
-#pragma warning restore CS8601 // Possible null reference assignment.
-                requestList.Add(userRequest);
-            }
-        }
+        requestList = await _accountRecovery.ReadUserRequests();
+
 
         return Ok(requestList);
     }
