@@ -7,6 +7,7 @@ using SS.Backend.SharedNamespace;
 using SS.Backend.UserDataProtection;
 using SS.Backend.Services.DeletingService;
 using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,19 +48,36 @@ builder.Services.AddTransient<UserDataProtection>(provider =>
 );
 
 var app = builder.Build();
+// get localhost cofig file path
+var corsConfigFilePath = Path.Combine(projectRootDirectory, "Configs", "originsConfig.json");
+string allowedOrigin= "coudl not connect to config file";
 
+if (File.Exists(corsConfigFilePath))
+{
+    string configJson = File.ReadAllText(corsConfigFilePath);
+    
+    JsonDocument doc = JsonDocument.Parse(configJson);
+    JsonElement root = doc.RootElement.GetProperty("Origin");
+    allowedOrigin = root.GetProperty("CorsAllowedOrigin").GetString() ?? "NA";
+}
+
+Console.WriteLine("Cors Allowed Origin: ");
+Console.WriteLine(allowedOrigin);
 app.Use(async (context, next) =>
 {
-    // Get the origin header from the request
     var origin = context.Request.Headers[HeaderNames.Origin].ToString();
 
-    var allowedOrigins = new[] { "http://localhost:3000" };
+    Console.WriteLine("IN HERERREEER ");
+    Console.WriteLine(allowedOrigin);
+
+    var allowedOrigins = new[] {allowedOrigin};
 
     if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
     {
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowOrigin, origin);
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowMethods, "GET, POST, OPTIONS");
-        context.Response.Headers.Append(HeaderNames.AccessControlAllowHeaders, "Content-Type, Accept, Authorization");
+        context.Response.Headers.Append("Access-Control-Allow-Origin", origin);
+        context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Accept");
+        context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
     }
     if (context.Request.Method == "OPTIONS")
     {
