@@ -24,7 +24,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
 
 // builder.Services.AddControllers().AddJsonOptions(options =>
 // {
@@ -41,6 +41,8 @@ var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local
 builder.Services.AddTransient<ConfigService>(provider =>new ConfigService(configFilePath));
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
+builder.Services.AddTransient<ILogTarget, SqlLogTarget>();
+builder.Services.AddTransient<SS.Backend.Services.LoggingService.ILogger, Logger>();
 
 //Repo Setup
 builder.Services.AddTransient<ITaskManagerHubRepo, TaskManagerHubRepo>();
@@ -102,12 +104,12 @@ app.Use((context, next) =>
 });
 
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseDeveloperExceptionPage();
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+//     app.UseDeveloperExceptionPage();
+// }
 
 //app.UseHttpsRedirection();
 

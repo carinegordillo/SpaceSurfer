@@ -6,6 +6,7 @@ using SS.Backend.SharedNamespace;
 using SS.Backend.SpaceManager;
 using System.Diagnostics;
 using Microsoft.Data.SqlClient;
+using SS.Backend.Services.LoggingService;
 
 namespace SS.Backend.Tests.SpaceCreationTest
 {
@@ -16,6 +17,8 @@ namespace SS.Backend.Tests.SpaceCreationTest
         private ISpaceManagerDao? _spaceManagerDao; 
         private SqlDAO? _sqlDao;
         private ConfigService? _configService;
+        private ILogTarget _logTarget;
+        private ILogger _logger;
      
 
         [TestInitialize]
@@ -26,8 +29,9 @@ namespace SS.Backend.Tests.SpaceCreationTest
             var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
             _configService = new ConfigService(configFilePath);
             _sqlDao = new SqlDAO(_configService);
+            _logger = new Logger(_logTarget);
             _spaceManagerDao = new SpaceManagerDao(_sqlDao);
-            _spaceCreation = new SpaceCreation(_spaceManagerDao);
+            _spaceCreation = new SpaceCreation(_spaceManagerDao, _logger);
         }
         private async Task CleanupTestData()
         {

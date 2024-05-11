@@ -1,6 +1,7 @@
 using SS.Backend.SharedNamespace;
 using System.Data.SqlClient;
 using System.Data;
+using SS.Backend.Services.LoggingService;
 
 
 namespace SS.Backend.SpaceManager
@@ -9,11 +10,16 @@ namespace SS.Backend.SpaceManager
     public class SpaceModification : ISpaceModification
     {
         private readonly ISpaceManagerDao _spaceManagerDao;
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
 
         // SpaceManagerDao spaceManagerDao = new SpaceManagerDao();
-        public SpaceModification(ISpaceManagerDao spaceManagerDao)
+        public SpaceModification(ISpaceManagerDao spaceManagerDao, ILogger logger)
         {
             _spaceManagerDao = spaceManagerDao;
+            _logger = logger;
+            logEntry = logBuilder.Build();
         }
 
         public async Task<Response> ModifyFloorImage(CompanyFloor? companyFloor)
@@ -61,6 +67,21 @@ namespace SS.Backend.SpaceManager
 
             // Now call the GeneralModifier with the updated signature
             response = await _spaceManagerDao.GeneralModifier(whereClauses, "floorPlanImage", companyFloor.FloorPlanImage, "dbo.companyFloor");
+
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully modified {companyFloor.FloorPlanName} floor image.").User(companyFloor.hashedUsername).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to modify {companyFloor.FloorPlanName} floor image.").User(companyFloor.hashedUsername).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
 
             return response;
         }
@@ -112,6 +133,21 @@ namespace SS.Backend.SpaceManager
             // Now call the GeneralModifier with the updated signature
             response = await _spaceManagerDao.GeneralModifier(whereClauses, "timeLimit", spaceModifier.newTimeLimit, "dbo.companyFloorSpaces");
         
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully modified space {spaceModifier.spaceID} time limit.").User(spaceModifier.hashedUsername).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to modify space {spaceModifier.spaceID} time limit.").User(spaceModifier.hashedUsername).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
+
             return response;
         }
 
@@ -152,6 +188,22 @@ namespace SS.Backend.SpaceManager
             };
 
             response = await _spaceManagerDao.DeleteField(conditions, "dbo.companyFloorSpaces");
+
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully deleted space {spaceModifier.spaceID}.").User(spaceModifier.hashedUsername).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to delete space {spaceModifier.spaceID}.").User(spaceModifier.hashedUsername).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
+
             return response;
         }
 
@@ -177,6 +229,21 @@ namespace SS.Backend.SpaceManager
                 return response;
             }
             response = await _spaceManagerDao.readTableWhere("companyID", companyID, "dbo.companyFloor");
+
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully retrieved floor {companyID}.").User(hashedUsername).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to retrieve floor {companyID}.").User(hashedUsername).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
 
             return response;
         }
@@ -228,7 +295,22 @@ namespace SS.Backend.SpaceManager
             }
 
             var deleteFloorResponse = await _spaceManagerDao.DeleteField(new Dictionary<string, object> { { "floorPlanID", floorPlanID }, { "companyID", companyID } }, "dbo.companyFloor");
-        
+
+            //logging
+            if (deleteFloorResponse.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully deleted floor {companyFloor.FloorPlanName}.").User(companyFloor.hashedUsername).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to delete floor {companyFloor.FloorPlanImage}.").User(companyFloor.hashedUsername).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
+            
             return deleteFloorResponse;
         }
 
