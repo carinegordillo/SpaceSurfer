@@ -1,4 +1,58 @@
--------------------------------------------------
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[CheckConflictingReservationsAutoID]
+    @companyID INT,
+    @floorPlanID INT,
+    @spaceID NVARCHAR(255),
+    @proposedStartDateTime DATETIME,
+    @proposedEndDateTime DATETIME,
+    @reservationIdToExclude INT = NULL  
+AS
+BEGIN
+    SELECT reservationID
+    FROM dbo.NewAutoIDReservations 
+    WHERE companyID = @companyID
+    AND floorPlanID = @floorPlanID 
+    AND spaceID = @spaceID 
+    AND status = 'Active'
+    AND NOT (
+        reservationEndTime <= @proposedStartDateTime
+        OR reservationStartTime >= @proposedEndDateTime
+    )
+    AND (@reservationIdToExclude IS NULL OR reservationID != @reservationIdToExclude);
+END;
+GO
+---------------------------------------------------------------
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[CheckConflictingReservationsManualID]
+    @companyID INT,
+    @floorPlanID INT,
+    @spaceID NVARCHAR(255),
+    @proposedStartDateTime DATETIME,
+    @proposedEndDateTime DATETIME,
+    @reservationIdToExclude INT = NULL  
+AS
+BEGIN
+    SELECT reservationID
+    FROM dbo.NewManualIDReservations 
+    WHERE companyID = @companyID
+    AND floorPlanID = @floorPlanID 
+    AND spaceID = @spaceID 
+    AND status = 'Active'
+    AND NOT (
+        reservationEndTime <= @proposedStartDateTime
+        OR reservationStartTime >= @proposedEndDateTime
+    )
+    AND (@reservationIdToExclude IS NULL OR reservationID != @reservationIdToExclude);
+END;
+GO
+---------------------------------------------------------------
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -26,7 +80,198 @@ BEGIN
 END;
 GO
 
--------------------------------------------------
+---------------------------------------------------------------
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[DeleteReservationPROD]
+    @ReservationID INT, 
+    @UserHash VARCHAR(50)
+AS
+BEGIN
+    -- Enabling error handling
+    BEGIN TRY
+        -- Deleting the reservation matching both reservationID and userHash
+        DELETE FROM [dbo].[reservations]
+        WHERE reservationID = @ReservationID AND userHash = @UserHash;
+
+        -- If the delete was successful, return the number of affected rows
+        SELECT @@ROWCOUNT AS 'DeletedRowsCount';
+    END TRY
+    BEGIN CATCH
+        -- If there's an error, return the error message
+        SELECT 
+            ERROR_NUMBER() AS ErrorNumber,
+            ERROR_MESSAGE() AS ErrorMessage;
+    END CATCH
+END;
+GO
+
+
+
+---------------------------------------------------------------
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetCompanyFloorPROD]
+    @companyId INT
+AS
+BEGIN
+    SELECT f.floorPlanID, f.FloorPlanName, f.FloorPlanImage, s.spaceID, s.timeLimit
+    FROM dbo.companyFloor f
+    JOIN dbo.companyFloorSpaces s ON f.floorPlanID = s.floorPlanID
+    WHERE f.companyID = @companyId;
+END
+GO
+
+
+
+
+
+---------------------------------------------------------------
+
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetCompanyInfoPROD]
+AS
+BEGIN
+    SELECT companyID, companyName, address, openingHours, closingHours, daysOpen, companyType
+    FROM dbo.companyProfile;
+END
+GO
+
+
+
+---------------------------------------------------------------
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[GetEmployeeCompanyInfoPROD]
+    @CompanyID INT
+AS
+BEGIN
+    SELECT 
+        companyID, 
+        companyName, 
+        address, 
+        openingHours, 
+        closingHours, 
+        daysOpen,
+        companyType
+    FROM 
+        dbo.companyProfile
+    WHERE 
+        companyID = @CompanyID;
+END
+GO
+
+
+
+
+
+---------------------------------------------------------------
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[GetFacilitiesInfoPROD]
+AS
+BEGIN
+    SELECT 
+        companyID, 
+        companyName, 
+        address, 
+        openingHours, 
+        closingHours, 
+        daysOpen, companyType
+    FROM 
+        dbo.companyProfile
+    WHERE 
+        companyType = 3;
+END
+GO
+
+
+
+
+---------------------------------------------------------------
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[InsertCompanyFloor]
+    @companyID INT,
+    @floorPlanName VARCHAR(50),
+    @floorPlanImage VARBINARY(MAX)
+AS
+BEGIN
+    INSERT INTO dbo.companyFloor (companyID, floorPlanName, floorPlanImage)
+    VALUES (@companyID, @floorPlanName, @floorPlanImage)
+END
+GO
+
+
+
+---------------------------------------------------------------
+
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[UpdateReservationStatusAutoID]
+AS
+BEGIN
+    UPDATE dbo.NewAutoIDReservations
+    SET Status = 'Passed'
+    WHERE reservationEndTime < SYSDATETIME()
+    AND Status = 'Active'
+END
+GO
+
+
+
+
+
+---------------------------------------------------------------
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[UpdateReservationStatusManualID]
+AS
+BEGIN
+    UPDATE dbo.NewManualIDReservations
+    SET Status = 'Passed'
+    WHERE reservationEndTime < SYSDATETIME()
+    AND Status = 'Active'
+END
+GO
+
+---------------------------------------------------------------
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -40,4 +285,6 @@ BEGIN
     AND Status = 'Active'
 END
 GO
--------------------------------------------------
+
+
+---------------------------------------------------------------

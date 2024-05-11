@@ -307,8 +307,7 @@ function getUsersReservations(userName, accessToken) {
         return response.json();
     })
     .then(data => {
-        console.log("in here");
-        console.log(data);
+
         renderReservations(data, '.reservation-list');
     })
     .catch(error => {
@@ -1087,7 +1086,7 @@ async function fetchCompanies() {
             li.classList.add('company-item');
             if (company.companyType === 2) {
                 li.classList.add('user-company'); 
-                htmlContent= ' <h5>Your Workplace</h5>'
+                htmlContent= ' <h5>Workplace</h5>'
             }
             htmlContent += `
                 <div class="company-name clickable" data-company-id="${company.companyID}">${company.companyName}</div>

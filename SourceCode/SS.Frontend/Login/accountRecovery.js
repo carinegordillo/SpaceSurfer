@@ -247,12 +247,34 @@ async function initUserRequests() {
         
         
         
-        
     });
 
     document.getElementById('loadRequestsButton').addEventListener('click', fetchUserRequests);
+    document.getElementById('filterByUsernameBtn').addEventListener('click', function() {
+        const username = document.getElementById('usernameInput').value.trim();
+        filterRequestsByUsername(username);
+    });
+
 
     await fetchUserRequests();
+}
+
+// Function to filter requests by username
+function filterRequestsByUsername(username) {
+    if (!username) {
+        console.log("No username entered, displaying all requests");
+        renderRequests(window.allRequests);
+        return;
+    }
+
+    console.log("Filtering by username:", username);
+
+    const filteredRequests = window.allRequests.filter(request => {
+        return request.userName.toLowerCase().includes(username.toLowerCase());
+    });
+
+    console.log(filteredRequests);
+    renderRequests(filteredRequests);
 }
 
 document.addEventListener('click', function (event) {
