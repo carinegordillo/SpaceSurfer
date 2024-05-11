@@ -94,10 +94,7 @@ app.Use(async (context, next) =>
     }
 });
 
-//app.UseMiddleware<AuthorizationMiddleware>();
-
-
-
+app.UseMiddleware<AuthorizationMiddleware>();
 
 app.MapControllers();
 
