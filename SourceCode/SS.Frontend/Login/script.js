@@ -1,5 +1,5 @@
-let viewStartTimer = null;
 let appConfig = null;
+clearTimer();
 
 function loadConfig() {
     fetch('csp-config.json')  
@@ -210,6 +210,9 @@ function manageUserViews(role, userIdentity) {
 
 function logout() {
     console.log("logout clicked")
+    const currentView = sessionStorage.getItem('currentView');
+    endTimerAndInsertDuration(currentView);
+
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('idToken');
     sessionStorage.removeItem('userIdentity');
@@ -268,6 +271,7 @@ function registrationAccess() {
     document.getElementById("accountCreationForm").style.display = "block";
     document.getElementById("enterRegistrationOTPSection").style.display = "none";
     document.getElementById('noLogin').style.display = 'block';    
+    startTimer('Register View');
 }
 
 function taskHubAccess() {
@@ -363,6 +367,11 @@ function clearTimer() {
 function endTimerAndInsertDuration(viewName) {
     const viewStartTime = sessionStorage.getItem('viewStartTime');
     const currentView = sessionStorage.getItem('currentView');
+    var idToken = sessionStorage.getItem('idToken');
+    if (idToken === null) {
+        return;
+    }
+
     if (viewStartTime && currentView === viewName) {
         const durationInSeconds = Math.round((new Date() - new Date(parseInt(viewStartTime))) / 1000);
         fetchInsertViewDuration(viewName, durationInSeconds)

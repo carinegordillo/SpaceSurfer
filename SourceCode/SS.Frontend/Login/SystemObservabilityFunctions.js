@@ -45,8 +45,6 @@ async function fetchAnalysis(timeSpan) {
         // Parse and return the response data
         const data = await response.json();
 
-        await fetchInsertUsedFeature("Usage Analysis");
-
         return data;
     }
     catch (error) {
@@ -92,6 +90,8 @@ async function updateTimeSpan() {
         updateLoginsTrendChart(loginLabels, successfulLogins, failedLogins);
         updateRegistrationTrendChart(registrationLabels, successfulRegistrations, failedRegistrations);
 
+        createTopListData(analysis);
+
     }, 60000);
 
     sessionStorage.setItem('intervalId', intervalId);
@@ -124,7 +124,7 @@ async function updateTimeSpan() {
         updateLoginsTrendChart(loginLabels, successfulLogins, failedLogins);
         updateRegistrationTrendChart(registrationLabels, successfulRegistrations, failedRegistrations);
 
-
+        createTopListData(analysis);
 
     }
     else {
@@ -258,4 +258,33 @@ function updateRegistrationTrendChart(labels, successfulRegistrations, failedReg
             }
         }
     });
+}
+
+function createTopListData(analysis) {
+    const topItems = {
+        viewsDuration: analysis.viewsDurationCount,
+        usedFeatures: analysis.usedFeatureCount,
+        companyReservations: analysis.topCompanyReservationCount,
+        companySpaces: analysis.topCompanySpaceCount
+    };
+
+    for (let itemType in topItems) {
+        if (topItems.hasOwnProperty(itemType)) {
+            const topItemsList = topItems[itemType];
+            const listContainer = document.getElementById(`${itemType}List`);
+
+            // Clear existing list
+            while (listContainer.firstChild) {
+                listContainer.removeChild(listContainer.firstChild);
+            }
+
+            // Create and append new list items
+            for (let i = 0; i < Math.min(topItemsList.length, 3); i++) {
+                const item = topItemsList[i];
+                const li = document.createElement('li');
+                li.textContent = `${item.companyName || item.viewName || item.featureName}: ${item.durationInSeconds || item.usageCount || item.reservationCount}`;
+                listContainer.appendChild(li);
+            }
+        }
+    }
 }

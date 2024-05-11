@@ -533,8 +533,35 @@
         <button type="button" id="so-timespan-button" onclick="updateTimeSpan(); fetchInsertUsedFeature('System Observability')">Confirm Timespan</button>
 
         <div id="systemObservabilityContainer">
+            <h3>Failed/Successful Logins:</h3>
             <canvas id="loginsTrendChart"></canvas>
+            <h3>Failed/Successful Registrations:</h3>
             <canvas id="registrationsTrendChart"></canvas>
+            <div id="topItemsContainer">
+                <!-- Top 3 Views Duration Count -->
+                <div class="topItems" id="viewsDuration">
+                    <h3>Top 3 Views Duration Count:</h3>
+                    <div id="viewsDurationList"></div>
+                </div>
+
+                <!-- Top 3 Used Features -->
+                <div class="topItems" id="usedFeatures">
+                    <h3>Top 3 Used Features:</h3>
+                    <div id="usedFeaturesList"></div>
+                </div>
+
+                <!-- Top 3 Company Reservation Count -->
+                <div class="topItems" id="companyReservations">
+                    <h3>Top 3 Company Reservation Count:</h3>
+                    <div id="companyReservationsList"></div>
+                </div>
+
+                <!-- Top 3 Company Space Count -->
+                <div class="topItems" id="companySpaces">
+                    <h3>Top 3 Company Space Count:</h3>
+                    <div id="companySpacesList"></div>
+                </div>
+            </div>
         </div>
 
     </section>
