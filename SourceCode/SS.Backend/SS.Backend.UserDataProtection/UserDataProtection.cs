@@ -57,47 +57,24 @@ public class UserDataProtection
 
         List<ReservationData> reservations = new List<ReservationData>();
 
-        foreach (DataRow row in result.ValuesRead?.Rows)
+        if (result.ValuesRead != null && result.ValuesRead.Rows.Count > 0)
         {
-            reservations.Add(new ReservationData
+            foreach (DataRow row in result.ValuesRead.Rows)
             {
-                ReservationID = Convert.ToInt32(row["reservationID"]),
-                CompanyID = Convert.ToInt32(row["companyID"]),
-                FloorPlanID = Convert.ToInt32(row["floorPlanID"]),
-                SpaceID = row["spaceID"].ToString(),
-                StartTime = Convert.ToDateTime(row["reservationStartTime"]),
-                EndTime = Convert.ToDateTime(row["reservationEndTime"]),
-                Status = row["status"].ToString()
-            });
+                reservations.Add(new ReservationData
+                {
+                    ReservationID = Convert.ToInt32(row["reservationID"]),
+                    CompanyID = Convert.ToInt32(row["companyID"]),
+                    FloorPlanID = Convert.ToInt32(row["floorPlanID"]),
+                    SpaceID = row["spaceID"].ToString(),
+                    StartTime = Convert.ToDateTime(row["reservationStartTime"]),
+                    EndTime = Convert.ToDateTime(row["reservationEndTime"]),
+                    Status = row["status"].ToString()
+                });
+            }
         }
 
         return reservations;
-    }
-
-    public async Task<List<WaitlistData>> GetWaitlists(string userhash)
-    {
-        var builder = new CustomSqlCommandBuilder();
-        var result = new Response();
-
-        var getWaitlists = builder
-            .BeginSelectAll()
-            .From("Waitlist")
-            .Where($"Username = '{userhash}'")
-            .Build();
-        result = await _sqldao.ReadSqlResult(getWaitlists);
-
-        List<WaitlistData> waitlists = new List<WaitlistData>();
-
-        foreach (DataRow row in result.ValuesRead?.Rows)
-        {
-            waitlists.Add(new WaitlistData
-            {
-                ReservationID = Convert.ToInt32(row["ReservationID"]),
-                Position = Convert.ToInt32(row["Position"])
-            });
-        }
-
-        return waitlists;
     }
 
     public async Task<List<FloorData>> GetFloors(int companyID)
@@ -114,37 +91,69 @@ public class UserDataProtection
 
         List<FloorData> floors = new List<FloorData>();
 
-        foreach (DataRow row in result.ValuesRead?.Rows)
+        if (result.ValuesRead != null && result.ValuesRead.Rows.Count > 0)
         {
-            int floorID = Convert.ToInt32(row["floorPlanID"]);
-            string floorName = row["floorPlanName"].ToString();
-
-            var getSpaces = builder
-                .BeginSelectAll()
-                .From("companyFloorSpaces")
-                .Where($"floorPlanID = '{floorID}' AND companyID = '{companyID}'")
-                .Build();
-            result = await _sqldao.ReadSqlResult(getSpaces);
-
-            List<SpaceData> spaces = new List<SpaceData>();
-            foreach (DataRow spaceRow in result.ValuesRead?.Rows)
+            foreach (DataRow row in result.ValuesRead.Rows)
             {
-                spaces.Add(new SpaceData
+                int floorID = Convert.ToInt32(row["floorPlanID"]);
+                string floorName = row["floorPlanName"].ToString();
+
+                var getSpaces = builder
+                    .BeginSelectAll()
+                    .From("companyFloorSpaces")
+                    .Where($"floorPlanID = '{floorID}' AND companyID = '{companyID}'")
+                    .Build();
+                result = await _sqldao.ReadSqlResult(getSpaces);
+
+                List<SpaceData> spaces = new List<SpaceData>();
+                foreach (DataRow spaceRow in result.ValuesRead?.Rows)
                 {
-                    SpaceID = spaceRow["spaceID"].ToString(),
-                    TimeLimit = Convert.ToInt32(spaceRow["timeLimit"])
+                    spaces.Add(new SpaceData
+                    {
+                        SpaceID = spaceRow["spaceID"].ToString(),
+                        TimeLimit = Convert.ToInt32(spaceRow["timeLimit"])
+                    });
+                }
+
+                floors.Add(new FloorData
+                {
+                    FloorID = floorID,
+                    FloorName = floorName,
+                    Spaces = spaces
                 });
             }
-
-            floors.Add(new FloorData
-            {
-                FloorID = floorID,
-                FloorName = floorName,
-                Spaces = spaces
-            });
         }
 
         return floors;
+    }
+
+    public async Task<List<WaitlistData>> GetWaitlists(string userhash)
+    {
+        var builder = new CustomSqlCommandBuilder();
+        var result = new Response();
+
+        var getWaitlists = builder
+            .BeginSelectAll()
+            .From("Waitlist")
+            .Where($"Username = '{userhash}'")
+            .Build();
+        result = await _sqldao.ReadSqlResult(getWaitlists);
+
+        List<WaitlistData> waitlists = new List<WaitlistData>();
+
+        if (result.ValuesRead != null && result.ValuesRead.Rows.Count > 0)
+        {
+            foreach (DataRow row in result.ValuesRead.Rows)
+            {
+                waitlists.Add(new WaitlistData
+                {
+                    ReservationID = Convert.ToInt32(row["ReservationID"]),
+                    Position = Convert.ToInt32(row["Position"])
+                });
+            }
+        }
+
+        return waitlists;
     }
 
     public async Task<UserDataModel> accessData_GeneralUser(string userhash)
@@ -153,6 +162,7 @@ public class UserDataProtection
         var result = new Response();
 
         var username = await getUsername(userhash); // Username
+        Console.WriteLine("Inside accessData_Gen: Username - " + username);
 
         var getFirstName = builder
             .BeginSelectAll()
@@ -161,6 +171,7 @@ public class UserDataProtection
             .Build();
         result = await _sqldao.ReadSqlResult(getFirstName);
         string? firstName = result.ValuesRead?.Rows[0]?["firstName"].ToString(); // First name
+        Console.WriteLine("Inside accessData_Gen: First name - " + firstName);
 
         var getLastName = builder
             .BeginSelectAll()
@@ -169,6 +180,7 @@ public class UserDataProtection
             .Build();
         result = await _sqldao.ReadSqlResult(getLastName);
         string? lastName = result.ValuesRead?.Rows[0]?["lastName"].ToString(); // Last name
+        Console.WriteLine("Inside accessData_Gen: Last name - " + lastName);
 
         var getBirthDate = builder
             .BeginSelectAll()
@@ -178,6 +190,7 @@ public class UserDataProtection
 
         result = await _sqldao.ReadSqlResult(getBirthDate);
         DateTime birthDate = Convert.ToDateTime(result.ValuesRead?.Rows[0]?["birthDate"]); // Birth date
+        Console.WriteLine("Inside accessData_Gen: Bday - " + birthDate);
 
         var getBackup = builder
             .BeginSelectAll()
@@ -190,6 +203,7 @@ public class UserDataProtection
         {
             backupEmail = null;
         }
+        Console.WriteLine("Inside accessData_Gen: Backup - " + backupEmail);
 
         var getRole = builder
             .BeginSelectAll()
@@ -198,6 +212,7 @@ public class UserDataProtection
             .Build();
         result = await _sqldao.ReadSqlResult(getRole);
         int appRole = Convert.ToInt32(result.ValuesRead?.Rows[0]?["appRole"]); // App role
+        Console.WriteLine("Inside accessData_Gen: Role - " + appRole);
 
         var getIsActive = builder
             .BeginSelectAll()
@@ -205,7 +220,8 @@ public class UserDataProtection
             .Where($"hashedUsername = '{userhash}'")
             .Build();
         result = await _sqldao.ReadSqlResult(getIsActive);
-        string? activeStatus = result.ValuesRead?.Rows[0]?["isActive"].ToString(); // Backup email
+        string? activeStatus = result.ValuesRead?.Rows[0]?["isActive"].ToString(); // Is Active
+        Console.WriteLine("Inside accessData_Gen: IsActive - " + activeStatus);
 
         var getOTP = builder
             .BeginSelectAll()
@@ -214,10 +230,13 @@ public class UserDataProtection
             .Build();
         result = await _sqldao.ReadSqlResult(getOTP);
         string? otp = result.ValuesRead?.Rows[0]?["OTP"].ToString(); // Last used OTP
+        Console.WriteLine("Inside accessData_Gen: OTP - " + otp);
 
         List<ReservationData> reservations = await GetReservations(userhash); // Reservations
+        Console.WriteLine("Inside accessData_Gen: got through reservations");
 
         List<WaitlistData> waitlists = await GetWaitlists(userhash); // Waitlists
+        Console.WriteLine("Inside accessData_Gen: got through waitlists");
 
         UserDataModel userData = new UserDataModel
         {
@@ -475,7 +494,6 @@ public class UserDataProtection
                 await writer.WriteLineAsync($"  Position: {waitlist.Position}");
                 await writer.WriteLineAsync();
             }
-
         }
     }
 
@@ -540,28 +558,50 @@ public class UserDataProtection
         }
     }
 
-    public async Task deleteData_GeneralUser(string userhash)
+    // just deleting logs for now
+    public async Task deleteData(string userhash)
     {
         var builder = new CustomSqlCommandBuilder();
         var result = new Response();
 
-
+        var deleteCmd = builder.deleteLogs(userhash).Build();
+        result = await _sqldao.SqlRowsAffected(deleteCmd);
     }
 
-    public async Task deleteData_Manager(string userhash)
+    public async Task sendDeleteEmail(UserDataModel userData, string attachmentPath)
     {
         var builder = new CustomSqlCommandBuilder();
         var result = new Response();
 
+        string? subject = $@"Confirmation of Data Deletion Request";
+        string? msg = $@"
+        Dear {userData.FirstName},
 
-    }
+        We have received your request to delete your data in accordance with the Personal Information Protection and California Privacy Rights Act (PII and CPRA) data laws. We understand and respect your privacy concerns and are committed to complying with these regulations.
 
-    public async Task sendDeleteEmail(UserDataModel userData)
-    {
-        var builder = new CustomSqlCommandBuilder();
-        var result = new Response();
+        Your data deletion request has been processed, and we have taken the necessary steps to remove all identifiable personal information associated with your account from our system. This includes details such as your username, first name, last name, birth date, backup email, app role, reservations, waitlist information, company details, and any other relevant data that we may have on file.
 
+        Please note that while your personal information has been deleted from our active databases, some residual data may remain in our backup systems for a limited period as part of our data retention policies. Rest assured, this data is securely stored and will be permanently deleted in accordance with our retention schedules.
 
+        If you have any further questions or concerns regarding your data deletion request, or if you believe there has been an error in the deletion process, please feel free to contact us at spacesurfers5@gmail.com. We are here to assist you and ensure that your privacy rights are upheld.
+
+        Thank you for your understanding and cooperation in this matter and look forward to seeing you again.
+
+        Best regards,
+        Space Surfer Team";
+
+        try
+        {
+            Console.WriteLine("Inside method (email): " + userData.Username);
+            Console.WriteLine("Inside method (output path): " + attachmentPath);
+            await MailSender.SendEmailWithAttachment(userData.Username, subject, msg, attachmentPath);
+            result.HasError = false;
+        }
+        catch (Exception ex)
+        {
+            result.HasError = true;
+            result.ErrorMessage = ex.Message;
+        }
     }
 
     public async Task<(string otp, Response res)> SendCode(string userhash)

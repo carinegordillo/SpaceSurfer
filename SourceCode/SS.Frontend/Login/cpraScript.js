@@ -71,50 +71,69 @@ function showAccessSuccessMessage() {
     modal.style.display = 'block';
 }
 
-//async function deleteData() {
-//    var accessToken = sessionStorage.getItem('accessToken');
-//    var idToken = sessionStorage.getItem('idToken');
-//    var parsedIdToken = JSON.parse(idToken);
-//    var username = parsedIdToken.Username;
+async function deleteData() {
+    var accessToken = sessionStorage.getItem('accessToken');
+    var idToken = sessionStorage.getItem('idToken');
+    var parsedIdToken = JSON.parse(idToken);
+    var username = parsedIdToken.Username;
 
-//    const isTokenExp = checkTokenExpiration(accessToken);
-//    if (!isTokenExp) {
-//        logout();
-//        return;
-//    }
+    try {
+        console.log("running user data protection endpoint");
+        const deleteResponse = await fetch(`http://localhost:5084/api/userDataProtection/deleteData`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(username)
+        });
 
-//    try {
-//        console.log(JSON.stringify(username));
-//        const response = await fetch(`http://localhost:5084/api/userDataProtection/deleteData`, {
-//            method: 'POST',
-//            headers: {
-//                'Authorization': 'Bearer ' + accessToken,
-//                'Content-Type': 'application/json'
-//            },
-//            body: JSON.stringify(username)
-//        });
+        if (!deleteResponse.ok) {
+            throw new Error(`HTTP error! status: ${deleteResponse.status}`);
+        }
 
-//        if (!response.ok) {
-//            throw new Error(`HTTP error! status: ${response.status}`);
-//        }
+        const contentType = deleteResponse.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const deleteData = await deleteResponse.json();
+            console.log('Delete response:', deleteData);
+            if (deleteData.newToken) {
+                accessToken = deleteData.newToken;
+                sessionStorage.setItem('accessToken', accessToken);
+                console.log('New access token stored:', accessToken);
+            }
+        } else {
+            console.log('Delete operation successful.');
+        }
 
-//        var data = await response;
+        console.log('Successfully deleted data.');
 
-//        if (data.newToken) {
-//            accessToken = data.newToken;
-//            sessionStorage.setItem('accessToken', accessToken);
-//            console.log('New access token stored:', accessToken);
-//        }
+        console.log("running account deletion endpoint");
+        const secondResponse = await fetch(`http://localhost:5198/api/AccountDeletion/Delete`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json'
+            }
+        });
 
-//        if (response.ok) {
-//            showDeleteSuccessMessage();
-//            console.log('Successfully deleted data.');
-//        }
+        if (!secondResponse.ok) {
+            throw new Error(`HTTP error! status: ${secondResponse.status}`);
+        }
 
-//    } catch (error) {
-//        console.error('Error deleting data:', error);
-//    }
-//}
+        const secondAccountDeletionData = await secondResponse.json();
+        if (secondAccountDeletionData.newToken) {
+            accessToken = secondAccountDeletionData.newToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            console.log('New access token stored:', accessToken);
+        }
+
+        console.log('Successfully completed account deletion.');
+
+        showDeleteSuccessMessage();
+    } catch (error) {
+        console.error('Error deleting data:', error);
+    }
+}
 
 function showDeleteSuccessMessage() {
     const modal = document.createElement('div');
@@ -133,6 +152,8 @@ function showDeleteSuccessMessage() {
     const closeButton = modalContent.querySelector('.close-button');
     closeButton.addEventListener('click', function () {
         modal.style.display = 'none';
+        logout();
+        document.getElementById('cpraView').style.display = 'none';
     });
 
     modal.appendChild(modalContent);
@@ -141,7 +162,7 @@ function showDeleteSuccessMessage() {
     modal.style.display = 'block';
 }
 
-function sendCode() {
+function sendCode_Access() {
     var userIdentity = document.getElementById("userIdentity").value;
     console.log(userIdentity);
     if (!appConfig) {
@@ -164,14 +185,40 @@ function sendCode() {
         })
         .then(data => {
             document.getElementById("requestDataSection").style.display = "none";
-            document.getElementById("verifyOTPSection").style.display = "block";
+            document.getElementById("verifyOTPSection_Access").style.display = "block";
         })
         .catch(error => {
             alert(error.message);
         });
 }
 
-function verifyUser() {
+function sendCode_Deletion() {
+    var userIdentity = document.getElementById("userIdentity").value;
+    console.log(userIdentity);
+
+    fetch('http://localhost:5270/api/auth/sendOTP', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userIdentity: userIdentity })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error sending verification code.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById("deleteDataSection").style.display = "none";
+            document.getElementById("verifyOTPSection_Deletion").style.display = "block";
+        })
+        .catch(error => {
+            alert(error.message);
+        });
+}
+
+function verifyUser_Access() {
     var accessToken = sessionStorage.getItem('accessToken');
     var idToken = sessionStorage.getItem('idToken');
     var parsedIdToken = JSON.parse(idToken);
@@ -196,12 +243,43 @@ function verifyUser() {
             return response;
         })
         .then(data => {
-            document.getElementById("verifyOTPSection").style.display = "none";
+            document.getElementById("verifyOTPSection_Access").style.display = "none";
             accessData();
             console.log("otp matches");
         })
         .catch (error => {
-            document.getElementById("verifyOTPSection").style.display = "none";
+            document.getElementById("verifyOTPSection_Access").style.display = "none";
+            console.log("Error:", error);
+        });
+}
+
+function verifyUser_Deletion() {
+    var accessToken = sessionStorage.getItem('accessToken');
+    var idToken = sessionStorage.getItem('idToken');
+    var parsedIdToken = JSON.parse(idToken);
+    var username = parsedIdToken.Username;
+    var otp = document.getElementById('deletion_otp').value;
+
+    fetch('http://localhost:5270/api/auth/verifyCode', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userIdentity: username, proof: otp })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error verifying OTP.');
+            }
+            return response;
+        })
+        .then(data => {
+            document.getElementById("verifyOTPSection_Deletion").style.display = "none";
+            deleteData();
+            console.log("otp matches");
+        })
+        .catch(error => {
+            document.getElementById("verifyOTPSection_Deletion").style.display = "none";
             console.log("Error:", error);
         });
 }
@@ -213,20 +291,22 @@ function createUserProtectionUI() {
     requestDataButton.textContent = 'Request Data';
     requestDataButton.addEventListener('click', function () {
         document.getElementById('requestDataSection').style.display = 'block';
-        //document.getElementById('deleteDataSection').style.display = 'none';
-        document.getElementById('verifyOTPSection').style.display = 'none';
+        document.getElementById('deleteDataSection').style.display = 'none';
+        document.getElementById('verifyOTPSection_Access').style.display = 'none';
+        document.getElementById('verifyOTPSection_Deletion').style.display = 'none';
     });
 
-    //const deleteDataButton = document.createElement('button');
-    //deleteDataButton.textContent = 'Delete Data';
-    //deleteDataButton.addEventListener('click', function () {
-    //    document.getElementById('deleteDataSection').style.display = 'block';
-    //    document.getElementById('requestDataSection').style.display = 'none';
-    //    document.getElementById('verifyOTPSection').style.display = 'none';
-    //});
+    const deleteDataButton = document.createElement('button');
+    deleteDataButton.textContent = 'Delete Data';
+    deleteDataButton.addEventListener('click', function () {
+        document.getElementById('deleteDataSection').style.display = 'block';
+        document.getElementById('requestDataSection').style.display = 'none';
+        document.getElementById('verifyOTPSection_Access').style.display = 'none';
+        document.getElementById('verifyOTPSection_Deletion').style.display = 'none';
+    });
 
     contentContainer.appendChild(requestDataButton);
-    //contentContainer.appendChild(deleteDataButton);
+    contentContainer.appendChild(deleteDataButton);
 
     const requestDataSection = document.createElement('section');
     requestDataSection.id = 'requestDataSection';
@@ -243,50 +323,71 @@ function createUserProtectionUI() {
     `;
     contentContainer.appendChild(requestDataSection);
 
-    //const deleteDataSection = document.createElement('section');
-    //deleteDataSection.id = 'deleteDataSection';
-    //deleteDataSection.classList.add('form-container');
-    //deleteDataSection.style.display = 'none';
-    //deleteDataSection.innerHTML = `
-    //    <h2>Delete Your Data</h2>
-    //    <p>By deleting your data, you acknowledge that all your personal data will be permanently removed from our system. This action is irreversible.</p>
-    //    <form id="deleteDataForm">
-    //        <label for="deleteUsername">Enter Your Username:</label>
-    //        <input type="text" id="deleteUsername" name="deleteUsername" required>
-    //        <button type="submit">Delete Data</button>
-    //    </form>
-    //`;
-    //contentContainer.appendChild(deleteDataSection);
+    const deleteDataSection = document.createElement('section');
+    deleteDataSection.id = 'deleteDataSection';
+    deleteDataSection.classList.add('form-container');
+    deleteDataSection.style.display = 'none';
+    deleteDataSection.innerHTML = `
+        <h2>Delete Your Data</h2>
+        <p>By deleting your data, you acknowledge that all your personal data will be permanently removed from our system. This action is irreversible.</p>
+        <form id="deleteDataForm">
+            <label for="deleteUsername">Enter Your Username:</label>
+            <input type="text" id="deleteUsername" name="deleteUsername" required>
+            <button type="submit">Delete Data</button>
+        </form>
+    `;
+    contentContainer.appendChild(deleteDataSection);
 
-    const verifyOTPSection = document.createElement('section');
-    verifyOTPSection.id = 'verifyOTPSection';
-    verifyOTPSection.classList.add('form-container');
-    verifyOTPSection.style.display = 'none';
-    verifyOTPSection.innerHTML = `
+    const verifyOTPSection_Access = document.createElement('section');
+    verifyOTPSection_Access.id = 'verifyOTPSection_Access';
+    verifyOTPSection_Access.classList.add('form-container');
+    verifyOTPSection_Access.style.display = 'none';
+    verifyOTPSection_Access.innerHTML = `
         <h2>Verify Your Identity</h2>
-        <form id="verifyOTPForm">
+        <form id="verifyOTPForm_Access">
             <label for="access_otp">Enter Verification Code:</label>
             <input type="text" id="access_otp" name="access_otp" required>
             <button type="submit">Submit</button>
         </form>
     `;
-    contentContainer.appendChild(verifyOTPSection);
+    contentContainer.appendChild(verifyOTPSection_Access);
 
+    const verifyOTPSection_Deletion = document.createElement('section');
+    verifyOTPSection_Deletion.id = 'verifyOTPSection_Deletion';
+    verifyOTPSection_Deletion.classList.add('form-container');
+    verifyOTPSection_Deletion.style.display = 'none';
+    verifyOTPSection_Deletion.innerHTML = `
+        <h2>Verify Your Identity</h2>
+        <form id="verifyOTPForm_Deletion">
+            <label for="deletion_otp">Enter Verification Code:</label>
+            <input type="text" id="deletion_otp" name="deletion_otp" required>
+            <button type="submit">Submit</button>
+        </form>
+    `;
+    contentContainer.appendChild(verifyOTPSection_Deletion);
     document.getElementById('requestDataForm').addEventListener('submit', function (event) {
         event.preventDefault();
-        sendCode();
+        sendCode_Access();
     });
 
-    //document.getElementById('deleteDataForm').addEventListener('submit', function (event) {
-    //    event.preventDefault();
-    //    deleteData();
-    //});
+    document.getElementById('deleteDataForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        sendCode_Deletion();
+    });
 
-    const verifyOTPForm = document.getElementById('verifyOTPForm');
-    if (verifyOTPForm) {
-        verifyOTPForm.addEventListener('submit', function (event) {
+    const verifyOTPForm_Access = document.getElementById('verifyOTPForm_Access');
+    if (verifyOTPForm_Access) {
+        verifyOTPForm_Access.addEventListener('submit', function (event) {
             event.preventDefault();
-            verifyUser();
+            verifyUser_Access();
+        });
+    }
+
+    const verifyOTPForm_Deletion = document.getElementById('verifyOTPForm_Deletion');
+    if (verifyOTPForm_Deletion) {
+        verifyOTPForm_Deletion.addEventListener('submit', function (event) {
+            event.preventDefault();
+            verifyUser_Deletion();
         });
     }
 }
@@ -300,6 +401,7 @@ function showUserProtectionSection() {
 function cpraAccess() {
     document.getElementById('cpraView').style.display = 'block';
 
+    document.getElementById('userProfileView').style.display = 'none';
     document.getElementById('homepageGen').style.display = 'none';
     document.getElementById('homepageManager').style.display = 'none';
     document.getElementById('sendOTPSection').style.display = 'none';

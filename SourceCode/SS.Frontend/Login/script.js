@@ -360,6 +360,8 @@ function hideAllSections() {
     document.getElementById("accountRecoverySection").style.display = "none";
     document.getElementById("userRequestsView").style.display = "none";
     document.getElementById("enterRegistrationOTPSection").style.display = "none";
+    document.getElementById('cpraView').style.display = 'none';
+    document.getElementById('deletionView').style.display = 'none';
 }
 
 function startTimer(viewName) {
