@@ -13,9 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using SS.Backend.Services.LoggingService;
 using System.Text;
-
-
-
+using System.Text.Json;
 
 
 var builder = WebApplication.CreateBuilder(args);
