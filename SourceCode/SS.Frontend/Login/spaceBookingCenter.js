@@ -84,7 +84,7 @@ function getReservationCenter() {
                 console.error('Access token is not available.');
                 return;
             }
-            handleReservationCreationFormSubmit(event);
+            reservationForm.addEventListener('submit', handleReservationFormSubmit);
 
         });
         formContainer.appendChild(reservationForm);
@@ -153,8 +153,8 @@ async function handleDeleteReservationFormSubmit(event) {
         const response = await fetch(`${BookingCenterUrl}/api/v1/spaceBookingCenter/reservations/DeleteReservation`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken,
+                'Accept': 'application/json',
             },
             body: JSON.stringify({ userHash, reservationID: parseInt(reservationID, 10) }),
         });
@@ -472,7 +472,7 @@ async function submitModification(reservation) {
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
-                'Content-Type': 'application/json',
+                'Accept': 'application/json',
             },
             body: JSON.stringify(modificationData),
         });

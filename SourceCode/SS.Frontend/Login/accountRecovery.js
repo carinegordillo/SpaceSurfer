@@ -204,7 +204,7 @@ function sendRecoveryRequest(event) {
 
 
 
-let allRequests = [];
+var allRequests = [];
 
 async function initUserRequests() {
     hideAllSections();
@@ -263,7 +263,6 @@ async function initUserRequests() {
 function filterRequestsByUsername(username) {
     if (!username) {
         console.log("No username entered, displaying all requests");
-        renderRequests(window.allRequests);
         return;
     }
 
@@ -315,7 +314,6 @@ async function fetchUserRequests() {
     try {
         const response = await fetch(`${recoveryUrl}/api/requestRecovery/getAllRequests`);
         const data = await response.json();
-        window.allRequests = data; // Store all requests globally to enable filtering
         allRequests = data;
         renderRequests(data);
     } catch (error) {

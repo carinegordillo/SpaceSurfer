@@ -7,6 +7,7 @@ using Microsoft.Net.Http.Headers;
 using SS.Backend.Services.LoggingService;
 using SS.Backend.SharedNamespace;
 using System.Text;
+using System.Text.Json;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,44 +52,52 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-app.Use((context, next) =>
-{
-    
-    context.Response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:3000");
-    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
-    context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+// get localhost cofig file path
+var corsConfigFilePath = Path.Combine(projectRootDirectory, "Configs", "originsConfig.json");
+string allowedOrigin= "coudl not connect to config file";
 
+if (File.Exists(corsConfigFilePath))
+{
+    string configJson = File.ReadAllText(corsConfigFilePath);
     
+    JsonDocument doc = JsonDocument.Parse(configJson);
+    JsonElement root = doc.RootElement.GetProperty("Origin");
+    allowedOrigin = root.GetProperty("CorsAllowedOrigin").GetString() ?? "NA";
+}
+
+Console.WriteLine("Cors Allowed Origin: ");
+Console.WriteLine(allowedOrigin);
+app.Use(async (context, next) =>
+{
+    var origin = context.Request.Headers[HeaderNames.Origin].ToString();
+
+    Console.WriteLine("IN HERERREEER ");
+    Console.WriteLine(allowedOrigin);
+
+    var allowedOrigins = new[] {allowedOrigin};
+
+    if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
+    {
+        context.Response.Headers.Append("Access-Control-Allow-Origin", origin);
+        context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+        context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+        context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+    }
     if (context.Request.Method == "OPTIONS")
     {
-        context.Response.Headers.Append("Access-Control-Max-Age", "86400"); 
-        context.Response.StatusCode = 204; 
-        return Task.CompletedTask;
+        context.Response.StatusCode = StatusCodes.Status200OK;
+        await context.Response.CompleteAsync();
     }
-
-    return next();
+    else
+    {
+        await next();
+    }
 });
 
-
-
-
-// Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-//     app.UseDeveloperExceptionPage();
-    
-    
-// }
-
-
-
-
-// app.UseHttpsRedirection();
-
 //app.UseMiddleware<AuthorizationMiddleware>();
+
+
+
 
 app.MapControllers();
 
