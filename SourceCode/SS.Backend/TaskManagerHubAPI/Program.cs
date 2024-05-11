@@ -77,8 +77,15 @@ builder.Services.AddTransient<SSAuthService>(provider =>
 var app = builder.Build();
 app.Use((context, next) =>
 {
+    var allowedOrigins = new List<string>
+    {
+        "http://localhost:3000",
+        "http://13.56.13.54"
+    };
+
+    string requestOrigin = context.Request.Headers["Origin"].ToString();
     
-    context.Response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:3000");
+    context.Response.Headers.Append("Access-Control-Allow-Origin", requestOrigin);
     context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
     context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
