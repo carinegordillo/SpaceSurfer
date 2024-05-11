@@ -29,7 +29,17 @@ namespace SS.Backend.Services.LoggingService
 
                 result = await _SqlDAO.SqlRowsAffected(command);
 
-                
+                string query = "INSERT INTO dbo.SystemObservability VALUES (@Timestamp, @LogLevel, @Username, @Category, @Description); SELECT SCOPE_IDENTITY();";
+                var cmd = new SqlCommand(query);
+
+                cmd.Parameters.AddWithValue("@Timestamp", DateTime.UtcNow);
+                cmd.Parameters.AddWithValue("@LogLevel", log.level);
+                cmd.Parameters.AddWithValue("@Username", log.username);
+                cmd.Parameters.AddWithValue("@Category", log.category);
+                cmd.Parameters.AddWithValue("@Description", log.description);
+
+                result = await _SqlDAO.SqlRowsAffected(cmd);
+
                 return result;
             }
             catch (Exception ex)
