@@ -22,7 +22,9 @@ namespace SS.Backend.UserManagement
         }
 
 
-        public async Task<Response> DisableAccount(string userhash){
+        public async Task<Response> DisableAccount(string username){
+
+            string userhash = await _userManagementDao.GetHashByEmail(username);
 
             Response result = await _userManagementDao.GeneralModifier("hashedUsername", userhash, "IsActive", "no", "dbo.activeAccount");
 

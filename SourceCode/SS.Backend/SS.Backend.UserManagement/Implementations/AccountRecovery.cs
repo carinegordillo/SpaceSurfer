@@ -144,23 +144,59 @@ namespace SS.Backend.UserManagement
         * @return Response - the response object
         */
 
-        public async Task<Response> ReadUserRequests(){
+        public async Task<List<UserRequestModel>> ReadUserRequests(){
 
             
             Response response = new Response();
             
             response = await _userManagementDao.ReadUserTable("dbo.userRequests");
 
+            List<UserRequestModel> requestList = new List<UserRequestModel>();
+
+
             if (response.HasError == false)
             {
-                response.ErrorMessage = "- ReadUserRequests successful. -";
+                if (response.ValuesRead != null)
+                {
+                    foreach (DataRow row in response.ValuesRead.Rows)
+                    {
+                        
+                        string userHash = Convert.ToString(row["userHash"]);
+                        Console.WriteLine(userHash);
+                        Console.WriteLine("HERE");
+
+                        string userName = null;
+                        try {userName = await _userManagementDao.GetEmailByHash(userHash);}
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                            userName = "Failed to retrieve username";
+                        }
+                        Console.WriteLine(userName);
+                        #pragma warning disable CS8601 // Possible null reference assignment.
+                        var userRequest = new UserRequestModel
+                        {
+                            RequestId = Convert.ToInt32(row["request_id"]),
+                            UserHash = userHash,
+                            RequestDate = Convert.ToDateTime(row["requestDate"]),
+                            Status = Convert.ToString(row["status"]),
+                            RequestType = Convert.ToString(row["requestType"]),
+                            ResolveDate = row["resolveDate"] != DBNull.Value ? Convert.ToDateTime(row["resolveDate"]) : (DateTime?)null,
+                            AdditionalInformation = row["additionalInformation"] != DBNull.Value ? Convert.ToString(row["additionalInformation"]) : null,
+                            UserName = userName
+                        };
+                        #pragma warning restore CS8601 // Possible null reference assignment.
+                        requestList.Add(userRequest);
+                    }
+                }
+                Console.WriteLine("- ReadUserRequests successful. -");
             }
             else
             {
-                response.ErrorMessage = "- ReadUserRequests Failed - ";
+                Console.WriteLine( "- ReadUserRequests Failed - ");
             }
 
-            return response;
+            return requestList;
         }
 
         public async Task<Response> ReadUserPendingRequests(){
