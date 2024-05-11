@@ -294,34 +294,63 @@ document.addEventListener('click', function (event) {
     }
 });
 
-// Function to fetch user requests
+
 async function fetchUserRequests() {
+    console.log("Fetching user requests");
     if (!appConfig) {
         console.error('Configuration is not loaded!');
         return "error";
     }
-    
-    const loginUrl = appConfig.api.Login;  
-    const recoveryUrl = appConfig.api.AccountRecovery;  
 
+    const recoveryUrl = appConfig.api.AdminAccountRecovery;
+    const idToken = sessionStorage.getItem('idToken');
+    
+    if (!idToken) {
+        console.error('idToken not found in sessionStorage');
+        return;
+    }
     const accessToken = sessionStorage.getItem('accessToken');
-    const isTokenValid = await checkTokenExpiration(accessToken);
+    const isTokenValid = checkTokenExpiration(accessToken);
     if (!isTokenValid) {
         logout();
         return;
     }
+    const parsedIdToken = JSON.parse(idToken);
 
+    if (!parsedIdToken || !parsedIdToken.Username) {
+        console.error('Parsed idToken does not have Username');
+        return;
+    }
     try {
-        const response = await fetch(`${recoveryUrl}/api/requestRecovery/getAllRequests`);
+        const response = await fetch(`${recoveryUrl}/api/adminAccountRecovery/getAllRequests`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const data = await response.json();
+
+        if (data.newToken) {
+            accessToken = data.newToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            console.log('New access token stored:', accessToken);
+        }
+
         allRequests = data;
+        console.log('Received user requests:', data);
         renderRequests(data);
     } catch (error) {
         console.error('Error fetching user requests:', error);
-
         renderRequests([]);
     }
 }
+
 
 function renderRequests(data) {
     const container = document.getElementById('pendingRequests');
@@ -391,27 +420,61 @@ function approveRequestsByUserHash(userHashes) {
         return "error";
     }
     
-    const loginUrl = appConfig.api.Login;  
-    const recoveryUrl = appConfig.api.AccountRecovery;  
-    if (userHashes.length === 0) return; 
+    const recoveryUrl = appConfig.api.AdminAccountRecovery;  
+    const idToken = sessionStorage.getItem('idToken');
+    
+    if (!idToken) {
+        console.error('idToken not found in sessionStorage');
+        return;
+    }
+    const accessToken = sessionStorage.getItem('accessToken');
+    const isTokenValid = checkTokenExpiration(accessToken);
+    if (!isTokenValid) {
+        logout();
+        return;
+    }
+    const parsedIdToken = JSON.parse(idToken);
+
+    if (!parsedIdToken || !parsedIdToken.Username) {
+        console.error('Parsed idToken does not have Username');
+        return;
+    }
+    
+
+    if (userHashes.length === 0) {
+        console.warn('No user hashes provided for approval.');
+        return;
+    }
+
     console.log('Approving requests for users:', userHashes);
 
-    fetch(`${recoveryUrl}/api/requestRecovery/acceptRequests`, {
+    fetch(`${recoveryUrl}/api/adminAccountRecovery/acceptRequests`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        },
         body: JSON.stringify(userHashes),
     })
     .then(response => {
-        if (!response.ok) throw new Error('Network response was not ok');
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(`Error: ${response.status} ${errorData.message || 'Unknown error'}`);
+            });
+        }
         return response.json();
     })
     .then(data => {
-        alert("Successfully approved requests")
+        alert("Successfully approved requests");
         console.log('Successfully approved requests:', data);
         fetchUserRequests(); // Refresh the data after approval
     })
-    .catch(error => console.error('Error approving requests:', error));
+    .catch(error => {
+        console.error('Error approving requests:', error);
+        alert(`Failed to approve requests: ${error.message}`);
+    });
 }
+
 
 // Function to deny user requests
 function denyRequestsByUserHash(userHashes) {
@@ -419,28 +482,68 @@ function denyRequestsByUserHash(userHashes) {
         console.error('Configuration is not loaded!');
         return "error";
     }
+
+    const recoveryUrl = appConfig.api.AdminAccountRecovery;  
+    const idToken = sessionStorage.getItem('idToken');
     
-    const loginUrl = appConfig.api.Login;  
-    const recoveryUrl = appConfig.api.AccountRecovery;  
-    if (userHashes.length === 0) return; // Skip if no requests to deny
+    if (!idToken) {
+        console.error('idToken not found in sessionStorage');
+        return;
+    }
+    const accessToken = sessionStorage.getItem('accessToken');
+    const isTokenValid = checkTokenExpiration(accessToken);
+    if (!isTokenValid) {
+        logout();
+        return;
+    }
+    const parsedIdToken = JSON.parse(idToken);
+
+    if (!parsedIdToken || !parsedIdToken.Username) {
+        console.error('Parsed idToken does not have Username');
+        return;
+    }
+
+    if (userHashes.length === 0) {
+        console.warn('No user hashes provided for denial.');
+        return;
+    }
+
     console.log('Denying requests for users:', userHashes);
 
-    fetch(`${recoveryUrl}/api/requestRecovery/denyRequests`, {
+    fetch(`${recoveryUrl}/api/adminAccountRecovery/denyRequests`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        },
         body: JSON.stringify(userHashes),
     })
     .then(response => {
-        if (!response.ok) throw new Error('Network response was not ok');
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(`Error: ${response.status} ${errorData.message || 'Unknown error'}`);
+            });
+        }
         return response.json();
     })
     .then(data => {
-        alert("Successfully denied requests")
+
+        if (data.newToken) {
+            accessToken = data.newToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            console.log('New access token stored:', accessToken);
+        }
+
+        alert("Successfully denied requests");
         console.log('Successfully denied requests:', data);
         fetchUserRequests(); // Refresh the data after denial
     })
-    .catch(error => console.error('Error denying requests:', error));
+    .catch(error => {
+        console.error('Error denying requests:', error);
+        alert(`Failed to deny requests: ${error.message}`);
+    });
 }
+
 
 document.getElementById('deactivateUserBtn').addEventListener('click', function() {
     var userHash = document.getElementById('userHashInput').value.trim();
@@ -452,27 +555,64 @@ document.getElementById('deactivateUserBtn').addEventListener('click', function(
     }
 });
 
+// Function to deactivate user account
 function deactivateUserAccount(userHash) {
     if (!appConfig) {
         console.error('Configuration is not loaded!');
         return "error";
     }
     
-    const loginUrl = appConfig.api.Login;  
-    const recoveryUrl = appConfig.api.AccountRecovery;  
-    fetch(`${recoveryUrl}/api/requestRecovery/disableAccount`, {
+    const recoveryUrl = appConfig.api.AdminAccountRecovery;  
+    const idToken = sessionStorage.getItem('idToken');
+    
+    if (!idToken) {
+        console.error('idToken not found in sessionStorage');
+        return;
+    }
+    const accessToken = sessionStorage.getItem('accessToken');
+    const isTokenValid = checkTokenExpiration(accessToken);
+    if (!isTokenValid) {
+        logout();
+        return;
+    }
+    const parsedIdToken = JSON.parse(idToken);
+
+    if (!parsedIdToken || !parsedIdToken.Username) {
+        console.error('Parsed idToken does not have Username');
+        return;
+    }
+
+    if (!userHash) {
+        console.warn('User hash is not provided.');
+        return;
+    }
+
+    console.log('Deactivating account for user:', userHash);
+
+    fetch(`${recoveryUrl}/api/adminAccountRecovery/disableAccount`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        },
         body: JSON.stringify(userHash)  // Send the userHash as a JSON string
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`HTTP error, status = ${response.status}`);
+            return response.json().then(errorData => {
+                throw new Error(`Error: ${response.status} ${errorData.message || 'Unknown error'}`);
+            });
         }
         return response.json();
     })
     .then(data => {
+        if (data.newToken) {
+            accessToken = data.newToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            console.log('New access token stored:', accessToken);
+        }
         alert('User deactivation ' + (data.success ? 'successful' : 'failed') + ': ' + data.message);
+        console.log('User deactivation result:', data);
         fetchUserRequests(); // Optionally refresh the list if needed
     })
     .catch(error => {
@@ -481,29 +621,70 @@ function deactivateUserAccount(userHash) {
     });
 }
 
+
+// Function to delete user requests
 function deleteRequestsByUserHash(userHashes) {
     if (!appConfig) {
         console.error('Configuration is not loaded!');
         return "error";
     }
     
-    const loginUrl = appConfig.api.Login;  
-    const recoveryUrl = appConfig.api.AccountRecovery;  
-    if (userHashes.length === 0) return; 
+    const recoveryUrl = appConfig.api.AdminAccountRecovery;  
+    
+    const idToken = sessionStorage.getItem('idToken');
+    
+    if (!idToken) {
+        console.error('idToken not found in sessionStorage');
+        return;
+    }
+    const accessToken = sessionStorage.getItem('accessToken');
+    const isTokenValid = checkTokenExpiration(accessToken);
+    if (!isTokenValid) {
+        logout();
+        return;
+    }
+    const parsedIdToken = JSON.parse(idToken);
+
+    if (!parsedIdToken || !parsedIdToken.Username) {
+        console.error('Parsed idToken does not have Username');
+        return;
+    }
+
+    if (userHashes.length === 0) {
+        console.warn('No user hashes provided for deletion.');
+        return;
+    }
+
     console.log('Deleting Completed User Requests:', userHashes);
 
-    fetch(`${recoveryUrl}/api/requestRecovery/deleteRequestByUserHash`, {
+    fetch(`${recoveryUrl}/api/adminAccountRecovery/deleteRequestByUserHash`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        },
         body: JSON.stringify(userHashes),
     })
     .then(response => {
-        if (!response.ok) throw new Error('Network response was not ok');
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(`Error: ${response.status} ${errorData.message || 'Unknown error'}`);
+            });
+        }
         return response.json();
     })
     .then(data => {
-        window.alert("Successfully Deleted User Requests")
+        if (data.newToken) {
+            accessToken = data.newToken;
+            sessionStorage.setItem('accessToken', accessToken);
+            console.log('New access token stored:', accessToken);
+        }
+        window.alert("Successfully Deleted User Requests");
         console.log('Successfully deleted requests:', data);
-        fetchUserRequests(); // Refresh the data after approval
+        fetchUserRequests(); // Refresh the data after deletion
     })
+    .catch(error => {
+        console.error('Error deleting user requests:', error);
+        window.alert('Error deleting user requests. Please try again.');
+    });
 }

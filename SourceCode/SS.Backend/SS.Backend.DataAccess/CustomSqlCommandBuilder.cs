@@ -288,4 +288,126 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         _command.Parameters.AddWithValue("@rid", rid);
         return this;
     }
+
+    // DELETION //
+
+    public ICustomSqlCommandBuilder deleteLogs(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM Logs WHERE Username = @username");
+        _command.Parameters.AddWithValue("@username", userHash);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deleteUserAccount(string email)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM userAccount WHERE username = @username");
+        _command.Parameters.AddWithValue("@username", email);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deleteUserHash(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM userHash WHERE hashedUsername = @username");
+        _command.Parameters.AddWithValue("@username", userHash);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deleteUserProfile(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM userProfile WHERE hashedUsername = @username");
+        _command.Parameters.AddWithValue("@username", userHash);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deleteActiveAccount(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM activeAccount WHERE hashedUsername = @username");
+        _command.Parameters.AddWithValue("@username", userHash);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deleteUserRequests(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM userRequests WHERE userHash = @username");
+        _command.Parameters.AddWithValue("@username", userHash);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deleteConfirmReservations(int resId)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM ConfirmReservations WHERE reservationID = @reservationId");
+        _command.Parameters.AddWithValue("@reservationId", resId);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deleteCompanyFloor(int compId)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM companyFloor WHERE companyID = @compID");
+        _command.Parameters.AddWithValue("@compID", compId);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deleteCompanyFloorSpaces(int compId)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM companyFloorSpaces WHERE companyID = @compID");
+        _command.Parameters.AddWithValue("@compID", compId);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deleteReservations(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM reservations WHERE userHash = @username");
+        _command.Parameters.AddWithValue("@username", userHash);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deleteCompanyProfile(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM companyProfile WHERE hashedUsername = @username");
+        _command.Parameters.AddWithValue("@username", userHash);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deleteOTP(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM OTP WHERE Username = @username");
+        _command.Parameters.AddWithValue("@username", userHash);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deleteWaitlist(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM Waitlist WHERE Username = @username");
+        _command.Parameters.AddWithValue("@username", userHash);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder getResId(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append("SELECT * FROM reservations WHERE userHash = @username");
+        _command.Parameters.AddWithValue("@username", userHash);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder getCompId(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append("SELECT * FROM companyProfile WHERE hashedUsername = @username");
+        _command.Parameters.AddWithValue("@username", userHash);
+        return this;
+    }
 }

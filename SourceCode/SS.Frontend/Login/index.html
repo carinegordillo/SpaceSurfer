@@ -33,36 +33,37 @@
                 </div>
                 <!-- general nav all users can see -->
                 <div id="homepageGen" style="display: none;">
-                    <!-- system admin view -->
-                    <div id="SAview" style="display:none;">
-                        <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
-                        <div class="nav-item" type="button" onclick="SOAccess()">System Observability</div>
+                        <!-- system admin view -->
+                        <div id="SAview" style="display:none;">
+                            <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
+                            <div class="nav-item" type="button" onclick="SOAccess()">System Observability</div>
+                            <div class="nav-item" type="button" onclick="initUserRequests()">User Requests</div>
+                        </div>
+                        <!-- company manager view -->
+                        <div id="CMview" style="display:none;">
+                            <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
+                            <div class="nav-item" type="button" onclick="employeeSetupAccess()">Employee Account Setup</div>
+                            <!-- <div class="nav-item" type="button" onclick="SOAccess()">System Observability</div>  -->
+                        </div>
+                        <!-- facility manager view -->
+                        <div id="FMview" style="display:none;">
+                            <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
+                        </div>
+                        <div class="nav-item" type="button" onclick="initSpaceBookingCenter()">Space Booking Center</div>
+                        <div class="nav-item" type="button" onclick="confirmationAccess()" data-testid="confirmation-view">Confirmations</div>
+                        <div class="nav-item" type="button" onclick="waitlistAccess()">Waitlist</div>
                         <div class="nav-item" type="button" onclick="initUserRequests()">User Requests</div>
+                        <div class="nav-item" type="button" onclick="personalOverviewAccess()" data-testid="personal-overview-view">Personal Overview</div>
+                        <div class="nav-item" type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</div>
                     </div>
-                    <!-- company manager view -->
-                    <div id="CMview" style="display:none;">
-                        <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
-                        <div class="nav-item" type="button" onclick="employeeSetupAccess()">Employee Account Setup</div>
-                        <!-- <div class="nav-item" type="button" onclick="SOAccess()">System Observability</div>  -->
+                    <div id="userNav" style="display: none;">
+                        <div class="nav-item" type="button" id="identity"></div>
+                        <div class="nav-item" type="button" onclick="getHomePage()">
+                            <i class="fas fa-home">Home</i>
+                        </div>
+                        <div class="nav-item" type="button" onclick="initProfile()">Profile</div>
+                        <div class="nav-item" type="button" onclick="logout()">Logout</div>
                     </div>
-                    <!-- facility manager view -->
-                    <div id="FMview" style="display:none;">
-                        <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
-                    </div>
-                    <div class="nav-item" type="button" onclick="initSpaceBookingCenter()">Space Booking Center</div>
-                    <div class="nav-item" type="button" onclick="confirmationAccess()" data-testid="confirmation-view">Confirmations</div>
-                    <div class="nav-item" type="button" onclick="waitlistAccess()">Waitlist</div>
-                    <div class="nav-item" type="button" onclick="personalOverviewAccess()" data-testid="personal-overview-view">Personal Overview</div>
-                    <div class="nav-item" type="button" onclick="taskHubAccess()" data-testid="task-view">Task Manager Hub</div>
-                </div>
-                <div id="userNav"  style="display: none;">
-                    <div class="nav-item" type="button" id="identity"></div>
-                    <div class="nav-item" type="button" onclick="getHomePage()">
-                        <i class="fas fa-home">Home</i>
-                    </div>
-                    <div class="nav-item" type="button" onclick="initProfile()">Profile</div>
-                    <div class="nav-item" type="button" onclick="logout()">Logout</div>
-                </div>
                 </div>
 
             </div>
@@ -250,6 +251,7 @@
     <section id="userProfileView" class="homepage-container" style="display: none;">
         <div class="userProfileContainer">
             <button type="button" onclick="cpraAccess()">User Data Protection</button>
+            <button type="button" onclick="deletionAccess()">Account Deletion</button>
             <div class="profile">
                 <div id="leftPanel" class="left-panel">
                 </div>
@@ -328,7 +330,7 @@
     </div>
 
     <!--Space Booking View-->
-    <section id="spaceBookingView"  class="homepage-container" style="display: none;">
+    <section id="spaceBookingView" class="homepage-container" style="display: none;">
         <div id="accessTokenContainer"></div>
         <div class="space-booking-center-container">
             <div class="sidebar"></div>
@@ -375,6 +377,11 @@
     <!--User Data Protection View-->
     <section id="cpraView" class="homepage-container" style="display: none;">
         <div id="contentContainer"></div>
+    </section>
+
+    <!--Account Deletion View-->
+    <section id="deletionView" class="homepage-container" style="display: none;">
+        <div id="contentContainer_Deletion"></div>
     </section>
 
     <!--Confirmation View-->
@@ -578,22 +585,23 @@
                     <button id="deleteRequestsBtn" type="submit">Delete Selected Requests</button>
                 </form>
             </div>
-            <div id="deactivateUserSectionContainer">
-            <section id="deactivateUserSection">
-                <h3>Deactivate User Account</h3>
-                <input type="text" id="userHashInput" placeholder="Enter Username of account you wish to Deactivate" />
-                <button id="deactivateUserBtn">Deactivate User</button>
-            </section>
-            </div>
             <div id="filterByUsernameContainer">
                 <input type="text" id="usernameInput" placeholder="Enter Username" />
                 <button id="filterByUsernameBtn">Filter by Username</button>
             </div>
+            <div id="deactivateUserSectionContainer">
+                <section id="deactivateUserSection">
+                    <h3>Deactivate User Account</h3>
+                    <input type="text" id="userHashInput" placeholder="Enter Username of account you wish to Deactivate" />
+                    <button id="deactivateUserBtn">Deactivate User</button>
+                </section>
+            </div>
+            
         </div>
     </section>
 
     <!--Manager Homepage-->
-    <section id="homepageManager"  style="display: none;">
+    <section id="homepageManager" style="display: none;">
         <button type="button" onclick="initSpaceBookingCenter()">Space Booking Center</button>
         <button type="button" onclick="confirmationAccess()">Confirmations</button>
         <button type="button" onclick="waitlistAccess()">Waitlist</button>
@@ -652,6 +660,7 @@
     <script src="spaceBookingCenter.js"></script>
     <script src="SystemObservabilityFunctions.js"></script>
     <script src="cpraScript.js"></script>
+    <script src="accountDeletion.js"></script>
     <script src="SpaceManager.js"></script>
     <script src="accountRecovery.js"></script>
     <script src="UserProfile.js"></script>

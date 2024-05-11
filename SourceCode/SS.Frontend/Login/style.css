@@ -391,21 +391,6 @@ input {
     font-size: 16px;
 }
 
-/* button {
-    background-color: #4CAF50;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
-    padding: 10px;
-    margin-top: 10px;
-}
-
-    button:hover {
-        background-color: #2F7232;
-    } */
-
 #enterOTPSection {
     display: none;
 }
@@ -1013,4 +998,37 @@ button, input[type="text"] {
 .user-company {
     background-color: #e0f7fa; 
     border: 2px solid #00796b; 
+}
+
+#filterByUsernameContainer{
+    padding: 10px;
+}
+
+#filterByUsernameBtn {
+    background-color: #897b83; /* Green background */
+    color: white; /* White text */
+    padding: 10px 20px; /* Some padding */
+    border: none; /* Remove borders */
+    cursor: pointer; /* Pointer/hand icon */
+    font-size: 10px; /* Increase font size */
+    border-radius: 3px; /* Rounded corners */
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#deactivateUserBtn {
+    background-color: #aeadad; /* Green background */
+    color: white; /* White text */
+    padding: 10px 20px; /* Some padding */
+    border: none; /* Remove borders */
+    cursor: pointer; /* Pointer/hand icon */
+    font-size: 10px; /* Increase font size */
+    border-radius: 3px; /* Rounded corners */
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+#deactivateUserBtn:hover {
+    background-color: #f03737; /* Green background */
 }

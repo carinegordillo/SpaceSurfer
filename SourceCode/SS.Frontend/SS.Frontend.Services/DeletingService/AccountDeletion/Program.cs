@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 
 // Add transient services for logging
 // builder.Services.AddTransient<SqlLogTarget>();
@@ -36,12 +36,6 @@ builder.Services.AddSingleton(new ConfigService(Path.Combine("C:/Users/brand/Doc
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    // Enables Swagger and the SwaggerUI
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseRouting();
 

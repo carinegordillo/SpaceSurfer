@@ -58,12 +58,14 @@ var app = builder.Build();
 
 var archivingService = app.Services.GetRequiredService<ArchivingService>();
 
-app.Lifetime.ApplicationStarted.Register(() => {
+app.Lifetime.ApplicationStarted.Register(() =>
+{
     Console.WriteLine("Application is starting. ArchivingService is being started...");
     archivingService.Start();
 });
 
-app.Lifetime.ApplicationStopping.Register(() => {
+app.Lifetime.ApplicationStopping.Register(() =>
+{
     Console.WriteLine("Application is stopping. ArchivingService is being stopped...");
     archivingService.Stop();
 });
