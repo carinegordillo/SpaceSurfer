@@ -390,7 +390,7 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
 
                 Assert.IsNotNull(companyReservationCounts);
 
-                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+                var query = commandBuilder.BeginDelete("dbo.SystemObservability").Where("Username = 'testLOGS'").Build();
 
                 response = await sqlDAO.SqlRowsAffected(query);
 
@@ -429,7 +429,7 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
 
                 Assert.IsNotNull(companyReservationCounts);
 
-                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+                var query = commandBuilder.BeginDelete("dbo.SystemObservability").Where("Username = 'testLOGS'").Build();
 
                 response = await sqlDAO.SqlRowsAffected(query);
 
@@ -468,7 +468,7 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
 
                 Assert.IsNotNull(companyReservationCounts);
 
-                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+                var query = commandBuilder.BeginDelete("dbo.SystemObservability").Where("Username = 'testLOGS'").Build();
 
                 response = await sqlDAO.SqlRowsAffected(query);
 
@@ -540,7 +540,7 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
                     Console.WriteLine();
                 }
 
-                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+                var query = commandBuilder.BeginDelete("dbo.SystemObservability").Where("Username = 'testLOGS'").Build();
 
                 response = await sqlDAO.SqlRowsAffected(query);
 
@@ -604,7 +604,7 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
                     Console.WriteLine();
                 }
 
-                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+                var query = commandBuilder.BeginDelete("dbo.SystemObservability").Where("Username = 'testLOGS'").Build();
 
                 response = await sqlDAO.SqlRowsAffected(query);
 
@@ -666,7 +666,7 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
                     Console.WriteLine();
                 }
 
-                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+                var query = commandBuilder.BeginDelete("dbo.SystemObservability").Where("Username = 'testLOGS'").Build();
 
                 response = await sqlDAO.SqlRowsAffected(query);
 
@@ -709,7 +709,7 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
 
                 Assert.IsNotNull(companySpaceCounts);
 
-                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+                var query = commandBuilder.BeginDelete("dbo.SystemObservability").Where("Username = 'testLOGS'").Build();
 
                 response = await sqlDAO.SqlRowsAffected(query);
 
@@ -748,7 +748,7 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
 
                 Assert.IsNotNull(companySpaceCounts);
 
-                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+                var query = commandBuilder.BeginDelete("dbo.SystemObservability").Where("Username = 'testLOGS'").Build();
 
                 response = await sqlDAO.SqlRowsAffected(query);
 
@@ -787,7 +787,7 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
 
                 Assert.IsNotNull(companySpaceCounts);
 
-                var query = commandBuilder.BeginDelete("dbo.Logs").Where("Username = 'testLOGS'").Build();
+                var query = commandBuilder.BeginDelete("dbo.SystemObservability").Where("Username = 'testLOGS'").Build();
 
                 response = await sqlDAO.SqlRowsAffected(query);
 
@@ -915,6 +915,45 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
                 response.ErrorMessage = ex.Message;
 
                 Assert.IsFalse(response.HasError);
+            }
+
+        }
+
+        [TestMethod]
+        public async Task WrongTimeSpan_Failure()
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+            Response response = new Response();
+
+            try
+            {
+
+                var registrationCounts = await _registrationCountService.GetRegistrationCount("qGkjtLi+R/fQXcdKnAYWDYjkEVPvJ3E8SPCYTrU0hvY=", "18 months");
+
+                foreach (var registrationCount in registrationCounts)
+                {
+                    Console.WriteLine($"Month: {registrationCount.Month}");
+                    Console.WriteLine($"Year: {registrationCount.Year}");
+                    Console.WriteLine($"Failed Registration: {registrationCount.FailedRegistrations}");
+                    Console.WriteLine($"Successful Registration: {registrationCount.SuccessfulRegistrations}");
+                    Console.WriteLine();
+                }
+
+                Assert.IsNotNull(registrationCounts);
+
+                Console.WriteLine(response.HasError);
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                Assert.IsTrue(response.HasError);
             }
 
         }

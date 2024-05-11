@@ -276,7 +276,7 @@ namespace SS.Backend.SystemObservability
 
                 var query = commandBuilder.BeginSelectString("MONTH(Timestamp) AS [Month], YEAR(Timestamp) AS[Year], SUM(CASE WHEN Description = 'Failure to authenticate.' " +
                     "THEN 1 WHEN Description = 'User tried to authenticate with an expired OTP.' THEN 1 ELSE 0 END) AS[Failed Logins], SUM(CASE WHEN Description = 'Successful authentication.' THEN 1 ELSE 0 END) AS[Successful Logins]")
-                    .From("dbo.logs").Where($"Timestamp BETWEEN '{startDate}' AND '{endDate}' GROUP BY YEAR(Timestamp), MONTH(Timestamp) ORDER BY [Year], [Month];").Build();
+                    .From("dbo.SystemObservability").Where($"Timestamp BETWEEN '{startDate}' AND '{endDate}' GROUP BY YEAR(Timestamp), MONTH(Timestamp) ORDER BY [Year], [Month];").Build();
 
                 response = await _sqlDAO.ReadSqlResult(query);
 
@@ -854,7 +854,7 @@ namespace SS.Backend.SystemObservability
 
                 var query = commandBuilder.BeginSelectString("MONTH(Timestamp) AS [Month], YEAR(Timestamp) AS[Year], SUM(CASE WHEN Description = 'Error inserting user in data store.' " +
                     "THEN 1 ELSE 0 END) AS [Failed Registrations], SUM(CASE WHEN Description = 'Successful account creation' THEN 1 ELSE 0 END) AS [Successful Registrations]")
-                    .From("dbo.logs").Where($"Timestamp BETWEEN '{startDate}' AND '{endDate}' GROUP BY YEAR(Timestamp), MONTH(Timestamp) ORDER BY [Year], [Month];").Build();
+                    .From("dbo.SystemObservability").Where($"Timestamp BETWEEN '{startDate}' AND '{endDate}' GROUP BY YEAR(Timestamp), MONTH(Timestamp) ORDER BY [Year], [Month];").Build();
 
                 response = await _sqlDAO.ReadSqlResult(query);
 
