@@ -84,7 +84,7 @@ function getReservationCenter() {
                 console.error('Access token is not available.');
                 return;
             }
-            handleReservationCreationFormSubmit(event);
+            reservationForm.addEventListener('submit', handleReservationFormSubmit);
 
         });
         formContainer.appendChild(reservationForm);
@@ -153,8 +153,8 @@ async function handleDeleteReservationFormSubmit(event) {
         const response = await fetch(`${BookingCenterUrl}/api/v1/spaceBookingCenter/reservations/DeleteReservation`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken,
+                'Accept': 'application/json',
             },
             body: JSON.stringify({ userHash, reservationID: parseInt(reservationID, 10) }),
         });
@@ -307,8 +307,7 @@ function getUsersReservations(userName, accessToken) {
         return response.json();
     })
     .then(data => {
-        console.log("in here");
-        console.log(data);
+
         renderReservations(data, '.reservation-list');
     })
     .catch(error => {
@@ -473,7 +472,7 @@ async function submitModification(reservation) {
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
-                'Content-Type': 'application/json',
+                'Accept': 'application/json',
             },
             body: JSON.stringify(modificationData),
         });
@@ -1087,7 +1086,7 @@ async function fetchCompanies() {
             li.classList.add('company-item');
             if (company.companyType === 2) {
                 li.classList.add('user-company'); 
-                htmlContent= ' <h5>Your Workplace</h5>'
+                htmlContent= ' <h5>Workplace</h5>'
             }
             htmlContent += `
                 <div class="company-name clickable" data-company-id="${company.companyID}">${company.companyName}</div>

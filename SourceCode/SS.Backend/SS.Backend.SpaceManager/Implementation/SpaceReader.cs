@@ -50,8 +50,6 @@ namespace SS.Backend.SpaceManager
 
             if (employeeCompanyID.HasValue)
             {
-                Console.WriteLine("This is an employee");
-                Console.WriteLine(employeeCompanyID.Value);
                 var employeeCompany = await GetEmployeeCompany(employeeCompanyID.Value);
                 companies.InsertRange(0, employeeCompany);
             }
@@ -138,7 +136,6 @@ namespace SS.Backend.SpaceManager
                     DaysOpen = Convert.ToString(row["daysOpen"]).Trim(),
                     CompanyType = row["companyType"] != DBNull.Value ? (int?)Convert.ToInt32(row["companyType"]) : null,
                 };
-                Console.WriteLine(companyInfo.CompanyType);
                 companyInfos.Add(companyInfo);
             }
 
@@ -155,11 +152,9 @@ namespace SS.Backend.SpaceManager
                                         .AddParameters(new Dictionary<string, object> { { "companyId", companyId } })
                                         .Build();
 
-            Console.WriteLine("Command: " + command.CommandText);
 
             Response response = await _spaceManagerDao.ExecuteReadCompanyTables(command);
 
-            Console.WriteLine(response.ErrorMessage);
             if (!response.HasError && response.ValuesRead != null)
             {
                 foreach (DataRow row in response.ValuesRead.Rows)
@@ -189,8 +184,6 @@ namespace SS.Backend.SpaceManager
             {
                 Console.WriteLine("No data found or error occurred.");
             }
-
-            Console.WriteLine("Returning floors");
 
             return floors.Values;
         }

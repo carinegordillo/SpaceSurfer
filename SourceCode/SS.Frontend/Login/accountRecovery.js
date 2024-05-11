@@ -9,9 +9,10 @@ document.addEventListener('click', function (event) {
 });
 
 function showRecoveryForm() {
-
+    hideAllSections();
     // Hide the OTP section and show the recovery form section
     document.getElementById("accountRecoverySection").style.display = "block";
+    document.getElementById('noLogin').style.display = 'block';
     document.getElementById('sendOTPSection').style.display = 'none';
     const recoveryForm = document.getElementById('recoveryForm');
     recoveryForm.addEventListener('submit', sendRecoveryRequest);
@@ -203,7 +204,7 @@ function sendRecoveryRequest(event) {
 
 
 
-let allRequests = [];
+var allRequests = [];
 
 async function initUserRequests() {
     hideAllSections();
@@ -246,12 +247,33 @@ async function initUserRequests() {
         
         
         
-        
     });
 
     document.getElementById('loadRequestsButton').addEventListener('click', fetchUserRequests);
+    document.getElementById('filterByUsernameBtn').addEventListener('click', function() {
+        const username = document.getElementById('usernameInput').value.trim();
+        filterRequestsByUsername(username);
+    });
+
 
     await fetchUserRequests();
+}
+
+// Function to filter requests by username
+function filterRequestsByUsername(username) {
+    if (!username) {
+        console.log("No username entered, displaying all requests");
+        return;
+    }
+
+    console.log("Filtering by username:", username);
+
+    const filteredRequests = window.allRequests.filter(request => {
+        return request.userName.toLowerCase().includes(username.toLowerCase());
+    });
+
+    console.log(filteredRequests);
+    renderRequests(filteredRequests);
 }
 
 document.addEventListener('click', function (event) {
@@ -292,7 +314,6 @@ async function fetchUserRequests() {
     try {
         const response = await fetch(`${recoveryUrl}/api/requestRecovery/getAllRequests`);
         const data = await response.json();
-        window.allRequests = data; // Store all requests globally to enable filtering
         allRequests = data;
         renderRequests(data);
     } catch (error) {

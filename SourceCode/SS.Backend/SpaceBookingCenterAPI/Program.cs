@@ -98,6 +98,7 @@ builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
 // get localhost cofig file path
 var corsConfigFilePath = Path.Combine(projectRootDirectory, "Configs", "originsConfig.json");
 string allowedOrigin= "coudl not connect to config file";
@@ -116,13 +117,17 @@ Console.WriteLine(allowedOrigin);
 app.Use(async (context, next) =>
 {
     var origin = context.Request.Headers[HeaderNames.Origin].ToString();
+
+    Console.WriteLine("IN HERERREEER ");
+    Console.WriteLine(allowedOrigin);
+
     var allowedOrigins = new[] {allowedOrigin};
 
     if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
     {
         context.Response.Headers.Append("Access-Control-Allow-Origin", origin);
-        context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Accept");
+        context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+        context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
         context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
     }
     if (context.Request.Method == "OPTIONS")
@@ -135,23 +140,6 @@ app.Use(async (context, next) =>
         await next();
     }
 });
-
-
-
-// Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-//     app.UseDeveloperExceptionPage();
-    
-    
-// }
-
-
-
-
-//app.UseHttpsRedirection();
 
 app.UseMiddleware<AuthorizationMiddleware>();
 
