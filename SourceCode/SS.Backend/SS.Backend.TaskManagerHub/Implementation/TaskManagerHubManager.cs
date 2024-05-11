@@ -2,16 +2,22 @@ using SS.Backend.SharedNamespace;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SS.Backend.Services.LoggingService;
 
 namespace SS.Backend.TaskManagerHub
 {
     public class TaskManagerHubManager : ITaskManagerHubManager
     {
         private readonly ITaskManagerHubService _taskManagerHubService;
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
 
-        public TaskManagerHubManager(ITaskManagerHubService taskManagerHubService)
+        public TaskManagerHubManager(ITaskManagerHubService taskManagerHubService, ILogger logger)
         {
             _taskManagerHubService = taskManagerHubService;
+            _logger = logger;
+            logEntry = logBuilder.Build();
         }
 
         public async Task<Response> ListTasks(string hashedUsername)
@@ -27,7 +33,25 @@ namespace SS.Backend.TaskManagerHub
             if (string.IsNullOrWhiteSpace(hashedUsername))
                 return new Response { HasError = true, ErrorMessage = "Invalid username." };
 
-            return await _taskManagerHubService.ScoreTasks(hashedUsername);
+            
+            Response response = await _taskManagerHubService.ScoreTasks(hashedUsername);
+            
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"List tasks successfully.").User(hashedUsername).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to list tasks.").User(hashedUsername).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
+
+            return response;
         }
 
         public async Task<Response> ListTasksByPriority(string hashedUsername, string priority)
@@ -55,7 +79,24 @@ namespace SS.Backend.TaskManagerHub
             if (string.IsNullOrWhiteSpace(taskHub.description))
                 return new Response { HasError = true, ErrorMessage = "Invalid task description." };
 
-            return await _taskManagerHubService.CreateNewTask(taskHub);
+            Response response = await _taskManagerHubService.CreateNewTask(taskHub);
+            
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"New task created successfully.").User(taskHub.hashedUsername).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to create new task.").User(taskHub.hashedUsername).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
+            
+            return response;
         }
 
         public async Task<Response> CreateMultipleNewTasks(string hashedUsername, List<TaskHub> tasks)
@@ -71,7 +112,24 @@ namespace SS.Backend.TaskManagerHub
                     return new Response { HasError = true, ErrorMessage = "One or more tasks are invalid." };
             }
 
-            return await _taskManagerHubService.CreateMultipleNewTasks(hashedUsername, tasks);
+            Response response = await _taskManagerHubService.CreateMultipleNewTasks(hashedUsername, tasks);
+            
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully created multiple new tasks.").User(hashedUsername).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to create multiple new tasks.").User(hashedUsername).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
+            
+            return response;
         }
 
         public async Task<Response> ModifyTasks(TaskHub task, Dictionary<string, object> fieldsToUpdate)
@@ -101,7 +159,24 @@ namespace SS.Backend.TaskManagerHub
                     return new Response { HasError = true, ErrorMessage = "Invalid task priority." };
             }
            
-            return await _taskManagerHubService.ModifyTasks(task, fieldsToUpdate);
+            Response response = await _taskManagerHubService.ModifyTasks(task, fieldsToUpdate);
+            
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully modified task {task.title}.").User(task.hashedUsername).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to modify task {task.title}.").User(task.hashedUsername).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
+            
+            return response;
         }
 
         public async Task<Response> DeleteTask(TaskHub task)
@@ -110,7 +185,24 @@ namespace SS.Backend.TaskManagerHub
             if (string.IsNullOrWhiteSpace(task.hashedUsername) || string.IsNullOrWhiteSpace(task.title))
                 return new Response { HasError = true, ErrorMessage = "Username or task title is invalid." };
 
-            return await _taskManagerHubService.DeleteTask(task);
+            Response response = await _taskManagerHubService.DeleteTask(task);
+            
+            //logging
+            if (response.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully deleted task {task.title}.").User(task.hashedUsername).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to delete task {task.title}.").User(task.hashedUsername).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
+            
+            return response;
         }
     }
 }

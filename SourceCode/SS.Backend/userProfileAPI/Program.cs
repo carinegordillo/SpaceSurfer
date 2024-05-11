@@ -47,7 +47,7 @@ builder.Services.AddTransient<SqlDAO>();
 
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -74,19 +74,19 @@ app.Use((context, next) =>
 
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseDeveloperExceptionPage();
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+//     app.UseDeveloperExceptionPage();
     
     
-}
+// }
 
 
 
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 //app.UseMiddleware<AuthorizationMiddleware>();
 

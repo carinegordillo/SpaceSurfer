@@ -14,10 +14,15 @@ namespace SS.Backend.SpaceManager
     {
 
         private readonly ISpaceManagerDao _spaceManagerDao;
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
 
-        public SpaceCreation(ISpaceManagerDao spaceManagerDao)
+        public SpaceCreation(ISpaceManagerDao spaceManagerDao, ILogger logger)
         {
             _spaceManagerDao = spaceManagerDao;
+            _logger = logger;
+            logEntry = logBuilder.Build();
         }
         public async Task<Response> CreateSpace(CompanyFloor? companyFloor)
         {
@@ -109,6 +114,21 @@ namespace SS.Backend.SpaceManager
                         }
                     }
                 }
+            }
+
+            //logging
+            if (floorInsertResponse.HasError == false)
+            {
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully created space from {companyFloor.FloorPlanName}.").User(companyFloor.hashedUsername).Build();
+            }
+            else
+            {
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to create space from {companyFloor.FloorPlanName}.").User(companyFloor.hashedUsername).Build();
+                
+            }
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
             }
             
             // Return response based on overall operation success or specific error handling

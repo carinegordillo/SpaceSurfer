@@ -29,7 +29,6 @@ namespace SS.Backend.EmailConfirm
         {
             int reservationID = (int)reservation.ReservationID;
             Console.WriteLine(reservationID);
-            var logResponse = new Response();
             Response emailResponse = await _emailDao.GetUsername(reservation.UserHash);
             string? targetEmail = emailResponse.ValuesRead.Rows[0]["username"].ToString();
             (string icsFile, string otp, string body, Response result) = await _emailConfirm.CreateConfirmation(reservationID);

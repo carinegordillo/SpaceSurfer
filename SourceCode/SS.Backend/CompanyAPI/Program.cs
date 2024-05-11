@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
 
 
 //dao
@@ -84,14 +84,14 @@ app.Use((context, next) =>
 
 
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseDeveloperExceptionPage();
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+//     app.UseDeveloperExceptionPage();
+// }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 //app.UseMiddleware<AuthorizationMiddleware>();
 app.MapControllers();

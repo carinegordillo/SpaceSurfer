@@ -12,15 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
 
 var baseDirectory = AppContext.BaseDirectory;
 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
 var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
 
 builder.Services.AddTransient<ConfigService>(provider => new ConfigService(configFilePath));
-
 builder.Services.AddTransient<ISqlDAO, SqlDAO>();
+builder.Services.AddTransient<SS.Backend.Services.LoggingService.ILogger, Logger>();
 
 builder.Services.AddTransient<ISpaceCreation, SpaceCreation>();
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
@@ -70,14 +70,14 @@ app.Use(async (context, next) =>
     await next();
 });
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseDeveloperExceptionPage();
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+//     app.UseDeveloperExceptionPage();
+// }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseMiddleware<AuthorizationMiddleware>();
 
