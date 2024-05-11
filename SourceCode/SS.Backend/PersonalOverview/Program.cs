@@ -10,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var baseDirectory = AppContext.BaseDirectory;
 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
@@ -39,10 +38,8 @@ builder.Services.AddTransient<SSAuthService>(provider =>
     )
 );
 
-
-// Learn more about configuring Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
@@ -82,16 +79,6 @@ app.Use(async (context, next) =>
         await next();
     }
 });
-
-
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//    app.UseDeveloperExceptionPage();
-
-
-//}
 
 app.UseMiddleware<AuthorizationMiddleware>();
 

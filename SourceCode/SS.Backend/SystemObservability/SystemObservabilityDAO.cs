@@ -116,17 +116,17 @@ namespace SS.Backend.SystemObservability
                 if (timeSpan == "6 months")
                 {
                     startDate = DateTime.Today.AddMonths(-6);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else if (timeSpan == "12 months")
                 {
                     startDate = DateTime.Today.AddMonths(-12);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else if (timeSpan == "24 months")
                 {
                     startDate = DateTime.Today.AddMonths(-24);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else
                 {
@@ -239,17 +239,17 @@ namespace SS.Backend.SystemObservability
                 if (timeSpan == "6 months")
                 {
                     startDate = DateTime.Today.AddMonths(-6);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else if (timeSpan == "12 months")
                 {
                     startDate = DateTime.Today.AddMonths(-12);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else if (timeSpan == "24 months")
                 {
                     startDate = DateTime.Today.AddMonths(-24);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else
                 {
@@ -364,17 +364,17 @@ namespace SS.Backend.SystemObservability
                 if (timeSpan == "6 months")
                 {
                     startDate = DateTime.Today.AddMonths(-6);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else if (timeSpan == "12 months")
                 {
                     startDate = DateTime.Today.AddMonths(-12);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else if (timeSpan == "24 months")
                 {
                     startDate = DateTime.Today.AddMonths(-24);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else
                 {
@@ -489,17 +489,17 @@ namespace SS.Backend.SystemObservability
                 if (timeSpan == "6 months")
                 {
                     startDate = DateTime.Today.AddMonths(-6);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else if (timeSpan == "12 months")
                 {
                     startDate = DateTime.Today.AddMonths(-12);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else if (timeSpan == "24 months")
                 {
                     startDate = DateTime.Today.AddMonths(-24);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else
                 {
@@ -693,17 +693,17 @@ namespace SS.Backend.SystemObservability
                 if (timeSpan == "6 months")
                 {
                     startDate = DateTime.Today.AddMonths(-6);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else if (timeSpan == "12 months")
                 {
                     startDate = DateTime.Today.AddMonths(-12);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else if (timeSpan == "24 months")
                 {
                     startDate = DateTime.Today.AddMonths(-24);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else
                 {
@@ -817,17 +817,17 @@ namespace SS.Backend.SystemObservability
                 if (timeSpan == "6 months")
                 {
                     startDate = DateTime.Today.AddMonths(-6);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else if (timeSpan == "12 months")
                 {
                     startDate = DateTime.Today.AddMonths(-12);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else if (timeSpan == "24 months")
                 {
                     startDate = DateTime.Today.AddMonths(-24);
-                    endDate = DateTime.Today.AddDays(1).AddTicks(-1);
+                    endDate = DateTime.Today.AddDays(2).AddTicks(-1);
                 }
                 else
                 {

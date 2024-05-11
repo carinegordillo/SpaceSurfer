@@ -41,7 +41,7 @@ builder.Services.AddTransient<SSAuthService>(provider =>
 
 // Learn more about configuring Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 // get localhost cofig file path

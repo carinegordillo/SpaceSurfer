@@ -3,6 +3,7 @@ using SS.Backend.SharedNamespace;
 using Microsoft.Data.SqlClient;
 using SS.Backend.DataAccess;
 using System.Data;
+using SS.Backend.Services.LoggingService;
 
 
 /// <summary>
@@ -25,9 +26,14 @@ namespace SS.Backend.ReservationManagement{
         // string COMPANY_FLOOR_PLAN_TABLE = "dbo.companyFloor";
         // string COMPANY_FLOOR_PLAN_SPACES_TABLE = "dbo.companyFloorSpaces";
         private IReservationManagementRepository _reservationManagementRepository;
-        public ReservationValidationService(IReservationManagementRepository reservationManagementRepository)
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
+        public ReservationValidationService(IReservationManagementRepository reservationManagementRepository, ILogger logger)
         {
             _reservationManagementRepository = reservationManagementRepository;
+            _logger = logger;
+            logEntry = logBuilder.Build();
         }
 
         
@@ -57,6 +63,7 @@ namespace SS.Backend.ReservationManagement{
             {
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
+                logEntry = logBuilder.Error().DataStore().Description($"Error for async check for reservation {userReservationsModel.ReservationID} conflicts: {ex.Message}").User(userReservationsModel.UserHash).Build();
             }
             
 
@@ -64,15 +71,19 @@ namespace SS.Backend.ReservationManagement{
             {
                 result.HasError = true;
                 result.ErrorMessage = "There is a conflicting reservation.";
-                
+                logEntry = logBuilder.Error().DataStore().Description($"Failed to async check for reservation {userReservationsModel.ReservationID} conflicts.").User(userReservationsModel.UserHash).Build();
             }
 
             else
             {
                 result.HasError = false;
+                logEntry = logBuilder.Info().DataStore().Description($"Successfully async checked for reservation {userReservationsModel.ReservationID} conflicts.").User(userReservationsModel.UserHash).Build();
             }
 
-           
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
     
             return result;
         }
@@ -120,18 +131,26 @@ namespace SS.Backend.ReservationManagement{
                     else
                     {
                         result.HasError = false;
+                        logEntry = logBuilder.Info().DataStore().Description($"Success for async valid reservation {userReservationsModel.ReservationID} hours.").User(userReservationsModel.UserHash).Build();
                     }
                 }
                 else
                 {
                     result.ErrorMessage = "Company ID does not exist.";
                     result.HasError = true;
+                    logEntry = logBuilder.Error().DataStore().Description($"Failure for async valid reservation {userReservationsModel.ReservationID} hours.").User(userReservationsModel.UserHash).Build();
                 }
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage += ex.Message;
+                logEntry = logBuilder.Error().DataStore().Description($"Error for async valid reservation {userReservationsModel.ReservationID} hours: {ex.Message}").User(userReservationsModel.UserHash).Build();
+            }
+
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
             }
 
             return result;
@@ -186,6 +205,7 @@ namespace SS.Backend.ReservationManagement{
                     else
                     {
                         result.HasError = false;
+                        logEntry = logBuilder.Info().DataStore().Description($"Success for async valid reservation {userReservationsModel.ReservationID} duration.").User(userReservationsModel.UserHash).Build();
                     }
                     
                 }
@@ -193,12 +213,20 @@ namespace SS.Backend.ReservationManagement{
                 {
                     result.ErrorMessage = "SpaceID does not exist or is Invalid.";
                     result.HasError = true;
+                    logEntry = logBuilder.Error().DataStore().Description($"Failure for async valid reservation {userReservationsModel.ReservationID} duration.").User(userReservationsModel.UserHash).Build();
+                    
                 }
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage += ex.Message;
+                logEntry = logBuilder.Error().DataStore().Description($"Error for async valid reservation {userReservationsModel.ReservationID} duration: {ex.Message}").User(userReservationsModel.UserHash).Build();
+            }
+
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
             }
 
             return result;
@@ -421,12 +449,19 @@ namespace SS.Backend.ReservationManagement{
             {
                 response.HasError = true;
                 response.ErrorMessage += $"Validation failed for {string.Join(", ", failedValidations)}.";
+                logEntry = logBuilder.Error().Business().Description($"Failure for async reservation {userReservationsModel.ReservationID} validation.").User(userReservationsModel.UserHash).Build();
                 return response;
             }
 
-            
             response.HasError = false;
             response.ErrorMessage += "All requested validations passed.";
+            logEntry = logBuilder.Info().Business().Description($"Success for async reservation {userReservationsModel.ReservationID} validation.").User(userReservationsModel.UserHash).Build();
+
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
+            }
+            
             return response;
         }
 
