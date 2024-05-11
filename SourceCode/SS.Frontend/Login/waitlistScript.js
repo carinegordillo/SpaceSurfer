@@ -31,6 +31,7 @@ async function displayWaitlistedReservations() {
 
     const isTokenExp = checkTokenExpiration(accessToken);
     if (!isTokenExp) {
+        console.log("no token expiration ");
         logout();
         return;
     }
@@ -107,6 +108,7 @@ async function displayReservationDetails(reservation) {
     
     const isTokenExp = checkTokenExpiration(accessToken);
     if (!isTokenExp) {
+        console.log("no token expiration ");
         logout();
         return;
     }
@@ -174,6 +176,7 @@ async function getReservationId(reservation) {
 
     const isTokenExp = checkTokenExpiration(accessToken);
     if (!isTokenExp) {
+        console.log("no token expiration ");
         logout();
         return;
     }
@@ -289,6 +292,7 @@ async function leaveWaitlist(confirm, reservation) {
 
     const isTokenExp = checkTokenExpiration(accessToken);
     if (!isTokenExp) {
+        console.log("no token expiration ");
         logout();
         return;
     }
