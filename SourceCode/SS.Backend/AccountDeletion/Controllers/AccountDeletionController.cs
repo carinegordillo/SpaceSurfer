@@ -44,8 +44,9 @@ namespace AccountDeletionAPI.Controllers
                         try
                         {
                             var user = _authService.ExtractSubjectFromToken(accessToken);
+                            Console.WriteLine("Inside AccountDeletionController - beginning DeleteAccount");
                             var deleteAccount = await _accountDeletion.DeleteAccount(user);
-
+                            Console.WriteLine("Inside AccountDeletionController - success DeleteAccount");
                             if (_authService.CheckExpTime(accessToken))
                             {
 
@@ -62,6 +63,7 @@ namespace AccountDeletionAPI.Controllers
                         }
                         catch (Exception ex)
                         {
+                            Console.WriteLine("Inside AccountDeletionController - fail, in catch DeleteAccount");
                             return StatusCode(500, $"An error occurred while fetching user reservations: {ex.Message}");
                         }
                     }

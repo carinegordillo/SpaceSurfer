@@ -30,7 +30,7 @@ builder.Services.AddTransient<Response>();
 builder.Services.AddTransient<LogEntry>();
 builder.Services.AddTransient<ILogTarget, SqlLogTarget>();
 builder.Services.AddTransient<Logger>();
-builder.Services.AddTransient<IAccountDeletion, AccountDeletion>();
+//builder.Services.AddTransient<IAccountDeletion, AccountDeletion>();
 builder.Services.AddTransient<SSAuthService>(provider =>
     new SSAuthService(
         provider.GetRequiredService<GenOTP>(),
@@ -76,7 +76,7 @@ app.Use(async (context, next) =>
     {
         context.Response.Headers.Append("Access-Control-Allow-Origin", origin);
         context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Accept");
+        context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
         context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
     }
     if (context.Request.Method == "OPTIONS")
