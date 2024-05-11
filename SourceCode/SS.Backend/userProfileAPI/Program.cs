@@ -100,7 +100,6 @@ app.Use(async (context, next) =>
 
 app.UseMiddleware<AuthorizationMiddleware>();
 
-
 app.MapControllers();
 
 app.Run();
