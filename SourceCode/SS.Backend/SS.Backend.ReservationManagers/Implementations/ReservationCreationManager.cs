@@ -101,11 +101,13 @@ namespace SS.Backend.ReservationManagers{
 
                 if (alreadyOnWaitlist)
                 {
+                    logEntry = logBuilder.Error().Business().Description($"Failed to add user to waitlist. Already on waitlist").User(userReservationsModel.UserHash).Build();
                     response.HasError = true;
                     response.ErrorMessage += "Already on waitlist";
                 }
                 else
                 {
+                    logEntry = logBuilder.Info().Business().Description($"Successfully added user to waitlist.").User(userReservationsModel.UserHash).Build();
                     response.HasError = false;
                     response.ErrorMessage += "Added to waitlist";
                     await _waitlist.InsertWaitlistedUser(tableName, userReservationsModel.UserHash, resId);
@@ -113,8 +115,14 @@ namespace SS.Backend.ReservationManagers{
             }
             catch (Exception ex)
             {
+                logEntry = logBuilder.Error().Business().Description($"Error adding user to waitlist: {ex.Message}").User(userReservationsModel.UserHash).Build();
                 response.HasError = true;
                 response.ErrorMessage = "Error adding to waitlist" + ex.Message;
+            }
+
+            if (logEntry != null && _logger != null)
+            {
+                _logger.SaveData(logEntry);
             }
 
             return response;

@@ -65,11 +65,11 @@ namespace SS.Backend.Tests.ReservationManagers{
 
            _reservationManagementRepository = new ReservationManagementRepository(_sqlDao);
 
-           _reservationValidationService = new ReservationValidationService(_reservationManagementRepository);
+           _reservationValidationService = new ReservationValidationService(_reservationManagementRepository, _logger);
 
            _reservationCreatorService = new ReservationCreatorService(_reservationManagementRepository, _waitlistService);
             
-           _reservationModificationService = new ReservationModificationService(_reservationManagementRepository);
+           _reservationModificationService = new ReservationModificationService(_reservationManagementRepository, _logger);
 
            _reservationModificationManager = new ReservationModificationManager(_reservationModificationService, _reservationValidationService,_logger);
 
