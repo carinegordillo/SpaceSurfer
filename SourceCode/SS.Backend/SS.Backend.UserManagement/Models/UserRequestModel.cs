@@ -9,5 +9,6 @@ namespace SS.Backend.UserManagement
         public string RequestType { get; set; }
         public DateTime? ResolveDate { get; set; }
         public string? AdditionalInformation { get; set; }
+        public string? UserName { get; set; }
     }
 }

@@ -14,10 +14,15 @@ namespace SS.Backend.TaskManagerHub
     {
 
         private readonly ITaskManagerHubRepo _taskManagerHubRepo;
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
 
-        public TaskManagerHubService(ITaskManagerHubRepo taskManagerHubRepo)
+        public TaskManagerHubService(ITaskManagerHubRepo taskManagerHubRepo, ILogger logger)
         {
             _taskManagerHubRepo = taskManagerHubRepo;
+            _logger = logger;
+            logEntry = logBuilder.Build();
         }
         public async Task<Response> ListTasks(string hashedUsername)
         {
@@ -33,11 +38,32 @@ namespace SS.Backend.TaskManagerHub
                 {
                     viewTasksResponse.ErrorMessage += $"View Task List - command not successful - ErrorMessage {viewTasksResponse.ErrorMessage}";
                 }
+
+                //logging
+                if (viewTasksResponse.HasError == false)
+                {
+                    logEntry = logBuilder.Info().DataStore().Description($"Successfully displays list tasks view.").User(hashedUsername).Build();
+                }
+                else
+                {
+                    logEntry = logBuilder.Error().DataStore().Description($"Failed to display list tasks view.").User(hashedUsername).Build();
+                    
+                }
+                if (logEntry != null && _logger != null)
+                {
+                    _logger.SaveData(logEntry);
+                }
                 
                 return viewTasksResponse;
             }
             catch (Exception ex)
             {
+                //logging
+                logEntry = logBuilder.Error().DataStore().Description($"Error to display list tasks view: Error {ex.Message}.").User(hashedUsername).Build();
+                if (logEntry != null && _logger != null)
+                {
+                    _logger.SaveData(logEntry);
+                }
                 return new Response
                 {
                     HasError = true,
@@ -60,11 +86,31 @@ namespace SS.Backend.TaskManagerHub
                 {
                     viewTasksResponse.ErrorMessage += $"View Task List By Priority - command not successful - ErrorMessage {viewTasksResponse.ErrorMessage}";
                 }
+
+                //logging
+                if (viewTasksResponse.HasError == false)
+                {
+                    logEntry = logBuilder.Info().Business().Description($"Successfully list tasks by priority.").User(hashedUsername).Build();
+                }
+                else
+                {
+                    logEntry = logBuilder.Error().Business().Description($"Failed to list tasks by priority.").User(hashedUsername).Build();
+                    
+                }
+                if (logEntry != null && _logger != null)
+                {
+                    _logger.SaveData(logEntry);
+                }
                 
                 return viewTasksResponse;
             }
             catch (Exception ex)
             {
+                logEntry = logBuilder.Error().Business().Description($"Error to list tasks by priority: Error {ex.Message}.").User(hashedUsername).Build();
+                if (logEntry != null && _logger != null)
+                {
+                    _logger.SaveData(logEntry);
+                }
                 return new Response
                 {
                     HasError = true,
@@ -170,14 +216,36 @@ namespace SS.Backend.TaskManagerHub
                     {"score", task.score}
                 }).ToList();
 
-                return new Response
+                var response = new Response
                 {
                     HasError = false,
                     Values = taskDictionaries
                 };
+
+                //logging
+                if (viewTasksResponse.HasError == false)
+                {
+                    logEntry = logBuilder.Info().Business().Description($"Successfully scored tasks.").User(hashedUsername).Build();
+                }
+                else
+                {
+                    logEntry = logBuilder.Error().Business().Description($"Failed to score tasks.").User(hashedUsername).Build();
+                    
+                }
+                if (logEntry != null && _logger != null)
+                {
+                    _logger.SaveData(logEntry);
+                }
+
+                return response;
             }
             catch (Exception ex)
             {
+                logEntry = logBuilder.Error().Business().Description($"Error to score tasks: {ex.Message}.").User(hashedUsername).Build();
+                if (logEntry != null && _logger != null)
+                {
+                    _logger.SaveData(logEntry);
+                }
                 return new Response { HasError = true, ErrorMessage = $"Failed to score tasks: {ex.Message}" };
             }
         }
@@ -312,14 +380,36 @@ namespace SS.Backend.TaskManagerHub
                 // Send email immediately
                 await MailSender.SendEmail(userEmail, subject, messageBody);
 
-                return new Response
+                var response = new Response
                 {
                     HasError = false,
                     ErrorMessage = "Email notification sent successfully."
                 };
+
+                //logging
+                if (response.HasError == false)
+                {
+                    logEntry = logBuilder.Info().Business().Description($"Successfully notified user of task {task.title}.").User(task.hashedUsername).Build();
+                }
+                else
+                {
+                    logEntry = logBuilder.Error().Business().Description($"Failed notify user of task {task.title}.").User(task.hashedUsername).Build();
+                    
+                }
+                if (logEntry != null && _logger != null)
+                {
+                    _logger.SaveData(logEntry);
+                }
+
+                return response;
             }
             catch (Exception ex)
             {
+                logEntry = logBuilder.Error().Business().Description($"Error to notify user of task {task.title}: {ex.Message}.").User(task.hashedUsername).Build();
+                if (logEntry != null && _logger != null)
+                {
+                    _logger.SaveData(logEntry);
+                }
                 return new Response
                 {
                     HasError = true,

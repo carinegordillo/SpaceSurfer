@@ -40,6 +40,7 @@ builder.Services.AddTransient<SSAuthService>(provider =>
 // Learn more about configuring Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 
+
 var app = builder.Build();
 
 app.Use((context, next) =>
