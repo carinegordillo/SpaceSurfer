@@ -14,7 +14,7 @@ using Microsoft.Net.Http.Headers;
 using SS.Backend.Services.LoggingService;
 using System.Text;
 using SS.Backend.Waitlist;
-
+using System.Text.Json;
 
 
 
@@ -108,24 +108,43 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-// Manually handle CORS
-app.Use(async (context, next) =>
+// get localhost cofig file path
+var corsConfigFilePath = Path.Combine(projectRootDirectory, "Configs", "originsConfig.json");
+string allowedOrigin= "coudl not connect to config file";
+
+if (File.Exists(corsConfigFilePath))
 {
-    // Set the necessary headers for CORS
-    context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+    string configJson = File.ReadAllText(corsConfigFilePath);
+    
+    JsonDocument doc = JsonDocument.Parse(configJson);
+    JsonElement root = doc.RootElement.GetProperty("Origin");
+    allowedOrigin = root.GetProperty("CorsAllowedOrigin").GetString() ?? "NA";
+}
+
+Console.WriteLine("Cors Allowed Origin: ");
+Console.WriteLine(allowedOrigin);
+app.Use((context, next) =>
+{
+    var origin = context.Request.Headers[HeaderNames.Origin].ToString();
+
+    Console.WriteLine("IN HERERREEER ");
+    Console.WriteLine(allowedOrigin);
+
+    var allowedOrigins = new[] {allowedOrigin};
+
+    context.Response.Headers.Append("Access-Control-Allow-Origin", origin);
     context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
 
-    // Handle the preflight request
     if (context.Request.Method == "OPTIONS")
     {
-        context.Response.StatusCode = 200;
-        await context.Response.CompleteAsync();
-        return;
+        context.Response.Headers.Append("Access-Control-Max-Age", "86400");
+        context.Response.StatusCode = 204;
+        return Task.CompletedTask;
     }
-    await next();
-});
 
+    return next();
+});
 
 
 
