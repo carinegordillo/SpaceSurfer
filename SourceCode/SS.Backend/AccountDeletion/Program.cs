@@ -2,7 +2,9 @@ using SS.Backend.DataAccess;
 using SS.Backend.Security;
 using SS.Backend.Services.DeletingService;
 using SS.Backend.Services.LoggingService;
+using Microsoft.Net.Http.Headers;
 using SS.Backend.SharedNamespace;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,15 +44,34 @@ builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+// get localhost cofig file path
+var corsConfigFilePath = Path.Combine(projectRootDirectory, "Configs", "originsConfig.json");
+string allowedOrigin= "coudl not connect to config file";
 
+if (File.Exists(corsConfigFilePath))
+{
+    string configJson = File.ReadAllText(corsConfigFilePath);
+    
+    JsonDocument doc = JsonDocument.Parse(configJson);
+    JsonElement root = doc.RootElement.GetProperty("Origin");
+    allowedOrigin = root.GetProperty("CorsAllowedOrigin").GetString() ?? "NA";
+}
+
+Console.WriteLine("Cors Allowed Origin: ");
+Console.WriteLine(allowedOrigin);
 app.Use((context, next) =>
 {
+    var origin = context.Request.Headers[HeaderNames.Origin].ToString();
 
-    context.Response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:3000");
+    Console.WriteLine("IN HERERREEER ");
+    Console.WriteLine(allowedOrigin);
+
+    var allowedOrigins = new[] {allowedOrigin};
+
+    context.Response.Headers.Append("Access-Control-Allow-Origin", origin);
     context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
-
 
     if (context.Request.Method == "OPTIONS")
     {
