@@ -9,9 +9,10 @@ document.addEventListener('click', function (event) {
 });
 
 function showRecoveryForm() {
-
+    hideAllSections();
     // Hide the OTP section and show the recovery form section
     document.getElementById("accountRecoverySection").style.display = "block";
+    document.getElementById('noLogin').style.display = 'block';
     document.getElementById('sendOTPSection').style.display = 'none';
     const recoveryForm = document.getElementById('recoveryForm');
     recoveryForm.addEventListener('submit', sendRecoveryRequest);
