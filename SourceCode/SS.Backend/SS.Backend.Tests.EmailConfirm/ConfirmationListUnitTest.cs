@@ -68,6 +68,23 @@ public class ConfirmListUnitTest
                             await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                         }
 
+                        // Then delete from userHash table
+                        string userHash = "testUser";
+                        string deleteUserSql = "DELETE FROM [dbo].[userHash] WHERE hashedUsername = @UserHash;";
+                        using (SqlCommand command = new SqlCommand(deleteUserSql, connection, transaction))
+                        {
+                            command.Parameters.AddWithValue("@UserHash", userHash);
+                            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        }
+                        // Then delete from userAccount table
+                        string username = "Sarah.Santos@student.csulb.edu";
+                        string deleteAcctSql = "DELETE FROM [dbo].[userAccount] WHERE username = @UserName;";
+                        using (SqlCommand command = new SqlCommand(deleteAcctSql, connection, transaction))
+                        {
+                            command.Parameters.AddWithValue("@UserName", username);
+                            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        }
+
                         // Commit the transaction
                         transaction.Commit();
                     }
@@ -108,12 +125,31 @@ public class ConfirmListUnitTest
                 {
                     try
                     {
-                        // insert data into Reservations table
+                        // insert into userAccount
+                        string sqlAcct = $@"
+                            INSERT INTO [dbo].[userAccount] (username, birthDate, companyID) 
+                            VALUES ('Sarah.Santos@student.csulb.edu', '2002-01-11', null);
+                        ";
+                        using (SqlCommand commandUser = new SqlCommand(sqlAcct, connection, transaction))
+                        {
+                            await commandUser.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        }
+                        //insert into userHash
+                        string sqlUser = $@"
+                            INSERT INTO [dbo].[userHash] (hashedUsername, username) 
+                            VALUES ('testUser', 'Sarah.Santos@student.csulb.edu');
+                        ";
+                        using (SqlCommand commandUser = new SqlCommand(sqlUser, connection, transaction))
+                        {
+                            await commandUser.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        }
+
+                        // insert into Reservations table
                         string sql = @"
                             INSERT INTO [dbo].[Reservations] 
-                            (companyID, floorPlanID, spaceID, reservationDate, reservationStartTime, reservationEndTime, status, userHash, companyType) 
+                            (companyID, floorPlanID, spaceID, reservationDate, reservationStartTime, reservationEndTime, status, userHash) 
                             OUTPUT INSERTED.reservationID 
-                            VALUES (9, 8, 'SPACE022', '2024-04-22', '2024-04-08T09:00:00Z', '2024-04-05T11:00:00Z', 'Active', '7mLYo1Gu98LGqqtvSQcZ31hJhDEit2iDK4BCD3DM8ZU=', 3);
+                            VALUES (9, 8, 'SPACE022', '2024-04-22', '2024-04-08T09:00:00Z', '2024-04-05T11:00:00Z', 'Active', 'testUser');
                         ";
                         using (SqlCommand command = new SqlCommand(sql, connection, transaction))
                         {
