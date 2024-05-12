@@ -13,6 +13,7 @@ namespace SS.Backend.Tests.SpacemodificationTest
     public class SpaceModificationTest
     {
         private SpaceModification? _spaceModification;
+        private SpaceCreation? _spaceCreation;
         private ISpaceManagerDao? _spaceManagerDao; 
         private SqlDAO? _sqlDao;
         private ConfigService? _configService;
@@ -31,6 +32,7 @@ namespace SS.Backend.Tests.SpacemodificationTest
             _logger = new Logger(_logTarget);
             _spaceManagerDao = new SpaceManagerDao(_sqlDao);
             _spaceModification = new SpaceModification(_spaceManagerDao, _logger);
+            _spaceCreation = new SpaceCreation(_spaceManagerDao, _logger);
             
         }
         [TestCleanup]
@@ -43,8 +45,8 @@ namespace SS.Backend.Tests.SpacemodificationTest
             try
             {
                 CompanyFloor companyFloor = new CompanyFloor{
-                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ", 
-                FloorPlanName = "first floor",
+                    hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ", 
+                    FloorPlanName = "test floor",
                 };
                 var response = await _spaceModification.DeleteFloor(companyFloor);
             }
@@ -58,10 +60,20 @@ namespace SS.Backend.Tests.SpacemodificationTest
         [TestMethod]
         public async Task ModifyFloorPlan_Success()
         {
+            var validFloorInfo = new CompanyFloor
+            {
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ",
+                FloorPlanName = "test floor",
+                FloorPlanImage = new byte[] { 0x01, 0x02, 0x03, 0x04 },
+                FloorSpaces = new Dictionary<string, int> { { "test1", 2 }, { "tets2", 3 }, {"tets3", 3} },
+            };
+            var createresponse = await _spaceCreation.CreateSpace(validFloorInfo);
+
+
             Stopwatch timer = new Stopwatch();
             CompanyFloor companyFloor = new CompanyFloor{
                 hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ", 
-                FloorPlanName = "first floor",
+                FloorPlanName = "test floor",
                 FloorPlanImage =  new byte[] { 0x08, 0x02, 0x03, 0x09 }
             };
             timer.Start();
@@ -77,10 +89,19 @@ namespace SS.Backend.Tests.SpacemodificationTest
         [TestMethod]
         public async Task ModifySpace_Success()
         {
+            var validFloorInfo = new CompanyFloor
+            {
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ",
+                FloorPlanName = "test floor",
+                FloorPlanImage = new byte[] { 0x01, 0x02, 0x03, 0x04 },
+                FloorSpaces = new Dictionary<string, int> { { "test1", 2 }, { "tets2", 3 }, {"tets3", 3} },
+            };
+            var createresponse = await _spaceCreation.CreateSpace(validFloorInfo);
+
             Stopwatch timer = new Stopwatch();
             SpaceModifier spaceModifier = new SpaceModifier{
                 hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ", 
-                spaceID = "first1",
+                spaceID = "test1",
                 newTimeLimit =  10
             };
             timer.Start();
@@ -96,10 +117,19 @@ namespace SS.Backend.Tests.SpacemodificationTest
         [TestMethod]
         public async Task DeleteSpace_Success()
         {
+            var validFloorInfo = new CompanyFloor
+            {
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ",
+                FloorPlanName = "test floor",
+                FloorPlanImage = new byte[] { 0x01, 0x02, 0x03, 0x04 },
+                FloorSpaces = new Dictionary<string, int> { { "test1", 2 }, { "test2", 3 }, {"tets3", 3} },
+            };
+            var createresponse = await _spaceCreation.CreateSpace(validFloorInfo);
+
             Stopwatch timer = new Stopwatch();
             SpaceModifier spaceModifier = new SpaceModifier{
-                hashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ", 
-                spaceID = "J1",
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ", 
+                spaceID = "test2",
             };
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -113,10 +143,19 @@ namespace SS.Backend.Tests.SpacemodificationTest
         [TestMethod]
         public async Task getCompanyFloor_Success()
         {
+            var validFloorInfo = new CompanyFloor
+            {
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ",
+                FloorPlanName = "test floor",
+                FloorPlanImage = new byte[] { 0x01, 0x02, 0x03, 0x04 },
+                FloorSpaces = new Dictionary<string, int> { { "test1", 2 }, { "tets2", 3 }, {"tets3", 3} },
+            };
+            var createresponse = await _spaceCreation.CreateSpace(validFloorInfo);
+
             Stopwatch timer = new Stopwatch();
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var response = await _spaceModification.getCompanyFloor("/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ");
+            var response = await _spaceModification.getCompanyFloor("kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ");
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             timer.Stop();
             Assert.IsFalse(response.HasError, response.ErrorMessage);
@@ -127,10 +166,19 @@ namespace SS.Backend.Tests.SpacemodificationTest
         [TestMethod]
         public async Task DeleteFloor_Success()
         {
+            var validFloorInfo = new CompanyFloor
+            {
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ",
+                FloorPlanName = "test floor",
+                FloorPlanImage = new byte[] { 0x01, 0x02, 0x03, 0x04 },
+                FloorSpaces = new Dictionary<string, int> { { "test1", 2 }, { "tets2", 3 }, {"tets3", 3} },
+            };
+            var createresponse = await _spaceCreation.CreateSpace(validFloorInfo);
+
             Stopwatch timer = new Stopwatch();
             CompanyFloor companyFloor = new CompanyFloor{
                 hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ", 
-                FloorPlanName = "plswork"
+                FloorPlanName = "test floor"
             };
             timer.Start();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -139,7 +187,7 @@ namespace SS.Backend.Tests.SpacemodificationTest
             timer.Stop();
             Assert.IsFalse(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            await CleanupTestData().ConfigureAwait(false);
+            // await CleanupTestData().ConfigureAwait(false);
         }
     }
 }

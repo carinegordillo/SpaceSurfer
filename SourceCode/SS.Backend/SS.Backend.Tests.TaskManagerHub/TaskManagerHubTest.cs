@@ -21,6 +21,9 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         private TaskManagerHubService  _taskManagerHubService;
         private TaskManagerHubRepo _taskManagerHubRepo;
         private SqlDAO _sqlDao;
+        private ILogTarget _logTarget;
+        private ILogger _logger;
+
 
         [TestInitialize]
         public void Setup()
@@ -31,8 +34,9 @@ namespace SS.Backend.Tests.TaskManagerHubTests
             _configService = new ConfigService(configFilePath);
             _sqlDao = new SqlDAO(_configService);
             _taskManagerHubRepo = new TaskManagerHubRepo(_sqlDao);
-            _taskManagerHubService = new TaskManagerHubService(_taskManagerHubRepo);
-            _taskManagerHubManager = new TaskManagerHubManager(_taskManagerHubService);
+            _taskManagerHubService = new TaskManagerHubService(_taskManagerHubRepo, _logger);
+            _taskManagerHubManager = new TaskManagerHubManager(_taskManagerHubService, _logger);
+
         }
 
         [TestCleanup]
