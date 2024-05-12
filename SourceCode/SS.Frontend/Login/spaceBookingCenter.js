@@ -84,7 +84,6 @@ function getReservationCenter() {
                 console.error('Access token is not available.');
                 return;
             }
-            reservationForm.addEventListener('submit', handleReservationFormSubmit);
 
         });
         formContainer.appendChild(reservationForm);
@@ -213,7 +212,7 @@ function reservationOverviewButtons() {
         { id: 'loadActiveReservationsBtn', text: 'Active Reservations', onClickFunction: () => filterReservationsByStatus('Active') },
         { id: 'loadPassedReservationsBtn', text: 'Passed Reservations', onClickFunction: () => filterReservationsByStatus('Passed') },
         { id: 'loadCancelledReservationsBtn', text: 'Cancelled Reservations', onClickFunction: () => filterReservationsByStatus('Cancelled') },
-        { id: 'loadAllReservationsBtn', text: 'All Reservations', onClickFunction: () => getUsersReservations(username, accessToken) }
+        { id: 'loadAllReservationsBtn', text: 'Refresh All Reservations', onClickFunction: () => getUsersReservations(username, accessToken) }
     ];
 
     buttons.forEach(({ id, text, onClickFunction }) => {
@@ -228,6 +227,7 @@ function reservationOverviewButtons() {
 function filterReservationsByStatus(statusFilter) {
     const container = document.querySelector('.reservation-list');
     const allReservations = container.querySelectorAll('.reservation-card');
+    var visibleCount = 0;
 
     allReservations.forEach(card => {
         const statusElement = card.querySelector('.status-0, .status-1, .status-2');
@@ -235,11 +235,17 @@ function filterReservationsByStatus(statusFilter) {
             const statusText = statusElement.textContent.split(': ')[1];
             if (statusText === statusFilter || statusFilter === 'All') {
                 card.style.display = ''; 
+                visibleCount++;
             } else {
                 card.style.display = 'none'; 
             }
         }
     });
+    console.log(`Showing ${visibleCount} ${statusFilter} reservations`);
+    if (visibleCount === 0) {
+        container.innerHTML = `<p>No ${statusFilter} reservations to show.</p>`;
+    }
+
 }
 
 
@@ -320,6 +326,11 @@ function getUsersReservations(userName, accessToken) {
 function renderReservations(data, containerSelector) {
     const container = document.querySelector(containerSelector);
     container.innerHTML = ''; 
+
+    if (data.length === 0) {
+        container.innerHTML = '<p>You currently have no reservations.<p>';
+        return;
+    }
 
     data.forEach(reservation => {
     let statusText = '';
@@ -548,6 +559,13 @@ async function submitModification(reservation) {
         } else {
             console.log('Reservation modified successfully');
             onSuccess('Reservation modified successfully!');
+            const existingModal = document.querySelector('.modal-content');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            getUsersReservations(username, accessToken)
+
+            
         }
     } catch (error) {
         console.error('Error modifying reservation:', error);
@@ -614,8 +632,8 @@ function showCancelModal(reservation) {
     if (accessToken) {
         document.getElementById('confirmCancel').addEventListener('click', function () {
             submitCancellation(reservation, accessToken);
-            getUsersReservations(username, accessToken)
             backdrop.remove(); // Close modal on confirmation
+            
         });
         document.getElementById('cancelCancel').addEventListener('click', function () {
             backdrop.remove(); // Close modal on cancellation
@@ -686,6 +704,7 @@ function showCancelModal(reservation) {
         } else {
             console.log('Reservation cancelled successfully');
             onSuccess('Reservation was cancelled.');
+            getUsersReservations(username, accessToken)
         }
     } catch (error) {
         console.error('Error cancelling reservation:', error);

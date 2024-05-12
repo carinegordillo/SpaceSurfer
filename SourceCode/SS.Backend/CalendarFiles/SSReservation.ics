@@ -2,12 +2,12 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//SpaceSurfer//Reservation Confirmation//EN
 BEGIN:VEVENT
-UID:a30362f5-5f7a-4a38-b736-3871500b8e72@gmail.com
-DTSTAMP:20240517T114800
-DTSTART:20240517T114800
-DTEND:20240517T124800
+UID:dce4c4f6-5ddc-4af1-8724-165beca8553d@gmail.com
+DTSTAMP:20240514T143600
+DTSTART:20240514T143600
+DTEND:20240514T153600
 SUMMARY:SpaceSurfer Reservation
-DESCRIPTION:Reservation at: Orbital Logistics Corp ReservationID: 4019 SpaceID: S5-FP1    
-LOCATION:1001 Launchpad Rd, Cape Canaveral, FL 32920       
+DESCRIPTION:Reservation at: AstroTech Innovations ReservationID: 4040 SpaceID: S2-FP3    
+LOCATION:250 Spaceway Blvd, Houston, TX 77058              
 END:VEVENT
 END:VCALENDAR

@@ -84,7 +84,7 @@ namespace SS.Backend.ReservationManagers{
             }
             else
             {
-                Console.WriteLine("No data found or error occurred.");
+                  
                 logEntry = logBuilder.Error().Business().Description($"No reservtaion data found or error occurred").User(userName).Build();
             }
             if (logEntry != null && _logger != null)

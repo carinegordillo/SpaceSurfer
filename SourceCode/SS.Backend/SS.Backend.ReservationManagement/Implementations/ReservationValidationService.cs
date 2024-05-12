@@ -45,7 +45,7 @@ namespace SS.Backend.ReservationManagement{
 
             if (userReservationsModel.ReservationID != null)
             {
-                Console.WriteLine("reservtaion ID !");
+                  
                 reservationParameters = new Dictionary<string, object>
                 {
                     { "reservationIdToExclude", userReservationsModel.ReservationID},
@@ -57,7 +57,7 @@ namespace SS.Backend.ReservationManagement{
                 };
             }
             else{
-                Console.WriteLine("NO reservtaion ID !");
+                  
                 reservationParameters = new Dictionary<string, object>
                 {
                     { "companyID", userReservationsModel.CompanyID },
@@ -187,7 +187,7 @@ namespace SS.Backend.ReservationManagement{
             
             if (proposedStartTime >= openingHours && proposedEndTime <= closingHours)
             {
-                Console.WriteLine("This is True");
+                  
                 return true;
             }
 

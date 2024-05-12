@@ -34,7 +34,7 @@ public class RecoverRequestController : ControllerBase
        string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
-            Console.WriteLine("getProfile called");
+              
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
             var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
 
@@ -99,7 +99,7 @@ public class RecoverRequestController : ControllerBase
         string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
-            Console.WriteLine("getProfile called");
+              
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
             var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
 
@@ -192,7 +192,7 @@ public class RecoverRequestController : ControllerBase
         string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
-            Console.WriteLine("getProfile called");
+              
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
             var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
 
@@ -284,7 +284,7 @@ public class RecoverRequestController : ControllerBase
         string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
-            Console.WriteLine("getProfile called");
+              
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
             var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
 
@@ -312,7 +312,7 @@ public class RecoverRequestController : ControllerBase
                             Console.WriteLine(response.HasError);
                             if (response.HasError)
                             {
-                                Console.WriteLine("Error disabling account");
+                                  
                                 return Ok(new { success = false, message = "Failed to Disable account." });
                             }
                             else
@@ -339,7 +339,7 @@ public class RecoverRequestController : ControllerBase
                             Console.WriteLine(response.HasError);
                             if (response.HasError)
                             {
-                                Console.WriteLine("Error disabling account");
+                                  
                                 return Ok(new { success = false, message = "Failed to Disable account." });
                             }
                             else
@@ -377,7 +377,7 @@ public class RecoverRequestController : ControllerBase
         string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
-            Console.WriteLine("getProfile called");
+              
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
             var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
 
