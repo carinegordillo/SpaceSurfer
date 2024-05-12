@@ -128,6 +128,10 @@ function sendRecoveryRequest(event) {
 
     var email = document.getElementById("userRecoveryIdentity").value;
     var additionalInformation = document.getElementById("additionalInformation").value;
+    if (additionalInformation.length > 49) {
+        alert('Additional Information must not exceed 49 characters.');
+        return; 
+    }
 
     var formData = new URLSearchParams({
         email: email,

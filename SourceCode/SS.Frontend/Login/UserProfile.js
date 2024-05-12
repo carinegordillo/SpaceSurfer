@@ -112,8 +112,6 @@ async function fetchUserProfile(email) {
     }
 }
 
-
-
 function displayUserProfile(userProfile) {
     isEditing = false; // Set edit mode to false when displaying profile
 
