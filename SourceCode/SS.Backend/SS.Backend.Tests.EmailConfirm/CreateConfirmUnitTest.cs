@@ -57,9 +57,7 @@ public class CreateConfirmUnitTest
                     try
                     {
                         // Delete from dependent tables first if foreign key constraints exist
-                        string deleteConfirmationsSql = $@"
-                            DELETE FROM [dbo].[ConfirmReservations] 
-                            WHERE reservationID = {reservationID};";
+                        string deleteConfirmationsSql = "DELETE FROM [dbo].[ConfirmReservations] WHERE reservationID = @ReservationID;";
                         using (SqlCommand command = new SqlCommand(deleteConfirmationsSql, connection, transaction))
                         {
                             command.Parameters.AddWithValue("@ReservationID", reservationID);
@@ -67,10 +65,27 @@ public class CreateConfirmUnitTest
                         }
 
                         // Then delete from the main Reservations table
-                        string deleteReservationsSql = $@"DELETE FROM [dbo].[Reservations] WHERE reservationID = {reservationID};";
+                        string deleteReservationsSql = "DELETE FROM [dbo].[Reservations] WHERE reservationID = @ReservationID;";
                         using (SqlCommand command = new SqlCommand(deleteReservationsSql, connection, transaction))
                         {
                             command.Parameters.AddWithValue("@ReservationID", reservationID);
+                            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        }
+
+                        // Then delete from userHash table
+                        string userHash = "testUser";
+                        string deleteUserSql = "DELETE FROM [dbo].[userHash] WHERE hashedUsername = @UserHash;";
+                        using (SqlCommand command = new SqlCommand(deleteUserSql, connection, transaction))
+                        {
+                            command.Parameters.AddWithValue("@UserHash", userHash);
+                            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        }
+                        // Then delete from userAccount table
+                        string username = "Sarah.Santos@student.csulb.edu";
+                        string deleteAcctSql = "DELETE FROM [dbo].[userAccount] WHERE username = @UserName;";
+                        using (SqlCommand command = new SqlCommand(deleteAcctSql, connection, transaction))
+                        {
+                            command.Parameters.AddWithValue("@UserName", username);
                             await command.ExecuteNonQueryAsync().ConfigureAwait(false);
                         }
 
@@ -93,6 +108,91 @@ public class CreateConfirmUnitTest
         }
     }
 
+    private async Task<int> InsertReservationTestData()
+    {
+        var baseDirectory = AppContext.BaseDirectory;
+        var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+        var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+
+        ConfigService configFile = new ConfigService(configFilePath);
+        var connectionString = configFile.GetConnectionString();
+        int reservationID = 0; 
+
+        try
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync().ConfigureAwait(false);
+
+                // Start a database transaction.
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        // insert into userAccount
+                        string sqlAcct = $@"
+                            INSERT INTO [dbo].[userAccount] (username, birthDate, companyID) 
+                            VALUES ('Sarah.Santos@student.csulb.edu', '2002-01-11', null);
+                        ";
+                        using (SqlCommand commandUser = new SqlCommand(sqlAcct, connection, transaction))
+                        {
+                            await commandUser.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        }
+                        //insert into userHash
+                        string sqlUser = $@"
+                            INSERT INTO [dbo].[userHash] (hashedUsername, username) 
+                            VALUES ('testUser', 'Sarah.Santos@student.csulb.edu');
+                        ";
+                        using (SqlCommand commandUser = new SqlCommand(sqlUser, connection, transaction))
+                        {
+                            await commandUser.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        }
+
+                        // insert into Reservations table
+                        string sql = @"
+                            INSERT INTO [dbo].[Reservations] 
+                            (companyID, floorPlanID, spaceID, reservationDate, reservationStartTime, reservationEndTime, status, userHash) 
+                            OUTPUT INSERTED.reservationID 
+                            VALUES (9, 8, 'SPACE022', '2024-04-22', '2024-04-08T09:00:00Z', '2024-04-05T11:00:00Z', 'Active', 'testUser');
+                        ";
+                        using (SqlCommand command = new SqlCommand(sql, connection, transaction))
+                        {
+#pragma warning disable CS8605 // Unboxing a possibly null value.
+                            reservationID = (int)await command.ExecuteScalarAsync().ConfigureAwait(false);
+#pragma warning restore CS8605 // Unboxing a possibly null value.
+                        }
+
+                        // insert data in confirmReservations for reservationID
+                        string sqlConfirm = @"
+                            INSERT INTO [dbo].[ConfirmReservations] (reservationID, reservationOTP, confirmStatus, icsFile) 
+                            VALUES (@ReservationID, '123456', 'yes', null);
+                        ";
+                        using (SqlCommand commandConfirm = new SqlCommand(sqlConfirm, connection, transaction))
+                        {
+                            commandConfirm.Parameters.AddWithValue("@ReservationID", reservationID);
+                            await commandConfirm.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        }
+
+                        // Commit the transaction
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Something went wrong within the transaction, roll it back
+                        transaction.Rollback();
+                        Console.WriteLine($"Transaction rolled back due to an exception: {ex.Message}");
+                        throw; // Re-throw the exception to handle it outside or log it
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception during data insertion: {ex.Message}");
+        }
+        return reservationID; // Return the generated ID, or 0 if an error occurred
+    
+    }
 
     private async Task<int> InsertResOnlyTestData()
     {
@@ -115,6 +215,24 @@ public class CreateConfirmUnitTest
                 {
                     try
                     {
+                        // insert into userAccount
+                        string sqlAcct = $@"
+                            INSERT INTO [dbo].[userAccount] (username, birthDate, companyID) 
+                            VALUES ('Sarah.Santos@student.csulb.edu', '2002-01-11', null);
+                        ";
+                        using (SqlCommand commandUser = new SqlCommand(sqlAcct, connection, transaction))
+                        {
+                            await commandUser.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        }
+                        //insert into userHash
+                        string sqlUser = $@"
+                            INSERT INTO [dbo].[userHash] (hashedUsername, username) 
+                            VALUES ('testUser', 'Sarah.Santos@student.csulb.edu');
+                        ";
+                        using (SqlCommand commandUser = new SqlCommand(sqlUser, connection, transaction))
+                        {
+                            await commandUser.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        }
                         // insert data into Reservations table
                         string sql = @"
                             INSERT INTO [dbo].[Reservations] 
