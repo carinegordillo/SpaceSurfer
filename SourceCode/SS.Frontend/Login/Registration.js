@@ -122,7 +122,6 @@ function submitAccountCreationForm() {
     .then(data => {
         showModal('Account successfully submitted! Check your email for OTP to verify accunt');
         sendRegistrationOTP(userInfo.username);
-        // getLogin();
     })
     .catch(error => {
         console.error('Error:', error);
