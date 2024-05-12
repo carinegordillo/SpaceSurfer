@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <ProjectReference Include="../../SS.Backend/SS.Backend.UserManagement/SS.Backend.UserManagement.csproj" />
     <ProjectReference Include="../../SS.Backend/SS.Backend.DataAccess/SS.Backend.DataAccess.csproj" />
     <ProjectReference Include="..\..\SS.Backend\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
