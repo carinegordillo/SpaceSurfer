@@ -76,10 +76,15 @@ async function deleteData() {
     var idToken = sessionStorage.getItem('idToken');
     var parsedIdToken = JSON.parse(idToken);
     var username = parsedIdToken.Username;
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const CPRAUrl = appConfig.api.CPRA; 
 
     try {
         console.log("running user data protection endpoint");
-        const deleteResponse = await fetch(`http://localhost:5084/api/userDataProtection/deleteData`, {
+        const deleteResponse = await fetch(`${CPRAUrl}/api/userDataProtection/deleteData`, {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -108,7 +113,8 @@ async function deleteData() {
         console.log('Successfully deleted data.');
 
         console.log("running account deletion endpoint");
-        const secondResponse = await fetch(`http://localhost:5198/api/AccountDeletion/Delete`, {
+        const DeletionUrl = appConfig.api.AccountDeletion; 
+        const secondResponse = await fetch(`${DeletionUrl}/api/AccountDeletion/Delete`, {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
@@ -195,8 +201,8 @@ function sendCode_Access() {
 function sendCode_Deletion() {
     var userIdentity = document.getElementById("userIdentity").value;
     console.log(userIdentity);
-
-    fetch('http://localhost:5270/api/auth/sendOTP', {
+    const loginUrl = appConfig.api.Login; 
+    fetch(`${loginUrl}/api/auth/sendOTP`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -260,7 +266,7 @@ function verifyUser_Deletion() {
     var username = parsedIdToken.Username;
     var otp = document.getElementById('deletion_otp').value;
 
-    fetch('http://localhost:5270/api/auth/verifyCode', {
+    fetch(`${loginUrl}/api/auth/verifyCode`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
