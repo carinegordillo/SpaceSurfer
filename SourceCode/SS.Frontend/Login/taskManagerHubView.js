@@ -243,12 +243,10 @@ function createTask(task) {
     })
     .then(data => {
         console.log('Task created successfully', data);
-        // alert('Task created successfully!');
         showModal('Task created successfully!');
     })
     .catch(error => {
         console.error('Failed to create task', error);
-        // alert('Failed to create task: ' + (error.message || JSON.stringify(error)));
         showModal('Failed to create task: ' + (error.message || JSON.stringify(error)));
     });
 }
@@ -280,14 +278,13 @@ function deleteTask(taskTitle, userName) {
         return response.json();
     })
     .then(() => {
-        // alert('Task deleted successfully!');
+
         showModal('Task deleted successfully!');
         fetchAndDisplayTasks(); // Refresh the task list after deletion
     })
     .catch(error => {
         console.error('Failed to delete task', error);
         showModal('Failed to delete task'+ error.message);
-        // alert('Failed to delete task: ' + error.message);
     });
 }
 

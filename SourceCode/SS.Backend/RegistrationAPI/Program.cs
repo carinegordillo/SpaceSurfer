@@ -84,14 +84,9 @@ if (File.Exists(corsConfigFilePath))
     allowedOrigin = root.GetProperty("CorsAllowedOrigin").GetString() ?? "NA";
 }
 
- 
- 
 app.Use(async (context, next) =>
 {
     var origin = context.Request.Headers[HeaderNames.Origin].ToString();
-
-      
-     
 
     var allowedOrigins = new[] {allowedOrigin};
 

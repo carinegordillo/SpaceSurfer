@@ -70,13 +70,13 @@ function sendRecoveryOTP() {
         return response.json();
     })
     .then(data => {
-        alert('OTP sent. Check your email for the verification code.');
+        showModal('OTP sent. Check your email for the verification code.');
         document.getElementById("accountRecoverySection").style.display = "none";
         document.getElementById("enterAccountRecoveryOTPSection").style.display = "block";
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error sending verification code.');
+        showModal('Error sending verification code.');
     });
 }
 
@@ -105,13 +105,13 @@ function authenticateRecoveryUser() {
         return response.json();
     })
     .then(data => {
-        alert("OTP verified successfully. Please provide additional information.");
+        showModal("OTP verified successfully. Please provide additional information.");
         document.getElementById("enterAccountRecoveryOTPSection").style.display = "none";
         document.getElementById("additionalInfoSection").style.display = "block";
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Invalid OTP. Please try again.');
+        showModal('Invalid OTP. Please try again.');
     });
 }
 
@@ -129,7 +129,7 @@ function sendRecoveryRequest(event) {
     var email = document.getElementById("userRecoveryIdentity").value;
     var additionalInformation = document.getElementById("additionalInformation").value;
     if (additionalInformation.length > 49) {
-        alert('Additional Information must not exceed 49 characters.');
+        showModal('Additional Information must not exceed 49 characters.');
         return; 
     }
 
@@ -155,7 +155,7 @@ function sendRecoveryRequest(event) {
         return response.json();
     })
     .then(data => {
-        alert('Recovery request sent successfully. Please wait for admin to approve your request.');
+        showModal('Recovery request sent successfully. Please wait for admin to approve your request.');
         document.getElementById("additionalInfoSection").style.display = "none";
         document.getElementById("accountRecoverySection").style.display = "none";
         document.getElementById("noLogin").style.display = "block";
@@ -163,7 +163,7 @@ function sendRecoveryRequest(event) {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error sending recovery request. Try again later');
+        showModal('Error sending recovery request. Try again later');
     });
 }
 
@@ -469,13 +469,13 @@ function approveRequestsByUserHash(userHashes) {
         return response.json();
     })
     .then(data => {
-        alert("Successfully approved requests");
+        showModal("Successfully approved requests");
         console.log('Successfully approved requests:', data);
         fetchUserRequests(); // Refresh the data after approval
     })
     .catch(error => {
         console.error('Error approving requests:', error);
-        alert(`Failed to approve requests: ${error.message}`);
+        showModal(`Failed to approve requests: ${error.message}`);
     });
 }
 
@@ -538,13 +538,13 @@ function denyRequestsByUserHash(userHashes) {
             console.log('New access token stored:', accessToken);
         }
 
-        alert("Successfully denied requests");
+        showModal("Successfully denied requests");
         console.log('Successfully denied requests:', data);
         fetchUserRequests(); // Refresh the data after denial
     })
     .catch(error => {
         console.error('Error denying requests:', error);
-        alert(`Failed to deny requests: ${error.message}`);
+        showModal(`Failed to deny requests: ${error.message}`);
     });
 }
 
@@ -555,7 +555,7 @@ document.getElementById('deactivateUserBtn').addEventListener('click', function(
     if (userHash) {
         deactivateUserAccount(userHash);
     } else {
-        alert('Please enter a valid user hash.');
+        showModal('Please enter a valid user hash.');
     }
 });
 
@@ -615,13 +615,13 @@ function deactivateUserAccount(userHash) {
             sessionStorage.setItem('accessToken', accessToken);
             console.log('New access token stored:', accessToken);
         }
-        alert('User deactivation ' + (data.success ? 'successful' : 'failed') + ': ' + data.message);
+        showModal('User deactivation ' + (data.success ? 'successful' : 'failed') + ': ' + data.message);
         console.log('User deactivation result:', data);
         fetchUserRequests(); // Optionally refresh the list if needed
     })
     .catch(error => {
         console.error('Error disabling the user account:', error);
-        alert('Error disabling the user account. Please try again.');
+        showModal('Error disabling the user account. Please try again.');
     });
 }
 
@@ -683,12 +683,12 @@ function deleteRequestsByUserHash(userHashes) {
             sessionStorage.setItem('accessToken', accessToken);
             console.log('New access token stored:', accessToken);
         }
-        window.alert("Successfully Deleted User Requests");
+        showModal("Successfully Deleted User Requests");
         console.log('Successfully deleted requests:', data);
         fetchUserRequests(); // Refresh the data after deletion
     })
     .catch(error => {
         console.error('Error deleting user requests:', error);
-        window.alert('Error deleting user requests. Please try again.');
+        showModal('Error deleting user requests. Please try again.');
     });
 }

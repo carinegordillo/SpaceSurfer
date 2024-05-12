@@ -1,11 +1,11 @@
 document.getElementById('replaceImage').addEventListener('change', function(event) {
     var fileModify = event.target.files[0];
     if (!fileModify) {
-        alert('No file selected.');
+        showModal('No file selected.');
         return;
     }
     if (fileModify.size > 5242880) {
-        alert('The file is too large. Please select a file smaller than 5MB.');
+        showModal('The file is too large. Please select a file smaller than 5MB.');
         return;
     }
     var reader = new FileReader();
@@ -27,11 +27,11 @@ document.getElementById('imageUpload').addEventListener('change', handleImageUpl
 function handleImageUpload(event) {
     var file = event.target.files[0];
     if (!file) {
-        alert('No file selected.');
+        showModal('No file selected.');
         return;
     }
     if (file.size > 5242880) {
-        alert('The file is too large. Please select a file smaller than 5MB.');
+        showModal('The file is too large. Please select a file smaller than 5MB.');
         return;
     }
     var reader = new FileReader();
@@ -52,7 +52,7 @@ function addSpaceRow(containerId, rowClass) {
     const container = document.getElementById(containerId);
     const currentSpaces = container.getElementsByClassName(rowClass).length;
     if (currentSpaces >= 20) {
-        alert('You cannot add more than 20 spaces.');
+        showModal('You cannot add more than 20 spaces.');
         return;
     }
     const newRow = document.createElement('div');
@@ -77,7 +77,7 @@ document.getElementById('addSpace').addEventListener('click', function() {
     const currentSpaces = container.getElementsByClassName('spaceRow').length;
 
     if (currentSpaces >= 20) {
-        alert('You cannot add more than 20 spaces.');
+        showModal('You cannot add more than 20 spaces.');
         return;
     }
 
@@ -95,7 +95,7 @@ document.getElementById('addSpaceModify').addEventListener('click', function() {
     const currentModifiedSpaces = container.getElementsByClassName('spaceRowModify').length;
 
     if (currentModifiedSpaces >= 20) {
-        alert('You cannot add more than 20 modified spaces.');
+        showModal('You cannot add more than 20 modified spaces.');
         return;
     }
 
@@ -260,11 +260,11 @@ function sendData(url, data) {
     .then(response => response.json())
     .then(data => {
         console.log('Success:', data);
-        alert('Operation successful!');
+        showModal('Operation successful!');
     })
     .catch((error) => {
         console.error('Error:', error);
-        alert('An error occurred. Please try again.');
+        showModal('An error occurred. Please try again.');
     });
 }
 
