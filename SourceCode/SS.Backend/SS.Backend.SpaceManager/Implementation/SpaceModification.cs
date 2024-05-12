@@ -36,7 +36,6 @@ namespace SS.Backend.SpaceManager
             // Assuming we have only one row per hashedUsername
             DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
             int companyID = Convert.ToInt32(companyIDRow["companyID"]);
-            Console.WriteLine($"Debug: CompanyID is {companyID}");
 
             // Check for valid companyID and companyFloor
             if (companyID <= 0)
@@ -101,7 +100,6 @@ namespace SS.Backend.SpaceManager
             // Assuming we have only one row per hashedUsername
             DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
             int companyID = Convert.ToInt32(companyIDRow["companyID"]);
-            Console.WriteLine($"Debug: CompanyID is {companyID}");
 
             // Check for valid companyID and companyFloor
             if (companyID <= 0)
@@ -165,7 +163,6 @@ namespace SS.Backend.SpaceManager
             // Assuming we have only one row per hashedUsername
             DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
             int companyID = Convert.ToInt32(companyIDRow["companyID"]);
-            Console.WriteLine($"Debug: CompanyID is {companyID}");
 
             // Check for valid companyID and companyFloor
             if (companyID <= 0)
@@ -220,7 +217,6 @@ namespace SS.Backend.SpaceManager
             // Assuming we have only one row per hashedUsername
             DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
             int companyID = Convert.ToInt32(companyIDRow["companyID"]);
-            Console.WriteLine($"Debug: CompanyID is {companyID}");
 
             // Check for valid companyID and companyFloor
             if (companyID <= 0)
@@ -263,7 +259,6 @@ namespace SS.Backend.SpaceManager
             // Assuming we have only one row per hashedUsername
             DataRow companyIDRow = companyIDResponse.ValuesRead.Rows[0];
             int companyID = Convert.ToInt32(companyIDRow["companyID"]);
-            Console.WriteLine($"Debug: CompanyID is {companyID}");
 
             // Check for valid companyID and companyFloor
             if (companyID <= 0)

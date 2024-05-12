@@ -31,7 +31,7 @@ namespace SS.Backend.UserManagement
 
         public async Task<Response> EnableAccount(string hashedUsername){
 
-            Console.WriteLine("Enabling account");
+              
 
 
             Response table1Result = await _userManagementDao.GeneralModifier("hashedUsername", hashedUsername, "IsActive", "yes", "dbo.activeAccount");
@@ -89,7 +89,7 @@ namespace SS.Backend.UserManagement
         */
 
         public async Task<Response> ResolveRequest(string userHash, string resolveStatus){
-            Console.WriteLine("Resolving account");
+              
 
             Response response = new Response();
 

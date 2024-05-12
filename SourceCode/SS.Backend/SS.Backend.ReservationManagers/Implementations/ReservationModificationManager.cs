@@ -33,7 +33,7 @@ namespace SS.Backend.ReservationManagers{
             Response response = new Response();
             Response reservationCreationResponse = new Response();
             string tableName = tableNameOverride ?? SS_RESERVATIONS_TABLE;
-            Console.WriteLine("Modifying reservation");
+              
             Console.WriteLine("Reservation ID: " + userReservationsModel.ReservationID);
                 
             ReservationValidationFlags flags = ReservationValidationFlags.CheckBusinessHours | ReservationValidationFlags.MaxDurationPerSeat | ReservationValidationFlags.ReservationLeadTime | ReservationValidationFlags.NoConflictingReservations | ReservationValidationFlags.CheckReservationFormatIsValid;

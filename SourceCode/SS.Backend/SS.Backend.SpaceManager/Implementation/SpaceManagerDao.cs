@@ -251,7 +251,6 @@ namespace SS.Backend.SpaceManager
             catch (Exception ex)
             {
                 result.HasError = true;
-                Console.WriteLine($"Error in ExecuteReadCompanyTables: {ex.Message}");
                 result.ErrorMessage = ex.Message;
             }
 
@@ -280,7 +279,6 @@ namespace SS.Backend.SpaceManager
             catch (Exception ex)
             {
                 result.HasError = true;
-                Console.WriteLine($"Error in ExecuteReadCompanyTables: {ex.Message}");
                 result.ErrorMessage = ex.Message;
             }
 

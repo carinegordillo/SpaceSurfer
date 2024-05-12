@@ -513,7 +513,7 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
                     int featureNum = random.Next(1, 12);
 
                     var parameters = new Dictionary<string, object>
-                { 
+                {
                     { "FeatureName", $"Feature {featureNum}"},
                     { "hashedUsername", "HCGl3rHu5KQyzNKfiLlm7ZMg0eCDSjxs1ZMWWp8E7Uw=" },
                     { "TimeStamp", $"20{year}-{month}-{day} 11:33:19.070"}
@@ -574,7 +574,7 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
                     int year = random.Next(22, 24);
                     int month = random.Next(1, 12);
                     int day = random.Next(1, 28);
-                    int featureNum = random.Next(1,12);
+                    int featureNum = random.Next(1, 12);
 
                     var parameters = new Dictionary<string, object>
                 {
@@ -920,7 +920,7 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
         }
 
         [TestMethod]
-        public async Task WrongTimeSpan_Failure()
+        public async Task Registration_WrongTimeSpan_Failure()
         {
             var baseDirectory = AppContext.BaseDirectory;
             var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
@@ -934,18 +934,145 @@ namespace SS.Backend.Tests.UsageAnalysisObeservability
 
                 var registrationCounts = await _registrationCountService.GetRegistrationCount("qGkjtLi+R/fQXcdKnAYWDYjkEVPvJ3E8SPCYTrU0hvY=", "18 months");
 
-                foreach (var registrationCount in registrationCounts)
-                {
-                    Console.WriteLine($"Month: {registrationCount.Month}");
-                    Console.WriteLine($"Year: {registrationCount.Year}");
-                    Console.WriteLine($"Failed Registration: {registrationCount.FailedRegistrations}");
-                    Console.WriteLine($"Successful Registration: {registrationCount.SuccessfulRegistrations}");
-                    Console.WriteLine();
-                }
+                Assert.IsNull(registrationCounts);
 
-                Assert.IsNotNull(registrationCounts);
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
 
-                Console.WriteLine(response.HasError);
+                Assert.IsTrue(response.HasError);
+            }
+
+        }
+
+        [TestMethod]
+        public async Task Login_WrongTimeSpan_Failure()
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+            Response response = new Response();
+
+            try
+            {
+
+                var logCounts = await _loginCountService.GetLoginCount("testLOGS", "15 months");
+
+                Assert.IsNull(logCounts);
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                Assert.IsTrue(response.HasError);
+            }
+
+        }
+
+        [TestMethod]
+        public async Task CompanySpaces_WrongTimeSpan_Failure()
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+            Response response = new Response();
+
+            try
+            {
+
+                var companySpaceCounts = await _companySpaceCountService.GetTop3CompaniesWithMostSpaces("testLOGS", "32 months");
+
+                Assert.IsNull(companySpaceCounts);
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                Assert.IsTrue(response.HasError);
+            }
+
+        }
+
+        [TestMethod]
+        public async Task CompanyReservations_WrongTimeSpan_Failure()
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+            Response response = new Response();
+
+            try
+            {
+
+                var companyReservationCounts = await _companyReservationCountService.GetTop3CompaniesWithMostReservations("testLOGS", "9 months");
+
+                Assert.IsNull(companyReservationCounts);
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                Assert.IsTrue(response.HasError);
+            }
+
+        }
+
+        [TestMethod]
+        public async Task ViewDurations_WrongTimeSpan_Failure()
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+            Response response = new Response();
+
+            try
+            {
+
+                var durations = await _viewDurationService.GetTop3ViewDuration("qGkjtLi+R/fQXcdKnAYWDYjkEVPvJ3E8SPCYTrU0hvY=", "16 months");
+                Assert.IsNull(durations);
+
+            }
+            catch (Exception ex)
+            {
+                response.HasError = true;
+                response.ErrorMessage = ex.Message;
+
+                Assert.IsTrue(response.HasError);
+            }
+
+        }
+
+        [TestMethod]
+        public async Task FeatureUse_WrongTimeSpan_Failure()
+        {
+            var baseDirectory = AppContext.BaseDirectory;
+            var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+            var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+            configService = new ConfigService(configFilePath);
+            Logger logger = new Logger(new SqlLogTarget(new SqlDAO(configService)));
+            Response response = new Response();
+
+            try
+            {
+
+                var features = await _mostUsedFeatureService.GetMostUsedFeatures("testLOGS", "3 months");
+                Assert.IsNull(features);
 
             }
             catch (Exception ex)
