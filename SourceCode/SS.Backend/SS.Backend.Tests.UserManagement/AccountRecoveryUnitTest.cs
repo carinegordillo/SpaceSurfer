@@ -21,6 +21,8 @@ public class AccountRecoveryTests
     private ILogTarget _logTarget;
     private ILogger _logger;
 
+    string userHash = "Yu86Ho6KDmtOeP687I/AHNE4rhxoCzZDs9v/Mpe+SZw=";
+
 
 
    [TestInitialize]
@@ -43,7 +45,7 @@ public class AccountRecoveryTests
    public async Task SendInitialRecoveryRequest_Pass()
    {
        // Arrange
-       var userHash = "testUsername";
+
 
        // Act
        var response = await _accountRecovery.createRecoveryRequest(userHash);
@@ -58,7 +60,7 @@ public class AccountRecoveryTests
    public async Task RecoverAccount_AdminDecision_True_ShouldPass()
    {
        // Arrange
-       var userHash = "testUserHash4";
+
        bool adminDecision = true; 
 
        // Act
@@ -74,7 +76,6 @@ public class AccountRecoveryTests
    {
        // Arrange
 
-        var userHash = "testUserHash1";
 
        var response = await _accountRecovery.createRecoveryRequest(userHash);
 
@@ -106,7 +107,7 @@ public class AccountRecoveryTests
    public async Task RecoverAccount_WithoutAdminApproval_ShouldFail()
    {
        // Arrange
-       var userHash = "someUserHash";
+
        bool adminDecision = false; 
 
        // Act
@@ -122,7 +123,6 @@ public class AccountRecoveryTests
    public async Task SendRecoveryRequest_MultipleConcurrentRequests_ShouldPass()
    {
        // Arrange
-       var userHash = "userForConcurrentTesting";
 
        // Act
        var task1 = _accountRecovery.createRecoveryRequest(userHash);
@@ -145,7 +145,6 @@ public class AccountRecoveryTests
    public async Task CreateRecoveryRequest_ValidUserHash_ShouldSucceed()
    {
        // Arrange
-       var userHash = "userHash1";
        string additionalInfo = "Need to recover account due to forgotten password.";
 
        // Actx

@@ -17,6 +17,7 @@ public class AccountRecoveryModifierUnitTests
     private ConfigService _configService;
     private ILogTarget _logTarget;
     private ILogger _logger;
+    private string userHash = "Yu86Ho6KDmtOeP687I/AHNE4rhxoCzZDs9v/Mpe+SZw=";
 
     [TestInitialize]
     public void Setup()
@@ -56,7 +57,6 @@ public class AccountRecoveryModifierUnitTests
     public async Task PendingRequest_UpdatesStatusToPending()
     {
         // Arrange
-        var userHash = "testUserHash5";
         
         // Act
         var result = await _accountRecoveryModifier.PendingRequest(userHash);
@@ -77,7 +77,7 @@ public class AccountRecoveryModifierUnitTests
     public async Task ResolveRequest_UpdatesStatusCorrectly()
     {
         // Arrange
-        var userHash = "testUserHash4";
+
         var resolveStatus = "accepted";
         
         // Act
@@ -103,7 +103,6 @@ public class AccountRecoveryModifierUnitTests
     public async Task EnabledAccount_UpdatesStatusToEnabled()
     {
         // Arrange
-        var userHash = "testUserHash1";
       
         // Act
         var result = await _accountRecoveryModifier.EnableAccount(userHash);
@@ -124,7 +123,6 @@ public class AccountRecoveryModifierUnitTests
     public async Task DiabledAccount_UpdatesStatusToEnabled()
     {
         // Arrange
-        var userHash = "testUserHash2";
       
         // Act
         var result = await _accountRecoveryModifier.EnableAccount(userHash);
