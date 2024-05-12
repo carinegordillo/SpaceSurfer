@@ -88,7 +88,7 @@ function sendOTP() {
     })
     .catch(error => {
         console.error('Error sending verification code:', error);
-        alert('Error sending verification code.');
+        showModal('Error sending verification code.');
     });
 }
 
