@@ -1,138 +1,119 @@
+using SS.Backend.DataAccess;
+using System.IO;
+using System.Threading.Tasks;
+using SS.Backend.UserManagement;
+using Microsoft.Data.SqlClient;
+using SS.Backend.Services.LoggingService;
+using System.Data;
+using SS.Backend.SharedNamespace;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-// using SS.Backend.DataAccess;
-// using System.IO;
-// using System.Threading.Tasks;
-// using SS.Backend.UserManagement;
-// using Microsoft.Data.SqlClient;
-// using System.Data;
+[TestClass]
+public class ProfileModifierUnitTests
+{
+    private ProfileModifier _profileModifier;
+    private IUserManagementDao _userManagementDao; 
+    private SqlDAO _sqlDao;
+    private ConfigService _configService;
+    private ILogTarget _logTarget;
+    private ILogger _logger;
 
+    string hashedUsername = "Yu86Ho6KDmtOeP687I/AHNE4rhxoCzZDs9v/Mpe+SZw=";
 
-// [TestClass]
-// public class ProfileModifierUnitTests
-// {
-//     private ProfileModifier _profileModifier;
-//     private IUserManagementDao _userManagementDao; 
-//     private SqlDAO _sqlDao;
-//     private ConfigService _configService;
+    [TestInitialize]
+    public void Setup()
+    {
+        var baseDirectory = AppContext.BaseDirectory;
+        var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+        var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+        _configService = new ConfigService(configFilePath);
+        _sqlDao = new SqlDAO(_configService);
+        _userManagementDao = new UserManagementDao(_sqlDao);
+        _logger = new Logger(_logTarget);
+        _profileModifier = new ProfileModifier(_userManagementDao, _logger);
+    }
 
-//     [TestInitialize]
-//     public void Setup()
-//     {
-//         var baseDirectory = AppContext.BaseDirectory;
-//         var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
-//         var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
-//         _configService = new ConfigService(configFilePath);
-//         _sqlDao = new SqlDAO(_configService);
-//         _userManagementDao = new UserManagementDao(_sqlDao);
-//         _profileModifier = new ProfileModifier(_userManagementDao);
-        
-//     }
+    [TestMethod]
+    public async Task ModifyProfile_ReturnsSuccess_WithValidFirstName()
+    {
+        // Arrange
+        var userProfile = new EditableUserProfile
+        {
+            username = hashedUsername,
+            firstname = "NewFirstName"
+        };
 
-//     [TestMethod]
-//     public async Task ModifyFirstName_ReturnsSuccess_WithValidInput()
-//     {
-//         // Arrange
-//         var hashedUsername = "testUserHash1";
-//         var newFirstName = "testUserHash1NewFirstName";
+        // Act
+        var response = await _profileModifier.ModifyProfile(userProfile);
 
-//         // Act
-//         var response = await _profileModifier.ModifyFirstName(hashedUsername, newFirstName);
+        // Assert
+        Assert.IsFalse(response.HasError);
 
-//         // Assert
-//         Assert.IsFalse(response.HasError);
+        response = await _userManagementDao.readTableWhere("hashedUsername", hashedUsername, "dbo.userProfile");
 
-//         response = await _userManagementDao.readTableWhere("hashedUsername", hashedUsername, "dbo.userProfile");
-        
-//         Assert.IsFalse(response.HasError);
-//         foreach (DataRow row in response.ValuesRead.Rows)
-//         {
-//             Assert.AreEqual(row["firstName"], newFirstName);
-//         }
-    
-//     }
+        Assert.IsFalse(response.HasError);
+        foreach (DataRow row in response.ValuesRead.Rows)
+        {
+            Assert.AreEqual(row["firstName"], userProfile.firstname);
+        }
+    }
 
-//     [TestMethod]
-//     public async Task ModifyLastName_ReturnsSuccess_WithValidInput()
-//     {
-//         // Arrange
-//         var hashedUsername = "testUserHash1";
-//         var newLastName = "testUserHash2NewLastName";
+    [TestMethod]
+    public async Task ModifyProfile_ReturnsSuccess_WithValidLastName()
+    {
+        // Arrange
+        var userProfile = new EditableUserProfile
+        {
+            username = hashedUsername,
+            lastname = "NewLastName"
+        };
 
-//         // Act
-//         var response = await _profileModifier.ModifyLastName(hashedUsername, newLastName);
+        // Act
+        var response = await _profileModifier.ModifyProfile(userProfile);
 
-//         // Assert
-//         Assert.IsFalse(response.HasError);
+        // Assert
+        Assert.IsFalse(response.HasError);
 
+        response = await _userManagementDao.readTableWhere("hashedUsername", hashedUsername, "dbo.userProfile");
 
-//         response = await _userManagementDao.readTableWhere("hashedUsername", hashedUsername, "dbo.userProfile");
-        
-//         Assert.IsFalse(response.HasError);
-//         foreach (DataRow row in response.ValuesRead.Rows)
-//         {
-//             Console.WriteLine(row["lastName"]);
-//             Assert.AreEqual(row["lastName"], newLastName);
-//         }
-        
-//     }
+        Assert.IsFalse(response.HasError);
+        foreach (DataRow row in response.ValuesRead.Rows)
+        {
+            Assert.AreEqual(row["lastName"], userProfile.lastname);
+        }
+    }
 
-//     [TestMethod]
-//     public async Task ModifyBackupEmail_ReturnsSuccess_WithValidInput()
-//     {
-//         // Arrange
-//         var hashedUsername = "testUserHash4";
-//         var newbackupEmail = "testUserHash1NewBackupEmail";
+    [TestMethod]
+    public async Task GetUserProfile_ReturnsUserProfile_WithValidUsername()
+    {
+        // Arrange
 
-//         // Act
-//         var response = await _profileModifier.ModifyBackupEmail(hashedUsername, newbackupEmail);
-//         Console.WriteLine(response.ErrorMessage);
-//         // Assert
-//         Assert.IsFalse(response.HasError);
+        // Act
+        var response = await _profileModifier.getUserProfile(hashedUsername);
 
-//         var response2 = await  _userManagementDao.readTableWhere("hashedUsername", hashedUsername, "dbo.userProfile");
-        
-//         foreach (DataRow row in response2.ValuesRead.Rows)
-//         {
-//             Console.WriteLine(row["backupEmail"]);
-//             Assert.AreEqual(row["backupEmail"], newbackupEmail);
-//         }
-//         Assert.IsFalse(response2.HasError);
-//     }
+        // Assert
+        Assert.IsFalse(response.HasError);
+        foreach (DataRow row in response.ValuesRead.Rows)
+        {
+            Assert.AreEqual(row["hashedUsername"], hashedUsername);
+        }
+    }
 
-//     [TestMethod]
-//     public async Task GetUserProfile_ReturnsUserProfile_WithValidUsername()
-//     {
-//         // Arrange
-//         var hashed  = "testUserHash1";
+    [TestMethod]
+    public async Task ModifyProfile_InvalidUserHash_ShouldFail()
+    {
+        // Arrange
+        var userProfile = new EditableUserProfile
+        {
+            username = "invalidUserHash",
+            firstname = "NewFirstName"
+        };
 
-//         // Act
-//         var response = await _profileModifier.getUserProfile(hashed);
+        // Act
+        var response = await _profileModifier.ModifyProfile(userProfile);
 
-//         // Assert
-//         Assert.IsFalse(response.HasError);
-//         foreach (DataRow row in response.ValuesRead.Rows)
-//         {
-//             Assert.AreEqual(row["hashedUsername"], hashed);
-//         }
-//     }
-
-//     [TestMethod]
-//     public async Task ModifyFirstName_InvalidUserHash_ShouldFail()
-//     {
-//         // Arrange
-//         var invalidUserHash = "invalidUserHash";
-//         var newFirstName = "NewFirstName";
-
-//         // Act
-//         var response = await _profileModifier.ModifyFirstName(invalidUserHash, newFirstName);
-
-//         // Assert
-//         Assert.IsTrue(response.HasError);
-//         Assert.IsTrue(response.RowsAffected == 0);
-//     }
-
-
-
-// }
-
-
+        // Assert
+        Assert.IsTrue(response.HasError);
+        Assert.AreEqual(response.RowsAffected, 0);
+    }
+}
