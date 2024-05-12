@@ -347,8 +347,8 @@ async function leaveWaitlist(confirm, reservation) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('initWaitlistButton').addEventListener('click', () => {
-        displayWaitlistedReservations();
-    });
-});
+//document.addEventListener('DOMContentLoaded', () => {
+//    document.getElementById('initWaitlistButton').addEventListener('click', () => {
+//        displayWaitlistedReservations();
+//    });
+//});

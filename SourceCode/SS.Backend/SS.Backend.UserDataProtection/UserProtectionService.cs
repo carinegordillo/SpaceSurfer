@@ -14,13 +14,13 @@ using System.Security.Cryptography;
 
 namespace SS.Backend.UserDataProtection;
 
-public class UserDataProtection
+public class UserProtectionService
 {
     private readonly SqlDAO _sqldao;
     private readonly GenOTP genotp;
     private readonly Hashing hasher;
 
-    public UserDataProtection(SqlDAO sqldao, GenOTP genotp, Hashing hasher)
+    public UserProtectionService(SqlDAO sqldao, GenOTP genotp, Hashing hasher)
     {
         _sqldao = sqldao;
         this.genotp = genotp;

@@ -381,7 +381,7 @@ namespace SS.Backend.UserManagement
 
         public async Task<string> GetEmailByHash(string hashedUsername)
         {
-            string userUsername = null;
+            string? userUsername = null;
             Response tablesresponse = new Response();
             var builder = new CustomSqlCommandBuilder();
             var command = builder.BeginSelect()
@@ -400,9 +400,7 @@ namespace SS.Backend.UserManagement
             {
                 foreach (DataRow row in username.ValuesRead.Rows)
                 {
-                    
-                    userUsername = Convert.ToString(row["username"]);
-                    
+                    userUsername = row["username"] != DBNull.Value ? Convert.ToString(row["username"]) : null;
                 }
             }
             else
@@ -410,12 +408,12 @@ namespace SS.Backend.UserManagement
                 throw new Exception("Couldn't read userHash: " + username.ErrorMessage);
             }
 
-            return userUsername;
+            return userUsername ?? string.Empty;
         }
 
         public async Task<string> GetHashByEmail(string email)
         {
-            string userUsername = null;
+            string? userUsername = null;
             Response tablesresponse = new Response();
             var builder = new CustomSqlCommandBuilder();
             var command = builder.BeginSelect()
@@ -434,9 +432,7 @@ namespace SS.Backend.UserManagement
             {
                 foreach (DataRow row in username.ValuesRead.Rows)
                 {
-                    
-                    userUsername = Convert.ToString(row["hashedUsername"]);
-                    
+                    userUsername = row["hashedUsername"]?.ToString();
                 }
             }
             else
@@ -444,7 +440,7 @@ namespace SS.Backend.UserManagement
                 throw new Exception("Couldn't read userHash: " + username.ErrorMessage);
             }
 
-            return userUsername;
+            return userUsername ?? "could not find User";
         }
 
     }

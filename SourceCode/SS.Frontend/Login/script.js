@@ -300,6 +300,7 @@ function personalOverviewAccess() {
 function waitlistAccess() {
     hideAllSections();
     document.getElementById('waitlistView').style.display = 'block';
+    displayWaitlistedReservations();
     startTimer('Waitlist View');
 }
 

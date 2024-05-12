@@ -161,11 +161,11 @@ namespace SS.Backend.UserManagement
                     foreach (DataRow row in response.ValuesRead.Rows)
                     {
                         
-                        string userHash = Convert.ToString(row["userHash"]);
+                        string? userHash = Convert.ToString(row["userHash"]);
                         Console.WriteLine(userHash);
-                        Console.WriteLine("HERE");
+                          
 
-                        string userName = null;
+                        string? userName = null;
                         try {userName = await _userManagementDao.GetEmailByHash(userHash);}
                         catch (Exception e)
                         {
@@ -189,7 +189,7 @@ namespace SS.Backend.UserManagement
                         requestList.Add(userRequest);
                     }
                 }
-                Console.WriteLine("- ReadUserRequests successful. -");
+                  
             }
             else
             {
@@ -283,7 +283,7 @@ namespace SS.Backend.UserManagement
 
         public async Task<UserAccountDetails> ReadUserAccount(string userHash)
         {
-            UserAccountDetails userAccountDetails = null;
+            UserAccountDetails? userAccountDetails = null;
 
             try
             {
@@ -291,7 +291,7 @@ namespace SS.Backend.UserManagement
 
                 if (!activeResponse.HasError)
                 {
-                    string isActive = null;
+                    string? isActive = null;
 
                     foreach (DataRow row in activeResponse.ValuesRead.Rows)
                     {
@@ -305,6 +305,7 @@ namespace SS.Backend.UserManagement
                     {
                         foreach (DataRow row in userResponse.ValuesRead.Rows)
                         {
+                            #pragma warning disable CS8601 // Disable warning about possible null reference assignment
                             userAccountDetails = new UserAccountDetails
                             {
                                 UserId = Convert.ToInt32(row["user_id"]),
@@ -313,6 +314,7 @@ namespace SS.Backend.UserManagement
                                 CompanyId = row["companyID"] == DBNull.Value ? (int?)null : Convert.ToInt32(row["companyID"]),
                                 IsActive = isActive
                             };
+                            #pragma warning restore CS8601 // Restore warning
                         }
                     }
                     else
@@ -330,7 +332,7 @@ namespace SS.Backend.UserManagement
                 throw new Exception("Exception occurred: " + ex.Message);
             }
 
-            return userAccountDetails;
+            return userAccountDetails ?? throw new Exception("User account details not found.");
         }
 
 
