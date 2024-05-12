@@ -399,23 +399,53 @@ function attachEventListeners() {
         });
     });
 }
-function showModifyModal(reservation) {
 
-    
+function showModifyModal(reservation) {
+    // Remove existing modal if present
     const existingModal = document.querySelector('.modal-content');
     if (existingModal) {
         existingModal.remove();
     }
 
-    const startTime = reservation.reservationStartTime ? new Date(reservation.reservationStartTime).toISOString().slice(0, 16) : '';
-    const endTime = reservation.reservationEndTime ? new Date(reservation.reservationEndTime).toISOString().slice(0, 16) : '';
+    // Extract start and end time in the required format
+    const startTime = toLocalTime(reservation.reservationStartTime);
+    const endTime = toLocalTime(reservation.reservationEndTime);
 
+    // Create modal backdrop
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
+    backdrop.style.position = 'fixed';
+    backdrop.style.top = '0';
+    backdrop.style.left = '0';
+    backdrop.style.width = '100%';
+    backdrop.style.height = '100%';
+    backdrop.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    backdrop.style.display = 'flex';
+    backdrop.style.justifyContent = 'center';
+    backdrop.style.alignItems = 'center';
+    backdrop.addEventListener('click', event => {
+        if (event.target === backdrop) {
+            backdrop.remove();
+        }
+    });
+
+    // Create modal content
     const modalContent = document.createElement('div');
     modalContent.classList.add('modal-content');
-    
+    modalContent.style.backgroundColor = 'white';
+    modalContent.style.padding = '20px';
+    modalContent.style.borderRadius = '8px';
+    modalContent.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+    modalContent.style.maxWidth = '500px';
+    modalContent.style.width = '100%';
+    modalContent.style.position = 'relative';
+
+    // Modal content HTML
     modalContent.innerHTML = `
+        <span class="close-button" style="position: absolute; top: 10px; right: 10px; cursor: pointer;">&times;</span>
         <h2>Modify Reservation</h2>
         <form id="modifyReservationForm" data-reservation-id="${reservation.reservationID}">
+            <h2>Reservation ID: ${reservation.reservationID}</h2>
             <h2>Company ID: ${reservation.companyID}</h2>
             <h2>FloorPlan ID: ${reservation.floorPlanID}</h2>
             <h2>Space ID: ${reservation.spaceID}</h2>
@@ -426,20 +456,40 @@ function showModifyModal(reservation) {
             <button type="submit">Submit</button>
         </form>
     `;
-    document.body.appendChild(modalContent);
-    
+
+    // Append modal content to backdrop
+    backdrop.appendChild(modalContent);
+
+    // Append backdrop to body
+    document.body.appendChild(backdrop);
+
+    // Close button event listener
+    document.querySelector('.close-button').addEventListener('click', () => {
+        backdrop.remove();
+    });
+
+    // Form submit event listener
     document.getElementById('modifyReservationForm').addEventListener('submit', function (event) {
         event.preventDefault();
         submitModification(reservation);
     });
 }
 
-async function submitModification(reservation) {
 
-    var accessToken = sessionStorage.getItem('accessToken', accessToken);
-    var idToken = sessionStorage.getItem('idToken');
-    var parsedIdToken = JSON.parse(idToken);
-    var username = parsedIdToken.Username;
+function toLocalTime(isoString) {
+    if (!isoString) return '';
+    const date = new Date(isoString);
+    const offset = date.getTimezoneOffset();
+    const localDate = new Date(date.getTime() - offset * 60 * 1000);
+    return localDate.toISOString().slice(0, 16);
+}
+
+
+async function submitModification(reservation) {
+    const accessToken = sessionStorage.getItem('accessToken');
+    const idToken = sessionStorage.getItem('idToken');
+    const parsedIdToken = JSON.parse(idToken);
+    const username = parsedIdToken.Username;
 
     const tokenExpired = await checkTokenExpiration(accessToken);
     if (!tokenExpired) {
@@ -462,17 +512,19 @@ async function submitModification(reservation) {
         status: reservation.status,
         userHash: username
     };
+
     if (!appConfig) {
         console.error('Configuration is not loaded!');
         return;
     }
     const BookingCenterUrl = appConfig.api.SpaceBookingCenter; 
+
     try {
         const response = await fetch(`${BookingCenterUrl}/api/v1/spaceBookingCenter/reservations/UpdateReservation`, {
             method: 'PUT',
             headers: {
                 'Authorization': 'Bearer ' + accessToken,
-                'Accept': 'application/json',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(modificationData),
         });
@@ -502,20 +554,41 @@ async function submitModification(reservation) {
     }
 }
 
-
 /////////////////////////////////////////
 
-
 function showCancelModal(reservation) {
+    // Remove existing modal if present
     const existingModal = document.querySelector('.modal-content');
     if (existingModal) {
         existingModal.remove();
     }
 
+    // Create modal backdrop
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
+    backdrop.style.position = 'fixed';
+    backdrop.style.top = '0';
+    backdrop.style.left = '0';
+    backdrop.style.width = '100%';
+    backdrop.style.height = '100%';
+    backdrop.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    backdrop.style.display = 'flex';
+    backdrop.style.justifyContent = 'center';
+    backdrop.style.alignItems = 'center';
+
+    // Create modal content
     const modalContent = document.createElement('div');
-    modalContent.classList.add('modal-content');
-    
+    modalContent.className = 'modal-content';
+    modalContent.style.backgroundColor = 'white';
+    modalContent.style.padding = '20px';
+    modalContent.style.borderRadius = '8px';
+    modalContent.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+    modalContent.style.maxWidth = '500px';
+    modalContent.style.width = '100%';
+    modalContent.style.position = 'relative';
+
     modalContent.innerHTML = `
+        <span class="close-button" style="position: absolute; top: 10px; right: 10px; cursor: pointer;">&times;</span>
         <h2>Cancel Reservation</h2>
         <h3>Are you sure you want to cancel this reservation?</h3>
         <h4>Reservation ID: ${reservation.reservationID}</h4>
@@ -524,28 +597,33 @@ function showCancelModal(reservation) {
         <h4>Space ID: ${reservation.spaceID}</h4>
         <h4>Start Time: ${new Date(reservation.reservationStartTime).toLocaleString()}</h4>
         <h4>End Time: ${new Date(reservation.reservationEndTime).toLocaleString()}</h4>
-        <button id="confirmCancel">Yes</button>
-        <button id="cancelCancel">No</button>
+        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+            <button id="confirmCancel" style="background-color: red; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Yes</button>
+            <button id="cancelCancel" style="background-color: grey; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">No</button>
+        </div>
     `;
 
-    document.body.appendChild(modalContent);
+    backdrop.appendChild(modalContent);
+    document.body.appendChild(backdrop);
 
     var accessToken = sessionStorage.getItem('accessToken');
     if (accessToken) {
         document.getElementById('confirmCancel').addEventListener('click', function () {
             submitCancellation(reservation, accessToken);
+            backdrop.remove(); // Close modal on confirmation
         });
         document.getElementById('cancelCancel').addEventListener('click', function () {
-            document.querySelector('.modal-content').remove();
+            backdrop.remove(); // Close modal on cancellation
         });
-    }
-    else {
+        document.querySelector('.close-button').addEventListener('click', function () {
+            backdrop.remove(); // Close modal on close button click
+        });
+    } else {
         console.error('Access token is not available.');
         return;
     }
-        
-   
 }
+
 
  async function submitCancellation(reservation, accessToken) {
     const isTokenValid = await checkTokenExpiration(accessToken);
@@ -1035,7 +1113,7 @@ async function fetchCompanies() {
     const accountInfo = await fetchUserAccount();
 
     if (accountInfo) {
-        const userIsActive = await getActivityStatus(accountInfo.isActive);
+        await getActivityStatus(accountInfo.isActive);
     }
 
     const userRole = sessionStorage.getItem('role');
@@ -1071,8 +1149,7 @@ async function fetchCompanies() {
                 'Content-Type': 'application/json'
             }
         });
-    
-        
+
         const data = await response.json();
         console.log('Received companies data:', data);
         if (data.newToken) {
@@ -1084,37 +1161,42 @@ async function fetchCompanies() {
         const companiesList = document.getElementById('companiesList');
         companiesList.innerHTML = '';
 
-
-        data.forEach(company => {
-            let htmlContent ='';
-            const li = document.createElement('li');
-            li.classList.add('company-item');
-            if (company.companyType === 2) {
-                li.classList.add('user-company'); 
-                htmlContent= ' <h5>Workplace</h5>'
-            }
-            htmlContent += `
-                <div class="company-name clickable" data-company-id="${company.companyID}">${company.companyName}</div>
-                <div class="company-info">
-                    <p class="company-address">Address: ${company.address}</p>
-                    <p class="company-hours">Hours: ${formatTime(company.openingHours)} - ${formatTime(company.closingHours)}</p>
-                    <p class="company-days">Days Open: ${company.daysOpen}</p>
-                </div>
-            `;
-
-            li.innerHTML = htmlContent;
-            companiesList.appendChild(li);
-        });
-        document.querySelectorAll('.clickable').forEach(item => {
-            item.addEventListener('click', function (event) {
-                const companyID = event.target.getAttribute('data-company-id');
-                fetchFloorPlans(companyID);
+        if (data.length === 0) {
+            companiesList.innerHTML = '<p>Sorry, no companies available.</p>';
+        } else {
+            data.forEach(company => {
+                let htmlContent = '';
+                const li = document.createElement('li');
+                li.classList.add('company-item');
+                if (company.companyType === 2) {
+                    li.classList.add('user-company');
+                    htmlContent = '<h5>Workplace</h5>';
+                }
+                htmlContent += `
+                    <div class="company-name clickable" data-company-id="${company.companyID}">${company.companyName}</div>
+                    <div class="company-info">
+                        <p class="company-address">Address: ${company.address}</p>
+                        <p class="company-hours">Hours: ${formatTime(company.openingHours)} - ${formatTime(company.closingHours)}</p>
+                        <p class="company-days">Days Open: ${company.daysOpen}</p>
+                    </div>
+                `;
+                li.innerHTML = htmlContent;
+                companiesList.appendChild(li);
             });
-        });
+
+            document.querySelectorAll('.clickable').forEach(item => {
+                item.addEventListener('click', function (event) {
+                    const companyID = event.target.getAttribute('data-company-id');
+                    fetchFloorPlans(companyID);
+                });
+            });
+        }
     } catch (error) {
         console.error('Error fetching companies:', error);
+        document.getElementById('companiesList').innerHTML = '<p>sorry we currently have no participating facilities.</p>';
     }
 }
+
 
 function formatTime(timeString) {
    
@@ -1156,53 +1238,59 @@ async function fetchFloorPlans(companyID) {
         console.log(data);
 
         if (data.newToken) {
-            accessToken = data.newToken;
-            sessionStorage.setItem('accessToken', accessToken);
-            console.log('New access token stored:', accessToken);
+            sessionStorage.setItem('accessToken', data.newToken);
+            console.log('New access token stored:', data.newToken);
         }
 
         const floorPlansContent = document.getElementById('floorPlansContent');
         floorPlansContent.innerHTML = '';
 
-        const floorPlansArray = data.floorPlans || data; 
-        data.forEach(floorPlan => {
-            const floorDiv = document.createElement('div');
-            floorDiv.classList.add('floor-plan');
-            floorDiv.innerHTML = `
-                <h3>${floorPlan.floorPlanName}</h3>
-                <img src="data:image/png;base64,${floorPlan.floorPlanImageBase64}" alt="${floorPlan.floorPlanName}" />
-                <div>FloorSpaces:</div>
-            `;
+        const floorPlansArray = data.floorPlans || data;
 
-            const spacesList = document.createElement('ul');
-            Object.entries(floorPlan.floorSpaces).forEach(([spaceId, timeLimit]) => {
-                const spaceItem = document.createElement('li');
-                spaceItem.textContent = `SpaceID: ${spaceId}, TimeLimit: ${timeLimit}`;
-                spaceItem.classList.add('clickable-space');
-                spaceItem.setAttribute('data-company-id', companyID);
-                spaceItem.setAttribute('data-floor-plan-id', floorPlan.floorPlanID);
-                spaceItem.setAttribute('data-space-id', spaceId);
-                spacesList.appendChild(spaceItem);
+        if (floorPlansArray.length === 0) {
+            floorPlansContent.innerHTML = '<p>Sorry, this company has not uploaded any floor plans.</p>';
+        } else {
+            floorPlansArray.forEach(floorPlan => {
+                const floorDiv = document.createElement('div');
+                floorDiv.classList.add('floor-plan');
+                floorDiv.innerHTML = `
+                    <h3>${floorPlan.floorPlanName}</h3>
+                    <img src="data:image/png;base64,${floorPlan.floorPlanImageBase64}" alt="${floorPlan.floorPlanName}" />
+                    <div>FloorSpaces:</div>
+                `;
+
+                const spacesList = document.createElement('ul');
+                Object.entries(floorPlan.floorSpaces).forEach(([spaceId, timeLimit]) => {
+                    const spaceItem = document.createElement('li');
+                    spaceItem.textContent = `SpaceID: ${spaceId}, TimeLimit: ${timeLimit}`;
+                    spaceItem.classList.add('clickable-space');
+                    spaceItem.setAttribute('data-company-id', companyID);
+                    spaceItem.setAttribute('data-floor-plan-id', floorPlan.floorPlanID);
+                    spaceItem.setAttribute('data-space-id', spaceId);
+                    spacesList.appendChild(spaceItem);
+                });
+
+                floorDiv.appendChild(spacesList);
+                floorPlansContent.appendChild(floorDiv);
             });
 
-            floorDiv.appendChild(spacesList);
-            floorPlansContent.appendChild(floorDiv);
-        });
-
-        const clickableSpaces = floorPlansContent.getElementsByClassName('clickable-space');
-        Array.from(clickableSpaces).forEach(space => {
-            space.addEventListener('click', function () {
-                updateReservationForm(
-                    space.getAttribute('data-company-id'),
-                    space.getAttribute('data-floor-plan-id'),
-                    space.getAttribute('data-space-id')
-                );
+            const clickableSpaces = floorPlansContent.getElementsByClassName('clickable-space');
+            Array.from(clickableSpaces).forEach(space => {
+                space.addEventListener('click', function () {
+                    updateReservationForm(
+                        space.getAttribute('data-company-id'),
+                        space.getAttribute('data-floor-plan-id'),
+                        space.getAttribute('data-space-id')
+                    );
+                });
             });
-        });
+        }
     } catch (error) {
         console.error('Error fetching floor plans:', error);
+        document.getElementById('floorPlansContent').innerHTML = '<h5>This company has no available floor plans.</h5>';
     }
 }
+
 
 async function checkTokenExpiration(accessToken) {
     if (!appConfig) {
