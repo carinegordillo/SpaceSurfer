@@ -50,7 +50,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
            
             try
             {
-                string sqlCMD = "DELETE FROM dbo.taskHub WHERE hashedUsername = '074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o='";
+                string sqlCMD = "DELETE FROM dbo.taskHub WHERE hashedUsername = 'kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      '";
                 var cmd = new SqlCommand(sqlCMD);
                 var response = await _sqlDao.SqlRowsAffected(cmd);
             }
@@ -65,7 +65,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         {
             var newTask = new TaskHub
             {
-                hashedUsername = "074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o=",
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ",
                 title = "This is a new test",
                 description = "this is a success test",
                 dueDate = DateTime.UtcNow.AddDays(1),
@@ -81,7 +81,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         {
             var newTask = new TaskHub
             {
-                hashedUsername = "074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o=",
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ",
                 title = "", // Empty title
                 description = "Need to handle empty title",
                 dueDate = DateTime.UtcNow.AddDays(1),
@@ -97,7 +97,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         {
             var newTask = new TaskHub
             {
-                hashedUsername = "074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o=",
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ",
                 title = "Test Task",
                 description = null, // Null description
                 dueDate = DateTime.UtcNow.AddDays(1),
@@ -113,7 +113,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         {
             var newTask = new TaskHub
             {
-                hashedUsername = "074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o=",
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ",
                 title = "Past Due Date Task",
                 description = "This task has a past due date",
                 dueDate = DateTime.UtcNow.AddDays(-1), // Past date
@@ -129,7 +129,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         {
             var newTask = new TaskHub
             {
-                hashedUsername = "074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o=",
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ",
                 title = "Invalid Priority Task",
                 description = "This task has an invalid priority setting",
                 dueDate = DateTime.UtcNow.AddDays(1),
@@ -181,7 +181,7 @@ namespace SS.Backend.Tests.TaskManagerHubTests
         {
             var newTask = new TaskHub
             {
-                hashedUsername = "074UwAygbv8K3cprBe3zXjHTW/Q/UMDt+/RDdjHX0/o=",
+                hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=      ",
                 title = "Task2",
                 description = "This task has a duplicate title",
                 dueDate = DateTime.UtcNow.AddDays(10),

@@ -19,6 +19,7 @@ namespace SS.Backend.Tests.AccountCreationTest
 
         private UserManagementDao _userManagementDao;
         private SqlDAO _sqlDao;
+        private ILogTarget _logTarget;
         private ILogger _logger;
 
 
@@ -30,25 +31,34 @@ namespace SS.Backend.Tests.AccountCreationTest
             var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
             _configService = new ConfigService(configFilePath);
             _sqlDao = new SqlDAO(_configService);
-
+            _logger = new Logger(_logTarget);
             _userManagementDao = new UserManagementDao(_sqlDao);
             _accountCreation = new AccountCreation(_userManagementDao, _logger);
         }
-
         [TestCleanup]
         public async Task TestCleanup()
         {
             await CleanupTestData();
         }
 
+
         private async Task CleanupTestData()
         {
            
             try
             {
-                string sqlCMD = "DELETE FROM dbo.taskHub WHERE hashedUsername = 'bdPoc6J/PLVi3kxY4iaQejK+hp+dNUeEd4CMpfBPQSE='";
+                string sqlCMD = "DELETE FROM dbo.userHash WHERE hashedUsername = 'bdPoc6J/PLVi3kxY4iaQejK+hp+dNUeEd4CMpfBPQSE='";
                 var cmd = new SqlCommand(sqlCMD);
                 var response = await _sqlDao.SqlRowsAffected(cmd);
+                string sqlCMD1 = "DELETE FROM dbo.userProfile WHERE hashedUsername = 'bdPoc6J/PLVi3kxY4iaQejK+hp+dNUeEd4CMpfBPQSE='";
+                var cmd1 = new SqlCommand(sqlCMD1);
+                var response1 = await _sqlDao.SqlRowsAffected(cmd1);
+                string sqlCMD2 = "DELETE FROM dbo.userAccount WHERE username = 'unittestemail@hotmail.com'";
+                var cmd2 = new SqlCommand(sqlCMD2);
+                var response2 = await _sqlDao.SqlRowsAffected(cmd2);
+                string sqlCMD3 = "DELETE FROM dbo.activeAccount WHERE hashedUsername = 'bdPoc6J/PLVi3kxY4iaQejK+hp+dNUeEd4CMpfBPQSE='";
+                var cmd3 = new SqlCommand(sqlCMD3);
+                var response3 = await _sqlDao.SqlRowsAffected(cmd3);
             }
             catch (Exception ex)
             {
@@ -82,7 +92,7 @@ namespace SS.Backend.Tests.AccountCreationTest
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            //await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
           
         }
 
@@ -97,7 +107,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             //username must be unique in database
             var validUserInfo = new UserInfo
             {
-                username = "employeework@hotmail.com",
+                username = "unittestemail@hotmail.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "workemployee",
                 lastname = "workemployee", 
@@ -105,7 +115,7 @@ namespace SS.Backend.Tests.AccountCreationTest
                 status = "no", 
                 backupEmail = "COMBININGEVERYTHING@backup.com"
             };
-            var manager_hashedUsername = "kj3VOKOk9Dh0pY5Fh41Dr7knV3/qR9FI6I7FmZlRVtc=";
+            var manager_hashedUsername = "/5WhbnBQfb39sAFdKIfsqr8Rt0D6fSi6CoCC+7qbeeI=      ";
 
             timer.Start();
             var response = await _accountCreation.CreateUserAccount(validUserInfo, null, manager_hashedUsername);
@@ -113,7 +123,7 @@ namespace SS.Backend.Tests.AccountCreationTest
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            //await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
           
         }
         
@@ -123,16 +133,25 @@ namespace SS.Backend.Tests.AccountCreationTest
         [TestMethod]
         public async Task VerifyAccount_Success()
         {
-            //AccountCreation accountCreation = new AccountCreation();
+            var validUserInfo = new UserInfo
+            {
+                username = "unittestemail@hotmail.com",
+                dob = new DateTime(1990, 1, 1),
+                firstname = "test",
+                lastname = "email", 
+                role = 5,
+                status = "no", 
+                backupEmail = "COMBININGEVERYTHING@backup.com"
+            };
+            var createresponse = await _accountCreation.CreateUserAccount(validUserInfo, null, null);
             Stopwatch timer = new Stopwatch();
-
             timer.Start();
-            var response = await _accountCreation.VerifyAccount("kay.kayale@student.csulb.edu");
+            var response = await _accountCreation.VerifyAccount("unittestemail@hotmail.com");
             timer.Stop();
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            //await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
           
         }
 
@@ -146,7 +165,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             //username must be unique in database
             var validUserInfo = new UserInfo
             {
-                username = "compnayfortestinf@hotmail.com",
+                username = "unittestemail@hotmail.com",
                 dob = new DateTime(1990, 1, 1),
                 firstname = "TESTINFT",
                 lastname = "TESTING", 
@@ -157,7 +176,7 @@ namespace SS.Backend.Tests.AccountCreationTest
 
             var validCompanyInfo = new CompanyInfo
             {
-                companyName = "Testing for Company", 
+                companyName = "New Company", 
                 address = "Irvine", 
                 openingHours = "2:00:00",
                 closingHours = "2:00:00" ,
@@ -171,7 +190,11 @@ namespace SS.Backend.Tests.AccountCreationTest
 
             Assert.IsFalse(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            //await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
+            string sqlCMD2 = "DELETE FROM dbo.companyProfile WHERE hashedUsername = 'bdPoc6J/PLVi3kxY4iaQejK+hp+dNUeEd4CMpfBPQSE='";
+            var cmd2 = new SqlCommand(sqlCMD2);
+            var response2 = await _sqlDao.SqlRowsAffected(cmd2);
+            
           
         }
 
@@ -200,7 +223,7 @@ namespace SS.Backend.Tests.AccountCreationTest
 
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            //await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
 
@@ -228,7 +251,7 @@ namespace SS.Backend.Tests.AccountCreationTest
 
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            //await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
           
         }
 
@@ -257,7 +280,7 @@ namespace SS.Backend.Tests.AccountCreationTest
 
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            //await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
           
         }
 
@@ -285,7 +308,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            //await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
           
         }
 
@@ -313,7 +336,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            //await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
           
         }
 
@@ -339,7 +362,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            //await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
 
@@ -367,7 +390,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsFalse(timer.ElapsedMilliseconds <= 1);
-            //await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
         [TestMethod]
@@ -392,7 +415,7 @@ namespace SS.Backend.Tests.AccountCreationTest
             timer.Stop();
             Assert.IsTrue(response.HasError, response.ErrorMessage);
             Assert.IsTrue(timer.ElapsedMilliseconds <= 5000);
-            //await CleanupTestData().ConfigureAwait(false);
+            await CleanupTestData();
         }
 
     
