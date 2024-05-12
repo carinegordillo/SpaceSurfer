@@ -94,7 +94,7 @@ function showDeleteSuccessMessage_Deletion() {
 
     modal.style.display = 'block';
 }
-function sendCode_Deletion() {
+function AccountDeletion_sendCode_Deletion() {
     var userIdentity = document.getElementById("userIdentity").value;
     console.log(userIdentity);
     const loginUrl = appConfig.api.Login; 
@@ -119,7 +119,7 @@ function sendCode_Deletion() {
             alert(error.message);
         });
 }
-function verifyUser_Deletion() {
+function AccountDeletion_verifyUser_Deletion() {
     var accessToken = sessionStorage.getItem('accessToken');
     var idToken = sessionStorage.getItem('idToken');
     var parsedIdToken = JSON.parse(idToken);
@@ -185,14 +185,14 @@ function createDeletionUI() {
 
     document.getElementById('deleteDataForm').addEventListener('submit', function (event) {
         event.preventDefault();
-        sendCode_Deletion();
+        AccountDeletion_sendCode_Deletion();
     });
 
     const verifyOTPForm_Deletion = document.getElementById('verifyOTPForm_Deletion');
     if (verifyOTPForm_Deletion) {
         verifyOTPForm_Deletion.addEventListener('submit', function (event) {
             event.preventDefault();
-            verifyUser_Deletion();
+            AccountDeletion_verifyUser_Deletion();
         });
     }
 }
