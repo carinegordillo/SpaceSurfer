@@ -41,14 +41,35 @@ namespace SS.Backend.ReservationManagement{
         public async Task<Response> ValidateNoConflictingReservationsAsync(UserReservationsModel userReservationsModel){
             Response result = new Response();
 
-            Dictionary<string, object> reservationParameters = new Dictionary<string, object>
+            Dictionary<string, object> reservationParameters = new Dictionary<string, object>();
+
+            if (userReservationsModel.ReservationID != null)
             {
-                { "companyID", userReservationsModel.CompanyID },
-                {"floorPlanID", userReservationsModel.FloorPlanID },
-                { "spaceID", userReservationsModel.SpaceID },
-                { "proposedStartDateTime", userReservationsModel.ReservationStartTime },
-                { "proposedEndDateTime", userReservationsModel.ReservationEndTime }
-            };
+                Console.WriteLine("reservtaion ID !");
+                reservationParameters = new Dictionary<string, object>
+                {
+                    { "reservationIdToExclude", userReservationsModel.ReservationID},
+                    { "companyID", userReservationsModel.CompanyID },
+                    {"floorPlanID", userReservationsModel.FloorPlanID },
+                    { "spaceID", userReservationsModel.SpaceID },
+                    { "proposedStartDateTime", userReservationsModel.ReservationStartTime },
+                    { "proposedEndDateTime", userReservationsModel.ReservationEndTime }
+                };
+            }
+            else{
+                Console.WriteLine("NO reservtaion ID !");
+                reservationParameters = new Dictionary<string, object>
+                {
+                    { "companyID", userReservationsModel.CompanyID },
+                    {"floorPlanID", userReservationsModel.FloorPlanID },
+                    { "spaceID", userReservationsModel.SpaceID },
+                    { "proposedStartDateTime", userReservationsModel.ReservationStartTime },
+                    { "proposedEndDateTime", userReservationsModel.ReservationEndTime }
+                };
+
+            }
+
+            
 
             CustomSqlCommandBuilder commandBuilder = new CustomSqlCommandBuilder();
             SqlCommand command = commandBuilder.BeginStoredProcedure("CheckConflictingReservationsPROD")
@@ -381,6 +402,7 @@ namespace SS.Backend.ReservationManagement{
         {
             var response = new Response();
             List<string> failedValidations = new List<string>(); 
+            
             
             if (validationFlags.HasFlag(ReservationValidationFlags.CheckBusinessHours))
             {
