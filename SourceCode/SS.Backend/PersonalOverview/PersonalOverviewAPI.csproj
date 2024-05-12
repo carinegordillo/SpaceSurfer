@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj" />
     <ProjectReference Include="..\SS.Backend.Security.AuthN\SS.Backend.Security.AuthN.csproj" />
     <ProjectReference Include="..\SS.Backend.Security\SS.Backend.Security.csproj" />

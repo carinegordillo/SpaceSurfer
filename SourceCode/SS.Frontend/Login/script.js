@@ -325,7 +325,7 @@ function employeeSetupAccess() {
 function confirmationAccess() {
     hideAllSections();
     document.getElementById('confirmationView').style.display = 'block';
-    startTimer('Confirmation View');
+    startTimer('Email Confirmation View');
 }
 
 function SOAccess() {
