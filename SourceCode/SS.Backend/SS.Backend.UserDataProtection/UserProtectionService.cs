@@ -27,7 +27,7 @@ public class UserProtectionService
         this.hasher = hasher;
     }
 
-    public async Task<string> getUsername(string userhash)
+    public async Task<string?> getUsername(string userHash)
     {
         var builder = new CustomSqlCommandBuilder();
         var result = new Response();
@@ -35,30 +35,36 @@ public class UserProtectionService
         var getUser = builder
             .BeginSelectAll()
             .From("userHash")
-            .Where($"hashedUsername = '{userhash}'")
+            .Where($"hashedUsername = '{userHash}'")
             .Build();
-        result = await _sqldao.ReadSqlResult(getUser);
-        string? username = result.ValuesRead?.Rows[0]?["username"].ToString();
 
-        return username;
+        result = await _sqldao.ReadSqlResult(getUser);
+
+        if (result?.ValuesRead?.Rows.Count > 0 &&
+        result.ValuesRead.Columns.Contains("username") &&
+        result.ValuesRead.Rows[0]["username"] != null)
+        {
+            return result.ValuesRead.Rows[0]["username"].ToString();
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public async Task<List<ReservationData>> GetReservations(string userhash)
     {
         var builder = new CustomSqlCommandBuilder();
-        var result = new Response();
-
-        var getReservations = builder
+        var result = await _sqldao.ReadSqlResult(builder
             .BeginSelectAll()
             .From("reservations")
             .Where($"userHash = '{userhash}'")
-            .Build();
-        result = await _sqldao.ReadSqlResult(getReservations);
-
-        List<ReservationData> reservations = new List<ReservationData>();
+            .Build());
 
         if (result.ValuesRead != null && result.ValuesRead.Rows.Count > 0)
         {
+            List<ReservationData> reservations = new List<ReservationData>();
+
             foreach (DataRow row in result.ValuesRead.Rows)
             {
                 reservations.Add(new ReservationData
@@ -66,15 +72,19 @@ public class UserProtectionService
                     ReservationID = Convert.ToInt32(row["reservationID"]),
                     CompanyID = Convert.ToInt32(row["companyID"]),
                     FloorPlanID = Convert.ToInt32(row["floorPlanID"]),
-                    SpaceID = row["spaceID"].ToString(),
+                    SpaceID = row["spaceID"]?.ToString() ?? "",
                     StartTime = Convert.ToDateTime(row["reservationStartTime"]),
                     EndTime = Convert.ToDateTime(row["reservationEndTime"]),
-                    Status = row["status"].ToString()
+                    Status = row["status"]?.ToString() ?? ""
                 });
             }
-        }
 
-        return reservations;
+            return reservations;
+        }
+        else
+        {
+            return new List<ReservationData>();
+        }
     }
 
     public async Task<List<FloorData>> GetFloors(int companyID)
@@ -96,7 +106,7 @@ public class UserProtectionService
             foreach (DataRow row in result.ValuesRead.Rows)
             {
                 int floorID = Convert.ToInt32(row["floorPlanID"]);
-                string floorName = row["floorPlanName"].ToString();
+                string floorName = row["floorPlanName"]?.ToString() ?? "";
 
                 var getSpaces = builder
                     .BeginSelectAll()
@@ -110,7 +120,7 @@ public class UserProtectionService
                 {
                     spaces.Add(new SpaceData
                     {
-                        SpaceID = spaceRow["spaceID"].ToString(),
+                        SpaceID = spaceRow["spaceID"]?.ToString() ?? "",
                         TimeLimit = Convert.ToInt32(spaceRow["timeLimit"])
                     });
                 }
@@ -118,7 +128,7 @@ public class UserProtectionService
                 floors.Add(new FloorData
                 {
                     FloorID = floorID,
-                    FloorName = floorName,
+                    FloorName = floorName ?? "",
                     Spaces = spaces
                 });
             }
@@ -170,7 +180,7 @@ public class UserProtectionService
             .Where($"hashedUsername = '{userhash}'")
             .Build();
         result = await _sqldao.ReadSqlResult(getFirstName);
-        string? firstName = result.ValuesRead?.Rows[0]?["firstName"].ToString(); // First name
+        string? firstName = result.ValuesRead.Rows[0]["firstName"].ToString(); // First name
         Console.WriteLine("Inside accessData_Gen: First name - " + firstName);
 
         var getLastName = builder
@@ -179,7 +189,7 @@ public class UserProtectionService
             .Where($"hashedUsername = '{userhash}'")
             .Build();
         result = await _sqldao.ReadSqlResult(getLastName);
-        string? lastName = result.ValuesRead?.Rows[0]?["lastName"].ToString(); // Last name
+        string? lastName = result.ValuesRead.Rows[0]["lastName"].ToString(); // Last name
         Console.WriteLine("Inside accessData_Gen: Last name - " + lastName);
 
         var getBirthDate = builder
@@ -199,7 +209,7 @@ public class UserProtectionService
             .Build();
         result = await _sqldao.ReadSqlResult(getBackup);
         string? backupEmail = result.ValuesRead?.Rows[0]?["backupEmail"].ToString(); // Backup email
-        if (backupEmail == "string" || backupEmail == null)
+        if (backupEmail.Equals("string") || backupEmail == null)
         {
             backupEmail = null;
         }
@@ -240,23 +250,23 @@ public class UserProtectionService
 
         UserDataModel userData = new UserDataModel
         {
-            Username = username,
-            FirstName = firstName,
-            LastName = lastName,
+            Username = username ?? "",
+            FirstName = firstName ?? "",
+            LastName = lastName ?? "",
             BirthDate = birthDate,
-            BackupEmail = backupEmail,
+            BackupEmail = backupEmail ?? "",
             AppRole = appRole,
-            IsActive = activeStatus,
-            OTP = otp,
+            IsActive = activeStatus ?? "",
+            OTP = otp ?? "",
             Reservations = reservations,
             Waitlist = waitlists,
-            CompanyName = null,
+            CompanyName = "",
             CompanyID = -1,
-            CompanyFloors = null,
-            CompanyAddress = null,
+            CompanyFloors = new List<FloorData>(),
+            CompanyAddress = "",
             CompanyOpeningHours = TimeSpan.Zero,
             CompanyClosingHours = TimeSpan.Zero,
-            CompanyDaysOpen = null
+            CompanyDaysOpen = ""
         };
 
         return userData;
@@ -367,7 +377,7 @@ public class UserProtectionService
             .Build();
         result = await _sqldao.ReadSqlResult(getOpeningHours);
         TimeSpan companyOpeningHours;
-        string openingHoursStr = result.ValuesRead?.Rows[0]?["openingHours"].ToString();
+        string? openingHoursStr = result.ValuesRead?.Rows[0]?["openingHours"]?.ToString();
         if (openingHoursStr != null && TimeSpan.TryParse(openingHoursStr, out TimeSpan openingHours))
         {
             companyOpeningHours = openingHours;
@@ -384,7 +394,7 @@ public class UserProtectionService
                 .Build();
         result = await _sqldao.ReadSqlResult(getClosingHours);
         TimeSpan companyClosingHours;
-        string closingHoursStr = result.ValuesRead?.Rows[0]?["closingHours"].ToString();
+        string? closingHoursStr = result.ValuesRead?.Rows[0]?["closingHours"].ToString();
         if (closingHoursStr != null && TimeSpan.TryParse(closingHoursStr, out TimeSpan closingHours))
         {
             companyClosingHours = closingHours;
@@ -404,23 +414,23 @@ public class UserProtectionService
 
         UserDataModel userData = new UserDataModel
         {
-            Username = username,
-            FirstName = firstName,
-            LastName = lastName,
+            Username = username ?? "",
+            FirstName = firstName ?? "",
+            LastName = lastName ?? "",
             BirthDate = birthDate,
-            BackupEmail = backupEmail,
+            BackupEmail = backupEmail ?? "",
             AppRole = appRole,
-            IsActive = activeStatus,
-            OTP = otp,
+            IsActive = activeStatus ?? "",
+            OTP = otp ?? "",
             Reservations = reservations,
             Waitlist = waitlists,
-            CompanyName = companyName,
+            CompanyName = companyName ?? "",
             CompanyID = companyID,
             CompanyFloors = floors,
-            CompanyAddress = address,
+            CompanyAddress = address ?? "",
             CompanyOpeningHours = companyOpeningHours,
             CompanyClosingHours = companyClosingHours,
-            CompanyDaysOpen = companyDaysOpen
+            CompanyDaysOpen = companyDaysOpen ?? ""
         };
 
         return userData;
