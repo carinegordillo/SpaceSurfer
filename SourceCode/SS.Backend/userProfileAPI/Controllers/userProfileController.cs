@@ -31,7 +31,7 @@ public class userProfileController : ControllerBase
         string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
         {
-            Console.WriteLine("getProfile called");
+              
             accessToken = accessToken.Substring("Bearer ".Length).Trim();
             var claimsJson = _authService.ExtractClaimsFromToken(accessToken);
 
@@ -50,7 +50,7 @@ public class userProfileController : ControllerBase
                         var newToken = _authService.CreateJwt(Request, principal);
                         try
                         {
-                            Console.WriteLine("1");
+                              
                             var response = await _profileModifier.getUserProfile(email);
 
                             if (response.HasError)
@@ -90,7 +90,7 @@ public class userProfileController : ControllerBase
                         try
                             {
 
-                            Console.WriteLine("2");
+                              
                                 var response = await _profileModifier.getUserProfile(email);
 
                                 if (response.HasError)
@@ -148,7 +148,7 @@ public class userProfileController : ControllerBase
     [HttpPost("updateUserProfile")]
     public async Task<IActionResult> UpdateUserProfile([FromBody] EditableUserProfile userProfile)
     {
-        Console.WriteLine("UpdateUserProfile called");
+          
 
         string? accessToken = HttpContext.Request.Headers["Authorization"];
         if (accessToken != null && accessToken.StartsWith("Bearer "))
@@ -175,7 +175,7 @@ public class userProfileController : ControllerBase
             
                                 if (response == null)
                                 {
-                                    Console.WriteLine("ModifyProfile returned null");
+                                      
                                     return StatusCode(500, "Internal server error: response is null");
                                 }
 
@@ -196,7 +196,7 @@ public class userProfileController : ControllerBase
             
                                 if (response == null)
                                 {
-                                    Console.WriteLine("ModifyProfile returned null");
+                                      
                                     return StatusCode(500, "Internal server error: response is null");
                                 }
 

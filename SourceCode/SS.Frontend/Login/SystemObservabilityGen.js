@@ -21,9 +21,13 @@ async function fetchInsertUsedFeature(featureName) {
         console.error('Access token not found.');
         return;
     }
-
-    // Construct the URL with the provided feature name
-    const url = `http://localhost:5295/api/v1/SystemObservability/UsedFeatureInsertion?FeatureName=${featureName}`;
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const SOurl = appConfig.api.SystemObservability;
+    // Construct the URL with the provided time span
+    const url = `${SOurl}/api/v1/SystemObservability/UsedFeatureInsertion?FeatureName=${featureName}`;
 
     try {
         // Fetch data from the API

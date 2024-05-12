@@ -91,18 +91,25 @@ namespace SS.Backend.Services.DeletingService
                 response.HasError = false;
                 response.ErrorMessage = "";
                 var reservationIds = new List<int>();
-                foreach (DataRow row in response.ValuesRead?.Rows)
+                if (response.ValuesRead?.Rows != null)
                 {
-                    reservationIds.Add(Convert.ToInt32(row["reservationID"]));
+                    foreach (DataRow row in response.ValuesRead.Rows)
+                    {
+                        reservationIds.Add(Convert.ToInt32(row["reservationID"]));
+                    }
                 }
                 // delete ConfirmReservations
                 Console.WriteLine("Inside DatabaseHelper.cs - delete ConfirmReservations");
-                foreach (var reservationId in reservationIds)
+                if (reservationIds.Any())
                 {
-                    query = commandBuild.deleteConfirmReservations(reservationId).Build();
-                    response = await _sqlDAO.SqlRowsAffected(query);
-                    response.HasError = false;
-                    response.ErrorMessage = "";
+                    Console.WriteLine("Inside DatabaseHelper.cs - delete ConfirmReservations");
+                    foreach (var reservationId in reservationIds)
+                    {
+                        query = commandBuild.deleteConfirmReservations(reservationId).Build();
+                        response = await _sqlDAO.SqlRowsAffected(query);
+                        response.HasError = false;
+                        response.ErrorMessage = "";
+                    }
                 }
                 // delete reservations
                 Console.WriteLine("Inside DatabaseHelper.cs - delete reservations");
@@ -117,22 +124,29 @@ namespace SS.Backend.Services.DeletingService
                 response.HasError = false;
                 response.ErrorMessage = "";
                 var companyIds = new List<int>();
-                foreach (DataRow row in response.ValuesRead?.Rows)
+                if (response.ValuesRead?.Rows != null)
                 {
-                    companyIds.Add(Convert.ToInt32(row["companyID"]));
+                    foreach (DataRow row in response.ValuesRead.Rows)
+                    {
+                        reservationIds.Add(Convert.ToInt32(row["companyID"]));
+                    }
                 }
                 // delete companyFloor and companyFloorSpaces
                 Console.WriteLine("Inside DatabaseHelper.cs - delete companyFloor and floor spaces");
-                foreach (var companyId in companyIds)
+                if (companyIds.Any())
                 {
-                    query = commandBuild.deleteCompanyFloor(companyId).Build();
-                    response = await _sqlDAO.SqlRowsAffected(query);
-                    response.HasError = false;
-                    response.ErrorMessage = "";
-                    query = commandBuild.deleteCompanyFloorSpaces(companyId).Build();
-                    response = await _sqlDAO.SqlRowsAffected(query);
-                    response.HasError = false;
-                    response.ErrorMessage = "";
+                    Console.WriteLine("Inside DatabaseHelper.cs - delete companyFloor and floor spaces");
+                    foreach (var companyId in companyIds)
+                    {
+                        query = commandBuild.deleteCompanyFloor(companyId).Build();
+                        response = await _sqlDAO.SqlRowsAffected(query);
+                        response.HasError = false;
+                        response.ErrorMessage = "";
+                        query = commandBuild.deleteCompanyFloorSpaces(companyId).Build();
+                        response = await _sqlDAO.SqlRowsAffected(query);
+                        response.HasError = false;
+                        response.ErrorMessage = "";
+                    }
                 }
                 // delete companyProfile
                 Console.WriteLine("Inside DatabaseHelper.cs - delete companyProfile");

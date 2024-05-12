@@ -14,6 +14,8 @@ namespace SS.Backend.Tests.UserManagement;
         private SqlDAO _sqlDao;
         private ConfigService _configService;
 
+        
+
         string userHash1 = "Yu86Ho6KDmtOeP687I/AHNE4rhxoCzZDs9v/Mpe+SZw=";
         string userHash2 = "MaKM/H0KYHLGJPn4alLS1BpbvakoB3RjXLmbbJI4PE4=";
         

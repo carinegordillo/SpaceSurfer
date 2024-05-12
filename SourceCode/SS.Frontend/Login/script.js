@@ -300,6 +300,7 @@ function personalOverviewAccess() {
 function waitlistAccess() {
     hideAllSections();
     document.getElementById('waitlistView').style.display = 'block';
+    displayWaitlistedReservations();
     startTimer('Waitlist View');
 }
 
@@ -416,9 +417,13 @@ async function fetchInsertViewDuration(viewName, duration) {
         console.error('Access token not found.');
         return;
     }
-
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const SOUrl = appConfig.api.SystemObservability;
     // Construct the URL with the provided view name and duration
-    const url = `http://localhost:5295/api/v1/SystemObservability/ViewDurationInsertion?viewName=${viewName}&durationInSeconds=${duration}`;
+    const url = `${SOUrl}/api/v1/SystemObservability/ViewDurationInsertion?viewName=${viewName}&durationInSeconds=${duration}`;
 
     try {
         // Fetch data from the API
