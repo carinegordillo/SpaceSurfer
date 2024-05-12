@@ -265,8 +265,8 @@ function verifyUser_Deletion() {
     var parsedIdToken = JSON.parse(idToken);
     var username = parsedIdToken.Username;
     var otp = document.getElementById('deletion_otp').value;
-
-    fetch(`${loginUrl}/api/auth/verifyCode`, {
+    const LoginUrl = appConfig.api.Login;
+    fetch(`${LoginUrl}/api/auth/verifyCode`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
