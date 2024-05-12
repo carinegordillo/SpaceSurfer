@@ -86,7 +86,7 @@
             <img src="images/astroText.png" alt="Astro" class="hovering">
         </div>
     </section>
-
+    
     <section id="UnAuthnAbout" style="display: none;">
         <div class="container">
             <section id="sendOTPSection" class="loginForm">
@@ -355,7 +355,6 @@
 
     <!--Waitlist View-->
     <section id="waitlistView" class="homepage-container" data-testid="waitlist-view" style="display: none;">
-        <button id="initWaitlistButton" data-testid="init-waitlist-button">Initialize Waitlist</button>
         <button type="button" onclick="initSpaceBookingCenter()">Space Booking Center</button>
         <button type="button" onclick="personalOverviewAccess()">PersonalOverview</button>
         <button type="button" onclick="taskHubAccess()">Task Manager Hub</button>
@@ -374,7 +373,7 @@
     </section>
 
     <!--User Data Protection View-->
-    <section id="cpraView" class="homepage-container" style="display: none;">
+    <section id="cpraView" class="homepage-container" data-testid="cpra-view" style="display: none;">
         <div id="contentContainer"></div>
     </section>
 
