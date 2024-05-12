@@ -271,3 +271,9 @@ function createTopListData(analysis) {
         }
     }
 }
+
+function stopTimeSpan()
+{
+    clearInterval(intervalId);
+    intervalId = null;
+}
