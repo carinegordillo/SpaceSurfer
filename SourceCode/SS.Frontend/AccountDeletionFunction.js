@@ -40,7 +40,7 @@ function validateCredentials()
 
     if (email == "" || otp == "")
     {
-        alert("All fields must be filled out");
+        showModal("All fields must be filled out");
         return false;
     }
 

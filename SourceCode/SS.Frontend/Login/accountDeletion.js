@@ -116,7 +116,7 @@ function AccountDeletion_sendCode_Deletion() {
             document.getElementById("verifyOTPSection_Deletion").style.display = "block";
         })
         .catch(error => {
-            alert(error.message);
+            showModal(error.message);
         });
 }
 function AccountDeletion_verifyUser_Deletion() {
