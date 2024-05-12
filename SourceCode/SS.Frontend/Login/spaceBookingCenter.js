@@ -1040,6 +1040,11 @@ async function fetchCompanies() {
 
     const userRole = sessionStorage.getItem('role');
     console.log(userRole);
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const companyUrl = appConfig.api.CompanyAPI;
 
     try {
         let response;
@@ -1047,15 +1052,15 @@ async function fetchCompanies() {
 
         if (userRole === '1') {
             console.log("this is an admin");
-            url = `http://localhost:5279/api/v1/spaceBookingCenter/companies/ListCompanies`;
+            url = `${companyUrl}/api/v1/spaceBookingCenter/companies/ListCompanies`;
         } else {
             console.log('not admin');
             if (accountInfo.companyId !== null && accountInfo.companyId !== undefined) {
                 console.log("this is an employee user");
-                url = `http://localhost:5279/api/v1/spaceBookingCenter/companies/ListCompaniesForUsers?companyID=${accountInfo.companyId}`;
+                url = `${companyUrl}/api/v1/spaceBookingCenter/companies/ListCompaniesForUsers?companyID=${accountInfo.companyId}`;
             } else {
                 console.log("this is a general user");
-                url = `http://localhost:5279/api/v1/spaceBookingCenter/companies/ListCompaniesForUsers`;
+                url = `${companyUrl}/api/v1/spaceBookingCenter/companies/ListCompaniesForUsers`;
             }
         }
 
