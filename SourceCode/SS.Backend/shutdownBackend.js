@@ -29,4 +29,4 @@ killProcess("userProfileAPI",5048);
 killProcess("TMH",8089);
 killProcess("EmailConfirmationsAPI",5116);;
 killProcess("Account Recovery",5176);
-;
+killProcess("Admin Account Recovery",5138);

@@ -159,6 +159,7 @@ namespace SS.Backend.UserManagement
             Response response = new Response();
             
             response = await _userManagementDao.readTableWhere("status", "Pending", "dbo.userRequests");
+            Console.WriteLine($"ReadUserRequests: {response.ErrorMessage}");
 
             if (response.HasError == false)
             {

@@ -146,7 +146,6 @@ body, html {
 
 #spaceBookingView{
     height: 900px;
-    background-color: aqua;
 }
 
 .company-info {
@@ -231,23 +230,32 @@ button:hover {
     color: white;
 }
 
-/* modal decor*/
 
-.modal {
-    display: none;         
-    position: fixed;      
-    z-index: 1;            
-    left: 30%;
-    top: 45%;
-    width: 100%;            
-    height: 100%;          
-    overflow: auto;         
-    display: flex;          
-    align-items: center;    
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
     justify-content: center;
-    box-shadow: none; /* Set to none if previously it had some values */
-    
+    align-items: center;
+    z-index: 1000;
 }
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+    text-align: center;
+}
+
 
 .close-button {
     color: #aaa;

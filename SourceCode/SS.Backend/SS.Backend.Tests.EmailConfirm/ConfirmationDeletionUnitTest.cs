@@ -103,7 +103,7 @@ public class ConfirmationDeletionUnitTest
 
         ConfigService configFile = new ConfigService(configFilePath);
         var connectionString = configFile.GetConnectionString();
-        int reservationID = 0; // This will store the generated reservation ID
+        int reservationID = 0; 
 
         try
         {
@@ -116,6 +116,7 @@ public class ConfirmationDeletionUnitTest
                 {
                     try
                     {
+                        // insert data into Reservations table
                         string sql = @"
                             INSERT INTO [dbo].[Reservations] 
                             (companyID, floorPlanID, spaceID, reservationDate, reservationStartTime, reservationEndTime, status, userHash) 
@@ -124,13 +125,12 @@ public class ConfirmationDeletionUnitTest
                         ";
                         using (SqlCommand command = new SqlCommand(sql, connection, transaction))
                         {
-                            // Execute the command and get the inserted reservation ID
 #pragma warning disable CS8605 // Unboxing a possibly null value.
                             reservationID = (int)await command.ExecuteScalarAsync().ConfigureAwait(false);
 #pragma warning restore CS8605 // Unboxing a possibly null value.
                         }
 
-                        // Optionally, insert into another table if needed using reservationID
+                        // insert data in confirmReservations for reservationID
                         string sqlConfirm = @"
                             INSERT INTO [dbo].[ConfirmReservations] (reservationID, reservationOTP, confirmStatus, icsFile) 
                             VALUES (@ReservationID, '123456', 'yes', null);
@@ -180,7 +180,6 @@ public class ConfirmationDeletionUnitTest
                 string sql1 = $"INSERT INTO [dbo].[ConfirmReservations](reservationID, reservationOTP, confirmStatus, icsFile) VALUES ({reservationID}, '123456', 'yes', null);";
                 using (SqlCommand command1 = new SqlCommand(sql1, connection))
                 {
-                    //reservationID = (int)await command1.ExecuteScalarAsync().ConfigureAwait(false); 
                     reservationID = Convert.ToInt32(await command1.ExecuteScalarAsync().ConfigureAwait(false));
                 }
             }
@@ -311,7 +310,7 @@ public class ConfirmationDeletionUnitTest
         // Arrange
         var timeoutDuration = TimeSpan.FromMilliseconds(3000);
         var timeoutTask = Task.Delay(timeoutDuration);
-        var reservationID = await InsertReservationTestData();  // Assumes this method is correctly setting up test data
+        var reservationID = await InsertReservationTestData();  
         var hashedUsername = "7mLYo1Gu98LGqqtvSQcZ31hJhDEit2iDK4BCD3DM8ZU=";
         Stopwatch timer = new Stopwatch();
 
@@ -370,29 +369,5 @@ public class ConfirmationDeletionUnitTest
         await CleanupTestData(reservationID);
     }
 
-    // [TestMethod]
-    // public async Task CancelConfirmedReservation_InvalidID_Fail()
-    // {
-    //     //Arrange
-    //     Stopwatch timer = new Stopwatch();
-    //     Response result = new Response();
-    //     int? reservationID = null;
-    //     int invalidID = reservationID.GetValueOrDefault(-1);
-    //     var hashedUsername = "7mLYo1Gu98LGqqtvSQcZ31hJhDEit2iDK4BCD3DM8ZU=";
-
-    //     //Act
-    //     timer.Start();
-    //     result = await _confirmDelete.CancelConfirmedReservation(hashedUsername, invalidID);
-    //     timer.Stop();
-
-    //     //Assert
-    //     Assert.IsTrue(result.HasError, "Expected CancelConfirmedReservation to fail with invalid input.");
-    //     Assert.IsFalse(string.IsNullOrEmpty(result.ErrorMessage), "Expected an error message for invalid input.");
-    //     Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
-
-    //     //Cleanup
-    //     //await CleanupTestData(reservationID);
-
-    // }
 
 }
