@@ -7,16 +7,21 @@ using System.Globalization;
 using System.Text;
 using System.Data;
 using System;
+using SS.Backend.Services.LoggingService;
 
 namespace SS.Backend.Waitlist
 {
     public class WaitlistService
     {
         private readonly SqlDAO _sqldao;
+        private readonly ILogger _logger;
+        private LogEntryBuilder logBuilder = new LogEntryBuilder();
+        private LogEntry logEntry;
 
-        public WaitlistService(SqlDAO sqldao)
+        public WaitlistService(SqlDAO sqldao, ILogger logger)
         {
             _sqldao = sqldao;
+            _logger = logger;
         }
 
         /// <summary>
@@ -81,17 +86,20 @@ namespace SS.Backend.Waitlist
                     // Send email
                     await MailSender.SendEmail(targetEmail, subject, msg);
                     result.HasError = false;
+                    logEntry = logBuilder.Info().Business().Description($"Email sent to user confirming waitlist entry.").User(info.userHash).Build();
                 }
                 catch (Exception ex)
                 {
                     result.HasError = true;
                     result.ErrorMessage = ex.Message;
+                    logEntry = logBuilder.Error().Business().Description($"Email failed to send when user joins waitlist.").User(info.userHash).Build();
                 }
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
+                logEntry = logBuilder.Error().Business().Description($"Email failed to send when user joins waitlist.").User(info.userHash).Build();
                 throw;
             }
         }
@@ -158,17 +166,20 @@ namespace SS.Backend.Waitlist
                     // Send email
                     await MailSender.SendEmail(targetEmail, subject, msg);
                     result.HasError = false;
+                    logEntry = logBuilder.Info().Business().Description($"Email sent to user notifying top of waitlist.").User(info.userHash).Build();
                 }
                 catch (Exception ex)
                 {
                     result.HasError = true;
                     result.ErrorMessage = ex.Message;
+                    logEntry = logBuilder.Error().Business().Description($"Email failed to send when user reaches top of waitlist.").User(info.userHash).Build();
                 }
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
+                logEntry = logBuilder.Error().Business().Description($"Email failed to send when user reaches top of waitlist.").User(info.userHash).Build();
             }
 
         }
@@ -198,11 +209,13 @@ namespace SS.Backend.Waitlist
                     .AddParameters(parameters)
                     .Build();
                 result = await _sqldao.SqlRowsAffected(insertCmd);
+                logEntry = logBuilder.Info().Business().Description($"Insert approved user to waitlist at top position.").User(userHash).Build();
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
+                logEntry = logBuilder.Error().Business().Description($"Failed to insert approved user to waitlist at top position.").User(userHash).Build();
                 throw;
             }
         }
@@ -369,11 +382,13 @@ namespace SS.Backend.Waitlist
                     position = pos
                 };
                 await SendConfirmationEmail(waitlistentry);
+                logEntry = logBuilder.Info().Business().Description($"Added user to waitlist.").User(userHash).Build();
             }
             catch (Exception ex)
             {
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
+                logEntry = logBuilder.Error().Business().Description($"Failed to add user to waitlist.").User(userHash).Build();
                 throw;
             }
 
@@ -500,8 +515,8 @@ namespace SS.Backend.Waitlist
                     position = 0
                 };
 
-                Console.WriteLine("Sending notification email (inside waitlistService 507)");
                 await SendNotificationEmail(entry);
+                logEntry = logBuilder.Info().Business().Description($"Updated waitlist after approved user leaves.").User(nextUser).Build();
             }
             catch (Exception ex)
             {

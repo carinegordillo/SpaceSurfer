@@ -11,6 +11,7 @@ using System.IO;
 
 using System.Text.Json;
 using System.Security.Cryptography;
+using SS.Backend.Services.LoggingService;
 
 namespace SS.Backend.UserDataProtection;
 
@@ -19,12 +20,16 @@ public class UserDataProtection
     private readonly SqlDAO _sqldao;
     private readonly GenOTP genotp;
     private readonly Hashing hasher;
+    private readonly ILogger _logger;
+    private LogEntryBuilder logBuilder = new LogEntryBuilder();
+    private LogEntry logEntry;
 
-    public UserDataProtection(SqlDAO sqldao, GenOTP genotp, Hashing hasher)
+    public UserDataProtection(SqlDAO sqldao, GenOTP genotp, Hashing hasher, ILogger logger)
     {
         _sqldao = sqldao;
         this.genotp = genotp;
         this.hasher = hasher;
+        _logger = logger;
     }
 
     public async Task<string?> getUsername(string userHash)
@@ -269,6 +274,7 @@ public class UserDataProtection
             CompanyDaysOpen = ""
         };
 
+        logEntry = logBuilder.Info().Business().Description($"General user requested their data.").User(userhash).Build();
         return userData;
     }
 
@@ -433,6 +439,7 @@ public class UserDataProtection
             CompanyDaysOpen = companyDaysOpen ?? ""
         };
 
+        logEntry = logBuilder.Info().Business().Description($"Mangager user requested their data.").User(userhash).Build();
         return userData;
     }
 
@@ -576,6 +583,7 @@ public class UserDataProtection
 
         var deleteCmd = builder.deleteLogs(userhash).Build();
         result = await _sqldao.SqlRowsAffected(deleteCmd);
+        logEntry = logBuilder.Info().Business().Description($"User deleted their data.").User(userhash).Build();
     }
 
     public async Task sendDeleteEmail(UserDataModel userData, string attachmentPath)
@@ -673,12 +681,14 @@ public class UserDataProtection
 
                 //update the otp and salt in table for that user
                 result = await _sqldao.SqlRowsAffected(updateCommand);
+                logEntry = logBuilder.Info().Business().Description($"User requested their data - Code sent.").User(userhash).Build();
 
                 return (otp, result);
             }
         }
         catch (Exception ex)
         {
+            logEntry = logBuilder.Error().Business().Description($"Failure when user requested their data - Code sent.").User(userhash).Build();
             result.HasError = true;
             result.ErrorMessage = ex.Message;
 #pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
@@ -716,12 +726,14 @@ public class UserDataProtection
             {
                 if (timeElapsed.TotalMinutes > 2)
                 {
+                    logEntry = logBuilder.Error().Business().Description($"Failure when user requested their data - Expired code.").User(userhash).Build();
                     result.HasError = true;
                     result.ErrorMessage = "OTP has expired.";
                     return result;
                 }
                 else
                 {
+                    logEntry = logBuilder.Info().Business().Description($"User requested their data - Code matches.").User(userhash).Build();
                     result.HasError = false;
                     result.ErrorMessage = "Code matches.";
                     return result;
@@ -730,6 +742,7 @@ public class UserDataProtection
             }
             else
             {
+                logEntry = logBuilder.Error().Business().Description($"Failure when user requested their data - Wrong code.").User(userhash).Build();
                 result.HasError = true;
                 result.ErrorMessage = "Failed to authenticate.";
                 return result;
