@@ -494,7 +494,7 @@ async function submitModification(reservation) {
 
     const tokenExpired = await checkTokenExpiration(accessToken);
     if (!tokenExpired) {
-        window.alert("Token expired");
+        showModal("Token expired");
         logout();
         return;
     }
@@ -1421,7 +1421,7 @@ function updateReservationForm(companyId, floorPlanId, spaceId) {
     companyIdInput.required = true;
     floorPlanIdInput.required = true;
     spaceIdInput.required = true;
-    window.alert("Updated Reservation form with companyID: " + companyId + ", floorPlanID: " + floorPlanId + ", spaceID: " + spaceId);
+    showModal("Updated Reservation form with companyID: " + companyId + ", floorPlanID: " + floorPlanId + ", spaceID: " + spaceId);
 }
 
 ////// WAITLIST ////////
