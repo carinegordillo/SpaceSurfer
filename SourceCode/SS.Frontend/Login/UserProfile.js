@@ -233,11 +233,11 @@ async function saveProfileChanges() {
                 }
             }).catch(error => console.error("Failed to fetch or append profile:", error));
         } else {
-            alert('Profile update failed: ' + result.message);
+            showModal('Profile update failed: ' + result.message);
         }
     } catch (error) {
         console.error('Error updating profile:', error);
-        alert('An error occurred while updating the profile');
+        showModal('An error occurred while updating the profile');
     }
 }
 
