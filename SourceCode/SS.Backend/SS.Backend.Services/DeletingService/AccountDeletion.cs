@@ -39,43 +39,13 @@ namespace SS.Backend.Services.DeletingService
 
             try
             {
+                Console.WriteLine("Inside AccountDeletion.cs - begin DeleteAccount");
                 // Sets the tables names from the Database Helper Response
                 result = await _databaseHelper.DeleteAccount(username);
 
-                //if (result.ValuesRead != null)
-                //{
-
-                //    // Delete Query Command built [DELETE FROM "Users" WHERE Username = @username]
-                //    var deleteCommand = commandBuilder.BeginDelete("dbo.userAccount").Where($"Username = '{username}'").Build();
-
-                //    // Sets the reponse from the executed command
-                //    result = await SQLDao.SqlRowsAffected(deleteCommand);
-
-                //    //// Appends the responses into one response
-                //    //overallResponse.RowsAffected += response.RowsAffected;
-                //    //overallResponse.HasError |= response.HasError;
-                //}
-                //else
-                //{
-                //    // Handle the case where tables.Task is not completed or its result is null
-                //    throw new InvalidOperationException("Failed to retrieve table.");
-                //}
-
-                // await tables;
-                //// Check if the task completed successfully and its result is not null
-                //// if (tables != null && tables.Result != null && tables.Result.ValuesRead != null)
-                //// {
-                //    // Iterates through every table that deals with the value being deleted
-                //    for (int i = tables.Result.ValuesRead.Count - 1; i >= 0; i--)
-                //    {
-                //        
-
-                //    }
-                //}
-
                 if (!result.HasError)
                 {
-
+                    Console.WriteLine("Inside AccountDeletion.cs - success DeleteAccount");
                     // Successful Deletion
                     LogEntry entry = new LogEntry()
 
@@ -91,6 +61,7 @@ namespace SS.Backend.Services.DeletingService
                 }
                 else
                 {
+                    Console.WriteLine("Inside AccountDeletion.cs - unsuccessful DeleteAccount");
                     //Unsuccessful Deletion
                     LogEntry errorEntry = new LogEntry()
                     {
@@ -106,6 +77,7 @@ namespace SS.Backend.Services.DeletingService
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Inside AccountDeletion.cs - inside catch");
                 // If an error occurs error
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;

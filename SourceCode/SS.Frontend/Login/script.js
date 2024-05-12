@@ -146,16 +146,20 @@ async function authenticateUser() {
     });
 }
 async function fetchUserAccount() {
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+        console.error('Token expired or invalid');
+        logout();
+        return;
+    }
     const idToken = sessionStorage.getItem('idToken');
     console.log("in fetch user account")
-    
         if (!idToken) {
             console.error('idToken not found in sessionStorage');
             return;
         }
         const parsedIdToken = JSON.parse(idToken);
 
-        // Log parsed object for debugging
         console.log('Parsed idToken:', parsedIdToken);
 
         if (!parsedIdToken || !parsedIdToken.Username) {
@@ -166,7 +170,14 @@ async function fetchUserAccount() {
 
     try {
         const recoveryUrl = appConfig.api.AccountRecovery;  
-        const response = await fetch(`${recoveryUrl}/api/requestRecovery/getUserAccountDetails?email=${encodeURIComponent(email)}`);
+        const response = await fetch(`${recoveryUrl}/api/requestRecovery/getUserAccountDetails?email=${encodeURIComponent(email)}`,
+        {
+            method: 'GET',
+            headers: {
+                'Origin': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
         const data = await response.json();
         console.log(data)
         return data || null;
@@ -349,6 +360,8 @@ function hideAllSections() {
     document.getElementById("accountRecoverySection").style.display = "none";
     document.getElementById("userRequestsView").style.display = "none";
     document.getElementById("enterRegistrationOTPSection").style.display = "none";
+    document.getElementById('cpraView').style.display = 'none';
+    document.getElementById('deletionView').style.display = 'none';
 }
 
 function startTimer(viewName) {

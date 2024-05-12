@@ -58,12 +58,14 @@ var app = builder.Build();
 
 var archivingService = app.Services.GetRequiredService<ArchivingService>();
 
-app.Lifetime.ApplicationStarted.Register(() => {
+app.Lifetime.ApplicationStarted.Register(() =>
+{
     Console.WriteLine("Application is starting. ArchivingService is being started...");
     archivingService.Start();
 });
 
-app.Lifetime.ApplicationStopping.Register(() => {
+app.Lifetime.ApplicationStopping.Register(() =>
+{
     Console.WriteLine("Application is stopping. ArchivingService is being stopped...");
     archivingService.Stop();
 });
@@ -99,7 +101,7 @@ app.Use(async (context, next) =>
     {
         context.Response.Headers.Append("Access-Control-Allow-Origin", origin);
         context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Accept");
+        context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     }
     if (context.Request.Method == "OPTIONS")
     {

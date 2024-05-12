@@ -1,19 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using System.Data;
-using SS.Backend.SharedNamespace;
-using SS.Backend.ReservationManagement;
-using SS.Backend.ReservationManagers;
+using SS.Backend.UserManagement;
 using SS.Backend.DataAccess;
-using SS.Backend.SpaceManager;
-using SS.Backend.Waitlist;
-using System.Text.Json;
-using SS.Backend.Security;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Net.Http.Headers;
-using SS.Backend.Services.LoggingService;
 
-using System.Text;
+using SS.Backend.SharedNamespace;
+using SS.Backend.Services.LoggingService;
+using System.Text.Json;
+using Microsoft.Net.Http.Headers;
+using SS.Backend.Security;
 
 
 
@@ -21,11 +15,12 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
 
 builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
-
 
 var baseDirectory = AppContext.BaseDirectory;
 var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
@@ -38,11 +33,6 @@ builder.Services.AddTransient<ISqlDAO, SqlDAO>();
 builder.Services.AddTransient<CustomSqlCommandBuilder>();
 
 
-
-
-
-//security
-
 builder.Services.AddTransient<GenOTP>();
 builder.Services.AddTransient<Hashing>();
 builder.Services.AddTransient<Response>();
@@ -52,29 +42,12 @@ builder.Services.AddTransient<SS.Backend.Services.LoggingService.ILogger,Logger>
 builder.Services.AddTransient<Logger>();
 builder.Services.AddTransient<SqlDAO>();
 
-//Repo Setup
-builder.Services.AddTransient<IReservationManagementRepository, ReservationManagementRepository>();
-
-//Services Setup
-builder.Services.AddTransient<IReservationCreatorService, ReservationCreatorService>();
-builder.Services.AddTransient<IReservationCancellationService, ReservationCancellationService>();
-builder.Services.AddTransient<IReservationModificationService, ReservationModificationService>();
-builder.Services.AddTransient<IReservationReadService, ReservationReadService>();
-builder.Services.AddTransient<IReservationValidationService, ReservationValidationService>();
-builder.Services.AddTransient<IReservationStatusUpdater, ReservationStatusUpdater>();
-builder.Services.AddTransient<IReservationDeletionService, ReservationDeletionService>();
-
-//spaceMAnger setup
-builder.Services.AddTransient<ISpaceManagerDao, SpaceManagerDao>();
-builder.Services.AddTransient<ISpaceReader, SpaceReader>();
-
-//Mangers Setup
-builder.Services.AddTransient<IReservationCreationManager, ReservationCreationManager>();
-builder.Services.AddTransient<IReservationCancellationManager, ReservationCancellationManager>();
-builder.Services.AddTransient<IReservationModificationManager, ReservationModificationManager>();
-builder.Services.AddTransient<IReservationReaderManager, ReservationReaderManager>();
-builder.Services.AddTransient<IAvailibilityDisplayManager, AvailabilityDisplayManager>();
-builder.Services.AddTransient<IReservationDeletionManager, ReservationDeletionManager>();
+builder.Services.AddTransient<CustomSqlCommandBuilder>();
+builder.Services.AddTransient<IUserManagementDao, UserManagementDao>();
+builder.Services.AddTransient<IAccountRecoveryModifier, AccountRecoveryModifier>();
+builder.Services.AddTransient<IProfileModifier, ProfileModifier>();
+builder.Services.AddTransient<IAccountRecovery, AccountRecovery>();
+builder.Services.AddTransient<IAccountDisabler, AccountDisabler>();
 
 
 builder.Services.AddTransient<SSAuthService>(provider =>
@@ -86,18 +59,13 @@ builder.Services.AddTransient<SSAuthService>(provider =>
     )
 );
 
-//waitlist
-builder.Services.AddTransient<WaitlistService>(provider =>
-    new WaitlistService(
-        provider.GetRequiredService<SqlDAO>()
-    )
-);
-
-// Learn more about configuring Swagger/OpenAPI
-builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
-
 var app = builder.Build();
+
+
+
+
+
+
 
 // get localhost cofig file path
 var corsConfigFilePath = Path.Combine(projectRootDirectory, "Configs", "originsConfig.json");
@@ -117,9 +85,6 @@ Console.WriteLine(allowedOrigin);
 app.Use(async (context, next) =>
 {
     var origin = context.Request.Headers[HeaderNames.Origin].ToString();
-
-    Console.WriteLine("IN HERERREEER ");
-    Console.WriteLine(allowedOrigin);
 
     var allowedOrigins = new[] {allowedOrigin};
 
@@ -141,8 +106,12 @@ app.Use(async (context, next) =>
     }
 });
 
+
+
 app.UseMiddleware<AuthorizationMiddleware>();
+
 
 app.MapControllers();
 
 app.Run();
+

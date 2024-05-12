@@ -2,12 +2,12 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//SpaceSurfer//Reservation Confirmation//EN
 BEGIN:VEVENT
-UID:932e6e51-2a4c-40bb-a027-d8710c0f4484@gmail.com
-DTSTAMP:20240515T104000
-DTSTART:20240515T104000
-DTEND:20240515T114000
+UID:83942b6b-0244-4a38-bdc2-e806ef28f09b@gmail.com
+DTSTAMP:20240516T143000
+DTSTART:20240516T143000
+DTEND:20240516T153000
 SUMMARY:SpaceSurfer Reservation
-DESCRIPTION:Reservation at: Stellar Coffee Roasters ReservationID: 1328 SpaceID: SPACE023  
-LOCATION:408 Starlight Expressway, Seattle, WA             
+DESCRIPTION:Reservation at: AstroTech Innovations ReservationID: 4012 SpaceID: S2-FP3    
+LOCATION:250 Spaceway Blvd, Houston, TX 77058              
 END:VEVENT
 END:VCALENDAR

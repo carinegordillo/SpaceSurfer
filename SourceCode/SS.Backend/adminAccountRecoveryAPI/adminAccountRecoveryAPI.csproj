@@ -4,14 +4,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <InvariantGlobalization>false</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="../../SS.Backend/SS.Backend.UserManagement/SS.Backend.UserManagement.csproj" />
     <ProjectReference Include="../../SS.Backend/SS.Backend.DataAccess/SS.Backend.DataAccess.csproj" />
     <ProjectReference Include="..\..\SS.Backend\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
@@ -20,8 +16,6 @@
     <ProjectReference Include="..\SS.Backend.Security.AuthN\SS.Backend.Security.AuthN.csproj" />
 		<ProjectReference Include="..\SS.Backend.Security\SS.Backend.Security.csproj" />
 
-  
   </ItemGroup>
-
 
 </Project>

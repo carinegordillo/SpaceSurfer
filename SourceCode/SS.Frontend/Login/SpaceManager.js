@@ -173,6 +173,7 @@ document.getElementById('spaceCreationForm').addEventListener('submit', function
     };
     sendData(`${SpaceManagerUrl}/api/SpaceManager/postSpace`, companyFloor);
     document.getElementById('spaceCreationForm').reset();
+    fetchFloorPlan();
 });
 
 document.getElementById('modifySpaceForm').addEventListener('submit', function(e) {
@@ -191,6 +192,7 @@ document.getElementById('modifySpaceForm').addEventListener('submit', function(e
         };
         sendData(`${SpaceManagerUrl}/api/SpaceManager/modifyTimeLimits`, request);
         document.getElementById('modifySpaceForm').reset();
+        fetchFloorPlan();
 
     });
 });
@@ -339,5 +341,3 @@ function fetchFloorPlan() {
         console.error('Error fetching floor plans:', error);
     });
 }
-
-//showing carine how to push 

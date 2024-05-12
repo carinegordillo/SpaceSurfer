@@ -13,17 +13,14 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using SS.Backend.Services.LoggingService;
 using System.Text;
-
-
-
-
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 
 
 
@@ -91,7 +88,7 @@ builder.Services.AddTransient<SSAuthService>(provider =>
 
 // Learn more about configuring Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 // get localhost cofig file path
@@ -117,8 +114,8 @@ app.Use(async (context, next) =>
     if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
     {
         context.Response.Headers.Append("Access-Control-Allow-Origin", origin);
-        context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Accept");
+        context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+        context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
         context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
     }
     if (context.Request.Method == "OPTIONS")
