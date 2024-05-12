@@ -14,7 +14,11 @@ $apiDirectories = @(
     "TaskManagerHubAPI",
     "EmailConfirmationAPI",
     "accountRecoveryAPI",
-    "SystemObservabilityAPI"
+    "SystemObservabilityAPI", 
+    "adminAccountRecoveryAPI", 
+    "ConfirmationAPI", 
+    "SpaceManager", 
+    "UserDataProtectionAPI"
 )
 
 # Get the current directory of the script

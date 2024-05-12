@@ -23,9 +23,13 @@ async function fetchAnalysis(timeSpan) {
         console.error('Access token not found.');
         return;
     }
-
+    if (!appConfig) {
+        console.error('Configuration is not loaded!');
+        return;
+    }
+    const SOurl = appConfig.api.SystemObservability;
     // Construct the URL with the provided time span
-    const url = `http://localhost:5295/api/v1/SystemObservability/Information?timeSpan=${timeSpan}`;
+    const url = `${SOurl}/api/v1/SystemObservability/Information?timeSpan=${timeSpan}`;
 
     try {
         // Fetch data from the API
@@ -270,4 +274,10 @@ function createTopListData(analysis) {
             }
         }
     }
+}
+
+function stopTimeSpan()
+{
+    clearInterval(intervalId);
+    intervalId = null;
 }
