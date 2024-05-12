@@ -295,7 +295,7 @@ namespace SS.Backend.UserManagement
 
                     foreach (DataRow row in activeResponse.ValuesRead.Rows)
                     {
-                        isActive = Convert.ToString(row["isActive"]);
+                        isActive = row["isActive"]?.ToString() ?? string.Empty;
                     }
                     string username = await _userManagementDao.GetEmailByHash(userHash);
 
