@@ -20,7 +20,7 @@ namespace SS.Backend.Services.DeletingService
             _sqlDAO = sqlDAO;
         }
 
-        public async Task<string> getUsername(string userhash)
+        public async Task<string?> getUsername(string userhash)
         {
             var builder = new CustomSqlCommandBuilder();
             var result = new Response();

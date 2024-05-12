@@ -32,7 +32,7 @@ public class ConfirmListUnitTest
         _confirmList = new EmailConfirmList(_emailDAO);
     }
 
-    private async Task CleanupTestData()
+    private async Task CleanupTestData(int reservationID)
     {
         var baseDirectory = AppContext.BaseDirectory;
         var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
@@ -40,25 +40,120 @@ public class ConfirmListUnitTest
 
         ConfigService configFile = new ConfigService(configFilePath);
         var connectionString = configFile.GetConnectionString();
+
         try
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                string sql1 = $"DELETE FROM dbo.ConfirmReservations WHERE [reservationID] = '40'";
-
-                using (SqlCommand command1 = new SqlCommand(sql1, connection))
+                // Start a database transaction for the cleanup
+                using (var transaction = connection.BeginTransaction())
                 {
-                    await command1.ExecuteNonQueryAsync().ConfigureAwait(false);
+                    try
+                    {
+                        // Delete from dependent tables first if foreign key constraints exist
+                        string deleteConfirmationsSql = "DELETE FROM [dbo].[ConfirmReservations] WHERE reservationID = @ReservationID;";
+                        using (SqlCommand command = new SqlCommand(deleteConfirmationsSql, connection, transaction))
+                        {
+                            command.Parameters.AddWithValue("@ReservationID", reservationID);
+                            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        }
+
+                        // Then delete from the main Reservations table
+                        string deleteReservationsSql = "DELETE FROM [dbo].[Reservations] WHERE reservationID = @ReservationID;";
+                        using (SqlCommand command = new SqlCommand(deleteReservationsSql, connection, transaction))
+                        {
+                            command.Parameters.AddWithValue("@ReservationID", reservationID);
+                            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        }
+
+                        // Commit the transaction
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Roll back the transaction in case of an error
+                        transaction.Rollback();
+                        Console.WriteLine($"An error occurred during cleanup: {ex.Message}");
+                        throw;  // Optional: rethrow the exception if you want to handle it outside
+                    }
                 }
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Exception during test cleanup: {ex}");
+            Console.WriteLine($"Exception during cleanup: {ex.Message}");
         }
     }
+
+    private async Task<int> InsertReservationTestData()
+    {
+        var baseDirectory = AppContext.BaseDirectory;
+        var projectRootDirectory = Path.GetFullPath(Path.Combine(baseDirectory, "../../../../../"));
+        var configFilePath = Path.Combine(projectRootDirectory, "Configs", "config.local.txt");
+
+        ConfigService configFile = new ConfigService(configFilePath);
+        var connectionString = configFile.GetConnectionString();
+        int reservationID = 0; 
+
+        try
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync().ConfigureAwait(false);
+
+                // Start a database transaction.
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        // insert data into Reservations table
+                        string sql = @"
+                            INSERT INTO [dbo].[Reservations] 
+                            (companyID, floorPlanID, spaceID, reservationDate, reservationStartTime, reservationEndTime, status, userHash, companyType) 
+                            OUTPUT INSERTED.reservationID 
+                            VALUES (9, 8, 'SPACE022', '2024-04-22', '2024-04-08T09:00:00Z', '2024-04-05T11:00:00Z', 'Active', '7mLYo1Gu98LGqqtvSQcZ31hJhDEit2iDK4BCD3DM8ZU=', 3);
+                        ";
+                        using (SqlCommand command = new SqlCommand(sql, connection, transaction))
+                        {
+#pragma warning disable CS8605 // Unboxing a possibly null value.
+                            reservationID = (int)await command.ExecuteScalarAsync().ConfigureAwait(false);
+#pragma warning restore CS8605 // Unboxing a possibly null value.
+                        }
+
+                        // insert data in confirmReservations for reservationID
+                        string sqlConfirm = @"
+                            INSERT INTO [dbo].[ConfirmReservations] (reservationID, reservationOTP, confirmStatus, icsFile) 
+                            VALUES (@ReservationID, '123456', 'yes', null);
+                        ";
+                        using (SqlCommand commandConfirm = new SqlCommand(sqlConfirm, connection, transaction))
+                        {
+                            commandConfirm.Parameters.AddWithValue("@ReservationID", reservationID);
+                            await commandConfirm.ExecuteNonQueryAsync().ConfigureAwait(false);
+                        }
+
+                        // Commit the transaction
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Something went wrong within the transaction, roll it back
+                        transaction.Rollback();
+                        Console.WriteLine($"Transaction rolled back due to an exception: {ex.Message}");
+                        throw; // Re-throw the exception to handle it outside or log it
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception during data insertion: {ex.Message}");
+        }
+        return reservationID; // Return the generated ID, or 0 if an error occurred
+    
+    }
+
 
     [TestMethod]
     public async Task GetAllTableInfo_Success()
@@ -66,6 +161,7 @@ public class ConfirmListUnitTest
         //Arrange
         Stopwatch timer = new Stopwatch();
         Response result = new Response();
+        var reservationID = await InsertReservationTestData();
         var tableName = "Reservations";
         var response = new Response();
 
@@ -79,7 +175,7 @@ public class ConfirmListUnitTest
         Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
         //Cleanup
-        await CleanupTestData().ConfigureAwait(false);
+        await CleanupTestData(reservationID).ConfigureAwait(false);
 
     }
 
@@ -88,6 +184,7 @@ public class ConfirmListUnitTest
     {
         //Arrange
         Stopwatch timer = new Stopwatch();
+        var reservationID = await InsertReservationTestData();
         var hashedUsername = "7mLYo1Gu98LGqqtvSQcZ31hJhDEit2iDK4BCD3DM8ZU=";
 
         //Act
@@ -101,7 +198,7 @@ public class ConfirmListUnitTest
         Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
         //Cleanup
-        await CleanupTestData().ConfigureAwait(false);
+        await CleanupTestData(reservationID).ConfigureAwait(false);
     }
 
     [TestMethod]
@@ -109,6 +206,7 @@ public class ConfirmListUnitTest
     {
         //Arrange
         Stopwatch timer = new Stopwatch();
+        var reservationID = await InsertReservationTestData();
         var hashedUsername = "bobsworld";
 
         //Act
@@ -122,13 +220,14 @@ public class ConfirmListUnitTest
         Assert.IsTrue(timer.ElapsedMilliseconds <= 3000);
 
         //Cleanup
-        await CleanupTestData().ConfigureAwait(false);
+        await CleanupTestData(reservationID).ConfigureAwait(false);
     }
 
     [TestMethod]
     public async Task ListConfirmations_Timeout_Fail()
     {
         //Arrange
+        var reservationID = await InsertReservationTestData();
         var hashedUsername = "7mLYo1Gu98LGqqtvSQcZ31hJhDEit2iDK4BCD3DM8ZU=";
         var timeoutTask = Task.Delay(TimeSpan.FromMilliseconds(3000));
 
@@ -153,6 +252,6 @@ public class ConfirmListUnitTest
         }
 
         //Cleanup
-        await CleanupTestData().ConfigureAwait(false);
+        await CleanupTestData(reservationID).ConfigureAwait(false);
     }
 }
