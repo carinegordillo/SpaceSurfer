@@ -227,6 +227,7 @@ async function saveProfileChanges() {
         }
 
         if (response.ok) {
+            alert('Profile updated successfully');
             fetchUserProfile(updatedProfile.username).then(profile => {
                 if (profile) {
                     displayUserProfile(profile);

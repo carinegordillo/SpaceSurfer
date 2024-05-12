@@ -344,7 +344,7 @@ public class ReservationController : ControllerBase
                         try
                         {
                             var response = await _reservationModificationManager.ModifySpaceSurferSpaceReservationAsync(reservation);
-                            Console.WriteLine("in modification");
+                              
                             Console.WriteLine(response.ErrorMessage);
                             return Ok(response);
                         }
@@ -522,18 +522,18 @@ public class ReservationController : ControllerBase
             bool tokenExpired = _authService.IsTokenExpired(accessToken);
             if (tokenExpired)
             {
-                Console.WriteLine("Token is expired.");
+                  
                 return Ok(true);
             }
             else
             {
-                Console.WriteLine("Token is not expired.");
+                  
                 return Ok(false);
             }
         }
         else
         {
-            Console.WriteLine("Token is missing or invalid.");
+              
             return BadRequest("Unauthorized. Access token is missing or invalid.");
         }
     }
