@@ -2,12 +2,12 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//SpaceSurfer//Reservation Confirmation//EN
 BEGIN:VEVENT
-UID:a782f192-e431-4789-8143-7552046ac1f7@gmail.com
-DTSTAMP:20240508T090000
-DTSTART:20240508T090000
-DTEND:20240505T110000
+UID:2fb11b7d-876f-44ee-b359-3a6196cdf6b0@gmail.com
+DTSTAMP:20240513T153100
+DTSTART:20240513T153100
+DTEND:20240513T163100
 SUMMARY:SpaceSurfer Reservation
-DESCRIPTION:Reservation at: Stellar Coffee Roasters ReservationID: 1736 SpaceID: SPACE022  
-LOCATION:408 Starlight Expressway, Seattle, WA             
+DESCRIPTION:Reservation at: Orbital Logistics Corp ReservationID: 4013 SpaceID: S1-FP4    
+LOCATION:1001 Launchpad Rd, Cape Canaveral, FL 32920       
 END:VEVENT
 END:VCALENDAR
