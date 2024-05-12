@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="confirmStyle.css">
     <link rel="stylesheet" href="PersonalOverviewStyle.css">
+    <link rel="icon" href="favicon.ico" />
     <!--<link rel="stylesheet" href="/Waitlist/style.css"> -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/Chart.min.js"></script>
 </head>
@@ -23,19 +24,20 @@
                 </div>
             </div>
             <div class="nav-container">
-                <div class="nav-items">
-                    <!-- unauthorized user view -->
-                    <div id="noLogin" style="display: none;">
-                        <div class="nav-item" id="navAbout" onclick="getAbout()">About</div>
-                        <div class="nav-item" id="navRegister" onclick="registrationAccess()">Register</div>
-                        <div class="nav-item" id="navLogin" onclick="getLogin()">Login</div>
-                    </div>
-                    <!-- general nav all users can see -->
-                    <div id="homepageGen" style="display: none;">
+                <div class="nav-items" >
+                <!-- unauthorized user view -->
+                <div id="noLogin" style="display: none;">
+                    <div class="nav-item" id="navAbout" onclick="getAbout()">About</div>
+                    <div class="nav-item" id="navRegister" onclick="registrationAccess()">Register</div>
+                    <div class="nav-item" id="navLogin" onclick="getLogin()">Login</div>
+                </div>
+                <!-- general nav all users can see -->
+                <div id="homepageGen" style="display: none;">
                         <!-- system admin view -->
                         <div id="SAview" style="display:none;">
                             <div class="nav-item" type="button" onclick="spaceManagerAccess()">Space Manager</div>
                             <div class="nav-item" type="button" onclick="SOAccess()">System Observability</div>
+                            <div class="nav-item" type="button" onclick="initUserRequests()">User Requests</div>
                         </div>
                         <!-- company manager view -->
                         <div id="CMview" style="display:none;">
@@ -117,7 +119,6 @@
 
         </div>
     </section>
-
 
     <!-- Account Recovery Section -->
     <section id="accountRecoverySection" class="recoveryForm" style="display: none;">
@@ -261,7 +262,6 @@
             </div>
         </div>
     </section>
-
 
     <!--Personal Overview Center View-->
     <section id="personalOverviewCenter" class="homepage-container" style="display: none;">
@@ -483,7 +483,7 @@
                 <div class="space-list-section">
                     <h2>Space Manager🤙</h2>
                     <ul id="spaceList"></ul>
-                    <button id="companyList">Companies List</button>
+                    <button id="companyList">My Floor Plans</button>
                     <div id="floorPlanContent" class="floor-plans-container"></div>
                 </div>
 
@@ -599,10 +599,6 @@
             
         </div>
     </section>
-
-
-
-
 
     <!--Manager Homepage-->
     <section id="homepageManager" style="display: none;">
