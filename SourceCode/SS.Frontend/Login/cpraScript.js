@@ -405,18 +405,8 @@ function showUserProtectionSection() {
 }
 
 function cpraAccess() {
+    hideAllSections();
     document.getElementById('cpraView').style.display = 'block';
-
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById('homepageGen').style.display = 'none';
-    document.getElementById('homepageManager').style.display = 'none';
-    document.getElementById('sendOTPSection').style.display = 'none';
-    document.getElementById('enterOTPSection').style.display = 'none';
-    document.getElementById('successResult').style.display = 'none';
-    document.getElementById('failResult').style.display = 'none';
-    document.getElementById('personalOverviewCenter').style.display = 'none';
-    document.getElementById('waitlistView').style.display = 'none';
-
     showUserProtectionSection();
 
 }
