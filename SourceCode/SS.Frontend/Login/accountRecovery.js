@@ -215,7 +215,7 @@ async function initUserRequests() {
     document.getElementById("userRequestsView").style.display = "block";
 
     console.log("get userReuests clicked  clicked");
-    
+    startTimer('User Request');
 
     
 
