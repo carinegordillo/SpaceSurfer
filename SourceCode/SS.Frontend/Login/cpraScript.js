@@ -300,6 +300,7 @@ function createUserProtectionUI() {
         document.getElementById('deleteDataSection').style.display = 'none';
         document.getElementById('verifyOTPSection_Access').style.display = 'none';
         document.getElementById('verifyOTPSection_Deletion').style.display = 'none';
+        fetchInsertUsedFeature('User Data Protection');
     });
 
     const deleteDataButton = document.createElement('button');
@@ -309,6 +310,7 @@ function createUserProtectionUI() {
         document.getElementById('requestDataSection').style.display = 'none';
         document.getElementById('verifyOTPSection_Access').style.display = 'none';
         document.getElementById('verifyOTPSection_Deletion').style.display = 'none';
+        fetchInsertUsedFeature('User Data Protection');
     });
 
     contentContainer.appendChild(requestDataButton);

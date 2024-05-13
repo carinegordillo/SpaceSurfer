@@ -39,7 +39,7 @@ async function displayWaitlistedReservations() {
         console.error('Configuration is not loaded!');
         return;
     }
-    const waitlistUrl = appConfig.api.Waitlist;  
+    const waitlistUrl = appConfig.api.Waitlist;
     try {
         const response = await fetch(`${waitlistUrl}/api/waitlist/getWaitlists`, {
             method: 'POST',
@@ -66,9 +66,8 @@ async function displayWaitlistedReservations() {
 
         // Clear the existing list of waitlisted reservations
         const reservationsList = document.getElementById('reservations-list');
-        reservationsList.innerHTML = '';
 
-        // Check if waitlistedReservations exist before iterating over it
+        // Iterate over waitlisted reservations and append them to the list
         if (Array.isArray(data) && data.length > 0) {
             data.forEach((reservation, index) => {
                 const listItem = document.createElement('li');
@@ -78,7 +77,6 @@ async function displayWaitlistedReservations() {
                 listItem.addEventListener('click', () => displayReservationDetails(reservation), fetchInsertUsedFeature('Waitlist'));
 
                 reservationsList.appendChild(listItem);
-                console.log(data);
             });
         } else {
             // If there are no waitlisted reservations, display a message
@@ -88,6 +86,8 @@ async function displayWaitlistedReservations() {
         console.error('Error fetching waitlisted reservations:', error);
     }
 }
+
+
 
 // Function to display reservation details
 async function displayReservationDetails(reservation) {
@@ -102,10 +102,13 @@ async function displayReservationDetails(reservation) {
     // Display reservation details in the reservation-details container
     const reservationDetails = document.getElementById('reservation-details');
 
+    // Clear the reservation details container before displaying the details of the new reservation
+    reservationDetails.innerHTML = '';
+
     //FETCH//
 
     var accessToken = sessionStorage.getItem('accessToken');
-    
+
     const isTokenExp = checkTokenExpiration(accessToken);
     if (!isTokenExp) {
         console.log("no token expiration ");
@@ -119,7 +122,7 @@ async function displayReservationDetails(reservation) {
         console.error('Configuration is not loaded!');
         return;
     }
-    const waitlistUrl = appConfig.api.Waitlist;  
+    const waitlistUrl = appConfig.api.Waitlist;
     try {
         const response = await fetch(`${waitlistUrl}/api/waitlist/getFloorplan?cid=${reservation.companyID}&fid=${reservation.floorID}`, {
             method: 'GET',
@@ -150,23 +153,24 @@ async function displayReservationDetails(reservation) {
     /////////
 
     data.forEach(floorPlan => {
-        reservationDetails.innerHTML = `
-        <h3>${reservation.companyName}</h3>
-        <img src="data:image/png;base64,${floorPlan.floorPlanImageBase64}" alt="${floorPlan.floorPlanName}" />
-        <p>Space ID: ${reservation.spaceID}</p>
-        <p>Date: ${formattedStartDate}</p>
-        <p>From: ${formattedStartTime}</p>
-        <p>To: ${formattedEndTime}</p>
-        <p>Current position on waitlist: ${reservation.position}</p>
-        <button id="leaveWaitlistBtn">Leave Waitlist</button>
-    `;
+        const reservationInfo = document.createElement('div');
+        reservationInfo.innerHTML = `
+            <h3>${reservation.companyName}</h3>
+            <img src="data:image/png;base64,${floorPlan.floorPlanImageBase64}" alt="${floorPlan.floorPlanName}" />
+            <p>Space ID: ${reservation.spaceID}</p>
+            <p>Date: ${formattedStartDate}</p>
+            <p>From: ${formattedStartTime}</p>
+            <p>To: ${formattedEndTime}</p>
+            <p>Current position on waitlist: ${reservation.position}</p>
+            <button class="leaveWaitlistBtn">Leave Waitlist</button>
+        `;
+        reservationDetails.appendChild(reservationInfo);
+
+        // Add click event listener to the leave waitlist button
+        const leaveWaitlistBtn = reservationInfo.querySelector('.leaveWaitlistBtn');
+        leaveWaitlistBtn.addEventListener('click', () => openDialog(reservation), fetchInsertUsedFeature('Waitlist'));
     });
-
-    // Add click event listener to the leave waitlist button
-    const leaveWaitlistBtn = document.getElementById('leaveWaitlistBtn');
-    leaveWaitlistBtn.addEventListener('click', () => openDialog(reservation), fetchInsertUsedFeature('Waitlist'));
 }
-
 
 async function getReservationId(reservation) {
     var accessToken = sessionStorage.getItem('accessToken');

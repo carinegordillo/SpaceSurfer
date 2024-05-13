@@ -410,4 +410,12 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         _command.Parameters.AddWithValue("@username", userHash);
         return this;
     }
+
+    public ICustomSqlCommandBuilder getResDetails(string table, int resId)
+    {
+        ResetBuilder();
+        _commandText.Append($"SELECT * FROM {table} WHERE reservationID = @id");
+        _command.Parameters.AddWithValue("@id", resId);
+        return this;
+    }
 }
