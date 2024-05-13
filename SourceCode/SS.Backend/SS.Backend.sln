@@ -207,6 +207,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "adminAccountRecoveryAPI", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserDataProtectionAPI", "UserDataProtectionAPI\UserDataProtectionAPI.csproj", "{099D7BFF-A64B-4007-B1B6-F9D3D59443A7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SS.Backend.UserDataProtection", "SS.Backend.UserDataProtection\SS.Backend.UserDataProtection.csproj", "{19F1737B-97C3-4562-BEFB-F8E13D670159}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -389,6 +391,10 @@ Global
 		{099D7BFF-A64B-4007-B1B6-F9D3D59443A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{099D7BFF-A64B-4007-B1B6-F9D3D59443A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{099D7BFF-A64B-4007-B1B6-F9D3D59443A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19F1737B-97C3-4562-BEFB-F8E13D670159}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19F1737B-97C3-4562-BEFB-F8E13D670159}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19F1737B-97C3-4562-BEFB-F8E13D670159}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19F1737B-97C3-4562-BEFB-F8E13D670159}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -448,6 +454,7 @@ Global
 		{26A96E35-2599-4B96-AD23-75981285AA10} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{2B9310D6-3C73-4403-9C2F-525BE83AD632} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 		{099D7BFF-A64B-4007-B1B6-F9D3D59443A7} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
+		{19F1737B-97C3-4562-BEFB-F8E13D670159} = {4DDF9735-C55F-4561-9AC5-5ECFC31A96F9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {27FF35A7-BBB6-414D-87FC-32255A9F675F}
