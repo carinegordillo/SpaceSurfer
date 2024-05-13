@@ -171,7 +171,7 @@ namespace SS.Backend.Security
         /// </summary>
         /// <param name="authRequest">Request to authenticate, holds UserIdentity and Proof</param>
         /// <returns>SSPrincipal object which contains UserIdentity and Claims as well as the Response object</returns>
-        public async Task<(SSPrincipal principal, Response res)> Authenticate(AuthenticationRequest authRequest)
+        public async Task<(SSPrincipal principal, Response res)> Authenticate(AuthenticationRequest authRequest, string? ip)
         {
             var builder = new CustomSqlCommandBuilder();
             Response result = new();
@@ -315,7 +315,7 @@ namespace SS.Backend.Security
                         level = "Error",
                         username = user_hash,
                         category = "Data Store",
-                        description = "Failure to authenticate."
+                        description = $"Failure to authenticate. User IP address was: {ip}"
                     };
                     await log.SaveData(entry);
 
@@ -333,7 +333,7 @@ namespace SS.Backend.Security
                     level = "Error",
                     username = user_hash,
                     category = "Data Store",
-                    description = "Failure to authenticate."
+                    description = $"Failure to authenticate. User IP address was: {ip}"
                 };
                 await log.SaveData(entry);
 

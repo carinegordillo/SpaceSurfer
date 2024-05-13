@@ -44,7 +44,9 @@ namespace AuthAPI.Controllers
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticationRequest request)
         {
-            var (principal, response) = await _authService.Authenticate(request);
+            var ip = HttpContext?.Connection?.RemoteIpAddress?.ToString();
+            Console.WriteLine("this is the ip: {0}", ip);
+            var (principal, response) = await _authService.Authenticate(request, ip);
 
             if (response.HasError)
             {
