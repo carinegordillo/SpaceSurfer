@@ -395,6 +395,30 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         return this;
     }
 
+    public ICustomSqlCommandBuilder deleteSystemObs(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM SystemObservability WHERE Username = @username");
+        _command.Parameters.AddWithValue("@username", userHash);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deleteFeatureAcc(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM FeatureAccess WHERE hashedUsername = @username");
+        _command.Parameters.AddWithValue("@username", userHash);
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deleteViewDur(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append("DELETE FROM ViewDurations WHERE hashedUsername = @username");
+        _command.Parameters.AddWithValue("@username", userHash);
+        return this;
+    }
+
     public ICustomSqlCommandBuilder getResId(string userHash)
     {
         ResetBuilder();

@@ -480,98 +480,119 @@ public class UserDataProtection
 
     public async Task WriteToFile_GeneralUser(UserDataModel userData, string outputPath)
     {
-        using (StreamWriter writer = File.CreateText(outputPath))
+        try
         {
-            await writer.WriteLineAsync($"Username: {userData.Username}");
-            await writer.WriteLineAsync($"BirthDate: {userData.BirthDate}");
-            await writer.WriteLineAsync($"FirstName: {userData.FirstName}");
-            await writer.WriteLineAsync($"LastName: {userData.LastName}");
-            await writer.WriteLineAsync($"BackupEmail: {userData.BackupEmail}");
-            await writer.WriteLineAsync($"AppRole: {userData.AppRole}");
-            await writer.WriteLineAsync($"IsActive: {userData.IsActive}");
-            await writer.WriteLineAsync();
-
-            await writer.WriteLineAsync("Reservations:");
-            foreach (var reservation in userData.Reservations)
+            using (StreamWriter writer = File.CreateText(outputPath))
             {
-                await writer.WriteLineAsync($"  ReservationID: {reservation.ReservationID}");
-                await writer.WriteLineAsync($"  CompanyID: {reservation.CompanyID}");
-                await writer.WriteLineAsync($"  FloorPlanID: {reservation.FloorPlanID}");
-                await writer.WriteLineAsync($"  SpaceID: {reservation.SpaceID}");
-                await writer.WriteLineAsync($"  StartTime: {reservation.StartTime}");
-                await writer.WriteLineAsync($"  EndTime: {reservation.EndTime}");
-                await writer.WriteLineAsync($"  Status: {reservation.Status}");
+                await writer.WriteLineAsync($"Username: {userData.Username}");
+                await writer.WriteLineAsync($"BirthDate: {userData.BirthDate}");
+                await writer.WriteLineAsync($"FirstName: {userData.FirstName}");
+                await writer.WriteLineAsync($"LastName: {userData.LastName}");
+                await writer.WriteLineAsync($"BackupEmail: {userData.BackupEmail}");
+                await writer.WriteLineAsync($"AppRole: {userData.AppRole}");
+                await writer.WriteLineAsync($"IsActive: {userData.IsActive}");
                 await writer.WriteLineAsync();
-            }
 
-            await writer.WriteLineAsync("Waitlist:");
-            foreach (var waitlist in userData.Waitlist)
-            {
-                await writer.WriteLineAsync($"  ReservationID: {waitlist.ReservationID}");
-                await writer.WriteLineAsync($"  Position: {waitlist.Position}");
-                await writer.WriteLineAsync();
+                await writer.WriteLineAsync("Reservations:");
+                foreach (var reservation in userData.Reservations)
+                {
+                    await writer.WriteLineAsync($"  ReservationID: {reservation.ReservationID}");
+                    await writer.WriteLineAsync($"  CompanyID: {reservation.CompanyID}");
+                    await writer.WriteLineAsync($"  FloorPlanID: {reservation.FloorPlanID}");
+                    await writer.WriteLineAsync($"  SpaceID: {reservation.SpaceID}");
+                    await writer.WriteLineAsync($"  StartTime: {reservation.StartTime}");
+                    await writer.WriteLineAsync($"  EndTime: {reservation.EndTime}");
+                    await writer.WriteLineAsync($"  Status: {reservation.Status}");
+                    await writer.WriteLineAsync();
+                }
+
+                await writer.WriteLineAsync("Waitlist:");
+                foreach (var waitlist in userData.Waitlist)
+                {
+                    await writer.WriteLineAsync($"  ReservationID: {waitlist.ReservationID}");
+                    await writer.WriteLineAsync($"  Position: {waitlist.Position}");
+                    await writer.WriteLineAsync();
+                }
+                writer.Close();
             }
+            
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while writing to the file: {ex.Message}");
+            throw;
+        }
+
+       
     }
 
     public async Task WriteToFile_Manager(UserDataModel userData, string outputPath)
     {
-        using (StreamWriter writer = File.CreateText(outputPath))
+        try
         {
-            await writer.WriteLineAsync($"Username: {userData.Username}");
-            await writer.WriteLineAsync($"BirthDate: {userData.BirthDate}");
-            await writer.WriteLineAsync($"FirstName: {userData.FirstName}");
-            await writer.WriteLineAsync($"LastName: {userData.LastName}");
-            await writer.WriteLineAsync($"BackupEmail: {userData.BackupEmail}");
-            await writer.WriteLineAsync($"AppRole: {userData.AppRole}");
-            await writer.WriteLineAsync($"IsActive: {userData.IsActive}");
-            await writer.WriteLineAsync();
-
-            await writer.WriteLineAsync("Reservations:");
-            foreach (var reservation in userData.Reservations)
+            using (StreamWriter writer = File.CreateText(outputPath))
             {
-                await writer.WriteLineAsync($"  ReservationID: {reservation.ReservationID}");
-                await writer.WriteLineAsync($"  CompanyID: {reservation.CompanyID}");
-                await writer.WriteLineAsync($"  FloorPlanID: {reservation.FloorPlanID}");
-                await writer.WriteLineAsync($"  SpaceID: {reservation.SpaceID}");
-                await writer.WriteLineAsync($"  StartTime: {reservation.StartTime}");
-                await writer.WriteLineAsync($"  EndTime: {reservation.EndTime}");
-                await writer.WriteLineAsync($"  Status: {reservation.Status}");
+                await writer.WriteLineAsync($"Username: {userData.Username}");
+                await writer.WriteLineAsync($"BirthDate: {userData.BirthDate}");
+                await writer.WriteLineAsync($"FirstName: {userData.FirstName}");
+                await writer.WriteLineAsync($"LastName: {userData.LastName}");
+                await writer.WriteLineAsync($"BackupEmail: {userData.BackupEmail}");
+                await writer.WriteLineAsync($"AppRole: {userData.AppRole}");
+                await writer.WriteLineAsync($"IsActive: {userData.IsActive}");
                 await writer.WriteLineAsync();
-            }
 
-            await writer.WriteLineAsync("Waitlist:");
-            foreach (var waitlist in userData.Waitlist)
-            {
-                await writer.WriteLineAsync($"  ReservationID: {waitlist.ReservationID}");
-                await writer.WriteLineAsync($"  Position: {waitlist.Position}");
-                await writer.WriteLineAsync();
-            }
-
-            await writer.WriteLineAsync($"CompanyName: {userData.CompanyName}");
-            await writer.WriteLineAsync($"CompanyID: {userData.CompanyID}");
-            await writer.WriteLineAsync($"CompanyAddress: {userData.CompanyAddress}");
-
-            await writer.WriteLineAsync("CompanyFloors:");
-            foreach (var floor in userData.CompanyFloors)
-            {
-                await writer.WriteLineAsync($"  FloorID: {floor.FloorID}");
-                await writer.WriteLineAsync($"  FloorName: {floor.FloorName}");
-
-                await writer.WriteLineAsync("  Spaces:");
-                foreach (var space in floor.Spaces)
+                await writer.WriteLineAsync("Reservations:");
+                foreach (var reservation in userData.Reservations)
                 {
-                    await writer.WriteLineAsync($"    SpaceID: {space.SpaceID}");
-                    await writer.WriteLineAsync($"    TimeLimit: {space.TimeLimit}");
+                    await writer.WriteLineAsync($"  ReservationID: {reservation.ReservationID}");
+                    await writer.WriteLineAsync($"  CompanyID: {reservation.CompanyID}");
+                    await writer.WriteLineAsync($"  FloorPlanID: {reservation.FloorPlanID}");
+                    await writer.WriteLineAsync($"  SpaceID: {reservation.SpaceID}");
+                    await writer.WriteLineAsync($"  StartTime: {reservation.StartTime}");
+                    await writer.WriteLineAsync($"  EndTime: {reservation.EndTime}");
+                    await writer.WriteLineAsync($"  Status: {reservation.Status}");
+                    await writer.WriteLineAsync();
                 }
 
-                await writer.WriteLineAsync();
+                await writer.WriteLineAsync("Waitlist:");
+                foreach (var waitlist in userData.Waitlist)
+                {
+                    await writer.WriteLineAsync($"  ReservationID: {waitlist.ReservationID}");
+                    await writer.WriteLineAsync($"  Position: {waitlist.Position}");
+                    await writer.WriteLineAsync();
+                }
+
+                await writer.WriteLineAsync($"CompanyName: {userData.CompanyName}");
+                await writer.WriteLineAsync($"CompanyID: {userData.CompanyID}");
+                await writer.WriteLineAsync($"CompanyAddress: {userData.CompanyAddress}");
+
+                await writer.WriteLineAsync("CompanyFloors:");
+                foreach (var floor in userData.CompanyFloors)
+                {
+                    await writer.WriteLineAsync($"  FloorID: {floor.FloorID}");
+                    await writer.WriteLineAsync($"  FloorName: {floor.FloorName}");
+
+                    await writer.WriteLineAsync("  Spaces:");
+                    foreach (var space in floor.Spaces)
+                    {
+                        await writer.WriteLineAsync($"    SpaceID: {space.SpaceID}");
+                        await writer.WriteLineAsync($"    TimeLimit: {space.TimeLimit}");
+                    }
+
+                    await writer.WriteLineAsync();
+                }
+
+                await writer.WriteLineAsync($"CompanyOpeningHours: {userData.CompanyOpeningHours}");
+                await writer.WriteLineAsync($"CompanyClosingHours: {userData.CompanyClosingHours}");
+                await writer.WriteLineAsync($"CompanyDaysOpen: {userData.CompanyDaysOpen}");
+
+                writer.Close();
             }
-
-            await writer.WriteLineAsync($"CompanyOpeningHours: {userData.CompanyOpeningHours}");
-            await writer.WriteLineAsync($"CompanyClosingHours: {userData.CompanyClosingHours}");
-            await writer.WriteLineAsync($"CompanyDaysOpen: {userData.CompanyDaysOpen}");
-
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while writing to the file: {ex.Message}");
+            throw;
         }
     }
 

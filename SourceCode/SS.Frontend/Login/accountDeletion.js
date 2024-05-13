@@ -153,6 +153,8 @@ function AccountDeletion_verifyUser_Deletion() {
 function createDeletionUI() {
     const contentContainer = document.getElementById('contentContainer_Deletion');
 
+    contentContainer.innerHTML = '';
+
     const deleteDataSection = document.createElement('section');
     deleteDataSection.id = 'deleteDataSection';
     deleteDataSection.classList.add('form-container');
@@ -203,19 +205,39 @@ function showDeletionSection() {
     createDeletionUI();
 }
 
-function deletionAccess() {
-    document.getElementById('deletionView').style.display = 'block';
+function hideAllSectionsDeletion() {
+    const currentView = sessionStorage.getItem('currentView');
 
-    document.getElementById('userProfileView').style.display = 'none';
-    document.getElementById('homepageGen').style.display = 'none';
-    document.getElementById('homepageManager').style.display = 'none';
+    if (currentView) {
+        endTimerAndInsertDuration(currentView);
+    }
+
+    document.getElementById('employeeSetup').style.display = 'none';
+    document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById('sendOTPSection').style.display = 'none';
     document.getElementById('enterOTPSection').style.display = 'none';
     document.getElementById('successResult').style.display = 'none';
-    document.getElementById('failResult').style.display = 'none';
+    document.getElementById("taskManagerView").style.display = "none";
     document.getElementById('personalOverviewCenter').style.display = 'none';
     document.getElementById('waitlistView').style.display = 'none';
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
+    document.getElementById('spaceManagerView').style.display = 'none';
+    document.getElementById('userProfileView').style.display = 'none';
+    document.getElementById('noLogin').style.display = 'none';
+    document.getElementById('confirmationView').style.display = 'none';
+    document.getElementById('systemObservability').style.display = 'none';
+    document.getElementById("accountRecoverySection").style.display = "none";
+    document.getElementById("userRequestsView").style.display = "none";
+    document.getElementById("enterRegistrationOTPSection").style.display = "none";
+    document.getElementById('cpraView').style.display = 'none';
+    document.getElementById('deletionView').style.display = 'none';
+}
 
+function deletionAccess() {
+    hideAllSectionsDeletion();
+    document.getElementById('deletionView').style.display = 'block';
     showDeletionSection();
 
 }

@@ -293,6 +293,8 @@ function verifyUser_Deletion() {
 function createUserProtectionUI() {
     const contentContainer = document.getElementById('contentContainer');
 
+    contentContainer.innerHTML = '';
+
     const requestDataButton = document.createElement('button');
     requestDataButton.textContent = 'Request Data';
     requestDataButton.addEventListener('click', function () {
@@ -406,8 +408,38 @@ function showUserProtectionSection() {
     createUserProtectionUI();
 }
 
+function hideAllSectionsCPRA() {
+    const currentView = sessionStorage.getItem('currentView');
+
+    if (currentView) {
+        endTimerAndInsertDuration(currentView);
+    }
+
+    document.getElementById('employeeSetup').style.display = 'none';
+    document.getElementById('spaceBookingView').style.display = 'none';
+    document.getElementById('sendOTPSection').style.display = 'none';
+    document.getElementById('enterOTPSection').style.display = 'none';
+    document.getElementById('successResult').style.display = 'none';
+    document.getElementById("taskManagerView").style.display = "none";
+    document.getElementById('personalOverviewCenter').style.display = 'none';
+    document.getElementById('waitlistView').style.display = 'none';
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById('UnAuthnAbout').style.display = 'none';
+    document.getElementById('Registration').style.display = 'none';
+    document.getElementById('spaceManagerView').style.display = 'none';
+    document.getElementById('userProfileView').style.display = 'none';
+    document.getElementById('noLogin').style.display = 'none';
+    document.getElementById('confirmationView').style.display = 'none';
+    document.getElementById('systemObservability').style.display = 'none';
+    document.getElementById("accountRecoverySection").style.display = "none";
+    document.getElementById("userRequestsView").style.display = "none";
+    document.getElementById("enterRegistrationOTPSection").style.display = "none";
+    document.getElementById('cpraView').style.display = 'none';
+    document.getElementById('deletionView').style.display = 'none';
+}
+
 function cpraAccess() {
-    hideAllSections();
+    hideAllSectionsCPRA();
     document.getElementById('cpraView').style.display = 'block';
     showUserProtectionSection();
 

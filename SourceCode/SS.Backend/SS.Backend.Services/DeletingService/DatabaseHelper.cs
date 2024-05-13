@@ -165,6 +165,21 @@ namespace SS.Backend.Services.DeletingService
                 response = await _sqlDAO.SqlRowsAffected(query);
                 response.HasError = false;
                 response.ErrorMessage = "";
+                // delete SystemObservability
+                query = commandBuild.deleteSystemObs(username).Build();
+                response = await _sqlDAO.SqlRowsAffected(query);
+                response.HasError = false;
+                response.ErrorMessage = "";
+                // delete FeatureAccess
+                query = commandBuild.deleteFeatureAcc(username).Build();
+                response = await _sqlDAO.SqlRowsAffected(query);
+                response.HasError = false;
+                response.ErrorMessage = "";
+                // delete ViewDurations
+                query = commandBuild.deleteViewDur(username).Build();
+                response = await _sqlDAO.SqlRowsAffected(query);
+                response.HasError = false;
+                response.ErrorMessage = "";
 
                 if (!response.HasError)
                 {
