@@ -22,6 +22,8 @@ function initProfile() {
     document.getElementById("welcomeSection").style.display = "none";
     document.getElementById("accountRecoverySection").style.display = "none";
 
+    startTimer('User Profile');
+
     try {
         const idToken = sessionStorage.getItem('idToken');
     
