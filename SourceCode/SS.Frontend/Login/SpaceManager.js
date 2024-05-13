@@ -177,6 +177,7 @@ document.querySelectorAll('.accordion').forEach(function(button) {
 
 
 document.getElementById('spaceCreationForm').addEventListener('submit', function(e) {
+    fetchInsertUsedFeature('Space Manager');
     if (!appConfig) {
         console.error('Configuration is not loaded!');
         return;
@@ -206,6 +207,7 @@ function isValidInput(input) {
 }
 
 document.getElementById('modifySpaceForm').addEventListener('submit', function(e) {
+    fetchInsertUsedFeature('Space Manager');
     e.preventDefault();
     if (!appConfig) {
         console.error('Configuration is not loaded!');
