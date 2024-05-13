@@ -21,6 +21,8 @@ function initProfile() {
     document.getElementById('spaceBookingView').style.display = 'none';
     document.getElementById("welcomeSection").style.display = "none";
     document.getElementById("accountRecoverySection").style.display = "none";
+    document.getElementById('cpraView').style.display = 'none';
+    document.getElementById('deletionView').style.display = 'none';
 
     try {
         const idToken = sessionStorage.getItem('idToken');
