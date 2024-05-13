@@ -116,7 +116,7 @@ app.Use(async (context, next) =>
 
 
 
-app.UseStaticFiles();
+// app.UseStaticFiles();
 
 app.MapControllers();
 

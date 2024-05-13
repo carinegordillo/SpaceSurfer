@@ -30,6 +30,7 @@ builder.Services.AddTransient<Response>();
 builder.Services.AddTransient<LogEntry>();
 builder.Services.AddTransient<ILogTarget, SqlLogTarget>();
 builder.Services.AddTransient<Logger>();
+builder.Services.AddTransient<SS.Backend.Services.LoggingService.ILogger, Logger>();
 //builder.Services.AddTransient<IAccountDeletion, AccountDeletion>();
 builder.Services.AddTransient<SSAuthService>(provider =>
     new SSAuthService(
