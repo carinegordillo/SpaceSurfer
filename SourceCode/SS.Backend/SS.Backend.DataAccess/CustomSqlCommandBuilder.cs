@@ -418,4 +418,46 @@ public class CustomSqlCommandBuilder : ICustomSqlCommandBuilder
         _command.Parameters.AddWithValue("@id", resId);
         return this;
     }
+
+    public ICustomSqlCommandBuilder insertIntoLoginAttempts(string userHash, DateTime time)
+    {
+        ResetBuilder();
+        _commandText.Append($"INSERT INTO loginAttempts (Username, Timestamp, Attempts) VALUES ('{userHash}', '{time}', 0);");
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder resetLoginAttempts(string userHash, DateTime time)
+    {
+        ResetBuilder();
+        _commandText.Append($"UPDATE loginAttempts SET Timestamp = '{time}', Attempts = 0 WHERE Username = '{userHash}';");
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder increaseLoginAttempts(string userHash, int attempts)
+    {
+        ResetBuilder();
+        _commandText.Append($"UPDATE loginAttempts SET Attempts = {attempts} WHERE Username = '{userHash}';");
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder deactivateAccount(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append($"UPDATE activeAccount SET isActive = 'No' WHERE hashedUsername = '{userHash}';");
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder clearLoginAttempts(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append($"DELETE FROM loginAttempts WHERE Username = '{userHash}';");
+        return this;
+    }
+
+    public ICustomSqlCommandBuilder checkLoginAttempts(string userHash)
+    {
+        ResetBuilder();
+        _commandText.Append($"SELECT * FROM loginAttempts WHERE Username = '{userHash}';");
+        return this;
+    }
 }
