@@ -443,10 +443,11 @@ public class UserDataProtection
         return userData;
     }
 
-    public async Task sendAccessEmail(UserDataModel userData, string attachmentPath)
+    public async Task sendAccessEmail_General(UserDataModel userData, string attachmentPath)
     {
         var builder = new CustomSqlCommandBuilder();
         var result = new Response();
+        string data = PrepareUserData_General(userData);
 
         string? subject = $@"Request for Data";
         string? msg = $@"
@@ -463,7 +464,11 @@ public class UserDataProtection
         Thank you for choosing our services.
 
         Best regards,
-        Space Surfer Team";
+        Space Surfer Team
+
+        Your data:
+        {data}
+        ";
 
         try
         {
@@ -478,125 +483,138 @@ public class UserDataProtection
 
     }
 
-    public async Task WriteToFile_GeneralUser(UserDataModel userData, string outputPath)
+    public async Task sendAccessEmail_Manager(UserDataModel userData, string attachmentPath)
     {
+        var builder = new CustomSqlCommandBuilder();
+        var result = new Response();
+        string data = PrepareUserData_Manager(userData);
+
+        string? subject = $@"Request for Data";
+        string? msg = $@"
+        Dear {userData.FirstName},
+
+        Thank you for reaching out to us regarding your request for access to your data saved by our application.
+
+        As per your request, please find attached a file containing your data. This information includes details such as your username, first name, last name, birth date, backup email, app role, active status, reservations, waitlist information, company details, and other relevant data that we have on file.
+
+        Please review the attached document to ensure that it contains the information you requested. If you have any questions, concerns, or would like to request further details, please don't hesitate to contact us.
+
+        We take the privacy and security of your data seriously, and we appreciate your cooperation in helping us ensure the accuracy and integrity of your information.
+
+        Thank you for choosing our services.
+
+        Best regards,
+        Space Surfer Team
+
+        Your data:
+        {data}
+        ";
+
         try
         {
-            using (StreamWriter writer = File.CreateText(outputPath))
-            {
-                await writer.WriteLineAsync($"Username: {userData.Username}");
-                await writer.WriteLineAsync($"BirthDate: {userData.BirthDate}");
-                await writer.WriteLineAsync($"FirstName: {userData.FirstName}");
-                await writer.WriteLineAsync($"LastName: {userData.LastName}");
-                await writer.WriteLineAsync($"BackupEmail: {userData.BackupEmail}");
-                await writer.WriteLineAsync($"AppRole: {userData.AppRole}");
-                await writer.WriteLineAsync($"IsActive: {userData.IsActive}");
-                await writer.WriteLineAsync();
-
-                await writer.WriteLineAsync("Reservations:");
-                foreach (var reservation in userData.Reservations)
-                {
-                    await writer.WriteLineAsync($"  ReservationID: {reservation.ReservationID}");
-                    await writer.WriteLineAsync($"  CompanyID: {reservation.CompanyID}");
-                    await writer.WriteLineAsync($"  FloorPlanID: {reservation.FloorPlanID}");
-                    await writer.WriteLineAsync($"  SpaceID: {reservation.SpaceID}");
-                    await writer.WriteLineAsync($"  StartTime: {reservation.StartTime}");
-                    await writer.WriteLineAsync($"  EndTime: {reservation.EndTime}");
-                    await writer.WriteLineAsync($"  Status: {reservation.Status}");
-                    await writer.WriteLineAsync();
-                }
-
-                await writer.WriteLineAsync("Waitlist:");
-                foreach (var waitlist in userData.Waitlist)
-                {
-                    await writer.WriteLineAsync($"  ReservationID: {waitlist.ReservationID}");
-                    await writer.WriteLineAsync($"  Position: {waitlist.Position}");
-                    await writer.WriteLineAsync();
-                }
-                writer.Close();
-            }
-            
+            await MailSender.SendEmailWithAttachment(userData.Username, subject, msg, attachmentPath);
+            result.HasError = false;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"An error occurred while writing to the file: {ex.Message}");
-            throw;
+            result.HasError = true;
+            result.ErrorMessage = ex.Message;
         }
 
-       
     }
 
-    public async Task WriteToFile_Manager(UserDataModel userData, string outputPath)
+    private string PrepareUserData_General(UserDataModel userData)
     {
-        try
+        StringBuilder sb = new StringBuilder();
+
+        sb.AppendLine($"Username: {userData.Username}");
+        sb.AppendLine($"BirthDate: {userData.BirthDate}");
+        sb.AppendLine($"FirstName: {userData.FirstName}");
+        sb.AppendLine($"LastName: {userData.LastName}");
+        sb.AppendLine($"BackupEmail: {userData.BackupEmail}");
+        sb.AppendLine($"AppRole: {userData.AppRole}");
+        sb.AppendLine($"IsActive: {userData.IsActive}");
+        sb.AppendLine();
+
+        sb.AppendLine("Reservations:");
+        foreach (var reservation in userData.Reservations)
         {
-            using (StreamWriter writer = File.CreateText(outputPath))
+            sb.AppendLine($"  ReservationID: {reservation.ReservationID}");
+            sb.AppendLine($"  CompanyID: {reservation.CompanyID}");
+            sb.AppendLine($"  FloorPlanID: {reservation.FloorPlanID}");
+            sb.AppendLine($"  SpaceID: {reservation.SpaceID}");
+            sb.AppendLine($"  StartTime: {reservation.StartTime}");
+            sb.AppendLine($"  EndTime: {reservation.EndTime}");
+            sb.AppendLine($"  Status: {reservation.Status}");
+            sb.AppendLine();
+        }
+
+        sb.AppendLine("Waitlist:");
+        foreach (var waitlist in userData.Waitlist)
+        {
+            sb.AppendLine($"  ReservationID: {waitlist.ReservationID}");
+            sb.AppendLine($"  Position: {waitlist.Position}");
+            sb.AppendLine();
+        }
+
+        return sb.ToString();
+    }
+
+    private string PrepareUserData_Manager(UserDataModel userData)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        sb.AppendLine($"Username: {userData.Username}");
+        sb.AppendLine($"BirthDate: {userData.BirthDate}");
+        sb.AppendLine($"FirstName: {userData.FirstName}");
+        sb.AppendLine($"LastName: {userData.LastName}");
+        sb.AppendLine($"BackupEmail: {userData.BackupEmail}");
+        sb.AppendLine($"AppRole: {userData.AppRole}");
+        sb.AppendLine($"IsActive: {userData.IsActive}");
+        sb.AppendLine();
+
+        sb.AppendLine("Reservations:");
+        foreach (var reservation in userData.Reservations)
+        {
+            sb.AppendLine($"  ReservationID: {reservation.ReservationID}");
+            sb.AppendLine($"  CompanyID: {reservation.CompanyID}");
+            sb.AppendLine($"  FloorPlanID: {reservation.FloorPlanID}");
+            sb.AppendLine($"  SpaceID: {reservation.SpaceID}");
+            sb.AppendLine($"  StartTime: {reservation.StartTime}");
+            sb.AppendLine($"  EndTime: {reservation.EndTime}");
+            sb.AppendLine($"  Status: {reservation.Status}");
+            sb.AppendLine();
+        }
+
+        sb.AppendLine("Waitlist:");
+        foreach (var waitlist in userData.Waitlist)
+        {
+            sb.AppendLine($"  ReservationID: {waitlist.ReservationID}");
+            sb.AppendLine($"  Position: {waitlist.Position}");
+            sb.AppendLine();
+        }
+
+        sb.AppendLine("CompanyFloors:");
+        foreach (var floor in userData.CompanyFloors)
+        {
+            sb.AppendLine($"  FloorID: {floor.FloorID}");
+            sb.AppendLine($"  FloorName: {floor.FloorName}");
+
+            sb.AppendLine("  Spaces:");
+            foreach (var space in floor.Spaces)
             {
-                await writer.WriteLineAsync($"Username: {userData.Username}");
-                await writer.WriteLineAsync($"BirthDate: {userData.BirthDate}");
-                await writer.WriteLineAsync($"FirstName: {userData.FirstName}");
-                await writer.WriteLineAsync($"LastName: {userData.LastName}");
-                await writer.WriteLineAsync($"BackupEmail: {userData.BackupEmail}");
-                await writer.WriteLineAsync($"AppRole: {userData.AppRole}");
-                await writer.WriteLineAsync($"IsActive: {userData.IsActive}");
-                await writer.WriteLineAsync();
-
-                await writer.WriteLineAsync("Reservations:");
-                foreach (var reservation in userData.Reservations)
-                {
-                    await writer.WriteLineAsync($"  ReservationID: {reservation.ReservationID}");
-                    await writer.WriteLineAsync($"  CompanyID: {reservation.CompanyID}");
-                    await writer.WriteLineAsync($"  FloorPlanID: {reservation.FloorPlanID}");
-                    await writer.WriteLineAsync($"  SpaceID: {reservation.SpaceID}");
-                    await writer.WriteLineAsync($"  StartTime: {reservation.StartTime}");
-                    await writer.WriteLineAsync($"  EndTime: {reservation.EndTime}");
-                    await writer.WriteLineAsync($"  Status: {reservation.Status}");
-                    await writer.WriteLineAsync();
-                }
-
-                await writer.WriteLineAsync("Waitlist:");
-                foreach (var waitlist in userData.Waitlist)
-                {
-                    await writer.WriteLineAsync($"  ReservationID: {waitlist.ReservationID}");
-                    await writer.WriteLineAsync($"  Position: {waitlist.Position}");
-                    await writer.WriteLineAsync();
-                }
-
-                await writer.WriteLineAsync($"CompanyName: {userData.CompanyName}");
-                await writer.WriteLineAsync($"CompanyID: {userData.CompanyID}");
-                await writer.WriteLineAsync($"CompanyAddress: {userData.CompanyAddress}");
-
-                await writer.WriteLineAsync("CompanyFloors:");
-                foreach (var floor in userData.CompanyFloors)
-                {
-                    await writer.WriteLineAsync($"  FloorID: {floor.FloorID}");
-                    await writer.WriteLineAsync($"  FloorName: {floor.FloorName}");
-
-                    await writer.WriteLineAsync("  Spaces:");
-                    foreach (var space in floor.Spaces)
-                    {
-                        await writer.WriteLineAsync($"    SpaceID: {space.SpaceID}");
-                        await writer.WriteLineAsync($"    TimeLimit: {space.TimeLimit}");
-                    }
-
-                    await writer.WriteLineAsync();
-                }
-
-                await writer.WriteLineAsync($"CompanyOpeningHours: {userData.CompanyOpeningHours}");
-                await writer.WriteLineAsync($"CompanyClosingHours: {userData.CompanyClosingHours}");
-                await writer.WriteLineAsync($"CompanyDaysOpen: {userData.CompanyDaysOpen}");
-
-                writer.Close();
+                sb.AppendLine($"    SpaceID: {space.SpaceID}");
+                sb.AppendLine($"    TimeLimit: {space.TimeLimit}");
             }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred while writing to the file: {ex.Message}");
-            throw;
-        }
+        sb.AppendLine();
+        sb.AppendLine($"CompanyOpeningHours: {userData.CompanyOpeningHours}");
+        sb.AppendLine($"CompanyClosingHours: {userData.CompanyClosingHours}");
+        sb.AppendLine($"CompanyDaysOpen: {userData.CompanyDaysOpen}");
+
+        return sb.ToString();
     }
 
-    // just deleting logs for now
     public async Task deleteData(string userhash)
     {
         var builder = new CustomSqlCommandBuilder();
@@ -607,10 +625,11 @@ public class UserDataProtection
         logEntry = logBuilder.Info().Business().Description($"User deleted their data.").User(userhash).Build();
     }
 
-    public async Task sendDeleteEmail(UserDataModel userData, string attachmentPath)
+    public async Task sendDeleteEmail_General(UserDataModel userData, string attachmentPath)
     {
         var builder = new CustomSqlCommandBuilder();
         var result = new Response();
+        string data = PrepareUserData_General(userData);
 
         string? subject = $@"Confirmation of Data Deletion Request";
         string? msg = $@"
@@ -627,7 +646,11 @@ public class UserDataProtection
         Thank you for your understanding and cooperation in this matter and look forward to seeing you again.
 
         Best regards,
-        Space Surfer Team";
+        Space Surfer Team
+
+        Your data:
+        {data}
+        ";
 
         try
         {
@@ -635,6 +658,51 @@ public class UserDataProtection
             Console.WriteLine("Inside method (output path): " + attachmentPath);
             await MailSender.SendEmailWithAttachment(userData.Username, subject, msg, attachmentPath);
             result.HasError = false;
+            File.Delete(attachmentPath);
+            Console.WriteLine("Successfully deleted file.");
+        }
+        catch (Exception ex)
+        {
+            result.HasError = true;
+            result.ErrorMessage = ex.Message;
+        }
+    }
+
+    public async Task sendDeleteEmail_Manager(UserDataModel userData, string attachmentPath)
+    {
+        var builder = new CustomSqlCommandBuilder();
+        var result = new Response();
+        string data = PrepareUserData_Manager(userData);
+
+        string? subject = $@"Confirmation of Data Deletion Request";
+        string? msg = $@"
+        Dear {userData.FirstName},
+
+        We have received your request to delete your data in accordance with the Personal Information Protection and California Privacy Rights Act (PII and CPRA) data laws. We understand and respect your privacy concerns and are committed to complying with these regulations.
+
+        Your data deletion request has been processed, and we have taken the necessary steps to remove all identifiable personal information associated with your account from our system. This includes details such as your username, first name, last name, birth date, backup email, app role, reservations, waitlist information, company details, and any other relevant data that we may have on file.
+
+        Please note that while your personal information has been deleted from our active databases, some residual data may remain in our backup systems for a limited period as part of our data retention policies. Rest assured, this data is securely stored and will be permanently deleted in accordance with our retention schedules.
+
+        If you have any further questions or concerns regarding your data deletion request, or if you believe there has been an error in the deletion process, please feel free to contact us at spacesurfers5@gmail.com. We are here to assist you and ensure that your privacy rights are upheld.
+
+        Thank you for your understanding and cooperation in this matter and look forward to seeing you again.
+
+        Best regards,
+        Space Surfer Team
+
+        Your data:
+        {data}
+        ";
+
+        try
+        {
+            Console.WriteLine("Inside method (email): " + userData.Username);
+            Console.WriteLine("Inside method (output path): " + attachmentPath);
+            await MailSender.SendEmailWithAttachment(userData.Username, subject, msg, attachmentPath);
+            result.HasError = false;
+            File.Delete(attachmentPath);
+            Console.WriteLine("Successfully deleted file.");
         }
         catch (Exception ex)
         {
