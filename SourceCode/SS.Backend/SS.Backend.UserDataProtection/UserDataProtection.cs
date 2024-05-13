@@ -443,6 +443,7 @@ public class UserDataProtection
         return userData;
     }
 
+
     public async Task sendAccessEmail_General(UserDataModel userData)
     {
         var builder = new CustomSqlCommandBuilder();
@@ -625,6 +626,7 @@ public class UserDataProtection
         logEntry = logBuilder.Info().Business().Description($"User deleted their data.").User(userhash).Build();
     }
 
+
     public async Task sendDeleteEmail_General(UserDataModel userData)
     {
         var builder = new CustomSqlCommandBuilder();
@@ -695,6 +697,8 @@ public class UserDataProtection
         {
             await MailSender.SendEmail(userData.Username, subject, msg);
             result.HasError = false;
+            File.Delete(attachmentPath);
+            Console.WriteLine("Successfully deleted file.");
         }
         catch (Exception ex)
         {

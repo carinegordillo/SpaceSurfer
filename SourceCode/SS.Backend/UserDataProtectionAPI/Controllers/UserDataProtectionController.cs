@@ -54,6 +54,7 @@ namespace UserDataProtectionAPI.Controllers
                                 Console.WriteLine("Attempting to access data.");
                                 var userData = await _userDataProtection.accessData_Manager(userHash);
                                 Console.WriteLine("Successfully accessed data.");
+
                                 try
                                 {
                                     await _userDataProtection.sendAccessEmail_Manager(userData);
@@ -78,6 +79,7 @@ namespace UserDataProtectionAPI.Controllers
                                 Console.WriteLine("Attempting to access data.");
                                 var userData = await _userDataProtection.accessData_Manager(userHash);
                                 Console.WriteLine("Successfully accessed data.");
+
                                 try
                                 {
                                     await _userDataProtection.sendAccessEmail_Manager(userData);
@@ -112,6 +114,7 @@ namespace UserDataProtectionAPI.Controllers
                                 Console.WriteLine("Attempting to access data.");
                                 var userData = await _userDataProtection.accessData_GeneralUser(userHash);
                                 Console.WriteLine("Successfully accessed data.");
+                                
                                 try
                                 {
                                     await _userDataProtection.sendAccessEmail_General(userData);
@@ -136,6 +139,7 @@ namespace UserDataProtectionAPI.Controllers
                                 Console.WriteLine("Attempting to access data.");
                                 var userData = await _userDataProtection.accessData_GeneralUser(userHash);
                                 Console.WriteLine("Successfully accessed data.");
+
                                 try
                                 {
                                     await _userDataProtection.sendAccessEmail_General(userData);
@@ -206,7 +210,9 @@ namespace UserDataProtectionAPI.Controllers
                 {
                     userData = await _userDataProtection.accessData_Manager(userHash);
                     Console.WriteLine("Attempting to send delete email.");
+
                     await _userDataProtection.sendDeleteEmail_Manager(userData);
+
                     Console.WriteLine("Attempting to delete logs.");
                     await _userDataProtection.deleteData(userHash);
                     Console.WriteLine("Successfully deleted data.");
@@ -216,7 +222,9 @@ namespace UserDataProtectionAPI.Controllers
                     Console.WriteLine("Attempting to access data.");
                     userData = await _userDataProtection.accessData_GeneralUser(userHash);
                     Console.WriteLine("Attempting to send delete email.");
+
                     await _userDataProtection.sendDeleteEmail_General(userData);
+
                     Console.WriteLine("Attempting to delete logs.");
                     await _userDataProtection.deleteData(userHash);
                     Console.WriteLine("Successfully deleted data.");
