@@ -202,7 +202,7 @@ document.getElementById('spaceCreationForm').addEventListener('submit', function
 });
 
 function isValidInput(input) {
-    const regex = /^[a-zA-Z0-9]{2,50}$/; // Regex to validate the input
+    const regex = /^[a-zA-Z0-9 ]{2,50}$/; 
     return regex.test(input);
 }
 
