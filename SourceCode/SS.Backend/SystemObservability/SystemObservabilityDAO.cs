@@ -151,8 +151,9 @@ namespace SS.Backend.SystemObservability
 
                 commandBuilder = new CustomSqlCommandBuilder();
 
-                var query = commandBuilder.BeginSelectString("TOP 3 *").From("dbo.ViewDurations").Where($"Timestamp Between '{startDate}' AND '{endDate}' ORDER BY DurationInSeconds DESC;").Build();
-
+                var query = commandBuilder.BeginStoredProcedure("GetTopViewDurations")
+                                        .AddParameters(new Dictionary<string, object> { { "StartDate", startDate },{"EndDate", endDate}})
+                                        .Build();
                 response = await _sqlDAO.ReadSqlResult(query);
 
                 if (!response.HasError)
@@ -274,10 +275,9 @@ namespace SS.Backend.SystemObservability
 
                 commandBuilder = new CustomSqlCommandBuilder();
 
-                var query = commandBuilder.BeginSelectString("MONTH(Timestamp) AS [Month], YEAR(Timestamp) AS[Year], SUM(CASE WHEN Description = 'Failure to authenticate.' " +
-                    "THEN 1 WHEN Description = 'User tried to authenticate with an expired OTP.' THEN 1 ELSE 0 END) AS[Failed Logins], SUM(CASE WHEN Description = 'Successful authentication.' THEN 1 ELSE 0 END) AS[Successful Logins]")
-                    .From("dbo.SystemObservability").Where($"Timestamp BETWEEN '{startDate}' AND '{endDate}' GROUP BY YEAR(Timestamp), MONTH(Timestamp) ORDER BY [Year], [Month];").Build();
-
+                var query = commandBuilder.BeginStoredProcedure("GetMonthlyLoginStats")
+                                        .AddParameters(new Dictionary<string, object> { { "StartDate", startDate },{"EndDate", endDate}})
+                                        .Build();
                 response = await _sqlDAO.ReadSqlResult(query);
 
                 if (!response.HasError)
@@ -399,9 +399,9 @@ namespace SS.Backend.SystemObservability
 
                 commandBuilder = new CustomSqlCommandBuilder();
 
-                var query = commandBuilder.BeginSelectString("TOP 3 cp.companyName AS CompanyName, COUNT(r.reservationID) AS ReservationCount")
-                    .From("dbo.companyProfile cp").Join("dbo.reservations r", "cp.companyID", "r.companyID").Where($"r.reservationStartTime BETWEEN '{startDate}' AND '{endDate}'")
-                    .GroupBy("cp.companyName").OrderBy("ReservationCount DESC;").Build();
+                var query = commandBuilder.BeginStoredProcedure("GetTopCompaniesByReservations")
+                                        .AddParameters(new Dictionary<string, object> { { "StartDate", startDate },{"EndDate", endDate}})
+                                        .Build();
 
                 response = await _sqlDAO.ReadSqlResult(query);
 
@@ -524,9 +524,10 @@ namespace SS.Backend.SystemObservability
 
                 commandBuilder = new CustomSqlCommandBuilder();
 
-                var query = commandBuilder.BeginSelectString("TOP 3 cp.companyName AS CompanyName, COUNT(cfs.spaceID) AS SpaceCount")
-                    .From("dbo.companyProfile cp").Join("dbo.companyFloorSpaces cfs", "cp.companyID", "cfs.companyID").Where($"cfs.timestamp BETWEEN '{startDate}' AND '{endDate}'")
-                    .GroupBy("cp.companyName, cp.companyID").OrderBy("SpaceCount DESC;").Build();
+                var query = commandBuilder.BeginStoredProcedure("GetTopCompaniesBySpaceCount")
+                                        .AddParameters(new Dictionary<string, object> { { "StartDate", startDate },{"EndDate", endDate}})
+                                        .Build();
+
 
                 response = await _sqlDAO.ReadSqlResult(query);
 
@@ -690,6 +691,8 @@ namespace SS.Backend.SystemObservability
                 DateTime startDate = DateTime.MinValue;
                 DateTime endDate = DateTime.MaxValue;
 
+                Console.WriteLine("TimeSpan: " + timeSpan);
+
                 if (timeSpan == "6 months")
                 {
                     startDate = DateTime.Today.AddMonths(-6);
@@ -726,11 +729,11 @@ namespace SS.Backend.SystemObservability
                     return response;
                 }
 
-                commandBuilder = new CustomSqlCommandBuilder();
 
-                var query = commandBuilder.BeginSelectString("TOP 3 FeatureName, COUNT(*) AS UsageCount")
-                    .From("dbo.FeatureAccess").Where($"Timestamp BETWEEN '{startDate}' AND '{endDate}'")
-                    .GroupBy("FeatureName").OrderBy("UsageCount DESC;").Build();
+                commandBuilder = new CustomSqlCommandBuilder();
+                var query = commandBuilder.BeginStoredProcedure("GetTopFeatures")
+                                        .AddParameters(new Dictionary<string, object> { { "StartDate", startDate },{"EndDate", endDate}})
+                                        .Build();
 
                 response = await _sqlDAO.ReadSqlResult(query);
 
@@ -852,9 +855,9 @@ namespace SS.Backend.SystemObservability
 
                 commandBuilder = new CustomSqlCommandBuilder();
 
-                var query = commandBuilder.BeginSelectString("MONTH(Timestamp) AS [Month], YEAR(Timestamp) AS[Year], SUM(CASE WHEN Description = 'Error inserting user in data store.' " +
-                    "THEN 1 ELSE 0 END) AS [Failed Registrations], SUM(CASE WHEN Description = 'Successful account creation' THEN 1 ELSE 0 END) AS [Successful Registrations]")
-                    .From("dbo.SystemObservability").Where($"Timestamp BETWEEN '{startDate}' AND '{endDate}' GROUP BY YEAR(Timestamp), MONTH(Timestamp) ORDER BY [Year], [Month];").Build();
+                var query = commandBuilder.BeginStoredProcedure("GetMonthlyRegistrations")
+                                        .AddParameters(new Dictionary<string, object> { { "StartDate", startDate },{"EndDate", endDate}})
+                                        .Build();
 
                 response = await _sqlDAO.ReadSqlResult(query);
 

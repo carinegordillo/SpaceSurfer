@@ -2,6 +2,7 @@ let intervalId = null;
 
 // Function to fetch analysis data
 async function fetchAnalysis(timeSpan) {
+
     // Retrieve tokens from sessionStorage
     var accessToken = sessionStorage.getItem('accessToken');
     var idToken = sessionStorage.getItem('idToken');
