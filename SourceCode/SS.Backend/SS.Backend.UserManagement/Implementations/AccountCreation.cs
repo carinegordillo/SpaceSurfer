@@ -123,10 +123,12 @@ namespace SS.Backend.UserManagement
                 Dear {userInfo.firstname},
 
                 An account with your email has recently been registered within Space Surfer. 
-                In order to enjoy and utilize the application please check your inbox for a one time password used to verify your account. 
+                In order to enjoy and utilize the application please check your inbox for a one time password used to verify your account. Please follow the following link to complete the registration process.  
+                
+                http://54.215.206.253/?employee
 
                 If you have any questions or need assistance, please don't hesitate to contact us at spacesurfers5@gmail.com.
-                http://13.56.13.54/Login/index.html/?employee
+                
                 Thank you for choosing SpaceSurfer.
 
                 Best regards,
