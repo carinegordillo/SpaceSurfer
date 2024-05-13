@@ -2,12 +2,12 @@ BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//SpaceSurfer//Reservation Confirmation//EN
 BEGIN:VEVENT
-UID:36023df8-9850-4a15-8144-9c6480beda4a@gmail.com
-DTSTAMP:20240514T152000
-DTSTART:20240514T152000
-DTEND:20240514T162000
+UID:f1277f3b-8769-4e28-9d9d-528dfe81fc44@gmail.com
+DTSTAMP:20240515T103900
+DTSTART:20240515T103900
+DTEND:20240515T113900
 SUMMARY:SpaceSurfer Reservation
-DESCRIPTION:Reservation at: SomeCompany ReservationID: 86 SpaceID: 126       
-LOCATION:456 Help Ave. Irvine CA, 90000                    
+DESCRIPTION:Reservation at: Stellar Coffee Roasters ReservationID: 4051 SpaceID: S1-FP2    
+LOCATION:408 Starlight Expressway, Seattle, WA 98104       
 END:VEVENT
 END:VCALENDAR

@@ -377,6 +377,7 @@ function showModal(message) {
 }
 
 
+
 async function checkTokenExpiration(accessToken) {
     const waitlistUrl = appConfig.api.Waitlist; 
     try {

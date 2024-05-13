@@ -807,18 +807,18 @@ async function sendConfirmation(reservation) {
     }
 }
 
-//////////////Reservation Confirmation//////////////
-function showModal(message, isSuccess = true) {
-    var modal = document.getElementById('modal');
-    var modalMessage = document.getElementById('modal-message');
-    modalMessage.textContent = message;
-    modal.style.display = 'block';
+// //////////////Reservation Confirmation//////////////
+// function showModal(message, isSuccess = true) {
+//     var modal = document.getElementById('modal');
+//     var modalMessage = document.getElementById('modal-message');
+//     modalMessage.textContent = message;
+//     modal.style.display = 'block';
 
-    var closeButton = document.querySelector('.close-button');
-    closeButton.onclick = function() {
-        modal.style.display = 'none';
-    };
-}
+//     var closeButton = document.querySelector('.close-button');
+//     closeButton.onclick = function() {
+//         modal.style.display = 'none';
+//     };
+// }
 
 function showConfirmationModal(reservation) {
     const reservationID = reservation.reservationID;
