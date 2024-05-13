@@ -66,6 +66,8 @@ async function displayWaitlistedReservations() {
 
         // Clear the existing list of waitlisted reservations
         const reservationsList = document.getElementById('reservations-list');
+        reservationsList.innerHTML = '';
+
 
         // Iterate over waitlisted reservations and append them to the list
         if (Array.isArray(data) && data.length > 0) {

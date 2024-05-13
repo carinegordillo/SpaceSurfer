@@ -241,7 +241,7 @@ function filterReservationsByStatus(statusFilter) {
             }
         }
     });
-    console.log(`Showing ${visibleCount} ${statusFilter} reservations`);
+    
     if (visibleCount === 0) {
         container.innerHTML = `<p>No ${statusFilter} reservations to show.</p>`;
     }
