@@ -43,7 +43,8 @@ builder.Services.AddTransient<UserDataProtection>(provider =>
     new UserDataProtection(
         provider.GetRequiredService<SqlDAO>(),
         provider.GetRequiredService<GenOTP>(),
-        provider.GetRequiredService<Hashing>()
+        provider.GetRequiredService<Hashing>(),
+        provider.GetRequiredService<Logger>()
     )
 );
 

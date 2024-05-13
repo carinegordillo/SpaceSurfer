@@ -339,11 +339,10 @@ async function leaveWaitlist(confirm, reservation) {
             // Clear the reservation details container
             const reservationDetails = document.getElementById('reservation-details');
             reservationDetails.innerHTML = '';
-
+            setTimeout(closeLeaveModal, 3000); // 3000 milliseconds = 3 seconds
         } catch (error) {
             console.error('Error leaving waitlist:', error);
         }
-        closeLeaveModal();
     }
 }
 

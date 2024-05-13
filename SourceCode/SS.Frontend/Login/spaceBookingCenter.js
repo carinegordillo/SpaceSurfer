@@ -1403,9 +1403,11 @@ async function handleReservationCreationFormSubmit(event) {
         }
 
         if (data.hasError) {
-            showWaitlistModal();
             console.log(`Reservation error: ${data.errorMessage}`);
-            //onError(data.errorMessage);
+            if (data.errorMessage == "Reservation did not pass validation checks: Validation failed for NoConflictingReservations.") {
+                showWaitlistModal();
+            }
+            else { onError(data.errorMessage); }
         } else {
             console.log(reservationData.companyId);
             getUsersReservationID(reservationData.companyId, reservationData.floorPlanId,
@@ -1416,7 +1418,7 @@ async function handleReservationCreationFormSubmit(event) {
         }
     } catch (error) {
         console.error('Error creating reservation:', error);
-        //onError("Error creating reservation. Please try again later.");
+        onError("Error creating reservation. Please try again later.");
     }
 }
 
