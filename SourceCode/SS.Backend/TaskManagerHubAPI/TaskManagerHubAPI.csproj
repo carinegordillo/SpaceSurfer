@@ -8,11 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- <PackageReference Include="Newtonsoft.Json" Version="13.0.3" /> -->
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-  </ItemGroup>
-
-  <ItemGroup>
 
   <ProjectReference Include="..\..\SS.Backend\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
   <ProjectReference Include="..\..\SS.Backend\SS.Backend.Services\SS.Backend.Services.csproj" />

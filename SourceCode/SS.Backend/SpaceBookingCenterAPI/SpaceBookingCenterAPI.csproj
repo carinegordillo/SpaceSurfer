@@ -8,14 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-  </ItemGroup>
-
-  <ItemGroup>
   
   <ProjectReference Include="..\..\SS.Backend\SS.Backend.SharedNamespace\SS.Backend.SharedNamespace.csproj" />
   <ProjectReference Include="..\..\SS.Backend\SS.Backend.Services\SS.Backend.Services.csproj" />
-  <ProjectReference Include="..\..\SS.Backend\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj"/>
+  <ProjectReference Include="..\..\SS.Backend\SS.Backend.DataAccess\SS.Backend.DataAccess.csproj" />
   <ProjectReference Include="..\SS.Backend.ReservationManagement\SS.Backend.ReservationManagement.csproj" />
   <ProjectReference Include="..\SS.Backend.ReservationManagers\SS.Backend.ReservationManagers.csproj" />
   <ProjectReference Include="..\..\SS.Backend\SS.Backend.SpaceManager\SS.Backend.SpaceManager.csproj" />
