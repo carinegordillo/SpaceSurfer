@@ -93,7 +93,7 @@ namespace SS.Backend.Services.ArchivingService
 
 
                     ArchivesModel s3Info = new ArchivesModel();
-                    s3Info.destination = "space-surfer-archivestest";
+                    s3Info.destination = "space-surfer-production-archives";
                     s3Info.filePath = tempFilePath;
                     
                     string dateTimeNow = DateTime.Now.ToString("yyyyMMdd_HHmm"); 

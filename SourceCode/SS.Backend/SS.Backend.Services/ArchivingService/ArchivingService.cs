@@ -156,7 +156,7 @@ namespace SS.Backend.Services.ArchivingService
 
                     ArchivesModel s3Info = new ArchivesModel
                     {
-                        destination = "space-surfer-archives",
+                        destination = _config.BucketName,
                         filePath = zipFilePath,
                         fileName = $"SpaceSurferLogs_{DateTime.Now:yyyyMMdd_HHmm}.zip"
                     };

@@ -29,6 +29,9 @@ namespace SS.Backend.Services.ArchivingService
 
             }
 
+            Console.WriteLine("S3ArchivingDestination initialized with Access Key: " + accessKey);  
+            Console.WriteLine("S3ArchivingDestination initialized with Secret Key: " + secretKey);
+
         }
 
 

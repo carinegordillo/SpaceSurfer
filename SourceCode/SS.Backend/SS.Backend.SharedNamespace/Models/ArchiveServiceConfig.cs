@@ -16,6 +16,7 @@ namespace SS.Backend.SharedNamespace
         public DateTime StartDate { get; set; } = DateTime.Now;
         public int Interval { get; set; } = 1;
         public ScheduleUnit Unit { get; set; } = ScheduleUnit.Days;
+        public string BucketName { get; set; } = "default";
 
         public static ArchivingServiceConfig LoadConfig(string filePath)
         {
@@ -28,6 +29,9 @@ namespace SS.Backend.SharedNamespace
                     JsonDocument doc = JsonDocument.Parse(configJson);
                     JsonElement root = doc.RootElement.GetProperty("Archiving");
                     DateTime startDate = root.GetProperty("StartDate").GetDateTime();
+                    
+
+                    
 
 
                     Console.WriteLine($"Start date: {startDate}");
@@ -43,6 +47,8 @@ namespace SS.Backend.SharedNamespace
                     int interval = root.GetProperty("Interval").GetInt32();
 
                     string unitString = root.GetProperty("Unit").GetString() ?? "Days";
+
+                    string bucketName = root.GetProperty("BucketName").GetString() ?? "default";
                     ScheduleUnit unit;
                     if (!Enum.TryParse<ScheduleUnit>(unitString, true, out unit))
                     {
@@ -53,7 +59,8 @@ namespace SS.Backend.SharedNamespace
                     {
                         StartDate = startDate,
                         Interval = interval,
-                        Unit = unit
+                        Unit = unit,
+                        BucketName = bucketName
                     };
                 }
                 else
