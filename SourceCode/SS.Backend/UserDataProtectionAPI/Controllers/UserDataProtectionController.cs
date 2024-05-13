@@ -54,10 +54,10 @@ namespace UserDataProtectionAPI.Controllers
                                 Console.WriteLine("Attempting to access data.");
                                 var userData = await _userDataProtection.accessData_Manager(userHash);
                                 Console.WriteLine("Successfully accessed data.");
-                                string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SpaceSurfers_UserData.txt");
+
                                 try
                                 {
-                                    await _userDataProtection.sendAccessEmail_Manager(userData, outputPath);
+                                    await _userDataProtection.sendAccessEmail_Manager(userData);
                                     Console.WriteLine("Successfully sent email.");
                                 }
                                 catch (Exception ex)
@@ -79,10 +79,10 @@ namespace UserDataProtectionAPI.Controllers
                                 Console.WriteLine("Attempting to access data.");
                                 var userData = await _userDataProtection.accessData_Manager(userHash);
                                 Console.WriteLine("Successfully accessed data.");
-                                string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SpaceSurfers_UserData.txt");
+
                                 try
                                 {
-                                    await _userDataProtection.sendAccessEmail_Manager(userData, outputPath);
+                                    await _userDataProtection.sendAccessEmail_Manager(userData);
                                     Console.WriteLine("Successfully sent email.");
                                 }
                                 catch (Exception ex)
@@ -114,10 +114,10 @@ namespace UserDataProtectionAPI.Controllers
                                 Console.WriteLine("Attempting to access data.");
                                 var userData = await _userDataProtection.accessData_GeneralUser(userHash);
                                 Console.WriteLine("Successfully accessed data.");
-                                string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SpaceSurfers_UserData.txt");
+                                
                                 try
                                 {
-                                    await _userDataProtection.sendAccessEmail_General(userData, outputPath);
+                                    await _userDataProtection.sendAccessEmail_General(userData);
                                     Console.WriteLine("Successfully sent email.");
                                 }
                                 catch (Exception ex)
@@ -139,10 +139,10 @@ namespace UserDataProtectionAPI.Controllers
                                 Console.WriteLine("Attempting to access data.");
                                 var userData = await _userDataProtection.accessData_GeneralUser(userHash);
                                 Console.WriteLine("Successfully accessed data.");
-                                string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SpaceSurfers_UserData.txt");
+
                                 try
                                 {
-                                    await _userDataProtection.sendAccessEmail_General(userData, outputPath);
+                                    await _userDataProtection.sendAccessEmail_General(userData);
                                     Console.WriteLine("Successfully sent email.");
                                 }
                                 catch (Exception ex)
@@ -202,7 +202,6 @@ namespace UserDataProtectionAPI.Controllers
             }
 
             bool closeToExpTime = _authService.CheckExpTime(accessToken);
-            string outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SpaceSurfers_UserData.txt");
 
             try
             {
@@ -211,8 +210,9 @@ namespace UserDataProtectionAPI.Controllers
                 {
                     userData = await _userDataProtection.accessData_Manager(userHash);
                     Console.WriteLine("Attempting to send delete email.");
-                    Console.WriteLine("Output path: " + outputPath);
-                    await _userDataProtection.sendDeleteEmail_Manager(userData, outputPath);
+
+                    await _userDataProtection.sendDeleteEmail_Manager(userData);
+
                     Console.WriteLine("Attempting to delete logs.");
                     await _userDataProtection.deleteData(userHash);
                     Console.WriteLine("Successfully deleted data.");
@@ -222,8 +222,9 @@ namespace UserDataProtectionAPI.Controllers
                     Console.WriteLine("Attempting to access data.");
                     userData = await _userDataProtection.accessData_GeneralUser(userHash);
                     Console.WriteLine("Attempting to send delete email.");
-                    Console.WriteLine("Output path: " + outputPath);
-                    await _userDataProtection.sendDeleteEmail_General(userData, outputPath);
+
+                    await _userDataProtection.sendDeleteEmail_General(userData);
+
                     Console.WriteLine("Attempting to delete logs.");
                     await _userDataProtection.deleteData(userHash);
                     Console.WriteLine("Successfully deleted data.");

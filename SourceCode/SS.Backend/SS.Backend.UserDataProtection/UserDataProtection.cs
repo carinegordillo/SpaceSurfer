@@ -443,7 +443,8 @@ public class UserDataProtection
         return userData;
     }
 
-    public async Task sendAccessEmail_General(UserDataModel userData, string attachmentPath)
+
+    public async Task sendAccessEmail_General(UserDataModel userData)
     {
         var builder = new CustomSqlCommandBuilder();
         var result = new Response();
@@ -472,7 +473,7 @@ public class UserDataProtection
 
         try
         {
-            await MailSender.SendEmailWithAttachment(userData.Username, subject, msg, attachmentPath);
+            await MailSender.SendEmail(userData.Username, subject, msg);
             result.HasError = false;
         }
         catch (Exception ex)
@@ -483,7 +484,7 @@ public class UserDataProtection
 
     }
 
-    public async Task sendAccessEmail_Manager(UserDataModel userData, string attachmentPath)
+    public async Task sendAccessEmail_Manager(UserDataModel userData)
     {
         var builder = new CustomSqlCommandBuilder();
         var result = new Response();
@@ -512,7 +513,7 @@ public class UserDataProtection
 
         try
         {
-            await MailSender.SendEmailWithAttachment(userData.Username, subject, msg, attachmentPath);
+            await MailSender.SendEmail(userData.Username, subject, msg);
             result.HasError = false;
         }
         catch (Exception ex)
@@ -625,7 +626,8 @@ public class UserDataProtection
         logEntry = logBuilder.Info().Business().Description($"User deleted their data.").User(userhash).Build();
     }
 
-    public async Task sendDeleteEmail_General(UserDataModel userData, string attachmentPath)
+
+    public async Task sendDeleteEmail_General(UserDataModel userData)
     {
         var builder = new CustomSqlCommandBuilder();
         var result = new Response();
@@ -654,12 +656,8 @@ public class UserDataProtection
 
         try
         {
-            Console.WriteLine("Inside method (email): " + userData.Username);
-            Console.WriteLine("Inside method (output path): " + attachmentPath);
-            await MailSender.SendEmailWithAttachment(userData.Username, subject, msg, attachmentPath);
+            await MailSender.SendEmail(userData.Username, subject, msg);
             result.HasError = false;
-            File.Delete(attachmentPath);
-            Console.WriteLine("Successfully deleted file.");
         }
         catch (Exception ex)
         {
@@ -668,7 +666,7 @@ public class UserDataProtection
         }
     }
 
-    public async Task sendDeleteEmail_Manager(UserDataModel userData, string attachmentPath)
+    public async Task sendDeleteEmail_Manager(UserDataModel userData)
     {
         var builder = new CustomSqlCommandBuilder();
         var result = new Response();
@@ -697,9 +695,7 @@ public class UserDataProtection
 
         try
         {
-            Console.WriteLine("Inside method (email): " + userData.Username);
-            Console.WriteLine("Inside method (output path): " + attachmentPath);
-            await MailSender.SendEmailWithAttachment(userData.Username, subject, msg, attachmentPath);
+            await MailSender.SendEmail(userData.Username, subject, msg);
             result.HasError = false;
             File.Delete(attachmentPath);
             Console.WriteLine("Successfully deleted file.");
