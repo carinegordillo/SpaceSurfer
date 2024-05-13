@@ -24,6 +24,8 @@ function initProfile() {
     document.getElementById('cpraView').style.display = 'none';
     document.getElementById('deletionView').style.display = 'none';
 
+    startTimer('User Profile');
+
     try {
         const idToken = sessionStorage.getItem('idToken');
     

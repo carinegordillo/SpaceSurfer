@@ -80,6 +80,19 @@ function sendRecoveryOTP() {
     });
 }
 
+function showModal(message, isSuccess = true) {
+    var modal = document.getElementById('modal');
+    var modalMessage = document.getElementById('modal-message');
+    modalMessage.textContent = message;
+    modal.style.display = 'block';
+
+    var closeButton = document.querySelector('.close-button');
+    closeButton.onclick = function() {
+        modal.style.display = 'none';
+    };
+}
+
+
 function authenticateRecoveryUser() {
     if (!appConfig) {
         console.error('Configuration is not loaded!');
@@ -215,7 +228,7 @@ async function initUserRequests() {
     document.getElementById("userRequestsView").style.display = "block";
 
     console.log("get userReuests clicked  clicked");
-    
+    startTimer('User Request');
 
     
 

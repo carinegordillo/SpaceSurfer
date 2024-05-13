@@ -40,8 +40,8 @@ function handleImageUpload(event) {
         imagePreviewContainer.innerHTML = '';
         var img = new Image();
         img.src = e.target.result;
-        img.style.maxWidth = '200px';
-        img.style.maxHeight = '200px';
+        img.style.width = '200px'; 
+        img.style.height = '200px'; 
         imagePreviewContainer.appendChild(img);
         document.getElementById('imageBase64').value = e.target.result.split(',')[1];
     };
@@ -177,6 +177,7 @@ document.querySelectorAll('.accordion').forEach(function(button) {
 
 
 document.getElementById('spaceCreationForm').addEventListener('submit', function(e) {
+    fetchInsertUsedFeature('Space Manager');
     if (!appConfig) {
         console.error('Configuration is not loaded!');
         return;
@@ -201,11 +202,12 @@ document.getElementById('spaceCreationForm').addEventListener('submit', function
 });
 
 function isValidInput(input) {
-    const regex = /^[a-zA-Z0-9]{2,50}$/; // Regex to validate the input
+    const regex = /^[a-zA-Z0-9 ]{2,50}$/; 
     return regex.test(input);
 }
 
 document.getElementById('modifySpaceForm').addEventListener('submit', function(e) {
+    fetchInsertUsedFeature('Space Manager');
     e.preventDefault();
     if (!appConfig) {
         console.error('Configuration is not loaded!');
@@ -345,8 +347,9 @@ function fetchFloorPlan() {
             data.floorPlans.forEach(floorPlan => {
                 const floorDiv = document.createElement('div');
                 floorDiv.classList.add('floor-plan');
+                const imageStyles = 'max-width: 400px; max-height: 400px; width: auto; height: auto;';
                 floorDiv.innerHTML = `<h3>${floorPlan.floorPlanName}</h3>
-                                      <img src="data:image/png;base64,${floorPlan.floorPlanImageBase64}" alt="${floorPlan.floorPlanName}" />
+                                      <img src="data:image/png;base64,${floorPlan.floorPlanImageBase64}" alt="${floorPlan.floorPlanName}" style="${imageStyles}"/>
                                       <div>FloorSpaces:</div>`;
 
                 const spacesList = document.createElement('ul');

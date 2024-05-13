@@ -220,6 +220,7 @@ document.getElementById('createTaskForm').addEventListener('submit', function(ev
 });
 
 function createTask(task) {
+    fetchInsertUsedFeature('Task Manager Hub');
     const accessToken = sessionStorage.getItem('accessToken'); 
     if (!accessToken) {
         console.error('Token expired or invalid');
@@ -374,6 +375,7 @@ function showModal(message) {
         modal.style.display = 'none';
     };
 }
+
 
 
 async function checkTokenExpiration(accessToken) {
