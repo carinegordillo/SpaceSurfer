@@ -502,8 +502,6 @@ namespace SS.Backend.Waitlist
                 result = await _sqldao.ReadSqlResult(getNext);
                 var nextUser = result.ValuesRead?.Rows[0]?["Username"].ToString();
 
-                Console.WriteLine("UserHash for next user on the waitlist after top leaves: " + nextUser);
-
                 // Populate WaitlistEntry with info needed for notification email
                 WaitlistEntry entry = new WaitlistEntry
                 {
@@ -632,7 +630,7 @@ namespace SS.Backend.Waitlist
                 .Where("Username = @user AND Position > 0")
                 .AddParameters(new Dictionary<string, object>
                 {
-                    { "user", userHash }
+            { "user", userHash }
                 })
                 .Build();
 
@@ -645,43 +643,48 @@ namespace SS.Backend.Waitlist
                     int reservationId = Convert.ToInt32(row["ReservationID"]);
 
                     // Get reservation details using reservationId
-                    var getResDetails = builder
-                        .BeginSelectAll()
-                        .From(resTable)
-                        .Where("reservationID = @id")
-                        .AddParameters(new Dictionary<string, object>
-                        {
-                            { "id", reservationId }
-                        })
-                        .Build();
-
+                    //var getResDetails = builder
+                    //    .BeginSelectAll()
+                    //    .From(resTable)
+                    //    .Where("reservationID = @id")
+                    //    .AddParameters(new Dictionary<string, object>
+                    //    {
+                    //        { "id", reservationId }
+                    //    })
+                    //    .Build();
+                    var getResDetails = builder.getResDetails(resTable, reservationId).Build();
                     var resDetailsResult = await _sqldao.ReadSqlResult(getResDetails);
-                    int compId = Convert.ToInt32(resDetailsResult.ValuesRead?.Rows[0]?["companyID"].ToString());
 
-                    if (resDetailsResult != null && resDetailsResult.ValuesRead != null && resDetailsResult.ValuesRead.Rows.Count > 0)
+                    // Check if reservation details were retrieved successfully
+                    if (resDetailsResult == null || resDetailsResult.ValuesRead == null || resDetailsResult.ValuesRead.Rows.Count == 0)
                     {
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-                        string compName = await GetCompanyName(compId);
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-                        var entry = new WaitlistEntry
-                        {
-                            userHash = userHash,
-                            spaceID = resDetailsResult.ValuesRead.Rows[0]["spaceID"].ToString(),
-                            companyID = compId,
-                            floorID = Convert.ToInt32(resDetailsResult.ValuesRead?.Rows[0]?["floorPlanID"].ToString()),
-                            companyName = compName,
-                            startTime = Convert.ToDateTime(resDetailsResult.ValuesRead.Rows[0]["reservationStartTime"]),
-                            endTime = Convert.ToDateTime(resDetailsResult.ValuesRead.Rows[0]["reservationEndTime"]),
-                            position = Convert.ToInt32(row["Position"])
-                        };
-
-                        waitlists.Add(entry);
+                        // Log a warning message and continue to the next reservation
+                        Console.WriteLine($"No reservation details found for reservation ID: {reservationId}");
+                        continue;
                     }
+
+                    int compId = Convert.ToInt32(resDetailsResult.ValuesRead.Rows[0]["companyID"].ToString());
+                    string? compName = await GetCompanyName(compId);
+
+                    var entry = new WaitlistEntry
+                    {
+                        userHash = userHash,
+                        spaceID = resDetailsResult.ValuesRead.Rows[0]["spaceID"].ToString(),
+                        companyID = compId,
+                        floorID = Convert.ToInt32(resDetailsResult.ValuesRead.Rows[0]["floorPlanID"].ToString()),
+                        companyName = compName,
+                        startTime = Convert.ToDateTime(resDetailsResult.ValuesRead.Rows[0]["reservationStartTime"]),
+                        endTime = Convert.ToDateTime(resDetailsResult.ValuesRead.Rows[0]["reservationEndTime"]),
+                        position = Convert.ToInt32(row["Position"])
+                    };
+
+                    waitlists.Add(entry);
                 }
             }
 
             return waitlists;
         }
+
 
         /// <summary>
         /// This method gets the company name
@@ -795,7 +798,6 @@ namespace SS.Backend.Waitlist
             var getCIDCmd = builder.getCid(compName).Build();
             result = await _sqldao.ReadSqlResult(getCIDCmd);
             int cid = Convert.ToInt32(result.ValuesRead.Rows[0]["companyID"]);
-            Console.WriteLine("service cid (725): " + cid);
 
             return cid;
         }
@@ -814,7 +816,6 @@ namespace SS.Backend.Waitlist
             var getFIDCmd = builder.getFid(tableName, compId).Build();
             result = await _sqldao.ReadSqlResult(getFIDCmd);
             int fid = Convert.ToInt32(result.ValuesRead.Rows[0]["floorPlanID"]);
-            Console.WriteLine("service fid (738): " + fid);
 
             return fid;
         }
@@ -833,8 +834,6 @@ namespace SS.Backend.Waitlist
             var floors = new Dictionary<int, CompanyFloorStrImage>();
 
             var command = builder.getFloor(compId, floorId).Build();
-
-            Console.WriteLine("Command: " + command.CommandText);
 
             result = await _sqldao.ReadSqlResult(command);
 
@@ -863,8 +862,6 @@ namespace SS.Backend.Waitlist
             {
                 Console.WriteLine("No data found or error occurred.");
             }
-
-            Console.WriteLine("Returning floors");
 
             return floors.Values;
         }
@@ -899,7 +896,6 @@ namespace SS.Backend.Waitlist
             }
             else
             {
-                Console.WriteLine("WaitlistService GetReservationID: No reservation found.");
                 return -1;
             }
         }
