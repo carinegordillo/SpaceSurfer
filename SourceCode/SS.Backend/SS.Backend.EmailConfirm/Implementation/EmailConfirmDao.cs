@@ -36,6 +36,8 @@ namespace SS.Backend.EmailConfirm
 
             response = await _sqlDao.ReadSqlResult(cmd);
 
+            Console.WriteLine(response.ValuesRead.Rows[0]["companyName"].ToString());
+
             if (!response.HasError)
             {
                 response.ErrorMessage += " -- GetReservationInfo Command: Successful";
@@ -65,6 +67,8 @@ namespace SS.Backend.EmailConfirm
                             .Build();
 
             response = await _sqlDao.ReadSqlResult(cmd);
+
+            Console.WriteLine(response.ValuesRead.Rows[0]["reservationID"].ToString());
 
             if (!response.HasError)
             {
@@ -173,34 +177,21 @@ namespace SS.Backend.EmailConfirm
 
         public async Task<Response> GetUsername(string userHash)
         {
-            Response response = new Response();
+            Response tablesresponse = new Response();
             var builder = new CustomSqlCommandBuilder();
-            
-            //string user = authRequest.UserIdentity;
-            var parameters = new Dictionary<string, object>
-            {
-                {"HashedUsername", userHash}
-            };
+            var command = builder.BeginSelect()
+                                .SelectColumns("username")
+                                .From("dbo.userHash")
+                                .Where("hashedUsername = @HashedUsername")
+                                .AddParameters(new Dictionary<string, object>
+                                {
+                                    { "HashedUsername", userHash}
+                                })
+                                .Build();
 
-            var cmd = builder.BeginSelect()
-                .SelectColumns("username")
-                .From("userHash")
-                .Where("hashedUsername = HashedUsername")
-                .AddParameters(parameters)
-                .Build();
+            var username = await _sqlDao.ReadSqlResult(command);
 
-            response = await _sqlDao.ReadSqlResult(cmd);
-            string? targetEmail = response.ValuesRead.Rows[0]["username"].ToString();
-
-            if (!response.HasError)
-            {
-                response.ErrorMessage = $" -- GetUsername Command: Successful {targetEmail}";
-            }
-            else
-            {
-                response.ErrorMessage = $" -- GetUsername Command: {cmd.CommandText} Failed";
-            }
-            return response;
+            return username;
         }
 
         public async Task<(UserReservationsModel, Response)> GetUserReservationByID (int reservationID)
