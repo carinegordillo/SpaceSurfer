@@ -34,7 +34,6 @@ namespace SS.Backend.SystemObservability
             try
             {
                 response = await _systemObservabilityDAO.RetrieveMostUsedFeatures(username, timeSpan);
-                Console.WriteLine("Response from DAO: " + response.ErrorMessage);
 
                 if (!response.HasError && response.ValuesRead != null)
                 {
@@ -46,7 +45,6 @@ namespace SS.Backend.SystemObservability
                             FeatureName = (string)row["FeatureName"],
                             UsageCount = (int)row["UsageCount"]
                         };
-                        Console.WriteLine("Used Feature: " + usedFeatures.FeatureName + " " + usedFeatures.UsageCount);
 
                         usedFeaturesList.Add(usedFeatures);
                     }

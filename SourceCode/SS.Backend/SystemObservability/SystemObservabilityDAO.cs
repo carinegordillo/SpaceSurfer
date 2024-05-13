@@ -691,8 +691,6 @@ namespace SS.Backend.SystemObservability
                 DateTime startDate = DateTime.MinValue;
                 DateTime endDate = DateTime.MaxValue;
 
-                Console.WriteLine("TimeSpan: " + timeSpan);
-
                 if (timeSpan == "6 months")
                 {
                     startDate = DateTime.Today.AddMonths(-6);
