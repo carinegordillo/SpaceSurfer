@@ -75,7 +75,7 @@ async function displayWaitlistedReservations() {
                 listItem.textContent = `${reservation.companyName} (${reservation.spaceID})`;
                 listItem.classList.add('waitlist-item');
 
-                listItem.addEventListener('click', () => displayReservationDetails(reservation));
+                listItem.addEventListener('click', () => displayReservationDetails(reservation), fetchInsertUsedFeature('Waitlist'));
 
                 reservationsList.appendChild(listItem);
                 console.log(data);
@@ -164,7 +164,7 @@ async function displayReservationDetails(reservation) {
 
     // Add click event listener to the leave waitlist button
     const leaveWaitlistBtn = document.getElementById('leaveWaitlistBtn');
-    leaveWaitlistBtn.addEventListener('click', () => openDialog(reservation));
+    leaveWaitlistBtn.addEventListener('click', () => openDialog(reservation), fetchInsertUsedFeature('Waitlist'));
 }
 
 
@@ -251,7 +251,7 @@ function openDialog(reservation) {
 
     const yesBtn = document.createElement('button');
     yesBtn.innerText = 'Yes';
-    yesBtn.onclick = () => leaveWaitlist(true, reservation);
+    yesBtn.onclick = () => leaveWaitlist(true, reservation), fetchInsertUsedFeature('Waitlist');
 
     const noBtn = document.createElement('button');
     noBtn.innerText = 'No';

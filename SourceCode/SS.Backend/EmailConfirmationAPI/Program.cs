@@ -67,7 +67,8 @@ builder.Services.AddTransient<IConfirmationDeletion,ConfirmationDeletion>();
 //waitlist
 builder.Services.AddTransient<WaitlistService>(provider =>
     new WaitlistService(
-        provider.GetRequiredService<SqlDAO>()
+        provider.GetRequiredService<SqlDAO>(),
+        provider.GetRequiredService<Logger>()
     )
 );
 
