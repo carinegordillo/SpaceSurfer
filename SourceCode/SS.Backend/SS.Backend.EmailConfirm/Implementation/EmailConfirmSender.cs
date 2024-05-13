@@ -55,6 +55,7 @@ namespace SS.Backend.EmailConfirm
             }
             try
             {
+                Console.WriteLine($"Email: {targetEmail}");
                 await MailSender.SendConfirmEmail(targetEmail, icsFile, body);
             }
             catch (SmtpException ex)
@@ -121,6 +122,7 @@ namespace SS.Backend.EmailConfirm
             }
             try
             {
+                Console.WriteLine($"Email: {targetEmail}");
                 await MailSender.SendConfirmEmail(targetEmail, icsFile, body);
             }
             catch (SmtpException ex)
