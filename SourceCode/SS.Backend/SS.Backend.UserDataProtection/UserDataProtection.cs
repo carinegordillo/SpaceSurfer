@@ -697,8 +697,6 @@ public class UserDataProtection
         {
             await MailSender.SendEmail(userData.Username, subject, msg);
             result.HasError = false;
-            File.Delete(attachmentPath);
-            Console.WriteLine("Successfully deleted file.");
         }
         catch (Exception ex)
         {
