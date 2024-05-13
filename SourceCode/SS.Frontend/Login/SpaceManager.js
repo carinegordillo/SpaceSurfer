@@ -177,6 +177,7 @@ document.querySelectorAll('.accordion').forEach(function(button) {
 
 
 document.getElementById('spaceCreationForm').addEventListener('submit', function(e) {
+    fetchInsertUsedFeature('Space Manager');
     if (!appConfig) {
         console.error('Configuration is not loaded!');
         return;
@@ -201,11 +202,12 @@ document.getElementById('spaceCreationForm').addEventListener('submit', function
 });
 
 function isValidInput(input) {
-    const regex = /^[a-zA-Z0-9]{2,50}$/; // Regex to validate the input
+    const regex = /^[a-zA-Z0-9 ]{2,50}$/; 
     return regex.test(input);
 }
 
 document.getElementById('modifySpaceForm').addEventListener('submit', function(e) {
+    fetchInsertUsedFeature('Space Manager');
     e.preventDefault();
     if (!appConfig) {
         console.error('Configuration is not loaded!');
