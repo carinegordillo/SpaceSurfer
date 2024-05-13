@@ -118,16 +118,34 @@ function collectSpacesAndTimeLimits() {
     // Assuming each spaceID input is directly followed by its corresponding timeLimit input
     const spaceIDs = document.querySelectorAll('.spaceID');
     const timeLimits = document.querySelectorAll('.timeLimit');
-
+    const uniqueSpaceIDs = new Set(); 
     spaceIDs.forEach((spaceInput, index) => {
         const spaceID = spaceInput.value;
         const timeLimit = timeLimits[index].value; // Assuming the same index
-        if (spaceID && timeLimit) {
+        if (isValidSpaceID(spaceID) && isValidTimeLimit(timeLimit)) {
+            if (uniqueSpaceIDs.has(spaceID)) {
+                showModal('Space ID must be unique.');
+                return; // Stop processing and return an empty object.
+            }
+            uniqueSpaceIDs.add(spaceID);
             spacesDict[spaceID] = parseInt(timeLimit);
+        } else {
+            showModal('Invalid Space ID or Time Limit.');
+            return; // Stop processing and return an empty object.
         }
     });
 
     return spacesDict;
+}
+
+function isValidSpaceID(spaceID) {
+    const regex = /^[a-zA-Z0-9]{2,10}$/; // Only alphanumeric characters, 2-10 in length
+    return regex.test(spaceID);
+}
+
+function isValidTimeLimit(timeLimit) {
+    const num = parseInt(timeLimit);
+    return !isNaN(num) && num >= 1 && num <= 12; // Must be an integer between 1 and 12
 }
 
 function collectSpacesAndTimeLimitsToModify() {
@@ -165,6 +183,12 @@ document.getElementById('spaceCreationForm').addEventListener('submit', function
     }
     const SpaceManagerUrl = appConfig.api.SpaceManager; 
     e.preventDefault();
+    const floorPlanName = document.getElementById('floorPlanName').value;
+
+    if (!isValidInput(floorPlanName)) {
+        showModal('Invalid input: Floor plan name must be 2-50 characters long and contain only letters and numbers.');
+        return;
+    }
     const companyFloor = {
         hashedUsername: JSON.parse(sessionStorage.getItem('idToken')).Username,
         FloorPlanName: document.getElementById('floorPlanName').value,
@@ -175,6 +199,11 @@ document.getElementById('spaceCreationForm').addEventListener('submit', function
     document.getElementById('spaceCreationForm').reset();
     fetchFloorPlan();
 });
+
+function isValidInput(input) {
+    const regex = /^[a-zA-Z0-9]{2,50}$/; // Regex to validate the input
+    return regex.test(input);
+}
 
 document.getElementById('modifySpaceForm').addEventListener('submit', function(e) {
     e.preventDefault();
