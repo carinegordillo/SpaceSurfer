@@ -37,7 +37,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SS.FrontEnd", "SS.FrontEnd"
 		..\SS.Frontend\Registration.html = ..\SS.Frontend\Registration.html
 		..\SS.Frontend\Registration\pages\Registration.js = ..\SS.Frontend\Registration\pages\Registration.js
 		..\SS.Frontend\ssName.png = ..\SS.Frontend\ssName.png
-		..\SS.Frontend\Login\test.js = ..\SS.Frontend\Login\test.js
 		..\SS.Frontend\test.txt = ..\SS.Frontend\test.txt
 	EndProjectSection
 EndProject
@@ -101,7 +100,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Login", "Login", "{95C970DB
 		..\SS.Frontend\Login\SystemObservabilityFunctions.js = ..\SS.Frontend\Login\SystemObservabilityFunctions.js
 		..\SS.Frontend\Login\SystemObservabilityGen.js = ..\SS.Frontend\Login\SystemObservabilityGen.js
 		..\SS.Frontend\Login\taskManagerHubView.js = ..\SS.Frontend\Login\taskManagerHubView.js
-		..\SS.Frontend\Login\test.js = ..\SS.Frontend\Login\test.js
 		..\SS.Frontend\Login\waitlistScript.js = ..\SS.Frontend\Login\waitlistScript.js
 	EndProjectSection
 EndProject
