@@ -288,3 +288,136 @@ GO
 
 
 ---------------------------------------------------------------
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetTopViewDurations]
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+    SELECT TOP 3 *
+    FROM dbo.ViewDurations
+    WHERE Timestamp BETWEEN @StartDate AND @EndDate
+    ORDER BY DurationInSeconds DESC;
+END
+GO
+
+
+---------------------------------------------------------------
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetMonthlyLoginStats]
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+    SELECT 
+        MONTH(Timestamp) AS [Month], 
+        YEAR(Timestamp) AS [Year], 
+        SUM(CASE WHEN Description = 'Failure to authenticate.' 
+                 THEN 1 
+                 WHEN Description = 'User tried to authenticate with an expired OTP.' 
+                 THEN 1 
+                 ELSE 0 END) AS [Failed Logins], 
+        SUM(CASE WHEN Description = 'Successful authentication.' 
+                 THEN 1 
+                 ELSE 0 END) AS [Successful Logins]
+    FROM dbo.SystemObservability
+    WHERE Timestamp BETWEEN @StartDate AND @EndDate
+    GROUP BY YEAR(Timestamp), MONTH(Timestamp)
+    ORDER BY [Year], [Month];
+END
+GO
+
+---------------------------------------------------------------
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetTopCompaniesByReservations]
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+    SELECT TOP 3 
+        cp.companyName AS CompanyName, 
+        COUNT(r.reservationID) AS ReservationCount
+    FROM dbo.companyProfile cp
+    JOIN dbo.reservations r ON cp.companyID = r.companyID
+    WHERE r.reservationStartTime BETWEEN @StartDate AND @EndDate
+    GROUP BY cp.companyName
+    ORDER BY ReservationCount DESC;
+END
+GO
+
+---------------------------------------------------------------
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetTopCompaniesBySpaceCount]
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+    SELECT TOP 3 
+        cp.companyName AS CompanyName, 
+        COUNT(cfs.spaceID) AS SpaceCount
+    FROM dbo.companyProfile cp
+    JOIN dbo.companyFloorSpaces cfs ON cp.companyID = cfs.companyID
+    WHERE cfs.timestamp BETWEEN @StartDate AND @EndDate
+    GROUP BY cp.companyName, cp.companyID
+    ORDER BY SpaceCount DESC;
+END
+GO
+
+---------------------------------------------------------------
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetTopFeatures]
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+    SELECT TOP 3 FeatureName, COUNT(*) AS UsageCount
+    FROM dbo.FeatureAccess
+    WHERE Timestamp BETWEEN @StartDate AND @EndDate
+    GROUP BY FeatureName
+    ORDER BY UsageCount DESC;
+END
+GO
+
+
+---------------------------------------------------------------
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[GetMonthlyRegistrations]
+    @StartDate DATETIME,
+    @EndDate DATETIME
+AS
+BEGIN
+    SELECT 
+        MONTH(Timestamp) AS [Month], 
+        YEAR(Timestamp) AS [Year], 
+        SUM(CASE WHEN Description = 'Error inserting user in data store.' THEN 1 ELSE 0 END) AS [Failed Registrations], 
+        SUM(CASE WHEN Description = 'Successful account creation' THEN 1 ELSE 0 END) AS [Successful Registrations]
+    FROM dbo.SystemObservability
+    WHERE Timestamp BETWEEN @StartDate AND @EndDate
+    GROUP BY YEAR(Timestamp), MONTH(Timestamp)
+    ORDER BY [Year], [Month];
+END
+GO

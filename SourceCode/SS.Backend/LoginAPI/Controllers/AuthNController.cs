@@ -22,12 +22,14 @@ namespace AuthAPI.Controllers
         public async Task<IActionResult> SendOTP([FromBody] AuthenticationRequest request)
         {
             var (otp, response) = await _authService.SendOTP_and_SaveToDB(request);
+            Console.WriteLine("initializng login attempt");
+            await _authService.initializeLoginAttempt(request);
 
             if (response.HasError == false)
             {
                 string targetEmail = request.UserIdentity;
-                string subject = "Verfication Code";
-                string msg = "Verification code: " + otp;
+                string msg = $"Your verification code is: {otp}\r\n\r\nPlease keep this code confidential and do not share it with anyone else. This code is for your personal use only and will help ensure the security of your account.\r\n\r\nIf you did not request this verification code or have any concerns, please contact us immediately at spacesurfers5@gmail.com.\r\n\r\nBest regards,\r\nSpace Surfer Team";
+                string subject = "Your Verification Code";
                 await MailSender.SendEmail(targetEmail, subject, msg);
             }
 
@@ -42,10 +44,23 @@ namespace AuthAPI.Controllers
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticationRequest request)
         {
-            var (principal, response) = await _authService.Authenticate(request);
+            var ip = HttpContext?.Connection?.RemoteIpAddress?.ToString();
+            Console.WriteLine("this is the ip: {0}", ip);
+            var (principal, response) = await _authService.Authenticate(request, ip);
 
             if (response.HasError)
             {
+                Console.WriteLine("checking login attempts");
+                bool deactivate = await _authService.checkLoginAttempts(request);
+                if (deactivate)
+                {
+                    Console.WriteLine("sending deactivate email");
+                    string targetEmail = request.UserIdentity;
+                    string subject = "Account Deactivated";
+                    string msg = "We regret to inform you that your account has been temporarily deactivated due to multiple unsuccessful login attempts.\r\n\r\nTo recover your account, please follow the link provided on the login page. If you have any questions or need further assistance, please don't hesitate to contact us at spacesurfers5@gmail.com.\r\n\r\nBest regards,\r\nSpace Surfer Team";
+                    await MailSender.SendEmail(targetEmail, subject, msg);
+                }
+
                 return BadRequest(response.ErrorMessage);
             }
 
@@ -58,6 +73,7 @@ namespace AuthAPI.Controllers
                 var accessToken = _authService.CreateJwt(Request, principal);
                 var idToken = _authService.CreateIdToken(principal);
 
+                await _authService.clearLoginAttempts(request);
                 return Ok(new { accessToken, idToken });
             }
             else

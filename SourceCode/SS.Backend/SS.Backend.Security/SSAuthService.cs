@@ -171,7 +171,7 @@ namespace SS.Backend.Security
         /// </summary>
         /// <param name="authRequest">Request to authenticate, holds UserIdentity and Proof</param>
         /// <returns>SSPrincipal object which contains UserIdentity and Claims as well as the Response object</returns>
-        public async Task<(SSPrincipal principal, Response res)> Authenticate(AuthenticationRequest authRequest)
+        public async Task<(SSPrincipal principal, Response res)> Authenticate(AuthenticationRequest authRequest, string? ip)
         {
             var builder = new CustomSqlCommandBuilder();
             Response result = new();
@@ -315,7 +315,7 @@ namespace SS.Backend.Security
                         level = "Error",
                         username = user_hash,
                         category = "Data Store",
-                        description = "Failure to authenticate."
+                        description = $"Failure to authenticate. User IP address was: {ip}"
                     };
                     await log.SaveData(entry);
 
@@ -333,7 +333,7 @@ namespace SS.Backend.Security
                     level = "Error",
                     username = user_hash,
                     category = "Data Store",
-                    description = "Failure to authenticate."
+                    description = $"Failure to authenticate. User IP address was: {ip}"
                 };
                 await log.SaveData(entry);
 
@@ -677,6 +677,122 @@ namespace SS.Backend.Security
             {
                 return true;
             }
+        }
+
+        // LOGIN ATTEMPT IMPLEMENTATION
+
+        public async Task initializeLoginAttempt(AuthenticationRequest authRequest)
+        {
+            try
+            {
+                var builder = new CustomSqlCommandBuilder();
+                Response result = new();
+                string user = authRequest.UserIdentity;
+
+                // get user hash based off of username
+                var getHash = builder
+                    .BeginSelectAll()
+                    .From("userHash")
+                    .Where($"username = '{user}'")
+                    .Build();
+                result = await sqldao.ReadSqlResult(getHash);
+                string? userHash = result.ValuesRead?.Rows[0]?["hashedUsername"].ToString();
+
+                var getLogins = builder.checkLoginAttempts(userHash).Build();
+                result = await sqldao.ReadSqlResult(getLogins);
+
+                if (result.ValuesRead == null)
+                {
+                    DateTime currTime = DateTime.UtcNow;
+                    var insertCmd = builder.insertIntoLoginAttempts(userHash, currTime).Build();
+                    await sqldao.SqlRowsAffected(insertCmd);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error initializing login attempt: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<bool> checkLoginAttempts(AuthenticationRequest authRequest)
+        {
+            try
+            {
+                var builder = new CustomSqlCommandBuilder();
+                Response result = new();
+                string user = authRequest.UserIdentity;
+
+                // get user hash based off of username
+                var getHash = builder
+                    .BeginSelectAll()
+                    .From("userHash")
+                    .Where($"username = '{user}'")
+                    .Build();
+                result = await sqldao.ReadSqlResult(getHash);
+                string? userHash = result.ValuesRead?.Rows[0]?["hashedUsername"].ToString();
+
+                var getAttempt = builder
+                    .BeginSelectAll()
+                    .From("loginAttempts")
+                    .Where($"Username = '{userHash}'")
+                    .Build();
+                result = await sqldao.ReadSqlResult(getAttempt);
+
+                if (result != null && result.ValuesRead != null && result.ValuesRead.Rows.Count > 0)
+                {
+                    var timestamp = Convert.ToDateTime(result.ValuesRead.Rows[0]["Timestamp"]);
+                    var attempts = Convert.ToInt32(result.ValuesRead.Rows[0]["Attempts"]);
+
+                    var currTime = DateTime.Now;
+                    TimeSpan timeDifference = currTime - timestamp;
+                    if (timeDifference.TotalHours > 24)
+                    {
+                        attempts = 0;
+                        var resetCmd = builder.resetLoginAttempts(userHash, currTime).Build();
+                        await sqldao.SqlRowsAffected(resetCmd);
+                    }
+                    else
+                    {
+                        attempts += 1;
+                        var increaseCmd = builder.increaseLoginAttempts(userHash, attempts).Build();
+                        await sqldao.SqlRowsAffected(increaseCmd);
+                    }
+
+                    if (attempts >= 3)
+                    {
+                        var deactivateCmd = builder.deactivateAccount(userHash).Build();
+                        await sqldao.SqlRowsAffected(deactivateCmd);
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error checking login attempts: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task clearLoginAttempts(AuthenticationRequest authRequest)
+        {
+            var builder = new CustomSqlCommandBuilder();
+            Response result = new();
+            string user = authRequest.UserIdentity;
+
+            // get user hash based off of username
+            var getHash = builder
+                .BeginSelectAll()
+                .From("userHash")
+                .Where($"username = '{user}'")
+                .Build();
+            result = await sqldao.ReadSqlResult(getHash);
+            string? userHash = result.ValuesRead?.Rows[0]?["hashedUsername"].ToString();
+
+            var clearCmd = builder.clearLoginAttempts(userHash).Build();
+            result = await sqldao.SqlRowsAffected(clearCmd);
         }
     }
 }
